@@ -2,8 +2,9 @@ import React from 'react'
 
 const Payment = () => {
   return (
-    <div>Paymen</div>
+    <div>Payment hii yuluwqbnsrsdgfyhgkghn</div>
   )
+  
 }
 
 export default Payment
