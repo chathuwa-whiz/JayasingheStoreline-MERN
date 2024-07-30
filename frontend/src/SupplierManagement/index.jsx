@@ -2,6 +2,6 @@ import React from 'react'
 
 export default function Home() {
   return (
-    <div>This is Dulangi</div>
+    <div>This is Dulangii</div>
   )
 }
