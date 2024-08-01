@@ -1,9 +1,7 @@
 import React from 'react'
 
-const reactReviews = () => {
+export default function reactReviews() {
   return (
-    <div>This is Chamathka nethmi</div>
+    <div>reactReviews</div>
   )
 }
-
-export default reactReviews
