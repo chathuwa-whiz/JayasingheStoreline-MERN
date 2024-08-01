@@ -13,9 +13,13 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={Dashboard} />
-          <Route path="reactreviews" element={ReactReviews} />
-          <Route path="inventory" element={InventoryManagement} />
+          <Route index element={<Dashboard />} />
+          <Route path="reactreviews" element={<ReactReviews />} />
+          <Route path="inventorymanagement" element={<InventoryManagement />} />
+          <Route path="suppliermanagement" element={<SupplierManagement />} />
+          <Route path="ordermanagement" element={<OrderManagement />} />
+          <Route path="paymentmanagement" element={<PaymentManagement />} />
+          <Route path="deliverymanagement" element={<DeliveryManagement />} />
         </Route>
       </Routes>
     </BrowserRouter>
