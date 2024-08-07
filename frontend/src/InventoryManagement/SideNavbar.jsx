@@ -1,40 +1,58 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { HomeIcon , CubeIcon , ArchiveBoxIcon , ClipboardDocumentListIcon , CogIcon , ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/solid";
 
 export default function SideNavbar() {
+
   return (
-    <div className="h-screen bg-white shadow-lg flex flex-col justify-between">
+    <>
+      <div className="h-screen bg-white shadow-lg flex flex-col justify-between">
       <div className="p-4">
         <div className="mb-8">
-          {/* <h1 className="text-2xl font-bold text-orange-500">Dashboard</h1> */}
+          <h1 className="text-2xl font-bold text-orange-500">Dashboard</h1>
         </div>
         <nav>
           <ul>
             <li className="mb-4">
-                <button type='button' className='text-white bg-orange-500 hover:bg-orange-400 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2'>
-                    <a href="#dashboard" className="flex items-center">
-                        <HomeIcon className="h-6 w-6 mr-3" />
-                        Dashboard
-                    </a>
-                </button>
+              <NavLink 
+                to="/inventory" 
+                exact
+                activeClassName="text-orange-500"
+                className="flex items-center text-gray-700 hover:text-orange-500"
+              >
+                <HomeIcon className="h-6 w-6 mr-3" />
+                Dashboard
+              </NavLink>
             </li>
             <li className="mb-4">
-              <a href="#products" className="flex items-center text-gray-700 hover:text-orange-500">
+              <NavLink 
+                to="products" 
+                activeClassName="text-orange-500"
+                className="flex items-center text-gray-700 hover:text-orange-500"
+              >
                 <CubeIcon className="h-6 w-6 mr-3" />
                 Products
-              </a>
+              </NavLink>
             </li>
             <li className="mb-4">
-              <a href="#stock" className="flex items-center text-gray-700 hover:text-orange-500">
+              <NavLink 
+                to="stock" 
+                activeClassName="text-orange-500"
+                className="flex items-center text-gray-700 hover:text-orange-500"
+              >
                 <ArchiveBoxIcon className="h-6 w-6 mr-3" />
                 Stock
-              </a>
+              </NavLink>
             </li>
             <li className="mb-4">
-              <a href="#reports" className="flex items-center text-gray-700 hover:text-orange-500">
+              <NavLink 
+                to="reports" 
+                activeClassName="text-orange-500"
+                className="flex items-center text-gray-700 hover:text-orange-500"
+              >
                 <ClipboardDocumentListIcon className="h-6 w-6 mr-3" />
                 Reports
-              </a>
+              </NavLink>
             </li>
           </ul>
         </nav>
@@ -43,10 +61,14 @@ export default function SideNavbar() {
         <nav>
           <ul>
             <li className="mb-4">
-              <a href="#settings" className="flex items-center text-gray-700 hover:text-orange-500">
+              <NavLink 
+                to="settings" 
+                activeClassName="text-orange-500"
+                className="flex items-center text-gray-700 hover:text-orange-500"
+              >
                 <CogIcon className="h-6 w-6 mr-3" />
                 Settings
-              </a>
+              </NavLink>
             </li>
             <li>
               <a href="#logout" className="flex items-center text-gray-700 hover:text-orange-500">
@@ -58,5 +80,6 @@ export default function SideNavbar() {
         </nav>
       </div>
     </div>
+    </>
   )
 }

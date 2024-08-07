@@ -1,13 +1,13 @@
 import React from 'react'
 import SideNavbar from './SideNavbar'
-import Dashboard from './Dashboard'
+import { Outlet } from 'react-router'
 
-export default function InventoryDashboard() {
+export default function Inventory() {
   return (
     <div className='flex'>
         <SideNavbar />
         <div className='flex-grow'>
-            <Dashboard />
+            <Outlet /> {/* This will render the child routes */}
         </div>
     </div>
   )

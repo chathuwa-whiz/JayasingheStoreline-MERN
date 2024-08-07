@@ -1,7 +1,8 @@
-import React from 'react'
+import React from 'react';
 
 export default function () {
   return (
+    <>
     <div className="min-h-screen bg-gray-100 p-8">
       <header className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Welcome back, Chathushka Navod</h1>
@@ -46,5 +47,6 @@ export default function () {
         </div>
       </div>
     </div>
+    </>
   )
 }
