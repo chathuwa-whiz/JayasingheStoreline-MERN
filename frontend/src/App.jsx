@@ -30,6 +30,8 @@ function App() {
           <Route index element={<InventoryDashboard />} />
           <Route path="products" element={<Products />} />
         </Route>
+        {/*Delivery manager Routes */}
+        <Route path="delivery" element={<DeliveryManagement />} />
       </Routes>
     </BrowserRouter>
   );
