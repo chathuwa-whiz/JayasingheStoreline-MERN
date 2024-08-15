@@ -1,42 +1,22 @@
 import express from "express";
-const router = express.Router();
+const productRoutes = express.Router();
 
-import Product from "../models/ProductModel.js";
+import { addProduct, fetchProducts, fetchProductById, updateProduct, deleteProduct } from "../controllers/ProductController.js"; 
 
 // addProduct
-router.post("/" , (req, res) => {
-    Product.create(req.body)
-        .then( () => res.json( { msg : "Product Added Successfully" } ) )
-        .catch( () => res.status(400).json( { msg : "Product Adding Failed" } ) )
-});
+productRoutes.post("/" , addProduct);
 
 // fetchProducts
-router.get("/" , (req, res) => {
-    Product.find()
-        .then( (products) => res.json(products) )
-        .catch( () => res.status(400).json( { msg : "No Product Found" } ) )
-});
+productRoutes.get("/" , fetchProducts);
 
 // fetchProductById
-router.get("/:id" , (req, res) => {
-    Product.findById(req.params.id)
-        .then( (product) => res.json(product) )
-        .catch( () => res.status(400).json( { msg : "Can not find this product" } ) )
-});
+productRoutes.get("/:id" , fetchProductById);
 
 // updateProductDetails
-router.put("/:id" , (req, res) => {
-    Product.findByIdAndUpdate(req.params.id, req.body)
-        .then( () => res.json( { msg : "Update Successful" } ) )
-        .catch( () => res.status(400).json( { msg : "Update Failed" } ) )
-});
+productRoutes.put("/:id" , updateProduct);
 
 // removeProduct
-router.delete("/:id" , (req, res) => {
-    Product.findByIdAndDelete(req.params.id)
-        .then( () => res.json( { msg : "Product Deleted Successfully" } ) )
-        .catch( () => res.status(400).json( { msg : "Can not be Delete" } ) )
-});
+productRoutes.delete("/:id" , deleteProduct);
 
 
 // fetchAllProducts
@@ -45,4 +25,4 @@ router.delete("/:id" , (req, res) => {
 // fetchNewProducts
 // filterProducts
 
-export default router;
+export default productRoutes;

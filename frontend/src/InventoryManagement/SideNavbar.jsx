@@ -1,85 +1,125 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { HomeIcon , CubeIcon , ArchiveBoxIcon , ClipboardDocumentListIcon , CogIcon , ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/solid";
+import { HomeIcon , CubeIcon , ArchiveBoxIcon , ClipboardDocumentListIcon , CogIcon , ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/solid'; // Replace with appropriate icons
 
-export default function SideNavbar() {
+const Sidebar = () => {
+  const [isProductsOpen, setIsProductsOpen] = useState(false);
+
+  const toggleProducts = () => {
+    setIsProductsOpen(!isProductsOpen);
+  };
 
   return (
-    <>
-      <div className="h-screen bg-white shadow-lg flex flex-col justify-between">
-      <div className="p-4">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-orange-500">Dashboard</h1>
-        </div>
+    <div className="fixed top-0 left-0 h-full w-64 bg-white p-4">
+
+      <div className='p-4'>
+
+        <h2 className="text-xl font-bold mb-6">Menu</h2>
+
         <nav>
+
           <ul>
-            <li className="mb-4">
-              <NavLink 
-                to="/inventory" 
-                exact
-                activeClassName="text-orange-500"
-                className="flex items-center text-gray-700 hover:text-orange-500"
+
+            <li className='mb-4'>
+              <NavLink
+                to="/inventory"
+                className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
               >
-                <HomeIcon className="h-6 w-6 mr-3" />
+                <HomeIcon className="h-5 w-5 mr-3" />
                 Dashboard
               </NavLink>
             </li>
-            <li className="mb-4">
-              <NavLink 
-                to="products" 
-                activeClassName="text-orange-500"
-                className="flex items-center text-gray-700 hover:text-orange-500"
+
+            <li className='mb-4'>
+              <button
+                onClick={toggleProducts}
+                className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2 w-full text-left"
               >
-                <CubeIcon className="h-6 w-6 mr-3" />
+                <CubeIcon className="h-5 w-5 mr-3" />
                 Products
-              </NavLink>
+              </button>
+              {isProductsOpen && (
+                <ul className="ml-8 space-y-1">
+                  <li>
+                    <NavLink
+                      to="products"
+                      className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
+                    >
+                      Product List
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="products"
+                      className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
+                    >
+                      Add Product
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
             </li>
+
             <li className="mb-4">
-              <NavLink 
-                to="stock" 
-                activeClassName="text-orange-500"
-                className="flex items-center text-gray-700 hover:text-orange-500"
+              <NavLink
+                to="/stock"
+                className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
               >
-                <ArchiveBoxIcon className="h-6 w-6 mr-3" />
+                <ClipboardDocumentListIcon className="h-5 w-5 mr-3" />
                 Stock
               </NavLink>
             </li>
+
             <li className="mb-4">
-              <NavLink 
-                to="reports" 
-                activeClassName="text-orange-500"
-                className="flex items-center text-gray-700 hover:text-orange-500"
+              <NavLink
+                to="/reports"
+                className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
               >
-                <ClipboardDocumentListIcon className="h-6 w-6 mr-3" />
+                <ArchiveBoxIcon className="h-5 w-5 mr-3" />
                 Reports
               </NavLink>
             </li>
+
           </ul>
+
         </nav>
+
       </div>
-      <div className="p-4">
+
+      <div className='p-4'>
+
         <nav>
+
           <ul>
+
             <li className="mb-4">
-              <NavLink 
-                to="settings" 
-                activeClassName="text-orange-500"
-                className="flex items-center text-gray-700 hover:text-orange-500"
+              <NavLink
+                to="/settings"
+                className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
               >
-                <CogIcon className="h-6 w-6 mr-3" />
+                <CogIcon className="h-5 w-5 mr-3" />
                 Settings
               </NavLink>
             </li>
-            <li>
-              <a href="#logout" className="flex items-center text-gray-700 hover:text-orange-500">
-                <ArrowRightStartOnRectangleIcon className="h-6 w-6 mr-3" />
+
+            <li className="mb-4">
+              <NavLink
+                to="/logout"
+                className="flex items-center hover:text-white hover:bg-red-500 rounded-lg px-4 py-2"
+              >
+                <ArrowRightStartOnRectangleIcon className="h-5 w-5 mr-3" />
                 Logout
-              </a>
+              </NavLink>
             </li>
+
           </ul>
+
         </nav>
+
       </div>
+
     </div>
-    </>
-  )
-}
+  );
+};
+
+export default Sidebar;

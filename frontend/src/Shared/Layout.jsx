@@ -1,12 +1,12 @@
 import React from 'react'
-import Header from './Header'
+import DefaultHeader from './Header'
 import { Outlet } from 'react-router'
 import Footer from './Footer'
 
 export default function Layout() {
   return (
     <div>
-        <Header />
+        <DefaultHeader />
 
         <Outlet />  {/* This will render the child routes */}
         
