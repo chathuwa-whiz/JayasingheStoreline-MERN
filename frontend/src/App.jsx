@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import DeliveryManagement from "./DeliveryManagement/delivery";
 import PaymentManagement from "./PaymentManagement/Payment";
 import ReactReviews from "./ReactReviews/reactReviews";
 import SupplierManagement from "./SupplierManagement/supplier";
@@ -11,6 +10,10 @@ import MainDashboard from "./Dashboard/Dashboard";
 import InventoryDashboard from "./InventoryManagement/Dashboard";
 import Inventory from "./InventoryManagement/Inventory";
 import Products from "./InventoryManagement/Products";
+//Delivery
+import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
+import DeliveryDashboard from "./DeliveryManagement/Dashboard";
+import Delivery from "./DeliveryManagement/delivery"
 
 function App() {
   return (
@@ -22,7 +25,6 @@ function App() {
           <Route path="suppliermanagement" element={<SupplierManagement />} />
           <Route path="ordermanagement" element={<OrderManagement />} />
           <Route path="paymentmanagement" element={<PaymentManagement />} />
-          <Route path="deliverymanagement" element={<DeliveryManagement />} />
         </Route>
 
         {/* Inventory Manager Routes */}
@@ -31,7 +33,11 @@ function App() {
           <Route path="products" element={<Products />} />
         </Route>
         {/*Delivery manager Routes */}
-        <Route path="delivery" element={<DeliveryManagement />} />
+        <Route path="delivery" element={<Delivery />}>
+          <Route index element={<DeliveryDashboard />} />
+          <Route path="drivervehicledetails" element={<DriverVehicleDetails />} />
+        </Route>
+        
       </Routes>
     </BrowserRouter>
   );
