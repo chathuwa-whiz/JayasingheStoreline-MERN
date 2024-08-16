@@ -37,7 +37,7 @@ const createUser = asyncHandler(async(req,res) => {
 
 const loginUser = asyncHandler(async(req,res) => {
 
-    const {emial,password} = req.body;
+    const {email,password} = req.body;
 
     const exsitingUser = await User.findOne({email});
 
@@ -54,4 +54,21 @@ const loginUser = asyncHandler(async(req,res) => {
     }
 })
 
-export {createUser};
+const logoutCurrentUser = asyncHandler(async(req,res) => {
+
+    res.cookie('jwt', '', {
+
+        httpOnly: true,
+        expires: new Date(0),
+    })
+
+    res.status(200).send("Logged out successfully")
+});
+
+// const getAllUsers = asyncHandler(async(req,res) => {
+
+//     const users = await User.find({})
+//     res.json(users);
+// })
+
+export {createUser, loginUser, logoutCurrentUser};
