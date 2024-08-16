@@ -1,7 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import PaymentManagement from "./PaymentManagement/Payment";
 import ReactReviews from "./ReactReviews/reactReviews";
-import SupplierManagement from "./SupplierManagement/supplier";
 import Layout from "./Shared/Layout";
 import MainDashboard from "./Dashboard/Dashboard";
 
@@ -19,6 +18,11 @@ import Delivery from "./DeliveryManagement/delivery";
 import Order from "./OrderManagement/order";
 import OrderDashboard from "./OrderManagement/Dashboard";
 
+// supplier
+import Supplier from "./SupplierManagement/supplier";
+import SupplierDashboard from "./SupplierManagement/Dashboard";
+
+
 function App() {
   return (
     <BrowserRouter>
@@ -26,7 +30,6 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<MainDashboard />} />
           <Route path="reactreviews" element={<ReactReviews />} />
-          <Route path="suppliermanagement" element={<SupplierManagement />} />
           <Route path="paymentmanagement" element={<PaymentManagement />} />
         </Route>
 
@@ -45,6 +48,12 @@ function App() {
         {/* Order Manager Routes */}
         <Route path="order" element={<Order />}>
           <Route index element={<OrderDashboard />} />
+        </Route>
+
+        {/* Supplier Routes */}
+        <Route path="supplier" element={<Supplier />}>
+          <Route index element={<SupplierDashboard />} />
+          
         </Route>
         
       </Routes>
