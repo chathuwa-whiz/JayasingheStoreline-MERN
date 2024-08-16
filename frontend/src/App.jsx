@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+
+=======
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import PaymentManagement from "./PaymentManagement/Payment";
 import ReactReviews from "./ReactReviews/reactReviews";
@@ -14,9 +17,17 @@ import Products from "./InventoryManagement/Products";
 import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
 import DeliveryDashboard from "./DeliveryManagement/Dashboard";
 import Delivery from "./DeliveryManagement/delivery"
+>>>>>>> e0c9caadfa00ce6de2fe9105848bec4c410dcdc4
 
 function App() {
+  
   return (
+<<<<<<< HEAD
+    <h1 className="text-3xl font-bold underline">
+      Hello world!
+    </h1>
+  )
+=======
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
@@ -41,6 +52,7 @@ function App() {
       </Routes>
     </BrowserRouter>
   );
+>>>>>>> e0c9caadfa00ce6de2fe9105848bec4c410dcdc4
 }
 
-export default App;
+export default App
