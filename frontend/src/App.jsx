@@ -1,5 +1,7 @@
+<<<<<<< HEAD
+
+=======
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import DeliveryManagement from "./DeliveryManagement/delivery";
 import PaymentManagement from "./PaymentManagement/Payment";
 import ReactReviews from "./ReactReviews/reactReviews";
 import SupplierManagement from "./SupplierManagement/supplier";
@@ -11,9 +13,21 @@ import MainDashboard from "./Dashboard/Dashboard";
 import InventoryDashboard from "./InventoryManagement/Dashboard";
 import Inventory from "./InventoryManagement/Inventory";
 import Products from "./InventoryManagement/Products";
+//Delivery
+import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
+import DeliveryDashboard from "./DeliveryManagement/Dashboard";
+import Delivery from "./DeliveryManagement/delivery"
+>>>>>>> e0c9caadfa00ce6de2fe9105848bec4c410dcdc4
 
 function App() {
+  
   return (
+<<<<<<< HEAD
+    <h1 className="text-3xl font-bold underline">
+      Hello world!
+    </h1>
+  )
+=======
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
@@ -22,7 +36,6 @@ function App() {
           <Route path="suppliermanagement" element={<SupplierManagement />} />
           <Route path="ordermanagement" element={<OrderManagement />} />
           <Route path="paymentmanagement" element={<PaymentManagement />} />
-          <Route path="deliverymanagement" element={<DeliveryManagement />} />
         </Route>
 
         {/* Inventory Manager Routes */}
@@ -30,9 +43,16 @@ function App() {
           <Route index element={<InventoryDashboard />} />
           <Route path="products" element={<Products />} />
         </Route>
+        {/*Delivery manager Routes */}
+        <Route path="delivery" element={<Delivery />}>
+          <Route index element={<DeliveryDashboard />} />
+          <Route path="drivervehicledetails" element={<DriverVehicleDetails />} />
+        </Route>
+        
       </Routes>
     </BrowserRouter>
   );
+>>>>>>> e0c9caadfa00ce6de2fe9105848bec4c410dcdc4
 }
 
-export default App;
+export default App

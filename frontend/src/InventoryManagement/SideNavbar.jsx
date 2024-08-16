@@ -10,7 +10,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="h-screen bg-white shadow-lg flex flex-col justify-between">
+    <div className="fixed top-0 left-0 h-full w-64 bg-white p-4">
 
       <div className='p-4'>
 
