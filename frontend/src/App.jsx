@@ -10,10 +10,13 @@ import MainDashboard from "./Dashboard/Dashboard";
 import InventoryDashboard from "./InventoryManagement/Dashboard";
 import Inventory from "./InventoryManagement/Inventory";
 import Products from "./InventoryManagement/Products";
+
 //Delivery
 import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
 import DeliveryDashboard from "./DeliveryManagement/Dashboard";
-import Delivery from "./DeliveryManagement/delivery"
+import Delivery from "./DeliveryManagement/delivery";
+import AddDelivery from "./DeliveryManagement/AddDelivery";
+import Notification from "./DeliveryManagement/Notification";
 
 function App() {
   return (
@@ -36,6 +39,8 @@ function App() {
         <Route path="delivery" element={<Delivery />}>
           <Route index element={<DeliveryDashboard />} />
           <Route path="drivervehicledetails" element={<DriverVehicleDetails />} />
+          <Route path="adddelivery" element={<AddDelivery />} />
+          <Route path="notification" element={<Notification />} />
         </Route>
         
       </Routes>
