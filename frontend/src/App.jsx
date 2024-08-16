@@ -19,6 +19,7 @@ import AddDelivery from "./DeliveryManagement/AddDelivery";
 import Notification from "./DeliveryManagement/Notification";
 
 function App() {
+  
   return (
     <BrowserRouter>
       <Routes>
@@ -46,6 +47,7 @@ function App() {
       </Routes>
     </BrowserRouter>
   );
+
 }
 
-export default App;
+export default App
