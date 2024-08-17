@@ -10,7 +10,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 h-full w-64 bg-white p-4">
+    <div className="bg-white p-4">
 
       <div className='p-4'>
 
@@ -39,7 +39,7 @@ const Sidebar = () => {
                 Products
               </button>
               {isProductsOpen && (
-                <ul className="ml-8 space-y-1">
+                <ul className="ml-5 space-y-1">
                   <li>
                     <NavLink
                       to="products"
@@ -50,7 +50,7 @@ const Sidebar = () => {
                   </li>
                   <li>
                     <NavLink
-                      to="products"
+                      to="addproducts"
                       className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
                     >
                       Add Product

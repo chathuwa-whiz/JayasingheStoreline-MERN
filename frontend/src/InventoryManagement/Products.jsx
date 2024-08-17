@@ -36,9 +36,9 @@ const products = [
 
     
   return (
-    <div className="pt-20 pl-64 pr-6 pb-4 h-[calc(100vh-4rem)] overflow-auto bg-gray-100">
-      <table className="min-w-full bg-white border border-gray-200">
-        <thead className="bg-gray-100">
+    <div className="rounded-lg p-8">
+      <table className="min-w-full overflow-y-auto min-h-full border rounded-lg bg-white">
+        <thead className="bg-orange-500 text-white">
           <tr>
             <th className="py-2 px-4 text-left">#</th>
             <th className="py-2 px-4 text-left">Image</th>

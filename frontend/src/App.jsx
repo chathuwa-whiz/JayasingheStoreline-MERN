@@ -9,6 +9,7 @@ import MainDashboard from "./Dashboard/Dashboard";
 import InventoryDashboard from "./InventoryManagement/Dashboard";
 import Inventory from "./InventoryManagement/Inventory";
 import Products from "./InventoryManagement/Products";
+import AddProducts from "./InventoryManagement/AddProducts";
 
 // Delivery
 import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
@@ -34,6 +35,7 @@ function App() {
         <Route path="inventory" element={<Inventory />}>
           <Route index element={<InventoryDashboard />} />
           <Route path="products" element={<Products />} />
+          <Route path="addproducts" element={<AddProducts />} />
         </Route>
 
         {/*Delivery manager Routes */}
