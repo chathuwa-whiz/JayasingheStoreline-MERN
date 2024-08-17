@@ -1,6 +1,73 @@
-import React from 'react'
+import React, {useState} from 'react';
+import {useNavigate} from "react-router-dom";
+import {useCreateProductMutation,  useUploadProductImageMutation} from "../redux/api/productApiSlice";
+import {useFetchCategoriesQuery} from "../redux/api/categoryApiSlice";
+import {toast} from "react-toastify";
 
 export default function AddProducts() {
+
+    const [image, setImage] = useState('');
+    const [imageUrl, setImageUrl] = useState(null);
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [buyingPrice, setBuyingPrice] = useState(0);
+    const [sellingPrice, setSellingPrice] = useState(0);
+    const [discount, setDiscount] = useState(0);
+    const [category, setCategory] = useState('');
+    const [brand, setBrand] = useState('');
+    const [sku, setSku] = useState('');
+    const [barcode, setBarcode] = useState('');
+    const [quantity, setQuantity] = useState(0);
+    const navigate = useNavigate();
+
+    // const [uploadProductImage] = useUploadProductImageMutation();
+    // const [createProduct] = useCreateProductMutation();
+    // const {data: categories, isLoading, isError, error} = useFetchCategoriesQuery();
+
+   
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+    
+        try {
+          const productData = new FormData();
+          productData.append("image", image);
+          productData.append("name", name);
+          productData.append("description", description);
+          productData.append("price", price);
+          productData.append("category", category);
+          productData.append("quantity", quantity);
+          productData.append("brand", brand);
+          productData.append("countInStock", stock);
+    
+          const { data } = await createProduct(productData);
+    
+          if (data.error) {
+            toast.error("Product create failed. Try Again.");
+          } else {
+            toast.success(`${data.name} is created`);
+            navigate("/");
+          }
+        } catch (error) {
+          console.error(error);
+          toast.error("Product create failed. Try Again.");
+        }
+    };
+    
+    const uploadFileHandler = async (e) => {
+        const formData = new FormData();
+        formData.append("image", e.target.files[0]);
+    
+        try {
+          const res = await uploadProductImage(formData).unwrap();
+          toast.success(res.message);
+          setImage(res.image);
+          setImageUrl(res.image);
+        } catch (error) {
+          toast.error(error?.data?.message || error.error);
+        }
+    };
+
   return (
     <div className="p-8 grid grid-cols-2 gap-10">
         {/* General Information */}
