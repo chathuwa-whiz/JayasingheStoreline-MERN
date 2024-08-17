@@ -61,7 +61,7 @@ const Sidebar = () => {
 
             <li className="mb-4">
               <NavLink
-                to="/notification"
+                to="notification"
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
               >
                 <FaBell className="h-5 w-5 mr-3" />
@@ -71,7 +71,7 @@ const Sidebar = () => {
 
             <li className="mb-4">
               <NavLink
-                to="/reports"
+                to="reports"
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
               >
                 <FaChartBar className="h-5 w-5 mr-3" />
@@ -95,7 +95,7 @@ const Sidebar = () => {
 
             <li className="mb-4">
               <NavLink
-                to="/settings"
+                to="settings"
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
               >
                 <FaCog className="h-5 w-5 mr-3" />
@@ -105,7 +105,7 @@ const Sidebar = () => {
 
             <li className="mb-4">
               <NavLink
-                to="/logout"
+                to="logout"
                 className="flex items-center hover:text-white hover:bg-red-500 rounded-lg px-4 py-2"
               >
                 <FaSignOutAlt className="h-5 w-5 mr-3" />

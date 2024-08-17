@@ -12,14 +12,14 @@ import Inventory from "./InventoryManagement/Inventory";
 import Products from "./InventoryManagement/Products";
 
 //Delivery
-import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
-import DeliveryDashboard from "./DeliveryManagement/Dashboard";
 import Delivery from "./DeliveryManagement/delivery";
-import AddDelivery from "./DeliveryManagement/AddDelivery";
-import Notification from "./DeliveryManagement/Notification";
+import DeliveryDashboard from "./DeliveryManagement/Dashboard";
 import DeliveryDetail from "./DeliveryManagement/DeliveryDetail";
-import Reports from "./DeliveryManagement/Reports";
-import Settings from "./DeliveryManagement/Settings";
+import AddDelivery from "./DeliveryManagement/AddDelivery";
+import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
+import DeliveryNotification from "./DeliveryManagement/Notification";
+import DeliveryReports from "./DeliveryManagement/Reports";
+import DeliverySettings from "./DeliveryManagement/Settings";
 
 function App() {
   return (
@@ -41,12 +41,12 @@ function App() {
         {/*Delivery manager Routes */}
         <Route path="delivery" element={<Delivery />}>
           <Route index element={<DeliveryDashboard />} />
-          <Route path="drivervehicledetails" element={<DriverVehicleDetails />} />
-          <Route path="adddelivery" element={<AddDelivery />} />
-          <Route path="notification" element={<Notification />} />
           <Route path="deliverydetail" element={<DeliveryDetail />} />
-          <Route path="reports" element={<Reports />} />
-          <Route path="settings" element={<Settings />} />
+          <Route path="adddelivery" element={<AddDelivery />} />
+          <Route path="drivervehicle" element={<DriverVehicleDetails />} />
+          <Route path="notification" element={<DeliveryNotification />} />
+          <Route path="reports" element={<DeliveryReports />} />
+          <Route path="settings" element={<DeliverySettings />} />
         </Route>
         
       </Routes>
