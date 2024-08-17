@@ -22,6 +22,7 @@ import Reports from "./DeliveryManagement/Reports";
 import Settings from "./DeliveryManagement/Settings";
 
 function App() {
+  
   return (
     <BrowserRouter>
       <Routes>
@@ -52,6 +53,7 @@ function App() {
       </Routes>
     </BrowserRouter>
   );
+
 }
 
-export default App;
+export default App
