@@ -17,6 +17,9 @@ import DeliveryDashboard from "./DeliveryManagement/Dashboard";
 import Delivery from "./DeliveryManagement/delivery";
 import AddDelivery from "./DeliveryManagement/AddDelivery";
 import Notification from "./DeliveryManagement/Notification";
+import DeliveryDetail from "./DeliveryManagement/DeliveryDetail";
+import Reports from "./DeliveryManagement/Reports";
+import Settings from "./DeliveryManagement/Settings";
 
 function App() {
   return (
@@ -41,6 +44,9 @@ function App() {
           <Route path="drivervehicledetails" element={<DriverVehicleDetails />} />
           <Route path="adddelivery" element={<AddDelivery />} />
           <Route path="notification" element={<Notification />} />
+          <Route path="deliverydetail" element={<DeliveryDetail />} />
+          <Route path="reports" element={<Reports />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
         
       </Routes>

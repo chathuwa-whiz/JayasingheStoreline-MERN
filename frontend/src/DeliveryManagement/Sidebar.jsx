@@ -1,42 +1,124 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaTruck, FaBell, FaChartBar, FaCog, FaSignOutAlt, FaListAlt, FaPlusCircle } from 'react-icons/fa';
-
+import { NavLink } from 'react-router-dom';
 const Sidebar = () => {
+  const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
+
+  const toggleDeliveryDropdown = () => {
+    setIsDeliveryOpen(!isDeliveryOpen);
+  };
+
   return (
-    <div className="w-64 bg-orange-500 text-white h-screen">
-      <div className="flex items-center justify-center p-6">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+    <div className="bg-white p-4">
+
+      <div className='p-4'>
+
+        <h2 className="text-xl font-bold mb-6">Menu</h2>
+
+        <nav>
+
+          <ul>
+
+            <li className='mb-4'>
+              <NavLink
+                to="/delivery"
+                className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
+              >
+                <FaListAlt className="h-5 w-5 mr-3" />
+                Dashboard
+              </NavLink>
+            </li>
+
+            <li className='mb-4'>
+              <button
+                onClick={toggleDeliveryDropdown}
+                className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2 w-full text-left"
+              >
+                <FaTruck className="h-5 w-5 mr-3" />
+                Deliveries
+              </button>
+              {isDeliveryOpen && (
+                <ul className="ml-5 space-y-1">
+                  <li>
+                    <NavLink
+                      to="deliverydetail"
+                      className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
+                    > <FaPlusCircle className="h-5 w-5 mr-3" />
+                      Delivery Details
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="adddelivery"
+                      className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
+                    > <FaPlusCircle className="h-5 w-5 mr-3" />
+                      Add Delivery
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
+            </li>
+
+            <li className="mb-4">
+              <NavLink
+                to="/notification"
+                className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
+              >
+                <FaBell className="h-5 w-5 mr-3" />
+                Notification
+              </NavLink>
+            </li>
+
+            <li className="mb-4">
+              <NavLink
+                to="/reports"
+                className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
+              >
+                <FaChartBar className="h-5 w-5 mr-3" />
+                Reports
+              </NavLink>
+            </li>
+
+            
+
+          </ul>
+
+        </nav>
+
       </div>
-      <nav className="space-y-4">
-        <a href="#" className="flex items-center p-4 hover:bg-orange-600">
-          <FaListAlt className="mr-3" />
-          <span>Dashboard</span>
-        </a>
-        <a href="#" className="flex items-center p-4 hover:bg-orange-600">
-          <FaTruck className="mr-3" />
-          <span>Deliveries</span>
-        </a>
-        <a href="#" className="flex items-center pl-12 p-4 hover:bg-orange-600">
-          <FaPlusCircle className="mr-3" />
-          <span>Add Delivery</span>
-        </a>
-        <a href="#" className="flex items-center p-4 hover:bg-orange-600">
-          <FaBell className="mr-3" />
-          <span>Notification</span>
-        </a>
-        <a href="#" className="flex items-center p-4 hover:bg-orange-600">
-          <FaChartBar className="mr-3" />
-          <span>Reports</span>
-        </a>
-        <a href="#" className="flex items-center p-4 hover:bg-orange-600">
-          <FaCog className="mr-3" />
-          <span>Settings</span>
-        </a>
-        <a href="#" className="flex items-center p-4 hover:bg-orange-600">
-          <FaSignOutAlt className="mr-3" />
-          <span>Logout</span>
-        </a>
-      </nav>
+
+      <div className='p-4'>
+
+        <nav>
+
+          <ul>
+
+            <li className="mb-4">
+              <NavLink
+                to="/settings"
+                className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
+              >
+                <FaCog className="h-5 w-5 mr-3" />
+                Settings
+              </NavLink>
+            </li>
+
+            <li className="mb-4">
+              <NavLink
+                to="/logout"
+                className="flex items-center hover:text-white hover:bg-red-500 rounded-lg px-4 py-2"
+              >
+                <FaSignOutAlt className="h-5 w-5 mr-3" />
+                Logout
+              </NavLink>
+            </li>
+
+          </ul>
+
+        </nav>
+
+      </div>
+
     </div>
   );
 };

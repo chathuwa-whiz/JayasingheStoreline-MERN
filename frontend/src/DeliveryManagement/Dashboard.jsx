@@ -1,51 +1,81 @@
 import React from 'react';
-import { FaTrash, FaEdit, FaEye, FaMapMarkerAlt } from 'react-icons/fa';
+import { Line, Doughnut } from 'react-chartjs-2';
 
-const deliveries = [
-  { id: 'D10', type: 'Electronics', vehicle: 'Lorry A', driver: 'Mr.Sam', cost: '15000 LKR', destination: 'J Hettipola – Kurunegala' },
-  { id: 'D15', type: 'Furniture', vehicle: 'Lorry B', driver: 'Mr.Lucky', cost: '30000 LKR', destination: 'J Hettipola – Wennappuwa' },
-  { id: 'D20', type: 'Electronics', vehicle: 'Lorry C', driver: 'Mr.Jake', cost: '10000 LKR', destination: 'J Hettipola – Minuwangoda' },
-  { id: 'D25', type: 'Electronics', vehicle: 'D Bike', driver: 'Mr.Hash', cost: '2500 LKR', destination: 'J Hettipola – Kurunegala' },
-  { id: 'D30', type: 'Electronics', vehicle: 'D Tuk', driver: 'Mr.Ciao', cost: '3000 LKR', destination: 'J Hettipola – Kandy' },
-  { id: 'D35', type: 'Electronics', vehicle: 'D Tuk', driver: 'Mr.Mac', cost: '3000 LKR', destination: 'J Hettipola – Kalutara' }
-];
+export default function Dashboard() {
+  // Dummy Data for Stats
+  const stats = [
+    { label: 'Total Deliveries', value: '250', percentage: '+18%', weekly: '+3.8k this week', color: 'bg-green-100' },
+    { label: 'Total Earnings', value: '1.234', percentage: '+18%', weekly: '+2.8k this week', color: 'bg-blue-100' },
+    { label: 'Available Units', value: '28', units: ['Lorry A - 10', 'Lorry B - 02', 'Lorry C - 03', 'D Tuk - 08', 'D Bike - 5'], color: 'bg-blue-100' },
+    { label: 'Ongoing Units', value: '12', units: ['Lorry C - 01', 'D Tuk - 02', 'D Bike - 09'], color: 'bg-red-100' }
+  ];
 
-export default function DeliveryDashboard() {
+  // Dummy Data for Line Chart
+  const lineData = {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    datasets: [
+      {
+        label: 'Delivery Stats',
+        data: [50, 70, 100, 120, 150, 180, 200, 220, 250],
+        fill: false,
+        borderColor: '#f97316',
+        tension: 0.1,
+      },
+    ],
+  };
+
+  // Dummy Data for Doughnut Chart
+  const doughnutData = {
+    labels: ['Electronics', 'Furniture'],
+    datasets: [
+      {
+        data: [53.1, 46.9],
+        backgroundColor: ['#f97316', '#facc15'],
+      },
+    ],
+  };
+
   return (
-    <div className="bg-white shadow-md rounded p-6">
-      <h1 className="text-xl font-bold mb-4">Deliveries</h1>
-      <input type="text" placeholder="Search Deliveries" className="p-2 border border-gray-300 rounded mb-4 w-full" />
-      <table className="w-full bg-white shadow-md rounded">
-        <thead>
-          <tr>
-            <th className="border p-2">ID</th>
-            <th className="border p-2">Delivery Type</th>
-            <th className="border p-2">Vehicle Type</th>
-            <th className="border p-2">Driver</th>
-            <th className="border p-2">Cost</th>
-            <th className="border p-2">Destination</th>
-            <th className="border p-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {deliveries.map((delivery) => (
-            <tr key={delivery.id}>
-              <td className="border p-2">{delivery.id}</td>
-              <td className="border p-2">{delivery.type}</td>
-              <td className="border p-2">{delivery.vehicle}</td>
-              <td className="border p-2">{delivery.driver}</td>
-              <td className="border p-2">{delivery.cost}</td>
-              <td className="border p-2">{delivery.destination}</td>
-              <td className="border p-2">
-                <button className="p-1 mx-1 text-blue-500"><FaMapMarkerAlt /></button>
-                <button className="p-1 mx-1 text-yellow-500"><FaEdit /></button>
-                <button className="p-1 mx-1 text-gray-500"><FaEye /></button>
-                <button className="p-1 mx-1 text-red-500"><FaTrash /></button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="p-8">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-bold">Welcome back, Yasith JY</h1>
+        <div className="flex items-center">
+          <span className="mr-4">Yasith JY</span>
+          <img src="path/to/avatar.png" alt="Avatar" className="w-12 h-12 rounded-full" />
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-4 gap-4 mb-8">
+        {stats.map((stat, index) => (
+          <div key={index} className={`p-4 ${stat.color} rounded-lg shadow-md`}>
+            <h2 className="text-lg font-semibold">{stat.label}</h2>
+            <p className="text-4xl font-bold">{stat.value}</p>
+            <p className="text-green-500">{stat.percentage}</p>
+            <p className="text-gray-500">{stat.weekly}</p>
+            {stat.units && (
+              <ul className="mt-2 text-gray-600">
+                {stat.units.map((unit, idx) => (
+                  <li key={idx}>{unit}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Delivery Stats</h2>
+          <Line data={lineData} />
+        </div>
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Delivery By Product</h2>
+          <Doughnut data={doughnutData} />
+        </div>
+      </div>
     </div>
   );
 }
