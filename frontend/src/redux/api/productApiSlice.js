@@ -1,4 +1,4 @@
-import {PRODUCT_URL , UPLOAD_URL} from "../constants";
+import {PRODUCT_URL, UPLOAD_URL} from "../constants";
 import {apiSlice} from "./apiSlice";
 
 export const productApiSlice = apiSlice.injectEndpoints({
@@ -62,7 +62,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
                 url: `${PRODUCT_URL}/${productId}`,
                 method: "DELETE",
             }),
-            providesTags: ["Product"],
+            invalidatesTags: ["Product"],
         }),
     
         createReview: builder.mutation({

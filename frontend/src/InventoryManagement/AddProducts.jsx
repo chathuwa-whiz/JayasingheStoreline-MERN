@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import {useCreateProductMutation,  useUploadProductImageMutation} from "../redux/api/productApiSlice";
 import {useFetchCategoriesQuery} from "../redux/api/categoryApiSlice";
@@ -20,11 +20,9 @@ export default function AddProducts() {
     const [quantity, setQuantity] = useState(0);
     const navigate = useNavigate();
 
-    // const [uploadProductImage] = useUploadProductImageMutation();
-    // const [createProduct] = useCreateProductMutation();
-    // const {data: categories, isLoading, isError, error} = useFetchCategoriesQuery();
-
-   
+    const [uploadProductImage] = useUploadProductImageMutation();
+    const [createProduct] = useCreateProductMutation();
+    const { data: categories } = useFetchCategoriesQuery();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -34,11 +32,14 @@ export default function AddProducts() {
           productData.append("image", image);
           productData.append("name", name);
           productData.append("description", description);
-          productData.append("price", price);
+          productData.append("buyingPrice", buyingPrice);
+          productData.append("sellingPrice", sellingPrice);
           productData.append("category", category);
           productData.append("quantity", quantity);
           productData.append("brand", brand);
-          productData.append("countInStock", stock);
+          productData.append("sku", sku);
+          productData.append("barcode", barcode);
+          productData.append("discount", discount);
     
           const { data } = await createProduct(productData);
     
@@ -52,9 +53,9 @@ export default function AddProducts() {
           console.error(error);
           toast.error("Product create failed. Try Again.");
         }
-    };
+      };
     
-    const uploadFileHandler = async (e) => {
+      const uploadFileHandler = async (e) => {
         const formData = new FormData();
         formData.append("image", e.target.files[0]);
     
@@ -66,7 +67,7 @@ export default function AddProducts() {
         } catch (error) {
           toast.error(error?.data?.message || error.error);
         }
-    };
+      };
 
   return (
     <div className="p-8 grid grid-cols-2 gap-10">
@@ -79,6 +80,8 @@ export default function AddProducts() {
                     type="text"
                     className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
                     placeholder="Enter product name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                 />
             </div>
             <div>
@@ -87,7 +90,9 @@ export default function AddProducts() {
                     className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
                     rows="4"
                     placeholder="Enter product description"
-                ></textarea>
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                />
             </div>
         </div>
 
@@ -96,9 +101,16 @@ export default function AddProducts() {
             <h2 className="text-xl font-semibold mb-4">Product Media</h2>
             <div className="border-2 border-dashed border-gray-300 p-6 text-center rounded-lg bg-blue-50">
                 <p className="mb-2">Photo Product</p>
-                <button className="px-4 py-2 border rounded-lg text-blue-500 border-blue-500">
-                    Add Images
-                </button>
+                <input 
+                    type="file" 
+                    onChange={uploadFileHandler} 
+                    className="px-4 py-2 border rounded-lg text-blue-500 border-blue-500"
+                />
+                {imageUrl && (
+                    <div className="mt-4">
+                        <img src={imageUrl} alt="Product" className="max-h-40 object-contain mx-auto" />
+                    </div>
+                )}
             </div>
         </div>
 
@@ -112,6 +124,8 @@ export default function AddProducts() {
                         type="number"
                         className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
                         placeholder="Enter buying price"
+                        value={buyingPrice}
+                        onChange={(e) => setBuyingPrice(e.target.value)}
                     />
                 </div>
                 <div>
@@ -120,6 +134,8 @@ export default function AddProducts() {
                         type="number"
                         className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
                         placeholder="Enter selling price"
+                        value={sellingPrice}
+                        onChange={(e) => setSellingPrice(e.target.value)}
                     />
                 </div>
                 <div className="col-span-2">
@@ -128,6 +144,8 @@ export default function AddProducts() {
                         type="number"
                         className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
                         placeholder="Enter discount percentage"
+                        value={discount}
+                        onChange={(e) => setDiscount(e.target.value)}
                     />
                 </div>
             </div>
@@ -139,18 +157,25 @@ export default function AddProducts() {
             <div className="grid grid-cols-1 gap-4">
                 <div>
                     <label className="block text-gray-700">Product Category</label>
-                    <input
-                        type="text"
+                    <select
                         className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
-                        placeholder="Enter product category"
-                    />
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                    >
+                        <option value="">Select a category</option>
+                        {categories?.map((cat) => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        ))}
+                    </select>
                 </div>
                 <div>
                     <label className="block text-gray-700">Brand Name</label>
                     <input
                         type="text"
                         className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
-                        placeholder="Enter product Brand Name"
+                        placeholder="Enter product brand name"
+                        value={brand}
+                        onChange={(e) => setBrand(e.target.value)}
                     />
                 </div>
             </div>
@@ -166,6 +191,8 @@ export default function AddProducts() {
                         type="text"
                         className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
                         placeholder="Enter SKU"
+                        value={sku}
+                        onChange={(e) => setSku(e.target.value)}
                     />
                 </div>
                 <div>
@@ -174,6 +201,8 @@ export default function AddProducts() {
                         type="text"
                         className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
                         placeholder="Enter barcode"
+                        value={barcode}
+                        onChange={(e) => setBarcode(e.target.value)}
                     />
                 </div>
                 <div>
@@ -182,6 +211,8 @@ export default function AddProducts() {
                         type="number"
                         className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
                         placeholder="Enter quantity"
+                        value={quantity}
+                        onChange={(e) => setQuantity(e.target.value)}
                     />
                 </div>
             </div>
@@ -189,10 +220,17 @@ export default function AddProducts() {
 
         {/* Action Buttons */}
         <div className="col-span-2 flex justify-end space-x-4">
-            <button className="px-6 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition">
+            <button 
+                type="button" 
+                className="px-6 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition"
+                onClick={() => navigate("/")}
+            >
                 Discard Changes
             </button>
-            <button className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition">
+            <button 
+                type="submit" 
+                className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
+            >
                 Add Product
             </button>
         </div>
