@@ -19,6 +19,7 @@ import Delivery from "./DeliveryManagement/delivery";
 // Order
 import Order from "./OrderManagement/order";
 import OrderDashboard from "./OrderManagement/Dashboard";
+import CategoryList from "./InventoryManagement/CategoryList";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
           <Route index element={<InventoryDashboard />} />
           <Route path="products" element={<Products />} />
           <Route path="addproducts" element={<AddProducts />} />
+          <Route path="categories" element={<CategoryList />} />
         </Route>
 
         {/*Delivery manager Routes */}

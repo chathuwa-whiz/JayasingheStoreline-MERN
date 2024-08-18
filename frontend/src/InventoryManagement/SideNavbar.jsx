@@ -48,12 +48,22 @@ const Sidebar = () => {
                       Product List
                     </NavLink>
                   </li>
+
                   <li>
                     <NavLink
                       to="addproducts"
                       className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
                     >
                       Add Product
+                    </NavLink>
+                  </li>
+
+                  <li>
+                    <NavLink
+                      to="categories"
+                      className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
+                    >
+                      Categories
                     </NavLink>
                   </li>
                 </ul>

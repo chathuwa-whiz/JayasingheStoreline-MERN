@@ -40,8 +40,10 @@ export default function AddProducts() {
           productData.append("sku", sku);
           productData.append("barcode", barcode);
           productData.append("discount", discount);
-    
+
+          
           const { data } = await createProduct(productData);
+          console.log("data : ", data);
     
           if (data.error) {
             toast.error("Product create failed. Try Again.");
@@ -103,6 +105,8 @@ export default function AddProducts() {
                 <p className="mb-2">Photo Product</p>
                 <input 
                     type="file" 
+                    name='image'
+                    accept='image/*'
                     onChange={uploadFileHandler} 
                     className="px-4 py-2 border rounded-lg text-blue-500 border-blue-500"
                 />
@@ -223,12 +227,12 @@ export default function AddProducts() {
             <button 
                 type="button" 
                 className="px-6 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition"
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/inventory")}
             >
                 Discard Changes
             </button>
             <button 
-                type="submit" 
+                onClick={handleSubmit}
                 className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
             >
                 Add Product
