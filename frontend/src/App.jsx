@@ -10,6 +10,7 @@ import InventoryDashboard from "./InventoryManagement/Dashboard";
 import Inventory from "./InventoryManagement/Inventory";
 import Products from "./InventoryManagement/Products";
 import AddProducts from "./InventoryManagement/AddProducts";
+import UpdateProduct from "./InventoryManagement/UpdateProduct";
 
 // Delivery
 import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
@@ -20,6 +21,7 @@ import Delivery from "./DeliveryManagement/delivery";
 import Order from "./OrderManagement/order";
 import OrderDashboard from "./OrderManagement/Dashboard";
 import CategoryList from "./InventoryManagement/CategoryList";
+import ProductsList from "./OrderManagement/ProductList";
 
 function App() {
   return (
@@ -37,6 +39,7 @@ function App() {
           <Route index element={<InventoryDashboard />} />
           <Route path="products" element={<Products />} />
           <Route path="addproducts" element={<AddProducts />} />
+          <Route path="products/update/:_id" element={<UpdateProduct />} />
           <Route path="categories" element={<CategoryList />} />
         </Route>
 
@@ -50,6 +53,7 @@ function App() {
         <Route path="order" element={<Order />}>
           <Route index element={<OrderDashboard />} />
         </Route>
+        <Route path="productlist" element={<ProductsList />} />
         
       </Routes>
     </BrowserRouter>

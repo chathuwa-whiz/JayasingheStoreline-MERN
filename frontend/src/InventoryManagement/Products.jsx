@@ -1,39 +1,20 @@
 import React, {useState} from 'react';
+import { Link } from 'react-router-dom';
 import {FaEye, FaPen, FaTrash} from "react-icons/fa";
+import moment from "moment";
+import { useAllProductsQuery } from '../redux/api/productApiSlice';
 
 
 export default function Products() {
 
-const products = [
-  {
-      id: 1,
-      image: '/path/to/image1.png',
-      sku: '1002030401231',
-      name: 'Dining Table',
-      category: 'Furniture',
-      price: 15000,
-      stock: 16
-  },
-  {
-      id: 2,
-      image: '/path/to/image2.png',
-      sku: '1002030401231',
-      name: 'Sofa Set',
-      category: 'Furniture',
-      price: 15000,
-      stock: 15
-  },
-  {
-      id: 3,
-      image: '/path/to/image3.png',
-      sku: '1002030401231',
-      name: 'Microwave oven',
-      category: 'Electronics',
-      price: 15000,
-      stock: 22
-  },
-  // ...add more products as needed
-];
+  const {data: products, isLoading, isError} = useAllProductsQuery();
+
+  console.log(products);
+  
+
+  if(isLoading) return <div>Loading...</div>
+
+  if(isError) return <div>Something went wrong</div>
 
     
   return (
@@ -53,7 +34,7 @@ const products = [
         </thead>
         <tbody>
           {products.map((product, index) => (
-            <tr key={product.id} className="border-b border-gray-200">
+            <tr key={product._id} className="border-b border-gray-200">
               <td className="py-2 px-4">{index + 1}</td>
               <td className="py-2 px-4">
                 <img src={product.image} alt={product.name} className="w-10 h-10" />
@@ -61,13 +42,13 @@ const products = [
               <td className="py-2 px-4">{product.sku}</td>
               <td className="py-2 px-4">{product.name}</td>
               <td className="py-2 px-4">{product.category}</td>
-              <td className="py-2 px-4">{`Rs.${product.price.toFixed(2)}`}</td>
+              <td className="py-2 px-4">{`Rs.${product.sellingPrice.toFixed(2)}`}</td>
               <td className="py-2 px-4">
                 <span className={`py-1 px-2 rounded-md text-white ${
-                    product.stock > 20 ? 'bg-green-500' :
-                    product.stock > 10 ? 'bg-yellow-500' : 'bg-red-500'
+                    product.countInStock > 20 ? 'bg-green-500' :
+                    product.countInStock > 10 ? 'bg-yellow-500' : 'bg-red-500'
                 }`}>
-                    {product.stock}
+                    {product.countInStock}
                 </span>
               </td>
               <td className="py-2 px-4">

@@ -32,7 +32,7 @@ export const addProduct = async (req, res) => {
 export const fetchProducts = async (req, res) => {
     try {
         const products = await Product.find();
-        res.json({products});
+        res.json(products);
     } catch (error) {
         res.status(400).json( { msg : "No Product Found", error } );
     }

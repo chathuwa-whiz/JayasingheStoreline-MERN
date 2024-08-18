@@ -1,28 +1,53 @@
 import React, {useEffect, useState} from 'react';
-import {useNavigate} from "react-router-dom";
-import {useCreateProductMutation,  useUploadProductImageMutation} from "../redux/api/productApiSlice";
+import {useNavigate, useParams} from "react-router-dom";
+import {
+    useUpdateProductMutation,
+    useDeleteProductMutation,
+    useGetProductByIdQuery,
+    useUploadProductImageMutation
+} from "../redux/api/productApiSlice";
 import {useFetchCategoriesQuery} from "../redux/api/categoryApiSlice";
 import {toast} from "react-toastify";
 
 export default function AddProducts() {
 
-    const [image, setImage] = useState('');
-    const [imageUrl, setImageUrl] = useState(null);
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [buyingPrice, setBuyingPrice] = useState(0);
-    const [sellingPrice, setSellingPrice] = useState(0);
-    const [discount, setDiscount] = useState(0);
+    const params = useParams();
+
+    const {data: productData} = useGetProductByIdQuery(params._id);
+
+    const [image, setImage] = useState(productData?.image ||'');
+    const [name, setName] = useState(productData?.name || '');
+    const [description, setDescription] = useState(productData?.description || '');
+    const [buyingPrice, setBuyingPrice] = useState(productData?.buyingPrice || 0);
+    const [sellingPrice, setSellingPrice] = useState(productData?.sellingPrice || 0);
+    const [discount, setDiscount] = useState(productData?.discount || 0);
     const [category, setCategory] = useState('');
-    const [brand, setBrand] = useState('');
-    const [sku, setSku] = useState('');
-    const [barcode, setBarcode] = useState('');
-    const [quantity, setQuantity] = useState('');
+    const [brand, setBrand] = useState(productData?.brand || '');
+    const [sku, setSku] = useState(productData?.sku || '');
+    const [barcode, setBarcode] = useState(productData?.barcode || '');
+    const [quantity, setQuantity] = useState(productData?.quantity || 0);
     const navigate = useNavigate();
 
     const [uploadProductImage] = useUploadProductImageMutation();
-    const [createProduct] = useCreateProductMutation();
-    const { data: categories } = useFetchCategoriesQuery();
+    const { data: categories = [] } = useFetchCategoriesQuery();
+    const [updateProduct] = useUpdateProductMutation();
+    const [deleteProduct] = useDeleteProductMutation();
+
+    useEffect(() => {
+        if(productData && productData._id) {
+            setName(productData.name);
+            setDescription(productData.description);
+            setBuyingPrice(productData.buyingPrice);
+            setSellingPrice(productData.sellingPrice);
+            setDiscount(productData.discount);
+            setCategory(productData.category);
+            setBrand(productData.brand);
+            setSku(productData.sku);
+            setBarcode(productData.barcode);
+            setQuantity(productData.quantity);
+            setImage(productData.image);
+        }
+    }, [productData]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -35,27 +60,25 @@ export default function AddProducts() {
           productData.append("buyingPrice", buyingPrice);
           productData.append("sellingPrice", sellingPrice);
           productData.append("category", category);
-          productData.append("countInStock", quantity);
+          productData.append("quantity", quantity);
           productData.append("brand", brand);
           productData.append("sku", sku);
           productData.append("barcode", barcode);
           productData.append("discount", discount);
-
           
-          const data = await createProduct(productData);
-          console.log("data : ", data);
+          const { data } = await updateProduct(productData);
     
           if (data.error) {
-            toast.error("Product create failed. Try Again.");
+            toast.error("Product update failed. Try Again.");
           } else {
-            toast.success(`product is created`);
-            navigate("/inventory/products");
+            toast.success(`${data.name} is updated successfully.`);
+            navigate("/");
           }
         } catch (error) {
           console.error(error);
-          toast.error("Product create failed. Try Again.");
+          toast.error("Product update failed. Try Again.");
         }
-    };
+      };
     
       const uploadFileHandler = async (e) => {
         const formData = new FormData();
@@ -235,7 +258,7 @@ export default function AddProducts() {
                 onClick={handleSubmit}
                 className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
             >
-                Add Product
+                Update Product
             </button>
         </div>
     </div>
