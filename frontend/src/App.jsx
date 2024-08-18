@@ -21,6 +21,7 @@ import DeliveryNotification from "./DeliveryManagement/Notification";
 import DeliveryReports from "./DeliveryManagement/Reports";
 import DeliverySettings from "./DeliveryManagement/Settings";
 
+
 function App() {
   return (
     <BrowserRouter>
@@ -47,6 +48,7 @@ function App() {
           <Route path="notification" element={<DeliveryNotification />} />
           <Route path="reports" element={<DeliveryReports />} />
           <Route path="settings" element={<DeliverySettings />} />
+          
         </Route>
         
       </Routes>

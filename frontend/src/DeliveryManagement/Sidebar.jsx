@@ -38,7 +38,7 @@ const Sidebar = () => {
                 Deliveries
               </button>
               {isDeliveryOpen && (
-                <ul className="ml-5 space-y-1">
+                <ul className="ml-1 space-y-1">
                   <li>
                     <NavLink
                       to="deliverydetail"
