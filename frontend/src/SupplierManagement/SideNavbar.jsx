@@ -36,39 +36,30 @@ const Sidebar = () => {
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2 w-full text-left"
               >
                 <CubeIcon className="h-5 w-5 mr-3" />
-                Products
+                Supplier Details
               </button>
               {isProductsOpen && (
                 <ul className="ml-8 space-y-1">
                   <li>
                     <NavLink
-                      to="products"
+                      to="Supplier Details"
                       className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
                     >
-                      Product List
+                      Supplier List
                     </NavLink>
                   </li>
                   <li>
                     <NavLink
-                      to="products"
+                      to="Supplier Details"
                       className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
                     >
-                      Add Product
+                      Supplier Form
                     </NavLink>
                   </li>
                 </ul>
               )}
             </li>
 
-            <li className="mb-4">
-              <NavLink
-                to="/stock"
-                className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
-              >
-                <ClipboardDocumentListIcon className="h-5 w-5 mr-3" />
-                Stock
-              </NavLink>
-            </li>
 
             <li className="mb-4">
               <NavLink
