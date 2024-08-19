@@ -22,6 +22,8 @@ import Order from "./OrderManagement/order";
 import OrderDashboard from "./OrderManagement/Dashboard";
 import CategoryList from "./InventoryManagement/CategoryList";
 import ProductsList from "./OrderManagement/ProductList";
+import singlproduct from "./OrderManagement/singleproduct";
+import Singleproductnew from "./OrderManagement/Singleproductnew";
 
 function App() {
   return (
@@ -50,10 +52,13 @@ function App() {
         </Route>
 
         {/* Order Manager Routes */}
+        
         <Route path="order" element={<Order />}>
           <Route index element={<OrderDashboard />} />
         </Route>
         <Route path="productlist" element={<ProductsList />} />
+        <Route path="Singleproduct" element={<singlproduct />}/>
+        <Route path="productsingle" element={<Singleproductnew />} />
         
       </Routes>
     </BrowserRouter>
