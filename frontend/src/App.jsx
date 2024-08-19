@@ -22,6 +22,7 @@ import Order from "./OrderManagement/order";
 import OrderDashboard from "./OrderManagement/Dashboard";
 import CategoryList from "./InventoryManagement/CategoryList";
 import ProductsList from "./OrderManagement/ProductList";
+import SingleProductView from "./OrderManagement/SingleProductView";
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
           <Route index element={<OrderDashboard />} />
         </Route>
         <Route path="productlist" element={<ProductsList />} />
+        <Route path="product/:_id" element={<SingleProductView />} />
         
       </Routes>
     </BrowserRouter>

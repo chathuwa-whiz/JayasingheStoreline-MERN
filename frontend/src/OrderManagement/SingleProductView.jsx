@@ -1,0 +1,113 @@
+import React, {useEffect, useState} from 'react';
+import {useNavigate, useParams} from "react-router-dom";
+import {
+    useUpdateProductMutation,
+    useDeleteProductMutation,
+    useGetProductByIdQuery,
+    useUploadProductImageMutation
+} from "../redux/api/productApiSlice";
+import {useFetchCategoriesQuery} from "../redux/api/categoryApiSlice";
+import toast from "react-hot-toast";
+
+export default function SingleProductView() {
+
+    const params = useParams();
+
+    const {data: productData} = useGetProductByIdQuery(params._id);
+
+    console.log(productData);
+    
+    const [image, setImage] = useState(productData?.image);
+    const [imageUrl, setImageUrl] = useState('');
+    const [name, setName] = useState(productData?.name || '');
+    const [description, setDescription] = useState(productData?.description || '');
+    const [buyingPrice, setBuyingPrice] = useState(productData?.buyingPrice || 0);
+    const [sellingPrice, setSellingPrice] = useState(productData?.sellingPrice || 0);
+    const [discount, setDiscount] = useState(productData?.discount || 0);
+    const [category, setCategory] = useState('');
+    const [brand, setBrand] = useState(productData?.brand || '');
+    const [sku, setSku] = useState(productData?.sku || '');
+    const [barcode, setBarcode] = useState(productData?.barcode || '');
+    const [quantity, setQuantity] = useState(productData?.quantity || 0);
+    const navigate = useNavigate();
+
+    const [uploadProductImage] = useUploadProductImageMutation();
+    const { data: categories = [] } = useFetchCategoriesQuery();
+    const [updateProduct] = useUpdateProductMutation();
+    const [deleteProduct] = useDeleteProductMutation();
+
+    useEffect(() => {
+        if(productData && productData._id) {
+            setName(productData.name);
+            setDescription(productData.description);
+            setBuyingPrice(productData.buyingPrice);
+            setSellingPrice(productData.sellingPrice);
+            setDiscount(productData.discount);
+            setCategory(productData.category);
+            setBrand(productData.brand);
+            setSku(productData.sku);
+            setBarcode(productData.barcode);
+            setQuantity(productData.countInStock);
+            setImage(productData.image);
+        }
+        
+    }, [productData]);
+
+
+  return (
+    <div className="container mx-auto p-6">
+            {/* Product Details Wrapper */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Product Image */}
+                <div className="flex justify-center">
+                    <img
+                        src="https://via.placeholder.com/400"
+                        alt="Product"
+                        className="w-full h-full object-cover rounded-lg shadow-md"
+                    />
+                </div>
+
+                {/* Product Details */}
+                <div>
+                    <h1 className="text-3xl font-semibold text-gray-800">Product Name</h1>
+                    <p className="mt-2 text-gray-600">Category: Electronics</p>
+                    
+                    <div className="mt-4">
+                        <p className="text-xl font-semibold text-gray-900">Rs. 15,000.00</p>
+                        <p className="mt-2 text-sm text-gray-500 line-through">Rs. 18,000.00</p>
+                        <p className="mt-1 text-sm text-green-600">Discount: 20% Off</p>
+                    </div>
+
+                    <div className="mt-6">
+                        <h2 className="text-lg font-semibold text-gray-700">Description</h2>
+                        <p className="mt-2 text-gray-600">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+                            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+                        </p>
+                    </div>
+
+                    <div className="mt-6">
+                        <h2 className="text-lg font-semibold text-gray-700">Product Specifications</h2>
+                        <ul className="mt-2 text-gray-600 list-disc list-inside">
+                            <li>Feature 1: Lorem ipsum dolor sit amet</li>
+                            <li>Feature 2: Consectetur adipiscing elit</li>
+                            <li>Feature 3: Sed do eiusmod tempor incididunt</li>
+                        </ul>
+                    </div>
+
+                    <div className="mt-6 flex items-center space-x-4">
+                        <input
+                            type="number"
+                            className="w-16 p-2 border rounded-lg text-center"
+                            defaultValue={1}
+                            min={1}
+                        />
+                        <button className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+  )
+}

@@ -7,13 +7,30 @@ import { useAllProductsQuery } from '../redux/api/productApiSlice';
 
 export default function Products() {
 
+  // Fetch all products
   const {data: products, isLoading, isError} = useAllProductsQuery();
-
-  console.log(products);
   
   if(isLoading) return <div>Loading...</div>
 
   if(isError) return <div>Something went wrong</div>
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 10;
+
+  // Calculate the indices of the first and last products on the current page
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+
+  // Get the products to display on the current page
+  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+
+  // Calculate total pages
+  const totalPages = Math.ceil(products.length / productsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
     
   return (
@@ -32,9 +49,9 @@ export default function Products() {
           </tr>
         </thead>
         <tbody>
-          {products.map((product, index) => (
+          {currentProducts.map((product, index) => (
             <tr key={product._id} className="border-b border-gray-200">
-              <td className="py-2 px-4">{index + 1}</td>
+              <td className="py-2 px-4">{indexOfFirstProduct + index + 1}</td>
               <td className="py-2 px-4">
                 <img src={product.image} alt={product.name} className="w-10 h-10" />
               </td>
@@ -51,18 +68,30 @@ export default function Products() {
                 </span>
               </td>
               <td className="py-2 px-4">
-                
-                  <Link to={`/inventory/products/update/${product._id}`}>
-                    <button className="text-green-500 hover:text-green-700 mx-2">
-                      <FaPen />
-                    </button>
-                  </Link>
-
+                <Link to={`/inventory/products/update/${product._id}`}>
+                  <button className="text-green-500 hover:text-green-700 mx-2">
+                    <FaPen />
+                  </button>
+                </Link>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center mt-4">
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i + 1}
+            onClick={() => handlePageChange(i + 1)}
+            className={`mx-1 px-3 py-1 rounded-md ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+          >
+            {i + 1}
+          </button>
+        ))}
+      </div>
+      
     </div>
   )
 }
