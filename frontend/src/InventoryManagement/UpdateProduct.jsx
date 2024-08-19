@@ -15,7 +15,7 @@ export default function UpdateProducts() {
 
     const {data: productData} = useGetProductByIdQuery(params._id);
 
-    console.log("Incoming Name : ",productData?.name);
+    console.log(productData);
     
     const [image, setImage] = useState(productData?.image);
     const [imageUrl, setImageUrl] = useState('');
@@ -47,7 +47,7 @@ export default function UpdateProducts() {
             setBrand(productData.brand);
             setSku(productData.sku);
             setBarcode(productData.barcode);
-            setQuantity(productData.quantity);
+            setQuantity(productData.countInStock);
             setImage(productData.image);
         }
         
