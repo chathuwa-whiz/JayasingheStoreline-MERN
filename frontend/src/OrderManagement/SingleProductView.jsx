@@ -8,6 +8,8 @@ import {
 } from "../redux/api/productApiSlice";
 import {useFetchCategoriesQuery} from "../redux/api/categoryApiSlice";
 import toast from "react-hot-toast";
+import { useDispatch } from 'react-redux';
+import {addToCart} from "../redux/features/cart/cartSlice";
 
 export default function SingleProductView() {
 
@@ -29,7 +31,9 @@ export default function SingleProductView() {
     const [sku, setSku] = useState(productData?.sku || '');
     const [barcode, setBarcode] = useState(productData?.barcode || '');
     const [quantity, setQuantity] = useState(productData?.quantity || 0);
+    const [qty, setQty] = useState(1);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const [uploadProductImage] = useUploadProductImageMutation();
     const { data: categories = [] } = useFetchCategoriesQuery();
@@ -53,6 +57,12 @@ export default function SingleProductView() {
         
     }, [productData]);
 
+    const newPrductPrice = (sellingPrice - (sellingPrice * discount) / 100).toFixed(2);
+
+    const addToCartHandler = () => {
+        dispatch(addToCart({...productData, qty}));
+        navigate('/cart');
+    }
 
   return (
     <div className="container mx-auto p-6">
@@ -61,7 +71,7 @@ export default function SingleProductView() {
                 {/* Product Image */}
                 <div className="flex justify-center">
                     <img
-                        src="https://via.placeholder.com/400"
+                        src={image}
                         alt="Product"
                         className="w-full h-full object-cover rounded-lg shadow-md"
                     />
@@ -69,17 +79,17 @@ export default function SingleProductView() {
 
                 {/* Product Details */}
                 <div>
-                    <h1 className="text-3xl font-semibold text-gray-800">Product Name</h1>
-                    <p className="mt-2 text-gray-600">Category: Electronics</p>
+                    <h1 className="text-3xl font-semibold text-gray-800">{name}</h1>
+                    <p className="mt-2 text-gray-600">Category: {category}</p>
                     
                     <div className="mt-4">
-                        <p className="text-xl font-semibold text-gray-900">Rs. 15,000.00</p>
-                        <p className="mt-2 text-sm text-gray-500 line-through">Rs. 18,000.00</p>
-                        <p className="mt-1 text-sm text-green-600">Discount: 20% Off</p>
+                        <p className="text-xl font-semibold text-gray-900">Rs. {newPrductPrice}.00</p>
+                        <p className="mt-2 text-sm text-gray-500 line-through">Rs. {sellingPrice}.00</p>
+                        <p className="mt-1 text-sm text-green-600">Discount: {discount}% Off</p>
                     </div>
 
                     <div className="mt-6">
-                        <h2 className="text-lg font-semibold text-gray-700">Description</h2>
+                        <h2 className="text-lg font-semibold text-gray-700">{description}</h2>
                         <p className="mt-2 text-gray-600">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
                             tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
@@ -99,10 +109,13 @@ export default function SingleProductView() {
                         <input
                             type="number"
                             className="w-16 p-2 border rounded-lg text-center"
-                            defaultValue={1}
-                            min={1}
+                            value={qty}
+                            onChange={(e) => setQty(e.target.value)}
                         />
-                        <button className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                        <button 
+                            onClick={addToCartHandler}
+                            disabled={quantity === 0}
+                            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
                             Add to Cart
                         </button>
                     </div>
