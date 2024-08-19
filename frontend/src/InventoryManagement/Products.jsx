@@ -11,7 +11,6 @@ export default function Products() {
 
   console.log(products);
   
-
   if(isLoading) return <div>Loading...</div>
 
   if(isError) return <div>Something went wrong</div>
@@ -52,15 +51,13 @@ export default function Products() {
                 </span>
               </td>
               <td className="py-2 px-4">
-                  <button className="text-blue-500 hover:text-blue-700">
-                    <FaEye />
-                  </button>
-                  <button className="text-green-500 hover:text-green-700 mx-2">
-                    <FaPen />
-                  </button>
-                  <button className="text-red-500 hover:text-red-700">
-                    <FaTrash />
-                  </button>
+                
+                  <Link to={`/inventory/products/update/${product._id}`}>
+                    <button className="text-green-500 hover:text-green-700 mx-2">
+                      <FaPen />
+                    </button>
+                  </Link>
+
               </td>
             </tr>
           ))}
