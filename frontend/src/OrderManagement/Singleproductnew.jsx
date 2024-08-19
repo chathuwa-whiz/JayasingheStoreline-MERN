@@ -1,10 +1,55 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from 'react';
+import {useNavigate, useParams} from "react-router-dom";
+import { useGetProductByIdQuery } from "../redux/api/productApiSlice";
+import {useFetchCategoriesQuery} from "../redux/api/categoryApiSlice";
+import toast from "react-hot-toast";
 
-const ProductPage = () => {
+export default function ProductPage() {
+
+  const params = useParams();
+
+  const {data: productData} = useGetProductByIdQuery(params._id);
+  
+  const [image, setImage] = useState(productData?.image);
+  const [imageUrl, setImageUrl] = useState('');
+  const [name, setName] = useState(productData?.name || '');
+  const [description, setDescription] = useState(productData?.description || '');
+  const [buyingPrice, setBuyingPrice] = useState(productData?.buyingPrice || 0);
+  const [sellingPrice, setSellingPrice] = useState(productData?.sellingPrice || 0);
+  const [discount, setDiscount] = useState(productData?.discount || 0);
+  const [category, setCategory] = useState('');
+  const [brand, setBrand] = useState(productData?.brand || '');
+  const [sku, setSku] = useState(productData?.sku || '');
+  const [barcode, setBarcode] = useState(productData?.barcode || '');
+  const [quantity, setQuantity] = useState(productData?.quantity || 0);
+  const navigate = useNavigate();
+
+  const { data: categories = [] } = useFetchCategoriesQuery();
+
+  useEffect(() => {
+      if(productData && productData._id) {
+          setName(productData.name);
+          setDescription(productData.description);
+          setBuyingPrice(productData.buyingPrice);
+          setSellingPrice(productData.sellingPrice);
+          setDiscount(productData.discount);
+          setCategory(productData.category);
+          setBrand(productData.brand);
+          setSku(productData.sku);
+          setBarcode(productData.barcode);
+          setQuantity(productData.quantity);
+          setImage(productData.image);
+      }
+      
+  }, [productData]);
+
+  console.log(productData);
+  
   // State to keep track of the selected image
   const [selectedImage, setSelectedImage] = useState("uploads/products/sofa2.png");
 
   // Array of image URLs
+
   const images = [
     "uploads/products/sofa.jpg",
     "uploads/products/sofa2.png",
@@ -101,6 +146,4 @@ const ProductPage = () => {
       </div>
     </div>
   );
-};
-
-export default ProductPage;
+}
