@@ -7,15 +7,18 @@ import {
     useUploadProductImageMutation
 } from "../redux/api/productApiSlice";
 import {useFetchCategoriesQuery} from "../redux/api/categoryApiSlice";
-import {toast} from "react-toastify";
+import toast from "react-hot-toast";
 
-export default function AddProducts() {
+export default function UpdateProducts() {
 
     const params = useParams();
 
     const {data: productData} = useGetProductByIdQuery(params._id);
 
-    const [image, setImage] = useState(productData?.image ||'');
+    console.log("Incoming Name : ",productData?.name);
+    
+    const [image, setImage] = useState(productData?.image);
+    const [imageUrl, setImageUrl] = useState('');
     const [name, setName] = useState(productData?.name || '');
     const [description, setDescription] = useState(productData?.description || '');
     const [buyingPrice, setBuyingPrice] = useState(productData?.buyingPrice || 0);
@@ -47,50 +50,84 @@ export default function AddProducts() {
             setQuantity(productData.quantity);
             setImage(productData.image);
         }
+        
     }, [productData]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
     
         try {
-          const productData = new FormData();
-          productData.append("image", image);
-          productData.append("name", name);
-          productData.append("description", description);
-          productData.append("buyingPrice", buyingPrice);
-          productData.append("sellingPrice", sellingPrice);
-          productData.append("category", category);
-          productData.append("quantity", quantity);
-          productData.append("brand", brand);
-          productData.append("sku", sku);
-          productData.append("barcode", barcode);
-          productData.append("discount", discount);
+          const formData = new FormData();
+          formData.append("image", image);
+          formData.append("name", name);
+          formData.append("description", description);
+          formData.append("buyingPrice", buyingPrice);
+          formData.append("sellingPrice", sellingPrice);
+          formData.append("category", category);
+          formData.append("countInStock", quantity);
+          formData.append("brand", brand);
+          formData.append("sku", sku);
+          formData.append("barcode", barcode);
+          formData.append("discount", discount);
           
-          const { data } = await updateProduct(productData);
+          const data = await updateProduct({productId: params._id, formData});
+
+          console.log(data.data.product.name);
+          
     
-          if (data.error) {
-            toast.error("Product update failed. Try Again.");
+          if (data?.error) {
+
+            toast.error("Product update failed");  
+
           } else {
-            toast.success(`${data.name} is updated successfully.`);
-            navigate("/");
+
+            toast.success(`Product successfully updated`);
+            setTimeout(() => {
+                toast.dismiss();
+                window.location.href = "/inventory/products";
+
+            }, 2000);
+
           }
         } catch (error) {
-          console.error(error);
-          toast.error("Product update failed. Try Again.");
+            console.log("ERROR: ",error);
+        }
+      };
+
+      const handleDelete = async () => {
+        try {
+          let answer = window.confirm(
+            "Are you sure you want to delete this product?"
+          );
+          if (!answer) return;
+    
+          const data = await deleteProduct(params._id);
+
+          toast.success(`Product is deleted`);
+
+          setTimeout(() => {
+            toast.dismiss();
+            window.location.href = "/inventory/products";
+          }, 2000);
+
+        } catch (err) {
+
+          console.log(err);
+          toast.error("Delete failed. Try again.");
         }
       };
     
       const uploadFileHandler = async (e) => {
         const formData = new FormData();
         formData.append("image", e.target.files[0]);
-    
         try {
+
           const res = await uploadProductImage(formData).unwrap();
-          toast.success(res.message);
+          toast.success("Item added successfully");
           setImage(res.image);
-          setImageUrl(res.image);
-        } catch (error) {
-          toast.error(error?.data?.message || error.error);
+
+        } catch (err) {
+          toast.success("Item added successfully");
         }
       };
 
@@ -133,9 +170,9 @@ export default function AddProducts() {
                     onChange={uploadFileHandler} 
                     className="px-4 py-2 border rounded-lg text-blue-500 border-blue-500"
                 />
-                {imageUrl && (
+                {image && (
                     <div className="mt-4">
-                        <img src={imageUrl} alt="Product" className="max-h-40 object-contain mx-auto" />
+                        <img src={image} alt="Product" className="max-h-40 object-contain mx-auto" />
                     </div>
                 )}
             </div>
@@ -247,12 +284,11 @@ export default function AddProducts() {
 
         {/* Action Buttons */}
         <div className="col-span-2 flex justify-end space-x-4">
-            <button 
-                type="button" 
+            <button
+                onClick={handleDelete}
                 className="px-6 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition"
-                onClick={() => navigate("/inventory")}
             >
-                Discard Changes
+                Delete
             </button>
             <button 
                 onClick={handleSubmit}

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import {useCreateProductMutation,  useUploadProductImageMutation} from "../redux/api/productApiSlice";
 import {useFetchCategoriesQuery} from "../redux/api/categoryApiSlice";
-import {toast} from "react-toastify";
+import {toast} from "react-hot-toast";
 
 export default function AddProducts() {
 
@@ -46,10 +46,17 @@ export default function AddProducts() {
           console.log("data : ", data);
     
           if (data.error) {
+
             toast.error("Product create failed. Try Again.");
+
           } else {
+
             toast.success(`product is created`);
-            navigate("/inventory/products");
+            setTimeout(() => {
+                toast.dismiss();
+                window.location.href = "/inventory/products";
+            }, 2000);
+
           }
         } catch (error) {
           console.error(error);

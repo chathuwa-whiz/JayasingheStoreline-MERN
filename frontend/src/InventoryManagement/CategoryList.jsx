@@ -6,7 +6,7 @@ import {
   useFetchCategoriesQuery,
 } from "../redux/api/categoryApiSlice";
 
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import CategoryForm from "./CategoryForm";
 import Modal from "./Modal";
 
