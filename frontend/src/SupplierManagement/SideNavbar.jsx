@@ -10,7 +10,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 h-full w-64 bg-white p-4">
+    <div className="bg-white p-4">
 
       <div className='p-4'>
 
@@ -36,26 +36,38 @@ const Sidebar = () => {
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2 w-full text-left"
               >
                 <CubeIcon className="h-5 w-5 mr-3" />
-                Supplier Details
+                Supplier
               </button>
               {isProductsOpen && (
                 <ul className="ml-8 space-y-1">
+
                   <li>
                     <NavLink
-                      to="Supplier Details"
+                      to="supplierdetailsform"
+                      className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
+                    >
+                      Supplier Details
+                    </NavLink>
+                  </li>
+
+                  <li>
+                    <NavLink
+                      to="supplierlist"
                       className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
                     >
                       Supplier List
                     </NavLink>
                   </li>
+
                   <li>
                     <NavLink
-                      to="Supplier Details"
+                      to="supplierform"
                       className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
                     >
                       Supplier Form
                     </NavLink>
                   </li>
+                  
                 </ul>
               )}
             </li>

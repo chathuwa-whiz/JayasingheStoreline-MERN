@@ -3,7 +3,7 @@ import React from 'react';
 export default function () {
   return (
     <>
-    <div className="min-h-screen bg-gray-100 pt-16 pl-64 pr- pb-4 h-[calc(100vh-4rem)] overflow-y-auto">
+    <div className="min-h-screen bg-gray-100 p-8 overflow-y-auto">
       <header className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Welcome back, Dulangi Tharusha</h1>
         <p className="text-gray-500">Lorem ipsum dolor sit amet consectetur adipiscing</p>
