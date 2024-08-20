@@ -25,7 +25,7 @@ import ProductsList from "./OrderManagement/ProductList";
 import SingleProductView from "./OrderManagement/SingleProductView";
 import Cart from "./OrderManagement/Cart";
 import Shipping from "./OrderManagement/Shipping";
-import OrderSummary from "./OrderManagement/OrderSummary";
+import OrderSummary from "./OrderManagement/orderSummary";
 // Payement
 import Checkout from "./PaymentManagement/Checkout";
 

@@ -168,8 +168,9 @@ const DeliveryInformationForm = () => {
 
         <div className="flex items-center justify-center">
           <button
+            onClick={() => navigate('/summary')}
             type="submit"
-            className="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-orange-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             Continue
           </button>
