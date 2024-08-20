@@ -33,7 +33,6 @@ function App() {
           <Route index element={<MainDashboard />} />
           <Route path="reactreviews" element={<ReactReviews />} />
           <Route path="suppliermanagement" element={<SupplierManagement />} />
-          <Route path="paymentmanagement" element={<PaymentManagement />} />
         </Route>
 
         {/* Inventory Manager Routes */}
