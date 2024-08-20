@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import PaymentManagement from "./PaymentManagement/Checkout";
 import ReactReviews from "./ReactReviews/reactReviews";
 import SupplierManagement from "./SupplierManagement/supplier";
 import Layout from "./Shared/Layout";
@@ -11,6 +10,7 @@ import Inventory from "./InventoryManagement/Inventory";
 import Products from "./InventoryManagement/Products";
 import AddProducts from "./InventoryManagement/AddProducts";
 import UpdateProduct from "./InventoryManagement/UpdateProduct";
+import Stock from "./InventoryManagement/Stock";
 
 // Delivery
 import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
@@ -25,7 +25,6 @@ import ProductsList from "./OrderManagement/ProductList";
 import SingleProductView from "./OrderManagement/SingleProductView";
 import Cart from "./OrderManagement/Cart";
 import Shipping from "./OrderManagement/Shipping";
-
 import PlaceOrder from "./OrderManagement/PlaceOrder";
 
 // Payement
