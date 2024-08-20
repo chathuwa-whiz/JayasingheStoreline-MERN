@@ -25,7 +25,9 @@ import ProductsList from "./OrderManagement/ProductList";
 import SingleProductView from "./OrderManagement/SingleProductView";
 import Cart from "./OrderManagement/Cart";
 import Shipping from "./OrderManagement/Shipping";
-import OrderSummary from "./OrderManagement/orderSummary";
+
+import PlaceOrder from "./OrderManagement/PlaceOrder";
+
 // Payement
 import Checkout from "./PaymentManagement/Checkout";
 
@@ -63,7 +65,8 @@ function App() {
         <Route path="product/:_id" element={<SingleProductView />} />
         <Route path="cart" element={<Cart />} />
         <Route path="shipping" element={<Shipping />} />
-        <Route path="summary" element={<OrderSummary/>} />
+        <Route path="placeorder" element={<PlaceOrder />} />
+        
 
         {/* Payment Manager Routes */}
         <Route path="checkout" element={<Checkout />} />
