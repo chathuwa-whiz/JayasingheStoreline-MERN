@@ -16,6 +16,12 @@ import Stock from "./InventoryManagement/Stock";
 import Delivery from "./DeliveryManagement/delivery";
 import DeliveryDashboard from "./DeliveryManagement/Dashboard";
 import Delivery from "./DeliveryManagement/delivery";
+import DeliveryDetail from "./DeliveryManagement/DeliveryDetail";
+import AddDelivery from "./DeliveryManagement/AddDelivery";
+import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
+import DeliveryNotification from "./DeliveryManagement/Notification";
+import DeliveryReports from "./DeliveryManagement/Reports";
+import DeliverySettings from "./DeliveryManagement/Settings";
 
 // Order
 import Order from "./OrderManagement/order";
@@ -29,12 +35,7 @@ import PlaceOrder from "./OrderManagement/PlaceOrder";
 
 // Payement
 import Checkout from "./PaymentManagement/Checkout";
-import DeliveryDetail from "./DeliveryManagement/DeliveryDetail";
-import AddDelivery from "./DeliveryManagement/AddDelivery";
-import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
-import DeliveryNotification from "./DeliveryManagement/Notification";
-import DeliveryReports from "./DeliveryManagement/Reports";
-import DeliverySettings from "./DeliveryManagement/Settings";
+
 
 
 function App() {
