@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 const DeliveryInformationForm = () => {
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const cart = useSelector((state) => state.cart);
+
+  console.log(cart);
+  
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -168,7 +179,7 @@ const DeliveryInformationForm = () => {
 
         <div className="flex items-center justify-center">
           <button
-            onClick={() => navigate('/summary')}
+            onClick={() => navigate('/placeorder', { state: {cart} })}
             type="submit"
             className="bg-orange-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
