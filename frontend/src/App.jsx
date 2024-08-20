@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import PaymentManagement from "./PaymentManagement/Payment";
+import PaymentManagement from "./PaymentManagement/Checkout";
 import ReactReviews from "./ReactReviews/reactReviews";
 import SupplierManagement from "./SupplierManagement/supplier";
 import Layout from "./Shared/Layout";
@@ -24,9 +24,10 @@ import CategoryList from "./InventoryManagement/CategoryList";
 import ProductsList from "./OrderManagement/ProductList";
 import SingleProductView from "./OrderManagement/SingleProductView";
 import Cart from "./OrderManagement/Cart";
+import Shipping from "./OrderManagement/Shipping";
 
 // Payement
-import Payment from "./PaymentManagement/Payment";
+import Checkout from "./PaymentManagement/Checkout";
 
 function App() {
   return (
@@ -55,14 +56,17 @@ function App() {
         </Route>
 
         {/* Order Manager Routes */}
-        
         <Route path="order" element={<Order />}>
           <Route index element={<OrderDashboard />} />
         </Route>
         <Route path="productlist" element={<ProductsList />} />
         <Route path="product/:_id" element={<SingleProductView />} />
         <Route path="cart" element={<Cart />} />
-        <Route path="checkout" element={<Payment />} />
+        <Route path="shipping" element={<Shipping />} />
+
+        {/* Payment Manager Routes */}
+        <Route path="checkout" element={<Checkout />} />
+
         
       </Routes>
     </BrowserRouter>

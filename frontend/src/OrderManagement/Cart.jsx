@@ -57,7 +57,7 @@ export default function Cart() {
                                     <p>Total: ${cart.totalPrice}</p>
                                 </div>
                                 <div className="mt-4">
-                                    <button onClick={() => navigate('/checkout')} className="bg-blue-500 text-white px-4 py-2">Proceed to Checkout</button>
+                                    <button onClick={() => navigate('/shipping')} className="bg-blue-500 text-white px-4 py-2">Proceed to Checkout</button>
                                 </div>
                             </div>
                         </div>
