@@ -60,7 +60,7 @@ function App() {
         <Route path="order" element={<Order />}>
           <Route index element={<OrderDashboard />} />
         </Route>
-        <Route path="productlist" element={<ProductsList />} />
+        <Route path="productlist" element={<ProductsList />} /> 
         <Route path="product/:_id" element={<SingleProductView />} />
         <Route path="cart" element={<Cart />} />
         <Route path="shipping" element={<Shipping />} />
