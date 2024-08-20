@@ -23,6 +23,7 @@ import CategoryList from "./InventoryManagement/CategoryList";
 import ProductsList from "./OrderManagement/ProductList";
 import SingleProductView from "./OrderManagement/SingleProductView";
 import Cart from "./OrderManagement/Cart";
+import Stock from "./InventoryManagement/Stock";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
           <Route path="addproducts" element={<AddProducts />} />
           <Route path="products/update/:_id" element={<UpdateProduct />} />
           <Route path="categories" element={<CategoryList />} />
+          <Route path="stock" element={<Stock />} />
         </Route>
 
         {/*Delivery manager Routes */}
