@@ -2,11 +2,13 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import path from "path";
 
 // utiles
 import connectDB from "./config/db.js";
-import routes from "./routes/ProductRoutes.js"
-import userRoutes from "./routes/userRoutes.js"
+import productRoutes from "./routes/ProductRoutes.js";
+import categoryRoutes from "./routes/CategoryRoutes.js"
+import uploadRoutes from './routes/UploadRoutes.js';
 
 // load the .env file
 dotenv.config();
@@ -20,10 +22,11 @@ app.use(express.json())
 app.use(express.urlencoded( { extended: true } ))
 app.use(cookieParser())
 
-app.use("/api/users", userRoutes)
+app.use("/api/category", categoryRoutes);
+app.use("/api/products" , productRoutes);
+app.use("/api/upload", uploadRoutes);
 
-app.use("/api/products" , routes);
+const __dirname = path.resolve();
+app.use("/uploads/products", express.static(path.join(__dirname + '/uploads/products')));
 
-app.listen(port, () => console.log(`server running on port: ${port}`))
-
-console.log("Hello ");
+app.listen(port, () => console.log(`server running on port: ${port}`));

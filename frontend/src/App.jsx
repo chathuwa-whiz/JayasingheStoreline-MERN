@@ -1,11 +1,7 @@
-<<<<<<< HEAD
-
-=======
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import PaymentManagement from "./PaymentManagement/Payment";
 import ReactReviews from "./ReactReviews/reactReviews";
 import SupplierManagement from "./SupplierManagement/supplier";
-import OrderManagement from "./OrderManagement/order";
 import Layout from "./Shared/Layout";
 import MainDashboard from "./Dashboard/Dashboard";
 
@@ -13,28 +9,30 @@ import MainDashboard from "./Dashboard/Dashboard";
 import InventoryDashboard from "./InventoryManagement/Dashboard";
 import Inventory from "./InventoryManagement/Inventory";
 import Products from "./InventoryManagement/Products";
-//Delivery
+import AddProducts from "./InventoryManagement/AddProducts";
+import UpdateProduct from "./InventoryManagement/UpdateProduct";
+
+// Delivery
 import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
 import DeliveryDashboard from "./DeliveryManagement/Dashboard";
-import Delivery from "./DeliveryManagement/delivery"
->>>>>>> e0c9caadfa00ce6de2fe9105848bec4c410dcdc4
+import Delivery from "./DeliveryManagement/delivery";
+
+// Order
+import Order from "./OrderManagement/order";
+import OrderDashboard from "./OrderManagement/Dashboard";
+import CategoryList from "./InventoryManagement/CategoryList";
+import ProductsList from "./OrderManagement/ProductList";
+import SingleProductView from "./OrderManagement/SingleProductView";
+import Cart from "./OrderManagement/Cart";
 
 function App() {
-  
   return (
-<<<<<<< HEAD
-    <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
-  )
-=======
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<MainDashboard />} />
           <Route path="reactreviews" element={<ReactReviews />} />
           <Route path="suppliermanagement" element={<SupplierManagement />} />
-          <Route path="ordermanagement" element={<OrderManagement />} />
           <Route path="paymentmanagement" element={<PaymentManagement />} />
         </Route>
 
@@ -42,17 +40,28 @@ function App() {
         <Route path="inventory" element={<Inventory />}>
           <Route index element={<InventoryDashboard />} />
           <Route path="products" element={<Products />} />
+          <Route path="addproducts" element={<AddProducts />} />
+          <Route path="products/update/:_id" element={<UpdateProduct />} />
+          <Route path="categories" element={<CategoryList />} />
         </Route>
+
         {/*Delivery manager Routes */}
         <Route path="delivery" element={<Delivery />}>
           <Route index element={<DeliveryDashboard />} />
           <Route path="drivervehicledetails" element={<DriverVehicleDetails />} />
         </Route>
+
+        {/* Order Manager Routes */}
+        <Route path="order" element={<Order />}>
+          <Route index element={<OrderDashboard />} />
+        </Route>
+        <Route path="productlist" element={<ProductsList />} />
+        <Route path="product/:_id" element={<SingleProductView />} />
+        <Route path="cart" element={<Cart />} />
         
       </Routes>
     </BrowserRouter>
   );
->>>>>>> e0c9caadfa00ce6de2fe9105848bec4c410dcdc4
 }
 
-export default App
+export default App;
