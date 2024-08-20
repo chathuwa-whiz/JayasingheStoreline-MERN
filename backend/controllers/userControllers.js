@@ -1,69 +1,69 @@
-import User from "../models/UserModel.js";
-import asyncHandler from "../middlewares/asyncHandler.js";
-import bcrypt from "bcryptjs";
-import createToken from "../utils/createToken.js";
+// import User from "../models/UserModel.js";
+// import asyncHandler from "../middlewares/asyncHandler.js";
+// import bcrypt from "bcryptjs";
+// import createToken from "../utils/createToken.js";
 
-const createUser = asyncHandler(async(req,res) => {
+// const createUser = asyncHandler(async(req,res) => {
 
-    const {username, password, email} = req.body;
+//     const {username, password, email} = req.body;
     
-    if(!username || !password || !email){
+//     if(!username || !password || !email){
 
-        throw new Error("Please fill all the inputs...")
-    }
+//         throw new Error("Please fill all the inputs...")
+//     }
 
-    const userExists = await User.findOne({email});
-    if(userExists){
+//     const userExists = await User.findOne({email});
+//     if(userExists){
 
-        res.status(400).send("User already Exists");
-    }
+//         res.status(400).send("User already Exists");
+//     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(password, salt);
+//     const salt = await bcrypt.genSalt(10);
+//     const hashPassword = await bcrypt.hash(password, salt);
 
-    const newUser = new User({username, email, password: hashPassword})
+//     const newUser = new User({username, email, password: hashPassword})
 
-    try{
-        await newUser.save()
-        createToken(res, newUser._id)
+//     try{
+//         await newUser.save()
+//         createToken(res, newUser._id)
 
-        res.status(201).json({_id: newUser._id, username: newUser.username, email: newUser.email, isAdmin: newUser.isAdmin})
-    }catch(error){
+//         res.status(201).json({_id: newUser._id, username: newUser.username, email: newUser.email, isAdmin: newUser.isAdmin})
+//     }catch(error){
 
-        res.status(400)
-        throw new Error("Invalid user data..." + console.log(error))
-    }
-})
+//         res.status(400)
+//         throw new Error("Invalid user data..." + console.log(error))
+//     }
+// })
 
-const loginUser = asyncHandler(async(req,res) => {
+// const loginUser = asyncHandler(async(req,res) => {
 
-    const {email,password} = req.body;
+//     const {email,password} = req.body;
 
-    const exsitingUser = await User.findOne({email});
+//     const exsitingUser = await User.findOne({email});
 
-    if(exsitingUser){
+//     if(exsitingUser){
 
-        const isPasswordValid = await bcrypt.compare(password, exsitingUser.password);
+//         const isPasswordValid = await bcrypt.compare(password, exsitingUser.password);
 
-        if(isPasswordValid){
+//         if(isPasswordValid){
 
-            createToken(res, exsitingUser._id)
-            res.status(201).json({_id: exsitingUser._id, username: exsitingUser.username, email: exsitingUser.email, isAdmin: exsitingUser.isAdmin});
-            return;
-        }
-    }
-})
+//             createToken(res, exsitingUser._id)
+//             res.status(201).json({_id: exsitingUser._id, username: exsitingUser.username, email: exsitingUser.email, isAdmin: exsitingUser.isAdmin});
+//             return;
+//         }
+//     }
+// })
 
-const logoutCurrentUser = asyncHandler(async(req,res) => {
+// const logoutCurrentUser = asyncHandler(async(req,res) => {
 
-    res.cookie('jwt', '', {
+//     res.cookie('jwt', '', {
 
-        httpOnly: true,
-        expires: new Date(0),
-    })
+//         httpOnly: true,
+//         expires: new Date(0),
+//     })
 
-    res.status(200).send("Logged out successfully")
-});
+//     res.status(200).json({message: "Logged out successfully"})
+// });
 
 // const getAllUsers = asyncHandler(async(req,res) => {
 
@@ -71,4 +71,86 @@ const logoutCurrentUser = asyncHandler(async(req,res) => {
 //     res.json(users);
 // })
 
-export {createUser, loginUser, logoutCurrentUser};
+// export {createUser, loginUser, logoutCurrentUser, getAllUsers};
+
+
+
+
+import User from "../models/userModel.js";
+import asyncHandler from "../middlewares/asyncHandler.js";
+import bcrypt from "bcryptjs";
+import createToken from "../utils/createToken.js";
+
+const createUser = asyncHandler(async (req, res) => {
+  const { username, email, password } = req.body;
+
+  if (!username || !email || !password) {
+    throw new Error("Please fill all the inputs.");
+  }
+
+  const userExists = await User.findOne({ email });
+  if (userExists) res.status(400).send("User already exists");
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+  const newUser = new User({ username, email, password: hashedPassword });
+
+  try {
+    await newUser.save();
+    createToken(res, newUser._id);
+
+    res.status(201).json({
+      _id: newUser._id,
+      username: newUser.username,
+      email: newUser.email,
+      isAdmin: newUser.isAdmin,
+    });
+  } catch (error) {
+    res.status(400);
+    throw new Error("Invalid user data");
+  }
+});
+
+const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  console.log(email);
+  console.log(password);
+
+  const existingUser = await User.findOne({ email });
+
+  if (existingUser) {
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      existingUser.password
+    );
+
+    if (isPasswordValid) {
+      createToken(res, existingUser._id);
+
+      res.status(201).json({
+        _id: existingUser._id,
+        username: existingUser.username,
+        email: existingUser.email,
+        isAdmin: existingUser.isAdmin,
+      });
+      return;
+    }
+  }
+});
+
+const logoutCurrentUser = asyncHandler(async (req, res) => {
+  res.cookie("jwt", "", {
+    httyOnly: true,
+    expires: new Date(0),
+  });
+
+  res.status(200).json({ message: "Logged out successfully" });
+});
+
+const getAllUsers = asyncHandler(async (req, res) => {
+  const users = await User.find({});
+  res.json(users);
+});
+
+export {createUser, loginUser, logoutCurrentUser, getAllUsers};
