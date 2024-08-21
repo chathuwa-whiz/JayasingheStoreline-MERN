@@ -25,6 +25,13 @@ import ProductsList from "./OrderManagement/ProductList";
 import SingleProductView from "./OrderManagement/SingleProductView";
 import Cart from "./OrderManagement/Cart";
 
+//payment
+import Payment from "./PaymentManagement/Payment";
+import PaymentReport from "./PaymentManagement/paymentReport";
+import CODdetails from "./PaymentManagement/CODdetails";
+import Checkout from "./PaymentManagement/Checkout";
+
+
 function App() {
   return (
     <BrowserRouter>
@@ -33,7 +40,7 @@ function App() {
           <Route index element={<MainDashboard />} />
           <Route path="reactreviews" element={<ReactReviews />} />
           <Route path="suppliermanagement" element={<SupplierManagement />} />
-          <Route path="paymentmanagement" element={<PaymentManagement />} />
+          {/* <Route path="paymentmanagement" element={<PaymentManagement />} /> */}
         </Route>
 
         {/* Inventory Manager Routes */}
@@ -54,12 +61,20 @@ function App() {
         {/* Order Manager Routes */}
         <Route path="order" element={<Order />}>
           <Route index element={<OrderDashboard />} />
-        </Route>
         <Route path="productlist" element={<ProductsList />} />
         <Route path="product/:_id" element={<SingleProductView />} />
         <Route path="cart" element={<Cart />} />
-        
+        </Route>
+
+        {/* payment Manager Routes */}
+        <Route path="payment" element={<Payment />} />
+        <Route path="paymentReport" element={<PaymentReport />} />
+        <Route path="coddetails" element={<CODdetails />} />
+        <Route path="checkout" element={<Checkout />} />
+
       </Routes>
+
+      
     </BrowserRouter>
   );
 }
