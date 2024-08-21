@@ -19,7 +19,7 @@ export default function DefaultHeader() {
           <a href="#" className="hover:text-yellow-400">HOME</a>
           <a href="#" className="hover:text-yellow-400">STORE</a>
           <a href="#" className="hover:text-yellow-400">CATALOG</a>
-          <a href="#" className="hover:text-yellow-400">PAYMENT</a>
+          <a href="#" className="hover:text-yellow-400">MAP</a>
           <a href="#" className="hover:text-yellow-400">CONTACT</a>
         </nav>
 
