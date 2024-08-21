@@ -99,47 +99,7 @@ export default function PaymentDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-pink-100 via-yellow-100 to-blue-100 flex">
-      {/* Sidebar */}
-      <aside className={`w-64 bg-white p-6 shadow-md transition-transform duration-300 ${sidebarVisible ? 'translate-x-0' : '-translate-x-64'}`}>
-        {/* Logo and Title */}
-        <div className="flex flex-col items-center space-y-2 mb-8">
-          <img
-            src="https://via.placeholder.com/40"
-            alt="Logo"
-            className="w-10 h-10 rounded-full"
-          />
-          <h2 className="text-2xl font-bold text-center">Payment Managger</h2>
-        </div>
-
-        {/* Navigation */}
-        <div className="space-y-6">
-          <nav className="space-y-4">
-            <a href="/" className={getNavItemClasses('/')}>
-              <i className="fas fa-tachometer-alt mr-2"></i>Dashboard
-            </a>
-            <a href="/hrsend" className={getNavItemClasses('/hrsend')}>
-              <i className="fas fa-box-open mr-2"></i>HR send details
-            </a>
-            {/* <a href="/stock" className={getNavItemClasses('/stock')}>
-              <i className="fas fa-warehouse mr-2"></i>Stock
-            </a> */}
-            <a href="/paymentReport" className={getNavItemClasses('/paymentReport')}>
-              <i className="fas fa-chart-line mr-2"></i>Reports
-            </a>
-            <a href="/payment" className={getNavItemClasses('/payment')}>
-              <i className="fas fa-credit-card mr-2"></i>Payment
-            </a>
-          </nav>
-        </div>
-        <div className="mt-auto space-y-4">
-          <a href="#" className="block text-gray-700 hover:text-gray-900">
-            <i className="fas fa-cog mr-2"></i>Settings
-          </a>
-          <a href="#" className="block text-gray-700 hover:text-gray-900">
-            <i className="fas fa-sign-out-alt mr-2"></i>Logout
-          </a>
-        </div>
-      </aside>
+      
 
       {/* Main content */}
       <main className="flex-1 p-6">

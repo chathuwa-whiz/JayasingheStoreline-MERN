@@ -67,47 +67,6 @@ const PaymentReport = () => {
 
   return (
     <div className="min-h-screen flex bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white p-6 shadow-md">
-        {/* Logo and Title */}
-        <div className="flex flex-col items-center space-y-2 mb-8">
-          <img
-            src="https://via.placeholder.com/40"
-            alt="Logo"
-            className="w-10 h-10 rounded-full"
-          />
-          <h2 className="text-2xl font-bold text-center">Payment Manager</h2>
-        </div>
-
-        {/* Navigation */}
-        <div className="space-y-6">
-          <nav className="space-y-4">
-            <a href="#" className="block text-gray-700 hover:text-gray-900">
-              <i className="fas fa-tachometer-alt mr-2"></i>Dashboard
-            </a>
-            <a href="#" className="block text-gray-700 hover:text-gray-900">
-              <i className="fas fa-box-open mr-2"></i>HR send details
-            </a>
-            {/* <a href="#" className="block text-gray-700 hover:text-gray-900">
-              <i className="fas fa-warehouse mr-2"></i>Stock
-            </a> */}
-            <a href="paymentReport" className="block text-gray-700 hover:text-gray-900">
-              <i className="fas fa-chart-line mr-2"></i>Reports
-            </a>
-            <a href="#" className="block text-orange-500 hover:text-orange-700 font-bold">
-              <i className="fas fa-credit-card mr-2"></i>Payment
-            </a>
-          </nav>
-        </div>
-        <div className="mt-auto space-y-4">
-          <a href="#" className="block text-gray-700 hover:text-gray-900">
-            <i className="fas fa-cog mr-2"></i>Settings
-          </a>
-          <a href="#" className="block text-gray-700 hover:text-gray-900">
-            <i className="fas fa-sign-out-alt mr-2"></i>Logout
-          </a>
-        </div>
-      </aside>
 
       {/* Main Content */}
       <div className="flex-grow p-6">
