@@ -66,7 +66,6 @@ function App() {
           <Route path="orderhistory" element={<OrderHistory />} />
           <Route path="orderinqiry" element={<OrderInquiries/>} />
           <Route path="orderByProduct" element={<OrderByProducts/>} />
-          
         </Route>
         <Route path="productlist" element={<ProductsList />} /> 
         <Route path="product/:_id" element={<SingleProductView />} />

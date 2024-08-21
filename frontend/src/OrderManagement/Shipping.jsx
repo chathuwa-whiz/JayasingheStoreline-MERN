@@ -6,10 +6,9 @@ const DeliveryInformationForm = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const cart = useSelector((state) => state.cart);
-
-  console.log(cart);
+  
+  // const cart = useSelector((state) => state.cart);
+  // console.log(cart);
   
 
   const [formData, setFormData] = useState({
@@ -182,7 +181,7 @@ const DeliveryInformationForm = () => {
 
         <div className="flex items-center justify-center">
           <button
-            onClick={() => navigate('/placeorder', { state: {cart} })}
+            onClick={() => navigate('/placeorder')}
             type="submit"
             className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >

@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-export default function orderSummary() {
-
+export default function OrderSummary() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -11,16 +10,9 @@ export default function orderSummary() {
 
   const { cartItems, itemsPrice, shippingPrice, taxPrice, totalPrice } = cart;
 
-  const orderSummary = {
-     itemsPrice: itemsPrice,
-     shippingPrice: shippingPrice,
-     taxPrice: taxPrice,
-     totalPrice: totalPrice,
-     shippingAddress: '1234 Main St, New York, NY 10001',
-     paymentMethod: 'PayPal',
-  };
+  console.log(cart);
   
-    
+
   return (
     <div className="bg-white text-black min-h-screen p-8">
       <h1 className="text-3xl font-bold mb-8">Order Summary</h1>
@@ -33,7 +25,7 @@ export default function orderSummary() {
                 <th className="p-4">Image</th>
                 <th className="p-4">Product</th>
                 <th className="p-4">Quantity</th>
-                <th className="p-4">Price</th>
+                <th className="p-4">Unit Price</th>
                 <th className="p-4">Total</th>
               </tr>
             </thead>
@@ -45,8 +37,8 @@ export default function orderSummary() {
                   </td>
                   <td className="p-4">{item.name}</td>
                   <td className="p-4 text-center">{item.qty}</td>
-                  <td className="p-4">Rs.{item.sellingPrice.toFixed(2)}</td>
-                  <td className="p-4">Rs.{(item.sellingPrice * item.qty).toFixed(2)}</td>
+                  <td className="p-4">Rs.{item.newProductPrice.toFixed(2)}</td>
+                  <td className="p-4">Rs.{(item.newProductPrice * item.qty).toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
@@ -54,41 +46,35 @@ export default function orderSummary() {
         </div>
 
         {/* Order Summary */}
-        {/* <div className="lg:w-1/3 mt-8 lg:mt-0 lg:ml-8">
-          <div className="p-6 border rounded-lg bg-gray-100">
-            <h2 className="text-2xl font-bold mb-4">Order Summary</h2>
-            <div className="flex justify-between">
-              <span>Items:</span>
-              <span>${orderSummary.itemsPrice.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between mt-2">
-              <span>Shipping:</span>
-              <span>${orderSummary.shippingPrice.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between mt-2">
-              <span>Tax:</span>
-              <span>${orderSummary.taxPrice.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between mt-2 text-lg font-semibold">
-              <span>Total:</span>
-              <span>${orderSummary.totalPrice.toFixed(2)}</span>
-            </div>
-            <hr className="my-4" />
-            <div>
-              <h3 className="font-bold">Shipping</h3>
-              <p>{orderSummary.shippingAddress}</p>
-            </div>
-            <div className="mt-4">
-              <h3 className="font-bold">Payment Method</h3>
-              <p>{orderSummary.paymentMethod}</p>
-            </div>
+        <div className="lg:w-1/3 sm:mt-5 bg-gray-100 p-6 rounded-lg ml-3">
+          <h2 className="text-2xl font-bold mb-6">Summary</h2>
+          <div className="flex justify-between mb-4">
+            <span className="font-semibold">Items Price:</span>
+            <span>Rs.{cart.itemsPriceSum}</span>
           </div>
-          <button className="mt-6 w-full py-3 bg-orange-500 text-white text-lg font-bold rounded-lg hover:bg-pink-600 transition">
-            Place Order
+          <div className="flex justify-between mb-4">
+            <span className="font-semibold">Delivery Price:</span>
+            <span>Rs.{cart.deliveryPrice}</span>
+          </div>
+          <div className="flex justify-between mb-4">
+            <span className="font-semibold">Discount:</span>
+            <span>Rs.{cart.totalDiscount}</span>
+          </div>
+          <div className="flex justify-between mb-4 border-t pt-4">
+            <span className="font-bold text-xl">Total Price:</span>
+            <span className="font-bold text-xl">Rs.{cart.totalPriceSum}</span>
+          </div>
+          <button
+            onClick={() => navigate('/checkout')}
+            className="bg-orange-500 text-white font-semibold py-2 px-4 mt-6 w-full rounded hover:bg-orange-600 transition duration-200"
+          >
+            Proceed to Checkout
           </button>
-        </div> */}
+          <Link to="/cart" className="block text-center mt-4 text-blue-500 hover:underline">
+            Edit Cart
+          </Link>
+        </div>
       </div>
     </div>
-  )
+  );
 }
-
