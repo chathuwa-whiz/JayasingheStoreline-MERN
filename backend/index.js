@@ -7,7 +7,7 @@ import path from "path";
 // utiles
 import connectDB from "./config/db.js";
 import productRoutes from "./routes/ProductRoutes.js";
-import categoryRoutes from "./routes/CategoryRoutes.js"
+import categoryRoutes from "./routes/CategoryRoutes.js";
 import uploadRoutes from './routes/UploadRoutes.js';
 
 // load the .env file

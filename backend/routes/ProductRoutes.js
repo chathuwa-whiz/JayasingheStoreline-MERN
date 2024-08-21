@@ -2,7 +2,7 @@ import express from "express";
 import formidable from "express-formidable";
 const productRoutes = express.Router();
 
-import { addProduct, fetchProducts, fetchProductById, updateProduct, deleteProduct } from "../controllers/ProductController.js"; 
+import { addProduct, fetchProducts, fetchProductById, updateProduct, deleteProduct } from "../controllers/ProductController.js";
 
 // addProduct
 productRoutes.post("/" , formidable(), addProduct);

@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaPen } from "react-icons/fa";
 import { useAllProductsQuery } from '../redux/api/productApiSlice';
 
 export default function Stock() {
@@ -60,7 +58,7 @@ export default function Stock() {
                     {product.countInStock}
                 </span>
               </td>
-              <td className="py-2 px-4">{product.category}</td>
+              <td className="py-2 px-4">{product.countInStock}</td>
               <td className="py-2 px-4">{`Rs.${product.buyingPrice.toFixed(2)}`}</td>
               <td className="py-2 px-4">{product.updatedAt}</td>
             </tr>
