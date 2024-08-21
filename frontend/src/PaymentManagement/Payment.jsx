@@ -108,7 +108,7 @@ export default function Payment() {
             alt="Logo"
             className="w-10 h-10 rounded-full"
           />
-          <h2 className="text-2xl font-bold text-center">Payment Manager</h2>
+          <h2 className="text-2xl font-bold text-center">Payment Managger</h2>
         </div>
 
         {/* Navigation */}
