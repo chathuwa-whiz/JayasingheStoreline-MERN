@@ -25,6 +25,9 @@ import ProductsList from "./OrderManagement/ProductList";
 import SingleProductView from "./OrderManagement/SingleProductView";
 import Cart from "./OrderManagement/Cart";
 
+//Customer
+
+
 function App() {
   return (
     <BrowserRouter>
@@ -58,6 +61,8 @@ function App() {
         <Route path="productlist" element={<ProductsList />} />
         <Route path="product/:_id" element={<SingleProductView />} />
         <Route path="cart" element={<Cart />} />
+
+        {/* <Route path="home" element={<Home/>}></Route> */}
         
       </Routes>
     </BrowserRouter>
