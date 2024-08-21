@@ -100,6 +100,8 @@ export default function Payment() {
   return (
     <div className="min-h-screen bg-gradient-to-r from-pink-100 via-yellow-100 to-blue-100 flex">
       {/* Sidebar */}
+
+      
       <aside className={`w-64 bg-white p-6 shadow-md transition-transform duration-300 ${sidebarVisible ? 'translate-x-0' : '-translate-x-64'}`}>
         {/* Logo and Title */}
         <div className="flex flex-col items-center space-y-2 mb-8">
