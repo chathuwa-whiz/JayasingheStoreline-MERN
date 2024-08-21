@@ -70,7 +70,7 @@ export default function Cart() {
                                     <p>Total: Rs.{total}.00</p>
                                 </div>
                                 <div className="mt-4">
-                                    <button onClick={() => navigate('/shipping')} className="bg-blue-500 text-white px-4 py-2">Proceed to Checkout</button>
+                                    <button onClick={() => navigate('/shipping')} className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Proceed to Checkout</button>
                                 </div>
                             </div>
                         </div>

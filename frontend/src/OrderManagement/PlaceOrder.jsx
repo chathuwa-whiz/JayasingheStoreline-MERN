@@ -11,14 +11,14 @@ export default function orderSummary() {
 
   const { cartItems, itemsPrice, shippingPrice, taxPrice, totalPrice } = cart;
 
-  // const orderSummary = {
-  //   itemsPrice: itemsPrice,
-  //   shippingPrice: shippingPrice,
-  //   taxPrice: taxPrice,
-  //   totalPrice: totalPrice,
-  //   shippingAddress: '1234 Main St, New York, NY 10001',
-  //   paymentMethod: 'PayPal',
-  // };
+  const orderSummary = {
+     itemsPrice: itemsPrice,
+     shippingPrice: shippingPrice,
+     taxPrice: taxPrice,
+     totalPrice: totalPrice,
+     shippingAddress: '1234 Main St, New York, NY 10001',
+     paymentMethod: 'PayPal',
+  };
   
     
   return (
@@ -45,8 +45,8 @@ export default function orderSummary() {
                   </td>
                   <td className="p-4">{item.name}</td>
                   <td className="p-4 text-center">{item.qty}</td>
-                  <td className="p-4">${item.sellingPrice.toFixed(2)}</td>
-                  <td className="p-4">${(item.sellingPrice * item.quantity).toFixed(2)}</td>
+                  <td className="p-4">Rs.{item.sellingPrice.toFixed(2)}</td>
+                  <td className="p-4">Rs.{(item.sellingPrice * item.qty).toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
