@@ -26,10 +26,11 @@ import SingleProductView from "./OrderManagement/SingleProductView";
 import Cart from "./OrderManagement/Cart";
 
 //payment
-import Payment from "./PaymentManagement/Payment";
 import PaymentReport from "./PaymentManagement/paymentReport";
 import CODdetails from "./PaymentManagement/CODdetails";
 import Checkout from "./PaymentManagement/Checkout";
+import PaymentDashboard from "./PaymentManagement/PaymentDashboard";
+import Payment from "./PaymentManagement/Payment";
 
 
 function App() {
@@ -67,10 +68,12 @@ function App() {
         </Route>
 
         {/* payment Manager Routes */}
-        <Route path="payment" element={<Payment />} />
-        <Route path="paymentReport" element={<PaymentReport />} />
-        <Route path="coddetails" element={<CODdetails />} />
-        <Route path="checkout" element={<Checkout />} />
+        <Route path="payment" element={<Payment />}>
+          <Route index element={<PaymentDashboard />} />
+          <Route path="paymentReport" element={<PaymentReport />} />
+          <Route path="coddetails" element={<CODdetails />} />
+          <Route path="checkout" element={<Checkout />} />
+        </Route>
 
       </Routes>
 

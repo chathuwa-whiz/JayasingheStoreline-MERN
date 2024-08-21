@@ -1,8 +1,102 @@
-import React from 'react';
-import SideNavbar from './SideNavbar';
-import { Outlet } from 'react-router';
+import React, { useState, useEffect } from 'react';
+import { Line, Doughnut } from 'react-chartjs-2';
+import { Chart, ArcElement, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { useLocation } from 'react-router-dom'; // Import useLocation for routing
 
-export default function Payment() {
+Chart.register(
+  ArcElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+export default function PaymentDashboard() {
+  // State to hold the data
+  const [data, setData] = useState(null);
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const location = useLocation(); // Get current location for page highlighting
+
+  useEffect(() => {
+    // Dummy data used for display purposes.
+    const dummyData = {
+      totalCost: 80000.24,
+      totalIncome: 120052.25,
+      totalProfit: 45000.52,
+      hrSend: 30000.00,
+      profitData: [50, 100, 150, 200, 220, 250, 280, 300, 350, 400, 450, 500],
+      hrSendData: [46.9, 53.1]
+    };
+
+    // Update state with dummy data
+    setData(dummyData);
+
+    // Normally, you would fetch data from the API here:
+    /*
+    fetch('/api/payment-data')
+      .then(response => response.json())
+      .then(data => {
+        setData(data);
+      })
+      .catch(error => console.error('Error fetching data:', error));
+    */
+  }, []);
+
+  if (!data) {
+    return <div>Loading...</div>;
+  }
+
+  // Line Chart Data
+  const lineChartData = {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    datasets: [
+      {
+        label: 'Profit',
+        data: data.profitData,
+        borderColor: 'rgba(255, 99, 132, 1)',
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        fill: true,
+        tension: 0.4,
+      },
+    ],
+  };
+
+  const lineChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Monthly Profit Overview',
+      },
+    },
+  };
+
+  // Doughnut Chart Data
+  const doughnutChartData = {
+    labels: ['New Employee', 'Permanent Employee'],
+    datasets: [
+      {
+        label: 'HR Send',
+        data: data.hrSendData,
+        backgroundColor: ['#FF6384', '#36A2EB'],
+        hoverBackgroundColor: ['#FF6384', '#36A2EB'],
+      },
+    ],
+  };
+
+  // Get classes for navigation items to highlight the current page
+  const getNavItemClasses = (path) => {
+    return `block text-gray-700 hover:text-gray-900 ${
+      location.pathname === path ? 'text-blue-600 font-bold' : ''
+    }`;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-pink-100 via-yellow-100 to-blue-100 flex">
       {/* Sidebar */}
@@ -90,6 +184,7 @@ export default function Payment() {
             <Doughnut data={doughnutChartData} />
           </div>
         </div>
+      </main>
     </div>
-  )
+  );
 }
