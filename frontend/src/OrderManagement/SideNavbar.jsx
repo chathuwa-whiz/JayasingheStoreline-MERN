@@ -10,7 +10,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 h-full w-64 bg-white p-4">
+    <div className="bg-white p-4">
 
       <div className='p-4'>
 
@@ -22,7 +22,7 @@ const Sidebar = () => {
 
             <li className='mb-4'>
               <NavLink
-                to="/inventory"
+                to="/order"
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
               >
                 <HomeIcon className="h-5 w-5 mr-3" />
@@ -36,24 +36,24 @@ const Sidebar = () => {
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2 w-full text-left"
               >
                 <CubeIcon className="h-5 w-5 mr-3" />
-                Products
+                Orders
               </button>
               {isProductsOpen && (
                 <ul className="ml-8 space-y-1">
                   <li>
                     <NavLink
-                      to="products"
+                      to="orderhistory"
                       className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
                     >
-                      Product List
+                      Order History
                     </NavLink>
                   </li>
                   <li>
                     <NavLink
-                      to="products"
+                      to="orderByProduct"
                       className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
                     >
-                      Add Product
+                      Orders by products
                     </NavLink>
                   </li>
                 </ul>
@@ -62,17 +62,17 @@ const Sidebar = () => {
 
             <li className="mb-4">
               <NavLink
-                to="/stock"
+                to="orderinqiry"
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
               >
                 <ClipboardDocumentListIcon className="h-5 w-5 mr-3" />
-                Stock
+                Order Inquiries
               </NavLink>
             </li>
 
             <li className="mb-4">
               <NavLink
-                to="/reports"
+                to="reports"
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
               >
                 <ArchiveBoxIcon className="h-5 w-5 mr-3" />
