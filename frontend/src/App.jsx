@@ -4,6 +4,8 @@ import ReactReviews from "./ReactReviews/reactReviews";
 import SupplierManagement from "./SupplierManagement/supplier";
 import Layout from "./Shared/Layout";
 import MainDashboard from "./Dashboard/Dashboard";
+import Register from "./CustomerManagemet/register";
+// import Login from "./CustomerManagemet/Login";
 
 // inventory
 import InventoryDashboard from "./InventoryManagement/Dashboard";
@@ -26,7 +28,8 @@ import SingleProductView from "./OrderManagement/SingleProductView";
 import Cart from "./OrderManagement/Cart";
 
 //Customer
-
+// import lgin from "./CustomerManagement/Lgin";
+import CustomerLogin from "./CustomerManagemet/CusLogin"; 
 
 function App() {
   return (
@@ -61,9 +64,13 @@ function App() {
         <Route path="productlist" element={<ProductsList />} />
         <Route path="product/:_id" element={<SingleProductView />} />
         <Route path="cart" element={<Cart />} />
-
-        {/* <Route path="home" element={<Home/>}></Route> */}
         
+        {/* Customer Manager Routes */}
+    <Route path="register" element={<Register />} />
+    <Route path="customerlogin" element={<CustomerLogin />} />
+
+
+
       </Routes>
     </BrowserRouter>
   );

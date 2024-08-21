@@ -25,8 +25,8 @@ export default function DefaultHeader() {
 
         {/* Login and Register Buttons */}
         <div className="space-x-4">
-          <button className="bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-50">Login</button>
-          <button className="bg-white text-black px-4 py-2 rounded hover:bg-yellow-400">Register</button>
+          <a href="CustomerLogin"><button className="bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-50">Login</button></a>
+          <a href="register"><button className="bg-white text-black px-4 py-2 rounded hover:bg-yellow-400">Register</button></a>
         </div>
       </div>
     </header>
