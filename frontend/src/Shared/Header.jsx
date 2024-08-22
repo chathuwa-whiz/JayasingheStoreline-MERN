@@ -6,7 +6,7 @@ import logo from "../../../uploads/customerManagement/logo.png" // Adjust the pa
 // main home
 export default function DefaultHeader() {
   return (
-    <header className="bg-blue-900 text-white p-4">
+    <header className="bg-blue-900 text-white p-4 h-20 ">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo and Brand Name */}
         <div className="flex items-center space-x-2">
@@ -15,7 +15,7 @@ export default function DefaultHeader() {
         </div>
 
         {/* Navigation Links */}
-        <nav className="space-x-6">
+        <nav className="space-x-6 mr-32">
           <a href="#" className="hover:text-yellow-400">HOME</a>
           <a href="#" className="hover:text-yellow-400">STORE</a>
           <a href="#" className="hover:text-yellow-400">CATALOG</a>
@@ -39,8 +39,8 @@ import profilePhoto from "../../../uploads/customerManagement/profilePhoto.png";
 // Home Header
 export function HomeHeader() {
   return (
-    <header className="bg-blue-900 text-white p-4">
-      <div className="container mx-auto flex justify-between items-center">
+    <header className="bg-blue-900 text-white p-4 h-20">
+      <div className="container mx-auto flex justify-between items-center -mt-3">
         {/* Logo and Brand Name */}
         <div className="flex items-center space-x-2">
           <img src={logo} alt="Logo" className="h-8 w-8" />
@@ -49,7 +49,7 @@ export function HomeHeader() {
 
         {/* Navigation Links */}
         <nav className="space-x-6">
-          <a href="#" className="hover:text-yellow-400">HOME</a>
+          <a href="#" className="hover:text-yellow-400 ml-48">HOME</a>
           <a href="#" className="hover:text-yellow-400">STORE</a>
           <a href="#" className="hover:text-yellow-400">CATALOG</a>
           <a href="#" className="hover:text-yellow-400">MAP</a>
@@ -60,13 +60,13 @@ export function HomeHeader() {
         <img
             src={profilePhoto}
             alt="User Profile"
-            className="h-16 w-30 rounded-full cursor-pointer ml-96"
+            className="h-16 w-30 rounded-full cursor-pointer ml-24"
           />
           
-          <span className="text-white text-lg font-semibold -ml-20">Akash Jayasinghe</span>
+          <span className="text-white text-lg font-semibold -m-20">Akash Jayasinghe</span>
 
         <div className="flex items-center ">
-          <a href="profile"><button className="bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-50 -ml-10">Profile</button></a>
+          <a href="profile"><button className="bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-50 ml-10">Profile</button></a>
         </div>
       </div>
     </header>
@@ -76,8 +76,8 @@ export function HomeHeader() {
 // Profile Header
 export function ProfileHeader() {
   return (
-    <header className="bg-blue-900 text-white p-4">
-      <div className="container mx-auto flex justify-between items-center">
+    <header className="bg-blue-900 text-white p-4 h-20">
+      <div className="container mx-auto flex justify-between items-center -mt-3">
         {/* Logo and Brand Name */}
         <div className="flex items-center space-x-2">
           <img src={logo} alt="Logo" className="h-8 w-8" />
@@ -86,7 +86,7 @@ export function ProfileHeader() {
 
         {/* Navigation Links */}
         <nav className="space-x-6">
-          <a href="#" className="hover:text-yellow-400">HOME</a>
+          <a href="#" className="hover:text-yellow-400 ml-10">HOME</a>
           <a href="#" className="hover:text-yellow-400">STORE</a>
           <a href="#" className="hover:text-yellow-400">CATALOG</a>
           <a href="#" className="hover:text-yellow-400">MAP</a>
@@ -97,10 +97,10 @@ export function ProfileHeader() {
         <img
             src={profilePhoto}
             alt="User Profile"
-            className="h-16 w-30 rounded-full cursor-pointer ml-96"
+            className="h-16 w-30 rounded-full cursor-pointer ml-24"
           />
           
-          <span className="text-white text-lg font-semibold -ml-20">Akash Jayasinghe</span>
+          <span className="text-white text-lg font-semibold -ml-48">Akash Jayasinghe</span>
 
         
       </div>

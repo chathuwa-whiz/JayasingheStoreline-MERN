@@ -44,6 +44,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<MainDashboard />} />
           <Route path="home" element={<Home />} />
+          <Route path="profile" element={<Profile />} />
           
         </Route>
 
@@ -81,7 +82,7 @@ function App() {
         {/* Customer Manager Routes */}
     <Route path="register" element={<Register />} />
     <Route path="customerlogin" element={<CustomerLogin />} />
-    <Route path="profile" element={<Profile />} />
+    
 
     
 

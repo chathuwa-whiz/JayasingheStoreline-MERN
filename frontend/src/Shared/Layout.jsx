@@ -1,5 +1,5 @@
 import React from 'react'
-import DefaultHeader, {HomeHeader} from './Header'
+import DefaultHeader, {HomeHeader, ProfileHeader} from './Header'
 import { Outlet, useLocation } from 'react-router'
 import Footer from './Footer'
 
