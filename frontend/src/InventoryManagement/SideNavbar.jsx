@@ -72,7 +72,7 @@ const Sidebar = () => {
 
             <li className="mb-4">
               <NavLink
-                to="/stock"
+                to="stock"
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
               >
                 <ClipboardDocumentListIcon className="h-5 w-5 mr-3" />
