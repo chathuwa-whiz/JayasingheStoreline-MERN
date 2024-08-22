@@ -1,153 +1,141 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useCreateOrderMutation } from "../redux/api/orderApiSlice";
+import { useSelector } from 'react-redux';
 
 const DeliveryInformationForm = () => {
-
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const [createOrder] = useCreateOrderMutation();
+
+  // redux states
+  const cart = useSelector((state) => state.cart);
+
   
-  // const cart = useSelector((state) => state.cart);
-  // console.log(cart);
-  
 
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    telephone: '',
-    address: '',
-    city: '',
-    postalCode: '',
-    country: '',
-    paymentMethod: '',
-  });
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [teleNo, setTeleNo] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [province, setProvince] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission, e.g., send data to backend
-    console.log(formData);
+
+    try {
+      const orderData = new FormData();
+
+      orderData.append("itemsPrice", cart.itemsPriceSum);
+      orderData.append("deliveryPrice", cart.deliveryPrice);
+      orderData.append("discount", cart.totalDiscount);
+      orderData.append("totalPrice", cart.totalPriceSum);
+      orderData.append("status", "");
+
+      const data = await createOrder(orderData);
+      console.log('Order created successfully:', data);
+      navigate('/placeorder');
+    } catch (error) {
+      console.error("Error creating order:", error);
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 pt-20">
       <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-2xl">
-
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Delivery Information</h2>
 
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="firstName">
-            First Name
-          </label>
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="firstName">First Name</label>
           <input
             id="firstName"
             name="firstName"
             type="text"
-            value={formData.firstName}
-            onChange={handleChange}
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Enter your first name"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="lastName">
-            Last Name
-          </label>
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="lastName">Last Name</label>
           <input
             id="lastName"
             name="lastName"
             type="text"
-            value={formData.lastName}
-            onChange={handleChange}
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Enter your last name"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="telephone">
-            Telephone Number
-          </label>
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="teleNo">Telephone Number</label>
           <input
-            id="telephone"
-            name="telephone"
+            id="teleNo"
+            name="teleNo"
             type="text"
-            value={formData.telephone}
-            onChange={handleChange}
+            value={teleNo}
+            onChange={(e) => setTeleNo(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Enter your telephone number"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="address">
-            Address
-          </label>
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="address">Address</label>
           <input
             id="address"
             name="address"
             type="text"
-            value={formData.address}
-            onChange={handleChange}
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Enter your address"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="city">
-            City
-          </label>
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="city">City</label>
           <input
             id="city"
             name="city"
             type="text"
-            value={formData.city}
-            onChange={handleChange}
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Enter your city"
           />
         </div>
 
-
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="country">
-            Province
-          </label>
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="province">Province</label>
           <input
-            id="country"
-            name="country"
+            id="province"
+            name="province"
             type="text"
-            value={formData.country}
-            onChange={handleChange}
+            value={province}
+            onChange={(e) => setProvince(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Enter your province"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="postalCode">
-            Postal Code
-          </label>
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="postalCode">Postal Code</label>
           <input
             id="postalCode"
             name="postalCode"
             type="text"
-            value={formData.postalCode}
-            onChange={handleChange}
+            value={postalCode}
+            onChange={(e) => setPostalCode(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Enter your postal code"
           />
         </div>
-
-     
 
         <div className="mb-6">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="paymentMethod">
@@ -159,8 +147,8 @@ const DeliveryInformationForm = () => {
               id="paypal"
               name="paymentMethod"
               value="PayPal"
-              checked={formData.paymentMethod === 'PayPal'}
-              onChange={handleChange}
+              checked={paymentMethod === 'PayPal'}
+              onChange={(e) => setPaymentMethod(e.target.value)}
               className="mr-2 leading-tight"
             />
             <span className="text-gray-700">PayPal</span>
@@ -171,8 +159,8 @@ const DeliveryInformationForm = () => {
               id="creditCard"
               name="paymentMethod"
               value="Credit Card"
-              checked={formData.paymentMethod === 'Credit Card'}
-              onChange={handleChange}
+              checked={paymentMethod === 'Credit Card'}
+              onChange={(e) => setPaymentMethod(e.target.value)}
               className="mr-2 leading-tight"
             />
             <span className="text-gray-700">Credit Card</span>
@@ -181,7 +169,6 @@ const DeliveryInformationForm = () => {
 
         <div className="flex items-center justify-center">
           <button
-            onClick={() => navigate('/placeorder')}
             type="submit"
             className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
@@ -194,4 +181,3 @@ const DeliveryInformationForm = () => {
 };
 
 export default DeliveryInformationForm;
-
