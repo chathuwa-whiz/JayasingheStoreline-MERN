@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import logo from '../../../uploads/paymentPh/1.jpg';
+import logo from '../../../uploads/products/paymentPh/1.jpg';
 import {
   HomeIcon,
   CubeIcon,

@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import PaymentManagement from "./PaymentManagement/Payment";
 import ReactReviews from "./ReactReviews/reactReviews";
 import SupplierManagement from "./SupplierManagement/supplier";
 import Layout from "./Shared/Layout";
@@ -10,7 +11,6 @@ import Inventory from "./InventoryManagement/Inventory";
 import Products from "./InventoryManagement/Products";
 import AddProducts from "./InventoryManagement/AddProducts";
 import UpdateProduct from "./InventoryManagement/UpdateProduct";
-import Stock from "./InventoryManagement/Stock";
 
 // Delivery
 import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
@@ -25,6 +25,16 @@ import ProductsList from "./OrderManagement/ProductList";
 import SingleProductView from "./OrderManagement/SingleProductView";
 import Cart from "./OrderManagement/Cart";
 
+//payment
+import PaymentReport from "./PaymentManagement/paymentReport";
+import CODdetails from "./PaymentManagement/CODdetails";
+import Checkout from "./PaymentManagement/Checkout";
+import PaymentDashboard from "./PaymentManagement/PaymentDashboard";
+import Payment from "./PaymentManagement/Payment";
+import HrNotify from "./PaymentManagement/HrNotify";
+import SupNotify from "./PaymentManagement/SupNotify";
+
+
 function App() {
   return (
     <BrowserRouter>
@@ -33,7 +43,7 @@ function App() {
           <Route index element={<MainDashboard />} />
           <Route path="reactreviews" element={<ReactReviews />} />
           <Route path="suppliermanagement" element={<SupplierManagement />} />
-          <Route path="paymentmanagement" element={<PaymentManagement />} />
+          {/* <Route path="paymentmanagement" element={<PaymentManagement />} /> */}
         </Route>
 
         {/* Inventory Manager Routes */}
@@ -43,7 +53,6 @@ function App() {
           <Route path="addproducts" element={<AddProducts />} />
           <Route path="products/update/:_id" element={<UpdateProduct />} />
           <Route path="categories" element={<CategoryList />} />
-          <Route path="stock" element={<Stock />} />
         </Route>
 
         {/*Delivery manager Routes */}
@@ -55,11 +64,21 @@ function App() {
         {/* Order Manager Routes */}
         <Route path="order" element={<Order />}>
           <Route index element={<OrderDashboard />} />
-        </Route>
         <Route path="productlist" element={<ProductsList />} />
         <Route path="product/:_id" element={<SingleProductView />} />
         <Route path="cart" element={<Cart />} />
-        
+        </Route>
+
+        {/* payment Manager Routes */}
+        <Route path="payment" element={<Payment />}>
+          <Route index element={<PaymentDashboard />} />
+          <Route path="paymentReport" element={<PaymentReport />} />
+          <Route path="coddetails" element={<CODdetails />} />
+          <Route path="checkout" element={<Checkout />} />
+          <Route path="hrnotify" element={<HrNotify />} />
+          <Route path="supnotify" element={<SupNotify />} />
+        </Route>
+
       </Routes>
 
       
