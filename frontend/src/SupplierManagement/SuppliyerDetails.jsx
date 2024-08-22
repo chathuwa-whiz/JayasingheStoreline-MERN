@@ -9,10 +9,11 @@ const SupplierDetailsForm = () => {
   const [email, setEmail] = useState('');
   const [Gender, setGender] = useState('');
   const [supplierMedia, setSupplierMedia] = useState(null);
-
+  
   const handleSubmit = () => {
     e.preventDefault();
     console.log('Supplier Details:', supplierName,  SupplierID, phoneNumber, Type, Date,email,Gender,supplierMedia);
+   
   };
   const handleMediaChange = (e) => {
     setSupplierMedia(e.target.files[0]);
