@@ -31,11 +31,12 @@ export default function Products() {
         <thead className="bg-orange-500 text-white">
           <tr>
             <th className="py-2 px-4 text-left">Order Id</th>
-            <th className="py-2 px-4 text-left">Order</th>
+            <th className="py-2 px-4 text-left">Order Amount</th>
+            <th className="py-2 px-4 text-left">Delivery Price</th>
+            <th className="py-2 px-4 text-left">Discount</th>
+            <th className="py-2 px-4 text-left">Total Price</th>
             <th className="py-2 px-4 text-left">Date</th>
             <th className="py-2 px-4 text-left">Order Status</th>
-            <th className="py-2 px-4 text-left">Quantity</th>
-            <th className="py-2 px-4 text-left">Total Amount</th>
             <th className="py-2 px-4 text-left">Action</th>
           </tr>
         </thead>
@@ -51,11 +52,15 @@ export default function Products() {
               <td className="py-2 px-4">{product.category}</td>
               <td className="py-2 px-4">{`Rs.${product.sellingPrice.toFixed(2)}`}</td>
               <td className="py-2 px-4">
+                
+              </td>
+              <td className="py-2 px-4">
                 <Link to={`/inventory/products/update/${product._id}`}>
                   <button className="text-green-500 hover:text-green-700 mx-2">
                     <FaPen />
                   </button>
                 </Link>
+                
               </td>
             </tr>
           ))}

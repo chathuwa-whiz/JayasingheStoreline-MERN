@@ -49,7 +49,7 @@ const cartSlice = createSlice({
       const shippingPrice = 0; // Change this as needed, e.g., state.shippingPrice or a default value
 
       // Set deliveryPrice (e.g., a fixed amount or based on conditions)
-      const deliveryPrice = 10; // Update this value as needed (e.g., state.deliveryPrice or a default value)
+      const deliveryPrice = 500; // Update this value as needed (e.g., state.deliveryPrice or a default value)
     
       // Calculate totalPriceSum
       const totalPriceSum = parseFloat((itemsPriceSum - totalDiscount + deliveryPrice).toFixed(2));
@@ -59,7 +59,8 @@ const cartSlice = createSlice({
       state.totalDiscount = parseFloat(totalDiscount.toFixed(2));
       state.shippingPrice = parseFloat(shippingPrice.toFixed(2));
       state.totalPriceSum = totalPriceSum;
-    
+      state.deliveryPrice = deliveryPrice;
+
       // Update the state with the new cart items and return the updated state
       return updateCart(state, state.cartItems);
     },    
