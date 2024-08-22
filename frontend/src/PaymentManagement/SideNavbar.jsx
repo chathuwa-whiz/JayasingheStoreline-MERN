@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { HomeIcon , CubeIcon , ArchiveBoxIcon , ClipboardDocumentListIcon , CogIcon , ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/solid'; // Replace with appropriate icons
+import logo from '../../../uploads/paymentPh/1.jpg';
+import {
+  HomeIcon,
+  CubeIcon,
+  ArchiveBoxIcon,
+  ClipboardDocumentListIcon,
+  CogIcon,
+  ArrowRightOnRectangleIcon,
+} from '@heroicons/react/24/solid';
 
 const Sidebar = () => {
   const [isProductsOpen, setIsProductsOpen] = useState(false);
@@ -10,27 +18,32 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="bg-white p-4">
+    <div className="bg-white p-4 w-64">
+      {/* Logo and Title */}
+      <div className="flex flex-col items-center mb-8">
+        <img
+          src={logo} // Replace with your logo path
+          alt="Logo"
+          className="w-16 h-16 rounded-full mb-2"
+        />
+        <span className="text-lg font-semibold">Payment Manager</span>
+      </div>
 
-      <div className='p-4'>
-
+      <div className="p-4">
         <h2 className="text-xl font-bold mb-6">Menu</h2>
-
         <nav>
-
           <ul>
-
-            <li className='mb-4'>
+            <li className="mb-4">
               <NavLink
-                to="/inventory"
+                to="/Payment"
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
               >
                 <HomeIcon className="h-5 w-5 mr-3" />
-                Dashboard
+                Payment Dashboard
               </NavLink>
             </li>
 
-            <li className='mb-4'>
+            <li className="mb-4">
               <button
                 onClick={toggleProducts}
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2 w-full text-left"
@@ -38,70 +51,44 @@ const Sidebar = () => {
                 <CubeIcon className="h-5 w-5 mr-3" />
                 Products
               </button>
-              {isProductsOpen && (
-                <ul className="ml-5 space-y-1">
-                  <li>
-                    <NavLink
-                      to="products"
-                      className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
-                    >
-                      Product List
-                    </NavLink>
-                  </li>
-
-                  <li>
-                    <NavLink
-                      to="addproducts"
-                      className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
-                    >
-                      Add Product
-                    </NavLink>
-                  </li>
-
-                  <li>
-                    <NavLink
-                      to="categories"
-                      className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
-                    >
-                      Categories
-                    </NavLink>
-                  </li>
-                </ul>
-              )}
             </li>
 
             <li className="mb-4">
               <NavLink
-                to="/stock"
+                to="/payment/HrNotify"
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
               >
                 <ClipboardDocumentListIcon className="h-5 w-5 mr-3" />
-                Stock
+                HR Notification
               </NavLink>
             </li>
 
             <li className="mb-4">
               <NavLink
-                to="/reports"
+                to="/payment/SupNotify"
+                className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
+              >
+                <ClipboardDocumentListIcon className="h-5 w-5 mr-3" />
+                Supplier Notification
+              </NavLink>
+            </li>
+
+            <li className="mb-4">
+              <NavLink
+                to="/payment/paymentReport"
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
               >
                 <ArchiveBoxIcon className="h-5 w-5 mr-3" />
                 Reports
               </NavLink>
             </li>
-
           </ul>
-
         </nav>
-
       </div>
 
-      <div className='p-4'>
-
+      <div className="p-4">
         <nav>
-
           <ul>
-
             <li className="mb-4">
               <NavLink
                 to="/settings"
@@ -117,17 +104,13 @@ const Sidebar = () => {
                 to="/logout"
                 className="flex items-center hover:text-white hover:bg-red-500 rounded-lg px-4 py-2"
               >
-                <ArrowRightStartOnRectangleIcon className="h-5 w-5 mr-3" />
+                <ArrowRightOnRectangleIcon className="h-5 w-5 mr-3" />
                 Logout
               </NavLink>
             </li>
-
           </ul>
-
         </nav>
-
       </div>
-
     </div>
   );
 };

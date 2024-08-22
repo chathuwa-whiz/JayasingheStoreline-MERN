@@ -31,6 +31,8 @@ import CODdetails from "./PaymentManagement/CODdetails";
 import Checkout from "./PaymentManagement/Checkout";
 import PaymentDashboard from "./PaymentManagement/PaymentDashboard";
 import Payment from "./PaymentManagement/Payment";
+import HrNotify from "./PaymentManagement/HrNotify";
+import SupNotify from "./PaymentManagement/SupNotify";
 
 
 function App() {
@@ -73,6 +75,8 @@ function App() {
           <Route path="paymentReport" element={<PaymentReport />} />
           <Route path="coddetails" element={<CODdetails />} />
           <Route path="checkout" element={<Checkout />} />
+          <Route path="hrnotify" element={<HrNotify />} />
+          <Route path="supnotify" element={<SupNotify />} />
         </Route>
 
       </Routes>
