@@ -1,29 +1,30 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaPen } from "react-icons/fa";
 import { useAllProductsQuery } from '../redux/api/productApiSlice';
 
-export default function Products() {
-  // Fetch all products
-  const { data: products, isLoading, isError } = useAllProductsQuery();
+export default function Stock() {
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 10;
+    // Fetch all products
+    const { data: products, isLoading, isError } = useAllProductsQuery();
+    console.log(products);
+    
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Something went wrong</div>;
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 10;
 
-  // Calculate the indices of the products to display
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+    if (isLoading) return <div>Loading...</div>;
+    if (isError) return <div>Something went wrong</div>;
 
-  // Calculate total pages
-  const totalPages = Math.ceil(products.length / productsPerPage);
+    // Calculate the indices of the products to display
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+    // Calculate total pages
+    const totalPages = Math.ceil(products.length / productsPerPage);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
   return (
     <div className="rounded-lg p-8">
@@ -34,9 +35,10 @@ export default function Products() {
             <th className="py-2 px-4 text-left">Image</th>
             <th className="py-2 px-4 text-left">SKU</th>
             <th className="py-2 px-4 text-left">Name</th>
-            <th className="py-2 px-4 text-left">Category</th>
-            <th className="py-2 px-4 text-left">Price</th>
-            <th className="py-2 px-4 text-left">Action</th>
+            <th className="py-2 px-4 text-left">Received QTY</th>
+            <th className="py-2 px-4 text-left">Current QTY</th>
+            <th className="py-2 px-4 text-left">Unit Price (Bought Price)</th>
+            <th className="py-2 px-4 text-left">Inbound Time</th>
           </tr>
         </thead>
         <tbody>
@@ -48,15 +50,17 @@ export default function Products() {
               </td>
               <td className="py-2 px-4">{product.sku}</td>
               <td className="py-2 px-4">{product.name}</td>
-              <td className="py-2 px-4">{product.category}</td>
-              <td className="py-2 px-4">{`Rs.${product.sellingPrice.toFixed(2)}`}</td>
               <td className="py-2 px-4">
-                <Link to={`/inventory/products/update/${product._id}`}>
-                  <button className="text-green-500 hover:text-green-700 mx-2">
-                    <FaPen />
-                  </button>
-                </Link>
+                <span className={`py-1 px-2 rounded-md text-white ${
+                    product.countInStock > 20 ? 'bg-green-500' :
+                    product.countInStock > 10 ? 'bg-yellow-500' : 'bg-red-500'
+                }`}>
+                    {product.countInStock}
+                </span>
               </td>
+              <td className="py-2 px-4">{product.countInStock}</td>
+              <td className="py-2 px-4">{`Rs.${product.buyingPrice.toFixed(2)}`}</td>
+              <td className="py-2 px-4">{product.updatedAt}</td>
             </tr>
           ))}
         </tbody>
@@ -75,5 +79,5 @@ export default function Products() {
         ))}
       </div>
     </div>
-  );
+  )
 }

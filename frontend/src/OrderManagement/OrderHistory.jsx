@@ -30,12 +30,12 @@ export default function Products() {
       <table className="min-w-full overflow-y-auto min-h-full border rounded-lg bg-white">
         <thead className="bg-orange-500 text-white">
           <tr>
-            <th className="py-2 px-4 text-left">#</th>
-            <th className="py-2 px-4 text-left">Image</th>
-            <th className="py-2 px-4 text-left">SKU</th>
-            <th className="py-2 px-4 text-left">Name</th>
-            <th className="py-2 px-4 text-left">Category</th>
-            <th className="py-2 px-4 text-left">Price</th>
+            <th className="py-2 px-4 text-left">Order Id</th>
+            <th className="py-2 px-4 text-left">Order</th>
+            <th className="py-2 px-4 text-left">Date</th>
+            <th className="py-2 px-4 text-left">Order Status</th>
+            <th className="py-2 px-4 text-left">Quantity</th>
+            <th className="py-2 px-4 text-left">Total Amount</th>
             <th className="py-2 px-4 text-left">Action</th>
           </tr>
         </thead>

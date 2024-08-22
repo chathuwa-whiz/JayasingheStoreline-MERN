@@ -142,7 +142,7 @@ export function OrderHeader() {
   return (
     <>
     <div className="fixed top-0 left-64 right-0 h-16 bg-white flex items-center justify-between px-4">
-      <h1 className="text-xl font-bold">List Product</h1>
+    <h1 className="text-xl font-bold">List Product</h1>
 
       <div className="flex items-center space-x-6">
         {/* Search Bar */}
