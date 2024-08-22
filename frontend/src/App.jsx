@@ -3,8 +3,7 @@ import ReactReviews from "./ReactReviews/reactReviews";
 import SupplierManagement from "./SupplierManagement/supplier";
 import Layout from "./Shared/Layout";
 import MainDashboard from "./Dashboard/Dashboard";
-import Register from "./CustomerManagemet/register";
-// import Login from "./CustomerManagemet/Login";
+
 
 // inventory
 import InventoryDashboard from "./InventoryManagement/Dashboard";
@@ -33,8 +32,10 @@ import PlaceOrder from "./OrderManagement/PlaceOrder";
 import Checkout from "./PaymentManagement/Checkout";
 
 //Customer
-// import lgin from "./CustomerManagement/Lgin";
 import CustomerLogin from "./CustomerManagemet/CusLogin"; 
+import Register from "./CustomerManagemet/register";
+import Home from "./CustomerManagemet/Home";
+import Profile from "./CustomerManagemet/profile";
 
 function App() {
   return (
@@ -42,8 +43,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<MainDashboard />} />
-          <Route path="reactreviews" element={<ReactReviews />} />
-          <Route path="suppliermanagement" element={<SupplierManagement />} />
+          <Route path="home" element={<Home />} />
+          
         </Route>
 
         {/* Inventory Manager Routes */}
@@ -80,6 +81,9 @@ function App() {
         {/* Customer Manager Routes */}
     <Route path="register" element={<Register />} />
     <Route path="customerlogin" element={<CustomerLogin />} />
+    <Route path="profile" element={<Profile />} />
+
+    
 
 
 
