@@ -58,7 +58,7 @@ export default function Stock() {
                     {product.countInStock}
                 </span>
               </td>
-              <td className="py-2 px-4">{product.countInStock}</td>
+              <td className="py-2 px-4">{product.currentQty}</td>
               <td className="py-2 px-4">{`Rs.${product.buyingPrice.toFixed(2)}`}</td>
               <td className="py-2 px-4">{product.updatedAt}</td>
             </tr>
