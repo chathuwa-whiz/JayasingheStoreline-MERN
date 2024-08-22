@@ -1,33 +1,36 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaPen } from "react-icons/fa";
-import { useAllProductsQuery } from '../redux/api/productApiSlice';
+import { useGetOrdersQuery } from '../redux/api/orderApiSlice';
 
 export default function Products() {
   // Fetch all products
-  const { data: products, isLoading, isError } = useAllProductsQuery();
+  const { data: orders, isLoading, isError } = useGetOrdersQuery();
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 10;
+  console.log(orders);
+  
+  
+  // if (isLoading) return <div>Loading...</div>;
+  // if (isError) return <div>Something went wrong</div>;
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Something went wrong</div>;
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const productsPerPage = 10;
 
-  // Calculate the indices of the products to display
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+  // // Calculate the indices of the products to display
+  // const indexOfLastProduct = currentPage * productsPerPage;
+  // const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  // const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
-  // Calculate total pages
-  const totalPages = Math.ceil(products.length / productsPerPage);
+  // // Calculate total pages
+  // const totalPages = Math.ceil(products.length / productsPerPage);
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+  // const handlePageChange = (pageNumber) => {
+  //   setCurrentPage(pageNumber);
+  // };
 
   return (
     <div className="rounded-lg p-8">
-      <table className="min-w-full overflow-y-auto min-h-full border rounded-lg bg-white">
+      {/* <table className="min-w-full overflow-y-auto min-h-full border rounded-lg bg-white">
         <thead className="bg-orange-500 text-white">
           <tr>
             <th className="py-2 px-4 text-left">Order Id</th>
@@ -67,7 +70,7 @@ export default function Products() {
         </tbody>
       </table>
 
-      {/* Pagination Controls */}
+     
       <div className="flex justify-center mt-4">
         {Array.from({ length: totalPages }, (_, i) => (
           <button
@@ -78,7 +81,7 @@ export default function Products() {
             {i + 1}
           </button>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }
