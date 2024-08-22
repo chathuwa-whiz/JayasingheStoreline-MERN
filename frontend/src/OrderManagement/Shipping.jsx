@@ -60,13 +60,10 @@ const DeliveryInformationForm = () => {
 
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="firstName">First Name</label>
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="firstName">First Name</label>
           <input
             id="firstName"
             name="firstName"
             type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -76,13 +73,10 @@ const DeliveryInformationForm = () => {
 
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="lastName">Last Name</label>
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="lastName">Last Name</label>
           <input
             id="lastName"
             name="lastName"
             type="text"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -105,13 +99,10 @@ const DeliveryInformationForm = () => {
 
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="address">Address</label>
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="address">Address</label>
           <input
             id="address"
             name="address"
             type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -121,13 +112,10 @@ const DeliveryInformationForm = () => {
 
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="city">City</label>
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="city">City</label>
           <input
             id="city"
             name="city"
             type="text"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
             value={city}
             onChange={(e) => setCity(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -137,15 +125,10 @@ const DeliveryInformationForm = () => {
 
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="province">Province</label>
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="province">Province</label>
           <input
             id="province"
             name="province"
-            id="province"
-            name="province"
             type="text"
-            value={province}
-            onChange={(e) => setProvince(e.target.value)}
             value={province}
             onChange={(e) => setProvince(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -155,13 +138,10 @@ const DeliveryInformationForm = () => {
 
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="postalCode">Postal Code</label>
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="postalCode">Postal Code</label>
           <input
             id="postalCode"
             name="postalCode"
             type="text"
-            value={postalCode}
-            onChange={(e) => setPostalCode(e.target.value)}
             value={postalCode}
             onChange={(e) => setPostalCode(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -181,8 +161,6 @@ const DeliveryInformationForm = () => {
               value="PayPal"
               checked={paymentMethod === 'PayPal'}
               onChange={(e) => setPaymentMethod(e.target.value)}
-              checked={paymentMethod === 'PayPal'}
-              onChange={(e) => setPaymentMethod(e.target.value)}
               className="mr-2 leading-tight"
             />
             <span className="text-gray-700">PayPal</span>
@@ -193,8 +171,6 @@ const DeliveryInformationForm = () => {
               id="creditCard"
               name="paymentMethod"
               value="Credit Card"
-              checked={paymentMethod === 'Credit Card'}
-              onChange={(e) => setPaymentMethod(e.target.value)}
               checked={paymentMethod === 'Credit Card'}
               onChange={(e) => setPaymentMethod(e.target.value)}
               className="mr-2 leading-tight"
