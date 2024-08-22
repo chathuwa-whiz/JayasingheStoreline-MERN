@@ -20,7 +20,7 @@ const SupplierDetailsForm = () => {
 
   return (
     <div className="max-w-xl mx-auto p-4 bg-white rounded-md shadow-md">
-      <h2 className="text-lg font-bold mb-4">Supplier Details Form</h2>
+      <h2 className="text-lg font-bold mb-4">Supplier Update Details Form</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="supplierName">
@@ -122,9 +122,9 @@ const SupplierDetailsForm = () => {
         
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          type="submit"
+          type="Update"
         >
-          Submit
+          Update
         </button>
       </form>
     </div>

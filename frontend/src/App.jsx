@@ -24,6 +24,7 @@ import SupplierDashboard from "./SupplierManagement/Dashboard";
 import SupplierDetailsForm from "./SupplierManagement/SuppliyerDetails";
 import SupplierForm from "./SupplierManagement/suppliyerForm";
 import SupplierList from "./SupplierManagement/supplierList";
+import SupplierUpdate from "./SupplierManagement/supplierUpdate";
 
 
 function App() {
@@ -59,6 +60,7 @@ function App() {
           <Route path="supplierdetailsform" element={<SupplierDetailsForm />} />
           <Route path="supplierform" element={<SupplierForm />} />
           <Route path="supplierlist" element={<SupplierList />} />
+          <Route path="supplierupdate" element={<SupplierUpdate />} />
         </Route>
 
       </Routes>
