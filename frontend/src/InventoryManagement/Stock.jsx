@@ -6,7 +6,7 @@ export default function Stock() {
 
   // Fetch all orders
   const { data: orders } = useGetOrdersQuery();
-  console.log("Orders -> ",JSON.parse(orders[2].orderItems));
+  // console.log("Orders -> ",JSON.parse(orders[2].orderItems));
   console.log(orders.length);
   for (let index = 0; index < orders.length; index++) {
     console.log("Order Items -> ",JSON.parse(orders[index].orderItems));
