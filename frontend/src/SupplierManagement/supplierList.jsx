@@ -67,7 +67,7 @@ export default function Products() {
               <td className="py-2 px-4">{product.Date}</td>
               <td className="py-2 px-4">{product.Gender}</td>
               <td className="py-2 px-4 flex space-x-2">
-                <Link to="/supplierUpdate" className="btn btn-success">
+                <Link to="../update" className="btn btn-success">
                   <FaPen />
                 </Link>
                 <button className="btn btn-danger">

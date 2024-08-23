@@ -49,7 +49,6 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<MainDashboard />} />
           <Route path="reactreviews" element={<ReactReviews />} />
-          <Route path="suppliermanagement" element={<SupplierManagement />} />
         </Route>
 
         {/* Inventory Manager Routes */}
@@ -85,6 +84,14 @@ function App() {
         {/* Payment Manager Routes */}
         <Route path="checkout" element={<Checkout />} />
 
+        {/* Supplier Management Routes */}
+        <Route path="/supplier" element={<Supplier />}>
+          <Route index element={<SupplierDashboard />} />
+          <Route path="update" element={<SupplierUpdate />} />
+          <Route path="supplierlist" element={<SupplierList />} />
+          <Route path="supplierdetails" element={<SupplierDetailsForm />} />
+          <Route path="supplierform" element={<SupplierForm />} />
+        </Route>
         
       </Routes>
     </BrowserRouter>
