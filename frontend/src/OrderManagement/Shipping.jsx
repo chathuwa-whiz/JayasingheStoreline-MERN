@@ -31,7 +31,7 @@ const DeliveryInformationForm = () => {
       orderData.append("deliveryPrice", cart.deliveryPrice);
       orderData.append("discount", cart.totalDiscount);
       orderData.append("totalPrice", cart.totalPriceSum);
-      orderData.append("orderItems", cart.cartItems);
+      orderData.append("orderItems", JSON.stringify(cart.cartItems));
       orderData.append("status", "Pending");
       orderData.append("firstName", firstName);
       orderData.append("lastName", lastName);
