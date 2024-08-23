@@ -1,5 +1,5 @@
 import React from 'react'
-import Sidebar from '../InventoryManagement/SideNavbar'
+import Sidebar from '../OrderManagement/SideNavbar'
 import { Outlet } from 'react-router'
 import { OrderHeader } from '../Shared/Header'
 
@@ -8,7 +8,7 @@ export default function order() {
     <div className='flex'>
         <Sidebar />
         <div className='flex-grow'>
-          <OrderHeader/>
+          {/*<OrderHeader/> */}
             <Outlet />
         </div>
     </div>
