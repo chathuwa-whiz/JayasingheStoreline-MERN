@@ -1,10 +1,11 @@
 import express from "express";
-import { addOrder,fetchOrders} from "../controllers/OrderController.js";
+import formidable from "express-formidable";
+import { addOrder , fetchOrders } from "../controllers/OrderController.js";
 
 const orderRoutes = express.Router();
 
 // addOrder
-orderRoutes.post("/" ,  addOrder);
+orderRoutes.post("/" , formidable() , addOrder);
 
 
 // fetchOrder

@@ -8,9 +8,13 @@ export default function OrderSummary() {
 
   const cart = useSelector((state) => state.cart);
 
-  const { cartItems, itemsPrice, shippingPrice, taxPrice, totalPrice } = cart;
+  const { cartItems } = cart;
 
   console.log(cart);
+
+  const handleSubmit = async(e) => {
+    
+  }
   
 
   return (
