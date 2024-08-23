@@ -53,35 +53,38 @@ export const fetchSupplierById = async (req, res) => {
 
 // Update supplier
 export const updateSupplier = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const updates = req.fields;
-
-        const updatedSupplier = await Supplier.findByIdAndUpdate(id, updates, { new: true });
-
-        if (!updatedSupplier) {
-            return res.status(404).json({ error: "Supplier not found" });
+try {
+        const { name, image, phone, email, gender, type } = req.fields;
+        
+        switch(true) {
+            case !name:
+                return res.json( { error: "Name is required" } );
+            case !image:
+                return res.json( { error: "Image is required" } );
+            case !phone:
+                return res.json( { error: "Phone is required" } );
+            case !email:
+                return res.json( { error: "Email is required" } );
+            case !gender:
+                return res.json( { error: "Gender is required" } );
+            case !type:
+                return res.json( { error: "Type is required" } );
         }
-
-        res.json({ msg: "Supplier updated successfully", updatedSupplier });
+        
+        const supplier = await Supplier.findByIdAndUpdate(req.params.id, {...req.fields}, { new : true });
+        if(!supplier) {
+            return res.status(400).json( { msg : "Product not found" } )
+        }
+        await supplier.save();
+        res.json( { msg : "Update Successful ", supplier } );
     } catch (error) {
-        res.status(400).json({ msg: "Supplier update failed", error });
-    }
-}
-
-// Delete supplier
+        res.status(400).json( { msg : "Update Failed ", error } );
+    }}
+    // Delete supplier
 export const deleteSupplier = async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        const deletedSupplier = await Supplier.findByIdAndDelete(id);
-
-        if (!deletedSupplier) {
-            return res.status(404).json({ error: "Supplier not found" });
-
-            
-        }
-
+    try {const supplier = await Supplier.findByIdAndDelete(req,params.id);
+        if (!supplier) {
+            return res.status(404).json({ error: "Supplier not found" });}
         res.json({ msg: "Supplier deleted successfully" });
     } catch (error) {
         res.status(400).json({ msg: "Supplier deletion failed", error });

@@ -1,13 +1,28 @@
 import express from "express";
 import formidable from "express-formidable";
-import { addSupplier, fetchSuppliers } from "../controllers/SupplierController.js";
+import {
+    addSupplier,
+    deleteSupplier,
+    fetchSuppliers,
+    fetchSupplierById,
+    updateSupplier
+} from "../controllers/SupplierController.js";
 
 const supplierRoutes = express.Router();
 
-// addOrder
+// Add Supplier
 supplierRoutes.post("/", formidable(), addSupplier);
 
-// fetchOrder
+// Fetch All Suppliers
 supplierRoutes.get("/", fetchSuppliers);
+
+// Fetch Supplier By ID
+supplierRoutes.get("/:id", fetchSupplierById);
+
+// Update Supplier Details
+supplierRoutes.put("/:id", formidable(), updateSupplier);
+
+// Remove Supplier
+supplierRoutes.delete("/:id", deleteSupplier);
 
 export default supplierRoutes;
