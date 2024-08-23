@@ -10,6 +10,7 @@ import productRoutes from "./routes/ProductRoutes.js";
 import categoryRoutes from "./routes/CategoryRoutes.js";
 import uploadRoutes from './routes/UploadRoutes.js';
 import orderRoutes from './routes/OrderRoutes.js';
+import supplierRoutes from './routes/SupplierRoutes.js';
 
 
 // load the .env file
@@ -28,7 +29,7 @@ app.use("/api/category", categoryRoutes);
 app.use("/api/products" , productRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/orders", orderRoutes);
-
+app.use("/api/supplier", supplierRoutes);
 
 const __dirname = path.resolve();
 app.use("/uploads/products", express.static(path.join(__dirname + '/uploads/products')));
