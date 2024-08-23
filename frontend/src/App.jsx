@@ -7,6 +7,15 @@ import SupplierManagement from "./SupplierManagement/supplier";
 import OrderManagement from "./OrderManagement/order";
 import Layout from "./Shared/Layout";
 import Dashboard from "./Dashboard/Dashboard";
+import DashboardHome from './ReactReviews/dashboardHome'; // Adjust the import path if necessary
+import DashboardGraph from './ReactReviews/dashboardGraph'; // Adjust the import path if necessary
+import DashboardInquiry from './ReactReviews/dashboardInquiry'; // Adjust the import path if necessary
+import ChatBot from './ReactReviews/chatBot'; // File path and name must match exactly
+import ReplyPage from './ReactReviews/ReplyPage'; // Import the new ReplyPage component
+import UserInquiry from './ReactReviews/userInquiry'; // Adjust the import path if necessary
+import ToReview from './ReactReviews/toReview'; // Adjust the import path if necessary
+import History from './ReactReviews/History'; // Adjust the import path if necessary
+import DisplayReview from './ReactReviews/displayReview'; // Adjust the import path if necessary
 
 function App() {
   return (
@@ -15,6 +24,15 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="reactreviews" element={<ReactReviews />} />
+          <Route path="dashboardhome" element={<DashboardHome />} />
+          <Route path="dashboardgraph" element={<DashboardGraph />} />
+          <Route path="dashboardinquiry" element={<DashboardInquiry />} />
+          <Route path="chatbot" element={<ChatBot />} />
+          <Route path="userinquiry" element={<UserInquiry />} />
+          <Route path="toreview" element={<ToReview />} />
+          <Route path="/history" element={<History />} />
+          <Route path="reply/:id" element={<ReplyPage />} /> {/* Added route for ReplyPage */}
+          <Route path="display" element={<DisplayReview />} />
           <Route path="inventorymanagement" element={<InventoryManagement />} />
           <Route path="suppliermanagement" element={<SupplierManagement />} />
           <Route path="ordermanagement" element={<OrderManagement />} />

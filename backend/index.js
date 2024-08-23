@@ -1,24 +1,18 @@
-// packages
 import express from 'express';
 import dotenv from 'dotenv';
-import cookieParser from 'cookie-parser';
+import connectDB from './config/db.js';
+import reviewRoutes from './routes/reviewRoutes.js';
 
-// utiles
-import connectDB from "./config/db.js";
-import routes from "./routes/ProductRoutes.js"
-
-// load the .env file
 dotenv.config();
-const port = process.env.PORT || 5000;
 
-connectDB()
+const app = express();
+connectDB();
 
-const app = express()
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use(express.json())
-app.use(express.urlencoded( { extended: true } ))
-app.use(cookieParser())
+// Register the review routes with the /api/reviews prefix
+app.use('/api/reviews', reviewRoutes);
 
-app.use("/api/products" , routes);
-
-app.listen(port, () => console.log(`server running on port: ${port}`))
+const PORT = process.env.PORT || 6000;
+app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
