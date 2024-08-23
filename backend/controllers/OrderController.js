@@ -2,21 +2,21 @@ import Order from "../models/OrderModel.js";
 
 // add new Order
 export const addOrder = async (req, res) => {
+    
     try {
-        const { itemsPrice, deliveryPrice, discount, totalprice, status } = req.fields;
+        const { itemsPrice, deliveryPrice, discount, totalPrice, status } = req.fields;
         
         switch(true) {
             case !itemsPrice:
-                return res.json( { error: "Name is required" } );
+                return res.json( { error: "itemsPrice is required" } );
             case !deliveryPrice:
-                return res.json( { error: "Brand is required" } );
+                return res.json( { error: "deliveryPrice is required" } );
             case !discount:
-                return res.json( { error: "Description is required" } );
-            case !totalprice:
-                return res.json( { error: "Category is required" } );
+                return res.json( { error: "discount is required" } );
+            case !totalPrice:
+                return res.json( { error: "totalprice is required" } );
             case !status:
-                return res.json( { error: "SKU is required" } );
-           
+                return res.json( { error: "status is required" } );
         }
         
         const order = new Order({...req.fields});

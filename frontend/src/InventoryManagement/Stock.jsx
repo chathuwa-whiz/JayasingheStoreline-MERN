@@ -1,30 +1,40 @@
 import React, { useState } from 'react';
 import { useAllProductsQuery } from '../redux/api/productApiSlice';
+import { useGetOrdersQuery } from '../redux/api/orderApiSlice';
 
 export default function Stock() {
 
-    // Fetch all products
-    const { data: products, isLoading, isError } = useAllProductsQuery();
-    console.log(products);
+  // Fetch all orders
+  const { data: orders } = useGetOrdersQuery();
+  // console.log("Orders -> ",JSON.parse(orders[2].orderItems));
+  console.log(orders.length);
+  for (let index = 0; index < orders.length; index++) {
+    console.log("Order Items -> ",JSON.parse(orders[index].orderItems));
     
+  }
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const productsPerPage = 10;
+  // Fetch all products
+  const { data: products, isLoading, isError } = useAllProductsQuery();
+  // console.log("Products -> ",products);
+  
 
-    if (isLoading) return <div>Loading...</div>;
-    if (isError) return <div>Something went wrong</div>;
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 10;
 
-    // Calculate the indices of the products to display
-    const indexOfLastProduct = currentPage * productsPerPage;
-    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-    const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Something went wrong</div>;
 
-    // Calculate total pages
-    const totalPages = Math.ceil(products.length / productsPerPage);
+  // Calculate the indices of the products to display
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-    };
+  // Calculate total pages
+  const totalPages = Math.ceil(products.length / productsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+      setCurrentPage(pageNumber);
+  };
 
   return (
     <div className="rounded-lg p-8">
