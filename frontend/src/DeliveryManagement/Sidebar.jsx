@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaTruck, FaBell, FaChartBar, FaCog, FaSignOutAlt, FaListAlt, FaPlusCircle } from 'react-icons/fa';
+import { FaTruck, FaBell, FaChartBar, FaCog, FaSignOutAlt, FaListAlt, FaPlusCircle,FaTasks } from 'react-icons/fa';
 import { NavLink } from 'react-router-dom';
 const Sidebar = () => {
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
@@ -79,6 +79,16 @@ const Sidebar = () => {
               </NavLink>
             </li>
 
+            <li className="mb-4">
+              <NavLink
+                to="drivervehicledetails"
+                className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
+              >
+                <FaTasks className="h-5 w-5 mr-3" />
+                D & V Details
+              </NavLink>
+            </li>
+
             
 
           </ul>
@@ -112,6 +122,8 @@ const Sidebar = () => {
                 Logout
               </NavLink>
             </li>
+
+            
 
           </ul>
 
