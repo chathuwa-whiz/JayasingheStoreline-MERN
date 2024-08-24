@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaTruck, FaBell, FaChartBar, FaCog, FaSignOutAlt, FaListAlt, FaPlusCircle,FaTasks } from 'react-icons/fa';
 import { NavLink } from 'react-router-dom';
+import logo from '../asset/logo.png';
 const Sidebar = () => {
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
 
@@ -10,6 +11,8 @@ const Sidebar = () => {
 
   return (
     <div className="bg-white p-4">
+
+    <img src={logo} alt="logo" className="w-20 h-20 rounded-full mb-5 mx-auto" />
 
       <div className='p-4'>
 
