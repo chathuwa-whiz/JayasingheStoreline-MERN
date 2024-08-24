@@ -33,7 +33,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
   };
   
   return (
-    <div className="bg-white shadow-md rounded p-6 bg-gray-100 h-screen">
+    <div className="shadow-md rounded p-6 bg-gray-100 h-screen">
       <h1 className="text-xl font-bold mb-4">Deliveries</h1>
       <input type="text" placeholder="Search Deliveries" className="p-2 border border-gray-300 rounded mb-4 w-full" />
       <table className="w-full bg-white shadow-md rounded">
