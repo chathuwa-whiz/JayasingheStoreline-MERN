@@ -1,10 +1,9 @@
 // src/components/ReviewForm.js
-
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import StarRating from './StarRating'; // Ensure this component is correctly imported
+import StarRating from './StarRating'; // Import the StarRating component
 
 function ReviewForm() {
   const [rating, setRating] = useState(0);
@@ -39,7 +38,7 @@ function ReviewForm() {
     }
 
     try {
-      const response = await axios.post('http://localhost:6000/api/reviews', {
+      const response = await axios.post('http://localhost:4000/api/reviewRoutes', {
         rating,
         comment,
         photos,
@@ -67,7 +66,7 @@ function ReviewForm() {
       }
     } catch (error) {
       console.error('Submission error:', error);
-      const errorMessage = error.response?.data?.message || 'An error occurred while submitting the review.'+error;
+      const errorMessage = error.response?.data?.message || 'An error occurred while submitting the review.';
       toast.error(errorMessage);
     }
   };
@@ -130,6 +129,7 @@ function ReviewForm() {
     <div className="max-w-xl mx-auto p-4 bg-[#fbf3f2] shadow-md rounded-md">
       <h2 className="text-2xl font-bold mb-4 text-center">Submit Your Review</h2>
       <form onSubmit={handleSubmit}>
+        {/* Star Rating at the beginning */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Rating:

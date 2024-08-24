@@ -23,7 +23,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
-          <Route path="reactreviews" element={<ReactReviews />} />
+          <Route path="reactReviews" element={<ReactReviews />} />
           <Route path="dashboardhome" element={<DashboardHome />} />
           <Route path="dashboardgraph" element={<DashboardGraph />} />
           <Route path="dashboardinquiry" element={<DashboardInquiry />} />
