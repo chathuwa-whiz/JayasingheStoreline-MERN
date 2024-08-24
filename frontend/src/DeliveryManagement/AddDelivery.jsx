@@ -5,23 +5,33 @@ import { useGetOrdersQuery } from "../redux/api/orderApiSlice";
 import { toast } from "react-hot-toast";
 
 export default function AddDelivery() {
+    const { data: orders, isFetching, isLoading, isError } = useGetOrdersQuery();
+    const [uploadDeliveryImage] = useUploadDeliveryImageMutation();
+    const [createDelivery] = useCreateDeliveryMutation();
+    const navigate = useNavigate();
 
-    const { data: orders, isLoading, isError } = useGetOrdersQuery();
 
     
     if(isLoading) return <div>Loading...</div>
     if(isError) return <div>Error</div>
+    // Debug logs
+    console.log("Orders data:", orders);
+    console.log("Is fetching:", isFetching);
+    console.log("Is loading:", isLoading);
+    console.log("Is error:", isError);
+
+    if (isLoading) return <div>Loading...</div>;
+    if (isError) return <div>Error loading orders. Please try again later.</div>;
+    if (isFetching) return <div>Fetching...</div>;
     
-    // Check if orders exist
+    // Check if orders exist and get the latest order
     const latestOrder = orders && orders.length > 0 ? orders[orders.length - 1] : null;
+    console.log("Latest order:", latestOrder);
 
-    const products = JSON.parse(latestOrder.orderItems[0]);
-
-    console.log(products);
-    
+    // Ensure products are only accessed if latestOrder exists
+    const products = latestOrder ? JSON.parse(latestOrder.orderItems[0]) : [];
 
     const [image, setImage] = useState('');
-    const [imageUrl, setImageUrl] = useState(null);
     const [itemsPrice, setItemsPrice] = useState(0);
     const [deliveryPrice, setDeliveryPrice] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
@@ -32,14 +42,9 @@ export default function AddDelivery() {
     const [city, setCity] = useState('');
     const [province, setProvince] = useState('');
     const [postalCode, setPostalCode] = useState('');
-    const navigate = useNavigate();
-
-    const [uploadDeliveryImage] = useUploadDeliveryImageMutation();
-    const [createDelivery] = useCreateDeliveryMutation();
 
     useEffect(() => {
         if (latestOrder) {
-            // Prefill form fields with data from the latest order
             setItemsPrice(latestOrder.itemsPrice || 0);
             setFirstName(latestOrder.firstName || '');
             setLastName(latestOrder.lastName || '');
@@ -72,26 +77,28 @@ export default function AddDelivery() {
             deliveryData.append("city", city);
             deliveryData.append("province", province);
             deliveryData.append("postalCode", postalCode);
-            deliveryData.append("deliveryItem", products.forEach(product => product.name));
+            if (products.length > 0) {
+                products.forEach((product) => deliveryData.append("deliveryItem", product.name));
+            }
             deliveryData.append("from", "MAINSTORE");
             deliveryData.append("to", latestOrder.address);
             deliveryData.append("driver", "Driver");
             deliveryData.append("vehicleType", "Vehicle Type");
 
-            const data = await createDelivery(deliveryData);
-            
-            if (data.error) {
-                console.log(data.error);                
+            const response = await createDelivery(deliveryData);
+            console.log("Create delivery response:", response);
+
+            if (response.error) {
                 toast.error("Delivery creation failed. Try Again.");
             } else {
                 toast.success(`Delivery created successfully`);
                 setTimeout(() => {
                     toast.dismiss();
-                    window.location.href = "/delivery/deliverydetail";
+                    navigate("/delivery/deliverydetail");
                 }, 2000);
             }
         } catch (error) {
-            console.log(error);
+            console.error("Delivery creation error:", error);
             toast.error("Delivery creation failed. Try Again.");
         }
     };
@@ -179,13 +186,17 @@ export default function AddDelivery() {
             {/* Delivery Products */}
             <div className="border rounded-lg p-4">
                 <h2 className="text-xl font-semibold mb-4">Delivery Products</h2>
-                {products && products.map((product) => (
-                    <div key={product._id} className="mb-4">
-                        <h3 className="text-lg font-semibold">{product.name}</h3>
-                        <p>Price: Rs.{product.newProductPrice}.00</p>
-                        <p>Quantity: {product.qty}</p>
-                    </div>
-                ))}
+                {products.length > 0 ? (
+                    products.map((product) => (
+                        <div key={product._id} className="mb-4">
+                            <h3 className="text-lg font-semibold">{product.name}</h3>
+                            <p>Price: Rs.{product.newProductPrice}.00</p>
+                            <p>Quantity: {product.qty}</p>
+                        </div>
+                    ))
+                ) : (
+                    <div>No products available for delivery</div>
+                )}
             </div>
 
             {/* Pricing */}
