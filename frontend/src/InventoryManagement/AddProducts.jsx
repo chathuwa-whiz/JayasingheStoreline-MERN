@@ -26,7 +26,7 @@ export default function AddProducts() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         try {
           const productData = new FormData();
           productData.append("image", image);

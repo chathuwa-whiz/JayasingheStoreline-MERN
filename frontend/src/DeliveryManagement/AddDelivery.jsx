@@ -1,144 +1,230 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
+import { useCreateDeliveryMutation, useUploadDeliveryImageMutation } from "../redux/api/deliveryApiSlice";
+import { toast } from "react-hot-toast";
 
-function AddDelivery() {
-  const [deliveryItem, setDeliveryItem] = useState("");
-  const [description, setDescription] = useState("");
-  const [productPrice, setProductPrice] = useState("");
-  const [shippingPrice, setShippingPrice] = useState("");
-  const [discount, setDiscount] = useState("");
-  const [unit, setUnit] = useState("");
-  const [driver, setDriver] = useState("");
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
-  const [time, setTime] = useState("");
-  const [photoProduct, setPhotoProduct] = useState("");
+export default function AddDelivery() {
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log({
-      deliveryItem,
-      description,
-      productPrice,
-      shippingPrice,
-      discount,
-      unit,
-      driver,
-      from,
-      to,
-      time,
-      photoProduct,
-    });
-  };
+    const [image, setImage] = useState('');
+    const [imageUrl, setImageUrl] = useState(null);
+    const [itemsPrice, setItemsPrice] = useState(0);
+    const [deliveryPrice, setDeliveryPrice] = useState(0);
+    const [totalPrice, setTotalPrice] = useState(0);
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [telephoneNo, setTelephoneNo] = useState('');
+    const [address, setAddress] = useState('');
+    const [city, setCity] = useState('');
+    const [province, setProvince] = useState('');
+    const [postalCode, setPostalCode] = useState('');
+    const navigate = useNavigate();
 
-  return (
-    <div className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold text-gray-800">Add Delivery</h1>
-        <div className="flex items-center space-x-4">
-          <button className="bg-gray-200 px-4 py-2 rounded-md">
-            <svg
-              className="w-6 h-6 text-gray-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-          </button>
+    const [uploadDeliveryImage] = useUploadDeliveryImageMutation();
+    const [createDelivery] = useCreateDeliveryMutation();
+
+    useEffect(() => {
+        setTotalPrice(parseFloat(itemsPrice) + parseFloat(deliveryPrice));
+    }, [itemsPrice, deliveryPrice]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const deliveryData = new FormData();
+            deliveryData.append("image", image);
+            deliveryData.append("itemsPrice", itemsPrice);
+            deliveryData.append("deliveryPrice", deliveryPrice);
+            deliveryData.append("totalPrice", totalPrice);
+            deliveryData.append("firstName", firstName);
+            deliveryData.append("lastName", lastName);
+            deliveryData.append("telephoneNo", telephoneNo);
+            deliveryData.append("address", address);
+            deliveryData.append("city", city);
+            deliveryData.append("province", province);
+            deliveryData.append("postalCode", postalCode);
+
+            const data = await createDelivery(deliveryData);
+
+            if (data.error) {
+                toast.error("Delivery creation failed. Try Again.");
+            } else {
+                toast.success(`Delivery created successfully`);
+                setTimeout(() => {
+                    toast.dismiss();
+                    window.location.href = "/delivery/details";
+                }, 2000);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Delivery creation failed. Try Again.");
+        }
+    };
+
+    const uploadFileHandler = async (e) => {
+        const formData = new FormData();
+        formData.append("image", e.target.files[0]);
+        
+        try {
+            const res = await uploadDeliveryImage(formData).unwrap();
+            toast.success(res.message);
+            setImage(res.image);
+            setImageUrl(res.image);
+        } catch (error) {
+            toast.error(error?.data?.message || error.error);
+        }
+    };
+
+    return (
+        <div className="p-8 grid grid-cols-2 gap-10">
+            {/* General Information */}
+            <div className="border rounded-lg p-4">
+                <h2 className="text-xl font-semibold mb-4">Delivery Information</h2>
+                <div className="mb-4">
+                    <label className="block text-gray-700">First Name</label>
+                    <input
+                        type="text"
+                        className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                        placeholder="Enter first name"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700">Last Name</label>
+                    <input
+                        type="text"
+                        className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                        placeholder="Enter last name"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700">Telephone Number</label>
+                    <input
+                        type="text"
+                        className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                        placeholder="Enter telephone number"
+                        value={telephoneNo}
+                        onChange={(e) => setTelephoneNo(e.target.value)}
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700">Address</label>
+                    <input
+                        type="text"
+                        className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                        placeholder="Enter address"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                    />
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                    <div>
+                        <label className="block text-gray-700">City</label>
+                        <input
+                            type="text"
+                            className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                            placeholder="Enter city"
+                            value={city}
+                            onChange={(e) => setCity(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-gray-700">Province</label>
+                        <input
+                            type="text"
+                            className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                            placeholder="Enter province"
+                            value={province}
+                            onChange={(e) => setProvince(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-gray-700">Postal Code</label>
+                        <input
+                            type="text"
+                            className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                            placeholder="Enter postal code"
+                            value={postalCode}
+                            onChange={(e) => setPostalCode(e.target.value)}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Delivery Media */}
+            <div className="border rounded-lg p-4">
+                <h2 className="text-xl font-semibold mb-4">Delivery Media</h2>
+                <div className="border-2 border-dashed border-gray-300 p-6 text-center rounded-lg bg-blue-50">
+                    <p className="mb-2">Delivery Photo</p>
+                    <input 
+                        type="file" 
+                        name='image'
+                        accept='image/*'
+                        onChange={uploadFileHandler} 
+                        className="px-4 py-2 border rounded-lg text-blue-500 border-blue-500"
+                    />
+                    {imageUrl && (
+                        <div className="mt-4">
+                            <img src={imageUrl} alt="Delivery" className="max-h-40 object-contain mx-auto" />
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Pricing */}
+            <div className="border rounded-lg p-4 col-span-2">
+                <h2 className="text-xl font-semibold mb-4">Pricing</h2>
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-gray-700">Items Price</label>
+                        <input
+                            type="number"
+                            className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                            placeholder="Enter items price"
+                            value={itemsPrice}
+                            onChange={(e) => setItemsPrice(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-gray-700">Delivery Price</label>
+                        <input
+                            type="number"
+                            className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                            placeholder="Enter delivery price"
+                            value={deliveryPrice}
+                            onChange={(e) => setDeliveryPrice(e.target.value)}
+                        />
+                    </div>
+                    <div className="col-span-2">
+                        <label className="block text-gray-700">Total Price</label>
+                        <input
+                            type="number"
+                            className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                            value={totalPrice}
+                            readOnly
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="col-span-2 flex justify-end space-x-4">
+                <button 
+                    type="button" 
+                    className="px-6 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition"
+                    onClick={() => navigate("/delivery")}
+                >
+                    Discard Changes
+                </button>
+                <button 
+                    onClick={handleSubmit}
+                    className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
+                >
+                    Add Delivery
+                </button>
+            </div>
         </div>
-      </div>
-      <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-2 gap-4">
-          <input
-            type="text"
-            placeholder="Delivery Item"
-            value={deliveryItem}
-            onChange={(e) => setDeliveryItem(e.target.value)}
-            className="border p-2 rounded-md"
-          />
-          <input
-            type="text"
-            placeholder="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="border p-2 rounded-md"
-          />
-          <input
-            type="number"
-            placeholder="Product Price"
-            value={productPrice}
-            onChange={(e) => setProductPrice(e.target.value)}
-            className="border p-2 rounded-md"
-          />
-          <input
-            type="number"
-            placeholder="Shipping Price"
-            value={shippingPrice}
-            onChange={(e) => setShippingPrice(e.target.value)}
-            className="border p-2 rounded-md"
-          />
-          <input
-            type="text"
-            placeholder="Discount"
-            value={discount}
-            onChange={(e) => setDiscount(e.target.value)}
-            className="border p-2 rounded-md"
-          />
-          <input
-            type="text"
-            placeholder="Unit"
-            value={unit}
-            onChange={(e) => setUnit(e.target.value)}
-            className="border p-2 rounded-md"
-          />
-          <input
-            type="text"
-            placeholder="Driver"
-            value={driver}
-            onChange={(e) => setDriver(e.target.value)}
-            className="border p-2 rounded-md"
-          />
-          <input
-            type="text"
-            placeholder="From"
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-            className="border p-2 rounded-md"
-          />
-          <input
-            type="text"
-            placeholder="To"
-            value={to}
-            onChange={(e) => setTo(e.target.value)}
-            className="border p-2 rounded-md"
-          />
-          <input
-            type="time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-            className="border p-2 rounded-md"
-          />
-          <input
-            type="file"
-            onChange={(e) => setPhotoProduct(e.target.files[0])}
-            className="border p-2 rounded-md"
-          />
-        </div>
-        <button
-          type="submit"
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md"
-        >
-          Submit
-        </button>
-      </form>
-    </div>
-  );
+    )
 }
-
-export default AddDelivery;

@@ -15,13 +15,13 @@ import Stock from "./InventoryManagement/Stock";
 //Delivery
 import Delivery from "./DeliveryManagement/delivery";
 import DeliveryDashboard from "./DeliveryManagement/Dashboard";
-import Delivery from "./DeliveryManagement/delivery";
 import DeliveryDetail from "./DeliveryManagement/DeliveryDetail";
 import AddDelivery from "./DeliveryManagement/AddDelivery";
 import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
 import DeliveryNotification from "./DeliveryManagement/Notification";
 import DeliveryReports from "./DeliveryManagement/Reports";
 import DeliverySettings from "./DeliveryManagement/Settings";
+
 
 // Order
 import Order from "./OrderManagement/order";
@@ -67,6 +67,7 @@ function App() {
           <Route path="notification" element={<DeliveryNotification />} />
           <Route path="reports" element={<DeliveryReports />} />
           <Route path="settings" element={<DeliverySettings />} />
+          
           
           <Route path="drivervehicledetails" element={<DriverVehicleDetails />} />
         </Route>
