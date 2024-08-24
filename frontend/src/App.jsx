@@ -32,6 +32,7 @@ import OrderByProducts from "./OrderManagement/OrderByProducts";
 
 // Payement
 import Checkout from "./PaymentManagement/Checkout";
+import Reports from "./InventoryManagement/Reports";
 
 
 function App() {
@@ -52,6 +53,7 @@ function App() {
           <Route path="products/update/:_id" element={<UpdateProduct />} />
           <Route path="categories" element={<CategoryList />} />
           <Route path="stock" element={<Stock />} />
+          <Route path="reports" element={<Reports />} />
         </Route>
 
         {/*Delivery manager Routes */}

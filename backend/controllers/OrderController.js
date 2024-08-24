@@ -1,10 +1,11 @@
 import Order from "../models/OrderModel.js";
+import Product from "../models/ProductModel.js";
 
 // add new Order
 export const addOrder = async (req, res) => {
     
     try {
-        const { itemsPrice, deliveryPrice, discount, totalPrice, status } = req.fields;
+        const { itemsPrice, deliveryPrice, discount, totalPrice, status, orderItems } = req.fields;
         
         switch(true) {
             case !itemsPrice:
@@ -21,7 +22,28 @@ export const addOrder = async (req, res) => {
         
         const order = new Order({...req.fields});
         await order.save();
-        res.status(201).json( { msg : "Order Added Successfully" } );
+
+        const items = JSON.parse(orderItems);
+        for ( const item of items ) {
+            try {
+                const product = await Product.findById(item._id);
+                if(!product) {
+                    return res.status(404).json( { error : `Product with ID ${item._id} not found` } );
+                }
+                if(product.currentQty <= 0) {
+                    product.currentQty = product.countInStock;
+                }
+                product.currentQty -= item.qty;
+                await product.save();
+                
+            } catch (error) {
+                res.status(400).json( { error : `current qty not changed : `, error } )
+            }
+            
+        }
+
+        res.status(201).json( { msg : "Order Added Successfully", items } );        
+
     } catch (error) {
         res.status(400).json( { msg : "Order Adding Failed ", error } );
     }

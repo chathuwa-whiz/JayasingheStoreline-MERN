@@ -1,6 +1,22 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { useAllProductsQuery } from '../redux/api/productApiSlice';
+import { useGetOrdersQuery } from '../redux/api/orderApiSlice';
+
 
 export default function () {
+
+  // fetch all products
+  const { data: products, isLoading, isError } = useAllProductsQuery();
+  console.log(products);
+  
+  let category = [];
+  
+  if(isLoading) return <div>Loading...</div>;
+  if(isError) return <div>Something went wrong</div>;
+
+  for(const product of products){}
+
   return (
     <>
     <div className="overflow-auto bg-gray-100 p-5 rounded-lg">
@@ -11,7 +27,7 @@ export default function () {
 
       <div className="grid grid-cols-4 gap-6 mb-8">
         <div className="bg-green-100 p-4 rounded-lg text-center">
-          <h2 className="text-4xl font-bold">890</h2>
+          <h2 className="text-4xl font-bold">{products.length}</h2>
           <p className="text-lg">Total Products</p>
           <p className="text-green-600">+18% +3.8k this week</p>
         </div>
