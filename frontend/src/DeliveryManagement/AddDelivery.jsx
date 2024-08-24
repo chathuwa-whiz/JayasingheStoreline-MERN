@@ -10,10 +10,6 @@ export default function AddDelivery() {
     const [createDelivery] = useCreateDeliveryMutation();
     const navigate = useNavigate();
 
-
-    
-    if(isLoading) return <div>Loading...</div>
-    if(isError) return <div>Error</div>
     // Debug logs
     console.log("Orders data:", orders);
     console.log("Is fetching:", isFetching);
@@ -102,7 +98,6 @@ export default function AddDelivery() {
             toast.error("Delivery creation failed. Try Again.");
         }
     };
-
 
     return (
         <div className="p-8 grid grid-cols-2 gap-10">
