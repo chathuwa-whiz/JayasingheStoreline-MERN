@@ -1,35 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function App() {
   const navigate = useNavigate();
-  const [comments, setComments] = useState([
-    {
-      id: 'AC1002',
-      username: 'acc.24',
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nibh ac tempor aliquam, elit quam eleifend lectus, at imperdiet augue diam sed diam. Maecenas quis ligula elit. Donec id magna et felis ultrices ultricies. Nulla facilisi. Nulla facilisi.',
-    },
-    {
-      id: 'AC1003',
-      username: 'acc.24',
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nibh ac tempor aliquam, elit quam eleifend lectus, at imperdiet augue diam sed diam. Maecenas quis ligula elit. Donec id magna et felis ultrices ultricies. Nulla facilisi. Nulla facilisi.',
-    },
-    {
-      id: 'AC1004',
-      username: 'acc.24',
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nibh ac tempor aliquam, elit quam eleifend lectus, at imperdiet augue diam sed diam. Maecenas quis ligula elit. Donec id magna et felis ultrices ultricies. Nulla facilisi. Nulla facilisi.',
-    },
-  ]);
+  const [comments, setComments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Fetch comments (inquiries) from the server
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/api/inquiryRoutes');
+        setComments(response.data); // Update state with fetched inquiries
+        setLoading(false); // Set loading to false after data is fetched
+      } catch (err) {
+        console.error('Error fetching comments:', err.response ? err.response.data : err.message);
+        setError('Failed to load comments.');
+        setLoading(false);
+      }
+    };
+
+    fetchComments();
+  }, []);
 
   const handleReplyClick = (id) => {
     navigate(`/reply/${id}`); // Navigate to ReplyPage with comment ID
   };
 
+  if (loading) return <p>Loading...</p>; // Display loading state
+  if (error) return <p>{error}</p>; // Display error message
+
   return (
     <div className="container mx-auto p-4">
       {comments.map((comment) => (
         <div
-          key={comment.id}
+          key={comment._id} // Use _id from MongoDB for unique key
           className="bg-[#FFFFFF] rounded-lg p-4 mb-4 shadow-md"
         >
           <div className="flex items-center mb-2">
@@ -48,15 +55,15 @@ function App() {
               </svg>
             </div>
             <div className="font-bold text-[#032539]">
-              {comment.id}
+              {comment._id} {/* Display the unique ID */}
             </div>
             <div className="text-gray-500 ml-2">
-              @{comment.username}
+              @{comment.username || 'unknown'} {/* Handle missing username */}
             </div>
           </div>
-          <p className="text-gray-700">{comment.content}</p>
+          <p className="text-gray-700">{comment.message}</p> {/* Display the message */}
           <button
-            onClick={() => handleReplyClick(comment.id)} // Pass comment ID to the handler
+            onClick={() => handleReplyClick(comment._id)} // Pass comment ID to the handler
             className="bg-[#1C768F] hover:bg-[#165A6D] text-[#FFFFFF] font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             Reply

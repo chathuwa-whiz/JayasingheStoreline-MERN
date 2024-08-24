@@ -1,6 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 function App() {
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/api/reviewRoutes');
+        setReviews(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError('Error fetching reviews');
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, []);
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Inquiries Section */}
@@ -50,39 +70,62 @@ function App() {
           </div>
         </div>
       </div>
-      
+
       {/* Reviews Section */}
       <div className="bg-[#FFFFFF] shadow-lg rounded-lg overflow-hidden">
         <div className="bg-[#032539] text-[#FFFFFF] p-4 flex justify-between items-center">
           <h2 className="text-lg font-semibold">Reviews</h2>
           <div className="w-6 h-6 bg-[#1C768F] rounded-full"></div>
         </div>
-        <div className="p-4 space-y-4">
-          {['Claudia Alves', 'Cahaya Dewi', 'Olivia Wilson', 'Yael Amari'].map((author, index) => (
-            <div key={index} className="flex items-start space-x-4">
-              <div className="w-12 h-12">
-                <img
-                  src={`https://via.placeholder.com/50?text=${author.split(' ')[0][0]}`}
-                  alt={author}
-                  className="w-full h-full object-cover rounded-full"
-                />
+        <div className="p-4">
+          {loading && <div>Loading...</div>}
+          {error && <div>{error}</div>}
+          {reviews.length === 0 && !loading && !error && <p>No reviews available.</p>}
+          {reviews.map((review) => (
+            <div key={review._id} className="mb-6 p-4 border-b border-gray-300">
+              <div className="mb-2">
+                <strong>Rating:</strong> {review.rating} / 5
               </div>
-              <div className="flex-1">
-                <div className="text-sm font-semibold text-[#032539]">{author}</div>
-                <div className="text-[#FA991C] text-sm">★★★★★</div>
-                <div className="text-gray-500 text-xs">• {index * 2 + 2} min ago</div>
-                <div className="text-gray-700 mt-1">
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing"
+              <div className="mb-2">
+                <strong>Comment:</strong> {review.comment}
+              </div>
+              {review.photos.length > 0 && (
+                <div className="mb-2">
+                  <strong>Photos:</strong>
+                  <div className="flex space-x-2 mt-2">
+                    {review.photos.map((photo, index) => (
+                      <img
+                        key={index}
+                        src={photo}
+                        alt={`Review photo ${index + 1}`}
+                        className="w-20 h-20 object-cover rounded-md"
+                      />
+                    ))}
+                  </div>
                 </div>
+              )}
+              {review.video && (
+                <div className="mb-2">
+                  <strong>Video:</strong>
+                  <div className="mt-2">
+                    <video
+                      src={review.video}
+                      controls
+                      className="w-full h-40 object-cover rounded-md"
+                    />
+                  </div>
+                </div>
+              )}
+              <div className="mt-4">
+                <strong>Additional Feedback:</strong>
+                <ul className="list-disc list-inside">
+                  {Object.entries(review.checkboxes).map(([key, value]) =>
+                    value ? <li key={key}>{key.replace(/([A-Z])/g, ' $1')}</li> : null
+                  )}
+                </ul>
               </div>
             </div>
           ))}
-          <div className="text-[#1C768F] flex items-center space-x-2 cursor-pointer">
-            <span>See All</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-down" viewBox="0 0 16 16">
-              <path fillRule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z" />
-            </svg>
-          </div>
         </div>
       </div>
     </div>

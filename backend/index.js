@@ -17,10 +17,14 @@ import driverRoutes from './routes/DriverRoutes.js'; // Import driver routes
 
 // load the .env file
 dotenv.config();
+const port = process.env.PORT || 4000;
 
-const app = express();
 connectDB();
 
+const app = express();
+
+// Middleware
+app.use(cors());  
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
