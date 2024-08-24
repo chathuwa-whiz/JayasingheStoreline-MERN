@@ -64,19 +64,19 @@ export default function AddProducts() {
         }
     };
     
-      const uploadFileHandler = async (e) => {
+    const uploadFileHandler = async (e) => {
         const formData = new FormData();
         formData.append("image", e.target.files[0]);
-    
+
         try {
-          const res = await uploadProductImage(formData).unwrap();
-          toast.success(res.message);
-          setImage(res.image);
-          setImageUrl(res.image);
+            const res = await uploadProductImage(formData).unwrap();
+            toast.success(res.message);
+            setImage(res.image);
+            setImageUrl(res.image);
         } catch (error) {
-          toast.error(error?.data?.message || error.error);
+            toast.error(error?.data?.message || error.error);
         }
-      };
+    };
 
   return (
     <div className="p-8 grid grid-cols-2 gap-10">
