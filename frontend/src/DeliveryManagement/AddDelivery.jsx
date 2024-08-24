@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useCreateDeliveryMutation, useUploadDeliveryImageMutation } from "../redux/api/deliveryApiSlice";
+import { useGetOrdersQuery } from "../redux/api/orderApiSlice";
 import { toast } from "react-hot-toast";
 
 export default function AddDelivery() {
+
+    const { data: orders, isLoading, isError } = useGetOrdersQuery();
+
 
     const [image, setImage] = useState('');
     const [imageUrl, setImageUrl] = useState(null);
@@ -48,11 +52,8 @@ export default function AddDelivery() {
             deliveryData.append("driver", "Driver");
             deliveryData.append("vehicleType", "Vehicle Type");
 
-            console.log({...deliveryData});
-
             const data = await createDelivery(deliveryData);
             
-
             if (data.error) {
                 console.log(data.error);                
                 toast.error("Delivery creation failed. Try Again.");
@@ -60,7 +61,7 @@ export default function AddDelivery() {
                 toast.success(`Delivery created successfully`);
                 setTimeout(() => {
                     toast.dismiss();
-                    window.location.href = "/delivery/details";
+                    window.location.href = "/delivery/deliverydetail";
                 }, 2000);
             }
         } catch (error) {
@@ -79,7 +80,7 @@ export default function AddDelivery() {
             setImage(res.image);
             setImageUrl(res.image);
         } catch (error) {
-            toast.error(error?.data?.message || error.error);
+            toast.error(error?.data?.message || error.message);
         }
     };
 

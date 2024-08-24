@@ -41,7 +41,7 @@ export default function DeliveryDashboard() {
         <div className="bg-white p-4 rounded-lg">
           <h3 className="text-xl font-bold mb-4">Add New Delivery</h3>
           {/* Render AddDelivery component */}
-          <AddDelivery refreshDeliveries={fetchDeliveries} />
+          
         </div>
 
         <div className="bg-white p-4 rounded-lg">
@@ -56,7 +56,7 @@ export default function DeliveryDashboard() {
         <div className="bg-white p-4 rounded-lg">
           <h3 className="text-xl font-bold mb-4">Upcoming Deliveries</h3>
           {/* Render the list of upcoming deliveries */}
-          <DeliveryDetail deliveries={deliveries} refreshDeliveries={fetchDeliveries} />
+          
         </div>
       </div>
     </div>
