@@ -7,7 +7,14 @@ import { toast } from "react-hot-toast";
 export default function AddDelivery() {
 
     const { data: orders, isLoading, isError } = useGetOrdersQuery();
+    
+    // Check if orders exist
+    const latestOrder = orders && orders.length > 0 ? orders[orders.length - 1] : null;
 
+    const products = JSON.parse(latestOrder.orderItems[0]);
+
+    console.log(products);
+    
 
     const [image, setImage] = useState('');
     const [imageUrl, setImageUrl] = useState(null);
@@ -25,6 +32,21 @@ export default function AddDelivery() {
 
     const [uploadDeliveryImage] = useUploadDeliveryImageMutation();
     const [createDelivery] = useCreateDeliveryMutation();
+
+    useEffect(() => {
+        if (latestOrder) {
+            // Prefill form fields with data from the latest order
+            setItemsPrice(latestOrder.itemsPrice || 0);
+            setFirstName(latestOrder.firstName || '');
+            setLastName(latestOrder.lastName || '');
+            setTelephoneNo(latestOrder.telephoneNo || '');
+            setAddress(latestOrder.address || '');
+            setCity(latestOrder.city || '');
+            setProvince(latestOrder.province || '');
+            setPostalCode(latestOrder.postalCode || '');
+            setDeliveryPrice(latestOrder.deliveryPrice || 0);
+        }
+    }, [latestOrder]);
 
     useEffect(() => {
         setTotalPrice(parseFloat(itemsPrice) + parseFloat(deliveryPrice));
@@ -46,9 +68,9 @@ export default function AddDelivery() {
             deliveryData.append("city", city);
             deliveryData.append("province", province);
             deliveryData.append("postalCode", postalCode);
-            deliveryData.append("deliveryItem", "item");
-            deliveryData.append("from", "From");
-            deliveryData.append("to", "To");
+            deliveryData.append("deliveryItem", products.forEach(product => product.name));
+            deliveryData.append("from", "MAINSTORE");
+            deliveryData.append("to", latestOrder.address);
             deliveryData.append("driver", "Driver");
             deliveryData.append("vehicleType", "Vehicle Type");
 
@@ -70,19 +92,8 @@ export default function AddDelivery() {
         }
     };
 
-    const uploadFileHandler = async (e) => {
-        const formData = new FormData();
-        formData.append("image", e.target.files[0]);
-        
-        try {
-            const res = await uploadDeliveryImage(formData).unwrap();
-            toast.success(res.message);
-            setImage(res.image);
-            setImageUrl(res.image);
-        } catch (error) {
-            toast.error(error?.data?.message || error.message);
-        }
-    };
+    if(isLoading) return <div>Loading...</div>
+    if(isError) return <div>Error</div>
 
     return (
         <div className="p-8 grid grid-cols-2 gap-10">
@@ -163,24 +174,16 @@ export default function AddDelivery() {
                 </div>
             </div>
 
-            {/* Delivery Media */}
+            {/* Delivery Products */}
             <div className="border rounded-lg p-4">
-                <h2 className="text-xl font-semibold mb-4">Delivery Media</h2>
-                <div className="border-2 border-dashed border-gray-300 p-6 text-center rounded-lg bg-blue-50">
-                    <p className="mb-2">Delivery Photo</p>
-                    <input 
-                        type="file" 
-                        name='image'
-                        accept='image/*'
-                        onChange={uploadFileHandler} 
-                        className="px-4 py-2 border rounded-lg text-blue-500 border-blue-500"
-                    />
-                    {imageUrl && (
-                        <div className="mt-4">
-                            <img src={imageUrl} alt="Delivery" className="max-h-40 object-contain mx-auto" />
-                        </div>
-                    )}
-                </div>
+                <h2 className="text-xl font-semibold mb-4">Delivery Products</h2>
+                {products && products.map((product) => (
+                    <div key={product._id} className="mb-4">
+                        <h3 className="text-lg font-semibold">{product.name}</h3>
+                        <p>Price: Rs.{product.newProductPrice}.00</p>
+                        <p>Quantity: {product.qty}</p>
+                    </div>
+                ))}
             </div>
 
             {/* Pricing */}
@@ -207,32 +210,22 @@ export default function AddDelivery() {
                             onChange={(e) => setDeliveryPrice(e.target.value)}
                         />
                     </div>
-                    <div className="col-span-2">
-                        <label className="block text-gray-700">Total Price</label>
-                        <input
-                            type="number"
-                            className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
-                            value={totalPrice}
-                            readOnly
-                        />
-                    </div>
                 </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="col-span-2 flex justify-end space-x-4">
-                <button 
-                    type="button" 
-                    className="px-6 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition"
-                    onClick={() => navigate("/delivery")}
-                >
-                    Discard Changes
-                </button>
-                <button 
+                <div className="mt-4">
+                    <label className="block text-gray-700">Total Price</label>
+                    <input
+                        type="number"
+                        className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                        placeholder="Total price"
+                        value={totalPrice}
+                        readOnly
+                    />
+                </div>
+                <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mt-6"
                     onClick={handleSubmit}
-                    className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
                 >
-                    Add Delivery
+                    Create Delivery
                 </button>
             </div>
         </div>
