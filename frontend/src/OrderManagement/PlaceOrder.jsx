@@ -10,7 +10,7 @@ export default function OrderSummary() {
 
   const { cartItems } = cart;
 
-  console.log(cart);
+  // console.log(cart);
 
   const handleSubmit = async(e) => {
     

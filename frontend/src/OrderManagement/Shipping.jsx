@@ -42,7 +42,7 @@ const DeliveryInformationForm = () => {
       orderData.append("postalCode", postalCode);
       orderData.append("paymentMethod", paymentMethod);
       
-      console.log(cart);
+      // console.log(cart);
       
 
       const data = await createOrder(orderData);
