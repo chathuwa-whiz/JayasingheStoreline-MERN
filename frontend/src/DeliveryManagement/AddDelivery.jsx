@@ -42,10 +42,19 @@ export default function AddDelivery() {
             deliveryData.append("city", city);
             deliveryData.append("province", province);
             deliveryData.append("postalCode", postalCode);
+            deliveryData.append("deliveryItem", "item");
+            deliveryData.append("from", "From");
+            deliveryData.append("to", "To");
+            deliveryData.append("driver", "Driver");
+            deliveryData.append("vehicleType", "Vehicle Type");
+
+            console.log({...deliveryData});
 
             const data = await createDelivery(deliveryData);
+            
 
             if (data.error) {
+                console.log(data.error);                
                 toast.error("Delivery creation failed. Try Again.");
             } else {
                 toast.success(`Delivery created successfully`);
@@ -55,7 +64,7 @@ export default function AddDelivery() {
                 }, 2000);
             }
         } catch (error) {
-            console.error(error);
+            console.log(error);
             toast.error("Delivery creation failed. Try Again.");
         }
     };
