@@ -1,6 +1,5 @@
 import React from 'react';
-import { Bar } from 'react-chartjs-2';
-import { Pie } from 'react-chartjs-2';
+import { Bar, Pie } from 'react-chartjs-2';
 import 'chart.js/auto';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -30,8 +29,6 @@ const Reports = () => {
 
   const exportToPDF = () => {
     const doc = new jsPDF();
-
-    // Add title
     doc.setFontSize(22);
     doc.text('Reports', 14, 22);
 
@@ -39,7 +36,6 @@ const Reports = () => {
     doc.setFontSize(16);
     doc.text('Monthly Deliveries', 14, 40);
 
-    // Generate Bar Chart as an image and add to PDF
     const barChart = document.querySelector('.bar-chart canvas');
     if (barChart) {
       doc.addImage(barChart.toDataURL(), 'PNG', 14, 50, 180, 100);
@@ -49,17 +45,15 @@ const Reports = () => {
     doc.setFontSize(16);
     doc.text('Most Used Units', 14, 160);
 
-    // Generate Pie Chart as an image and add to PDF
     const pieChart = document.querySelector('.pie-chart canvas');
     if (pieChart) {
       doc.addImage(pieChart.toDataURL(), 'PNG', 14, 170, 180, 100);
     }
 
-    // Add More Details
+    // Add Table
     doc.setFontSize(16);
     doc.text('Details:', 14, 280);
 
-    // Example: Add a table
     const details = [
       ['Unit', 'Percentage'],
       ['Lorry A', '20%'],
@@ -77,6 +71,11 @@ const Reports = () => {
     });
 
     doc.save('report.pdf');
+  };
+
+  const exportToExcel = () => {
+    // This is a placeholder function. You will need to implement the logic for exporting data to Excel.
+    alert('Export to Excel functionality is not implemented yet.');
   };
 
   return (
@@ -108,26 +107,12 @@ const Reports = () => {
           <div className="w-1/2 bg-white p-6 rounded-lg shadow-md mr-4">
             <h2 className="text-xl font-semibold mb-4">Most Used Units</h2>
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-medium">Lorry A</span>
-                <span>20%</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="font-medium">Lorry B</span>
-                <span>35%</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="font-medium">Lorry C</span>
-                <span>12%</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="font-medium">D Bike</span>
-                <span>10%</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="font-medium">D Tuk</span>
-                <span>21%</span>
-              </div>
+              {pieData.labels.map((label, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <span className="font-medium">{label}</span>
+                  <span>{pieData.datasets[0].data[index]}%</span>
+                </div>
+              ))}
             </div>
           </div>
           <div className="w-1/2 bg-white p-6 rounded-lg shadow-md pie-chart">
@@ -136,8 +121,18 @@ const Reports = () => {
         </div>
 
         <div className="mt-8 flex justify-end space-x-4">
-          <button className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Export to PDF</button>
-          <button className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Export to Excel</button>
+          <button
+            onClick={exportToPDF}
+            className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+          >
+            Export to PDF
+          </button>
+          <button
+            onClick={exportToExcel}
+            className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+          >
+            Export to Excel
+          </button>
         </div>
       </div>
     </div>
