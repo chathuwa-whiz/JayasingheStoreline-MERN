@@ -4,6 +4,7 @@ import SupplierManagement from "./SupplierManagement/supplier";
 import Layout from "./Shared/Layout";
 import MainDashboard from "./Dashboard/Dashboard";
 
+
 // inventory
 import InventoryDashboard from "./InventoryManagement/Dashboard";
 import Inventory from "./InventoryManagement/Inventory";
@@ -42,15 +43,28 @@ import Reports from "./InventoryManagement/Reports";
 
 
 
+//Customer
+import CustomerLogin from "./CustomerManagemet/CusLogin"; 
+import Register from "./CustomerManagemet/register";
+import Home from "./CustomerManagemet/Home";
+import Profile from "./CustomerManagemet/profile";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         <Route path="/" element={<Layout />}>
           <Route index element={<MainDashboard />} />
-          <Route path="reactreviews" element={<ReactReviews />} />
-          <Route path="suppliermanagement" element={<SupplierManagement />} />
+          <Route path="home" element={<Home />} />
+          <Route path="profile" element={<Profile />} />
+
+          {/* order manager part */}
+          <Route path="productlist" element={<ProductsList />} />
+          <Route path="product/:_id" element={<SingleProductView />} />
+          <Route path="cart" element={<Cart />} />
+          <Route path="shipping" element={<Shipping />} />
+          <Route path="placeorder" element={<PlaceOrder />} />
         </Route>
 
         {/* Inventory Manager Routes */}
@@ -84,18 +98,21 @@ function App() {
           <Route path="orderhistory" element={<OrderHistory />} />
           <Route path="orderinqiry" element={<OrderInquiries/>} />
           <Route path="orderByProduct" element={<OrderByProducts/>} />
-        </Route>
-        <Route path="productlist" element={<ProductsList />} /> 
-        <Route path="product/:_id" element={<SingleProductView />} />
-        <Route path="cart" element={<Cart />} />
-        <Route path="shipping" element={<Shipping />} />
-        <Route path="placeorder" element={<PlaceOrder />} />
-        
+        </Route>        
 
         {/* Payment Manager Routes */}
         <Route path="checkout" element={<Checkout />} />
 
         
+        {/* Customer Manager Routes */}
+        <Route path="register" element={<Register />} />
+        <Route path="customerlogin" element={<CustomerLogin />} />
+    
+
+    
+
+
+
       </Routes>
     </BrowserRouter>
   );

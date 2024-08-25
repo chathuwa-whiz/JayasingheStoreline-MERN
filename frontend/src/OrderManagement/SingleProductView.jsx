@@ -1,12 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
-import {
-    useUpdateProductMutation,
-    useDeleteProductMutation,
-    useGetProductByIdQuery,
-    useUploadProductImageMutation
-} from "../redux/api/productApiSlice";
-import {useFetchCategoriesQuery} from "../redux/api/categoryApiSlice";
+import { useGetProductByIdQuery } from "../redux/api/productApiSlice";
 import toast from "react-hot-toast";
 import { useDispatch } from 'react-redux';
 import {addToCart} from "../redux/features/cart/cartSlice";
@@ -35,11 +29,6 @@ export default function SingleProductView() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const [uploadProductImage] = useUploadProductImageMutation();
-    const { data: categories = [] } = useFetchCategoriesQuery();
-    const [updateProduct] = useUpdateProductMutation();
-    const [deleteProduct] = useDeleteProductMutation();
-
     useEffect(() => {
         if(productData && productData._id) {
             setName(productData.name);
@@ -64,8 +53,8 @@ export default function SingleProductView() {
         navigate('/cart');
     }
 
-  return (
-    <div className="container mx-auto p-6">
+    return (
+        <div className="container mx-auto p-6">
             {/* Product Details Wrapper */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Product Image */}
@@ -122,5 +111,5 @@ export default function SingleProductView() {
                 </div>
             </div>
         </div>
-  )
+    )
 }
