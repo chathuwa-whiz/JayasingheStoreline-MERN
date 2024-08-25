@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
 import { FaSearch, FaBell } from "react-icons/fa";
-import logo from "../../../uploads/customerManagement/logo.png" // Adjust the path to your logo image
+import logo from "../asset/logo.png" // Adjust the path to your logo image
 
 
 // main home

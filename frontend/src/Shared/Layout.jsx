@@ -10,16 +10,14 @@ export default function Layout() {
   // Determine which header to display based on the current route
   let header;
 
-  if(location.pathname === "/") {
+  if(location.pathname === "/" || location.pathname === "/productlist" || location.pathname === "/cart" || location.pathname === "/shipping" || location.pathname === "/placeorder") {
     header = <DefaultHeader />
   } else if(location.pathname === "/home") {
     header = <HomeHeader />
   } else if(location.pathname === "/profile") {
     header = <ProfileHeader />
-  } else if(location.pathname === "/inventory/reports") {
-    // header = <ReportsHeader />
   } else{
-    // header = <DefaultHeadre />
+    header = <DefaultHeader />
   }
 
   return (
