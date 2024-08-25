@@ -16,12 +16,10 @@ export default function Layout() {
     header = <HomeHeader />
   } else if(location.pathname === "/profile") {
     header = <ProfileHeader />
-  } else{
-    header = <DefaultHeader />
-  } else if(location.pathname === "/register" || location.pathname === "/customerlogin") {
+  }else if(location.pathname === "/register" || location.pathname === "/customerlogin") {
     header = <RegisterHeader />
   } else {
-    header = <RegisterHeader />
+    header = <DefaultHeader />
   }
 
   return (
