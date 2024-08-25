@@ -45,6 +45,8 @@ function App() {
           <Route index element={<MainDashboard />} />
           <Route path="home" element={<Home />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="register" element={<Register />} />
+          <Route path="customerlogin" element={<CustomerLogin />} />
           
         </Route>
 
@@ -80,8 +82,7 @@ function App() {
 
         
         {/* Customer Manager Routes */}
-    <Route path="register" element={<Register />} />
-    <Route path="customerlogin" element={<CustomerLogin />} />
+    
     
 
     

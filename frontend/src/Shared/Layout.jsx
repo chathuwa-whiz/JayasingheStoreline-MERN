@@ -1,5 +1,5 @@
 import React from 'react'
-import DefaultHeader, {HomeHeader, ProfileHeader} from './Header'
+import DefaultHeader, {HomeHeader, ProfileHeader, RegisterHeader} from './Header'
 import { Outlet, useLocation } from 'react-router'
 import Footer from './Footer'
 
@@ -16,10 +16,10 @@ export default function Layout() {
     header = <HomeHeader />
   } else if(location.pathname === "/profile") {
     header = <ProfileHeader />
-  } else if(location.pathname === "/inventory/reports") {
-    // header = <ReportsHeader />
-  } else{
-    // header = <DefaultHeadre />
+  } else if(location.pathname === "/register" || location.pathname === "/customerlogin") {
+    header = <RegisterHeader />
+  } else {
+    header = <RegisterHeader />
   }
 
   return (
