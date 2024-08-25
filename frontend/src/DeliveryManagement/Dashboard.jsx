@@ -114,6 +114,37 @@ export default function DeliveryDashboard() {
         </div>
       </div>
 
+      {/* Recent Deliveries Section */}
+      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h2 className="text-2xl font-semibold mb-4">Recent Deliveries</h2>
+        <table className="w-full table-auto">
+          <thead>
+            <tr>
+              <th className="px-4 py-2">ID</th>
+              <th className="px-4 py-2">Delivery Item</th>
+              <th className="px-4 py-2">Items Price</th>
+              <th className="px-4 py-2">Delivery Price</th>
+              <th className="px-4 py-2">Total Price</th>
+              <th className="px-4 py-2">Driver</th>
+              <th className="px-4 py-2">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {deliveries.slice(0, 5).map(delivery => (
+              <tr key={delivery._id} className="text-center">
+                <td className="border px-4 py-2">{delivery._id}</td>
+                <td className="border px-4 py-2">{delivery.itemName}</td>
+                <td className="border px-4 py-2">{delivery.itemsPrice.toFixed(2)}</td>
+                <td className="border px-4 py-2">{delivery.deliveryPrice.toFixed(2)}</td>
+                <td className="border px-4 py-2">{(delivery.itemsPrice + delivery.deliveryPrice).toFixed(2)}</td>
+                <td className="border px-4 py-2">{delivery.driverName}</td>
+                <td className="border px-4 py-2">{delivery.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       {/* Delivery Insights Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-lg shadow-md">
