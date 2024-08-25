@@ -1,30 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { useCreateDeliveryMutation, useUploadDeliveryImageMutation } from "../redux/api/deliveryApiSlice";
-import { useGetOrdersQuery } from "../redux/api/orderApiSlice";
+import { useCreateDeliveryMutation } from "../redux/api/deliveryApiSlice";
 import { toast } from "react-hot-toast";
 
 export default function AddDelivery() {
-    const { data: orders, isFetching, isLoading, isError } = useGetOrdersQuery();
-    const [uploadDeliveryImage] = useUploadDeliveryImageMutation();
-    const [createDelivery] = useCreateDeliveryMutation();
-    const navigate = useNavigate();
-
-    console.log("Orders data:", orders);
-    console.log("Is fetching:", isFetching);
-    console.log("Is loading:", isLoading);
-    console.log("Is error:", isError);
-
-    if (isLoading) return <div>Loading...</div>;
-    if (isError) return <div>Error loading orders. Please try again later.</div>;
-    if (isFetching) return <div>Fetching...</div>;
-
-    const latestOrder = orders && orders.length > 0 ? orders[orders.length - 1] : null;
-    console.log("Latest order:", latestOrder);
-
-    const products = latestOrder ? JSON.parse(latestOrder.orderItems[0]) : [];
-
-    const [image, setImage] = useState('');
+    const [image, setImage] = useState(null);
     const [itemsPrice, setItemsPrice] = useState(0);
     const [deliveryPrice, setDeliveryPrice] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
@@ -36,19 +16,8 @@ export default function AddDelivery() {
     const [province, setProvince] = useState('');
     const [postalCode, setPostalCode] = useState('');
 
-    useEffect(() => {
-        if (latestOrder) {
-            setItemsPrice(latestOrder.itemsPrice || 0);
-            setFirstName(latestOrder.firstName || '');
-            setLastName(latestOrder.lastName || '');
-            setTelephoneNo(latestOrder.telephoneNo || '');
-            setAddress(latestOrder.address || '');
-            setCity(latestOrder.city || '');
-            setProvince(latestOrder.province || '');
-            setPostalCode(latestOrder.postalCode || '');
-            setDeliveryPrice(latestOrder.deliveryPrice || 0);
-        }
-    }, [latestOrder]);
+    const [createDelivery] = useCreateDeliveryMutation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         setTotalPrice(parseFloat(itemsPrice) + parseFloat(deliveryPrice));
@@ -59,7 +28,9 @@ export default function AddDelivery() {
 
         try {
             const deliveryData = new FormData();
-            deliveryData.append("image", image);
+            if (image) {
+                deliveryData.append("image", image);
+            }
             deliveryData.append("itemsPrice", itemsPrice);
             deliveryData.append("deliveryPrice", deliveryPrice);
             deliveryData.append("totalPrice", totalPrice);
@@ -70,17 +41,8 @@ export default function AddDelivery() {
             deliveryData.append("city", city);
             deliveryData.append("province", province);
             deliveryData.append("postalCode", postalCode);
-            if (products.length > 0) {
-                products.forEach((product) => deliveryData.append("deliveryItem", product.name));
-            }
-            deliveryData.append("from", "MAINSTORE");
-            deliveryData.append("to", latestOrder.address);
-            deliveryData.append("driver", "Driver");
-            deliveryData.append("vehicleType", "Vehicle Type");
 
             const response = await createDelivery(deliveryData);
-            console.log("Create delivery response:", response);
-
             if (response.error) {
                 toast.error("Delivery creation failed. Try Again.");
             } else {
@@ -97,45 +59,45 @@ export default function AddDelivery() {
     };
 
     return (
-        <div className="p-8 grid grid-cols-2 gap-10">
+        <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50">
             {/* General Information */}
-            <div className="border rounded-lg p-4">
-                <h2 className="text-xl font-semibold mb-4">Delivery Information</h2>
+            <div className="border rounded-lg p-6 bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <h2 className="text-2xl font-semibold mb-6 text-gray-800">Delivery Information</h2>
                 <div className="mb-4">
-                    <label className="block text-gray-700">First Name</label>
+                    <label className="block text-gray-700 font-medium">First Name</label>
                     <input
                         type="text"
-                        className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                        className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
                         placeholder="Enter first name"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700">Last Name</label>
+                    <label className="block text-gray-700 font-medium">Last Name</label>
                     <input
                         type="text"
-                        className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                        className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
                         placeholder="Enter last name"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700">Telephone Number</label>
+                    <label className="block text-gray-700 font-medium">Telephone Number</label>
                     <input
                         type="text"
-                        className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                        className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
                         placeholder="Enter telephone number"
                         value={telephoneNo}
                         onChange={(e) => setTelephoneNo(e.target.value)}
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700">Address</label>
+                    <label className="block text-gray-700 font-medium">Address</label>
                     <input
                         type="text"
-                        className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                        className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
                         placeholder="Enter address"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
@@ -143,30 +105,30 @@ export default function AddDelivery() {
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                     <div>
-                        <label className="block text-gray-700">City</label>
+                        <label className="block text-gray-700 font-medium">City</label>
                         <input
                             type="text"
-                            className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                            className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
                             placeholder="Enter city"
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
                         />
                     </div>
                     <div>
-                        <label className="block text-gray-700">Province</label>
+                        <label className="block text-gray-700 font-medium">Province</label>
                         <input
                             type="text"
-                            className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                            className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
                             placeholder="Enter province"
                             value={province}
                             onChange={(e) => setProvince(e.target.value)}
                         />
                     </div>
                     <div>
-                        <label className="block text-gray-700">Postal Code</label>
+                        <label className="block text-gray-700 font-medium">Postal Code</label>
                         <input
                             type="text"
-                            className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                            className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
                             placeholder="Enter postal code"
                             value={postalCode}
                             onChange={(e) => setPostalCode(e.target.value)}
@@ -176,51 +138,52 @@ export default function AddDelivery() {
             </div>
 
             {/* Delivery Products */}
-            <div className="border rounded-lg p-4">
-                <h2 className="text-xl font-semibold mb-4">Delivery Products</h2>
-                {products.length > 0 ? (
+            <div className="border rounded-lg p-6 bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <h2 className="text-2xl font-semibold mb-6 text-gray-800">Delivery Products</h2>
+                {/* Placeholder for product information */}
+                {/* {products.length > 0 ? (
                     products.map((product) => (
                         <div key={product._id} className="mb-4">
-                            <h3 className="text-lg font-semibold">{product.name}</h3>
-                            <p>Price: Rs.{product.newProductPrice}.00</p>
-                            <p>Quantity: {product.qty}</p>
+                            <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
+                            <p className="text-gray-600">Price: Rs.{product.newProductPrice}.00</p>
+                            <p className="text-gray-600">Quantity: {product.qty}</p>
                         </div>
                     ))
                 ) : (
-                    <div>No products available for delivery</div>
-                )}
+                    <div className="text-gray-600">No products available for delivery</div>
+                )} */}
             </div>
 
             {/* Pricing */}
-            <div className="border rounded-lg p-4 col-span-2">
-                <h2 className="text-xl font-semibold mb-4">Pricing</h2>
+            <div className="border rounded-lg p-6 col-span-2 bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <h2 className="text-2xl font-semibold mb-6 text-gray-800">Pricing</h2>
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-gray-700">Items Price</label>
+                        <label className="block text-gray-700 font-medium">Items Price</label>
                         <input
                             type="number"
-                            className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                            className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
                             placeholder="Enter items price"
                             value={itemsPrice}
                             onChange={(e) => setItemsPrice(e.target.value)}
                         />
                     </div>
                     <div>
-                        <label className="block text-gray-700">Delivery Price</label>
+                        <label className="block text-gray-700 font-medium">Delivery Price</label>
                         <input
                             type="number"
-                            className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                            className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
                             placeholder="Enter delivery price"
                             value={deliveryPrice}
                             onChange={(e) => setDeliveryPrice(e.target.value)}
                         />
                     </div>
                 </div>
-                <div className="mt-4">
-                    <label className="block text-gray-700">Total Price</label>
+                <div className="mt-6">
+                    <label className="block text-gray-700 font-medium">Total Price</label>
                     <input
                         type="number"
-                        className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                        className="w-full p-3 mt-1 border rounded-lg bg-gray-200 cursor-not-allowed"
                         placeholder="Total price"
                         value={totalPrice}
                         disabled
@@ -228,13 +191,28 @@ export default function AddDelivery() {
                 </div>
             </div>
 
+            {/* Proof of Delivery */}
+            <div className="border rounded-lg p-6 col-span-2 bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <h2 className="text-2xl font-semibold mb-6 text-gray-800">Proof of Delivery</h2>
+                <div className="mb-4">
+                    <label className="block text-gray-700 font-medium">Upload Image (PNG/JPG)</label>
+                    <input
+                        type="file"
+                        accept=".png, .jpg, .jpeg"
+                        className="w-full p-3 mt-1 border rounded-lg bg-gray-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
+                        onChange={(e) => setImage(e.target.files[0])}
+                    />
+                </div>
+            </div>
+
             {/* Submit Button */}
-            <div className="col-span-2">
+            <div className="col-span-2 flex justify-end mt-8">
                 <button
+                    type="submit"
+                    className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg transition duration-200"
                     onClick={handleSubmit}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
                 >
-                    Submit Delivery
+                    Submit
                 </button>
             </div>
         </div>

@@ -55,66 +55,76 @@ export default function DeliveryDetail({ onEditDelivery }) {
   const getRowClass = (status) => {
     switch (status) {
       case 'Delayed':
-        return 'bg-blue-100'; // Light blue for delayed
+        return 'bg-blue-50 border-blue-300 text-blue-700'; // Light blue for delayed
       case 'Completed':
-        return 'bg-green-100'; // Light green for completed
+        return 'bg-green-50 border-green-300 text-green-700'; // Light green for completed
       default:
-        return 'bg-yellow-100'; // Light yellow for pending
+        return 'bg-white border-gray-300 text-gray-700'; // White for pending
     }
   };
 
   return (
-    <div className="shadow-md rounded p-6 bg-gray-100 h-screen">
-      <h1 className="text-xl font-bold mb-4">Deliveries</h1>
-      
-      <input type="text" placeholder="Search Deliveries" className="p-2 border border-gray-300 rounded mb-4 w-full" />
+    <div className="shadow-lg rounded-lg p-6 bg-gray-100 h-screen overflow-auto">
+      <h1 className="text-2xl font-semibold mb-6 text-gray-800">Deliveries</h1>
 
-      <table className="w-full bg-white shadow-md rounded">
-        <thead>
+      <input 
+        type="text" 
+        placeholder="Search Deliveries" 
+        className="p-3 border border-gray-300 rounded-lg mb-6 w-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow duration-300"
+      />
+
+      <table className="w-full bg-white shadow-lg rounded-lg border border-gray-300">
+        <thead className="bg-gray-200 text-gray-700">
           <tr>
-            <th className="border p-2">ID</th>
-            <th className="border p-2">Delivery Item</th>
-            <th className="border p-2">Items Price</th>
-            <th className="border p-2">Delivery Price</th>
-            <th className="border p-2">Total Price</th>
-            <th className="border p-2">Driver</th>
-            <th className="border p-2">Status</th>
-            <th className="border p-2">Actions</th>
+            <th className="border p-3 text-left">ID</th>
+            <th className="border p-3 text-left">Delivery Item</th>
+            <th className="border p-3 text-left">Items Price</th>
+            <th className="border p-3 text-left">Delivery Price</th>
+            <th className="border p-3 text-left">Total Price</th>
+            <th className="border p-3 text-left">Driver</th>
+            <th className="border p-3 text-left">Status</th>
+            <th className="border p-3 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
           {deliveries.map((delivery) => (
-            <tr key={delivery._id} className={getRowClass(delivery.status)}>
-              <td className="border p-2">{delivery._id}</td>
-              <td className="border p-2">{delivery.deliveryItem}</td>
-              <td className="border p-2">{delivery.itemsPrice} LKR</td>
-              <td className="border p-2">{delivery.deliveryPrice} LKR</td>
-              <td className="border p-2">{delivery.totalPrice} LKR</td>
-              <td className="border p-2">{delivery.driver}</td>
-              <td className="border p-2">{delivery.status || 'Pending'}</td>
-              <td className="border p-2 flex space-x-2">
+            <tr key={delivery._id} className={`border-b ${getRowClass(delivery.status)} hover:bg-orange-100 transition-colors duration-300`}>
+              <td className="border p-3">{delivery._id}</td>
+              <td className="border p-3">{delivery.deliveryItem}</td>
+              <td className="border p-3">{delivery.itemsPrice} LKR</td>
+              <td className="border p-3">{delivery.deliveryPrice} LKR</td>
+              <td className="border p-3">{delivery.totalPrice} LKR</td>
+              <td className="border p-3">{delivery.driver}</td>
+              <td className="border p-3">{delivery.status || 'Pending'}</td>
+              <td className="border p-3 flex space-x-2">
                 <button
-                  className="p-1 mx-1 text-yellow-500 hover:text-yellow-600"
+                  className="p-2 text-yellow-500 hover:bg-yellow-100 rounded-lg transition-colors duration-300"
                   onClick={() => handleStatusChange(delivery._id, 'Pending')}
                 >
                   Pending
                 </button>
                 <button
-                  className="p-1 mx-1 text-blue-500 hover:text-blue-600"
+                  className="p-2 text-blue-500 hover:bg-blue-100 rounded-lg transition-colors duration-300"
                   onClick={() => handleStatusChange(delivery._id, 'Delayed')}
                 >
                   Delay
                 </button>
                 <button
-                  className="p-1 mx-1 text-green-500 hover:text-green-600"
+                  className="p-2 text-green-500 hover:bg-green-100 rounded-lg transition-colors duration-300"
                   onClick={() => handleStatusChange(delivery._id, 'Completed')}
                 >
                   Done
                 </button>
-                <button className="p-1 mx-1 text-yellow-500" onClick={() => onEditDelivery(delivery)}>
+                <button 
+                  className="p-2 text-yellow-500 hover:bg-yellow-100 rounded-lg transition-colors duration-300"
+                  onClick={() => onEditDelivery(delivery)}
+                >
                   <FaEdit />
                 </button>
-                <button className="p-1 mx-1 text-red-500" onClick={() => handleDelete(delivery._id)}>
+                <button 
+                  className="p-2 text-red-500 hover:bg-red-100 rounded-lg transition-colors duration-300"
+                  onClick={() => handleDelete(delivery._id)}
+                >
                   <FaTrash />
                 </button>
               </td>

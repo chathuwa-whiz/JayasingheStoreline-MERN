@@ -22,6 +22,7 @@ import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
 import DeliveryNotification from "./DeliveryManagement/Notification";
 import DeliveryReports from "./DeliveryManagement/Reports";
 import DeliverySettings from "./DeliveryManagement/Settings";
+import Logout from "./DeliveryManagement/Logout";
 
 
 // Order
@@ -87,6 +88,7 @@ function App() {
           <Route path="notification" element={<DeliveryNotification />} />
           <Route path="reports" element={<DeliveryReports />} />
           <Route path="settings" element={<DeliverySettings />} />
+          <Route path="logout" element={<Logout />} />
           
           
           <Route path="drivervehicledetails" element={<DriverVehicleDetails />} />
