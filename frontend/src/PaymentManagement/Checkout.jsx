@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+export default function Checkout() {
 
-function Checkout() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [totalAmount, setTotalAmount] = useState(0);
 
@@ -27,9 +27,9 @@ function Checkout() {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-200 via-blue-300 to-purple-300 flex flex-col">
-      <header className="py-4 bg-blue-600 text-white text-center">
+      {/* <header className="py-4 bg-blue-600 text-white text-center">
         <h1 className="text-3xl font-semibold">Checkout</h1>
-      </header>
+      </header> */}
 
       <div className="flex justify-center items-start h-full py-8 flex-grow">
         <div className="w-2/3 max-w-lg p-6 bg-white shadow-md rounded-md mr-4">
@@ -141,18 +141,9 @@ function Checkout() {
         </div>
       </div>
 
-      <footer className="py-4 bg-blue-600 text-white text-center w-full fixed bottom-0">
+      {/* <footer className="py-4 bg-blue-600 text-white text-center w-full fixed bottom-0">
         <p className="text-sm">© 2024 Your Company. All rights reserved.</p>
-      </footer>
+      </footer> */}
     </div>
   );
-}
-
-export default Checkout;
-import React from 'react';
-
-export default function Checkout() {
-  return (
-    <div>Checkout</div>
-  )
 }

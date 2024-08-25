@@ -32,7 +32,7 @@ import OrderInquiries from "./OrderManagement/OrderInquiries";
 import OrderByProducts from "./OrderManagement/OrderByProducts";
 
 // Payement
-import Checkout from "./PaymentManagement/Checkout";
+
 import Reports from "./InventoryManagement/Reports";
 
 
@@ -100,31 +100,18 @@ function App() {
 
         {/* Payment Manager Routes */}
         <Route path="checkout" element={<Checkout />} />
+        <Route path="payment" element={<Payment />}>
+          <Route index element={<PaymentDashboard />} />
+          <Route path="paymentreport" element={<PaymentReport />} />
+          <Route path="cod" element={<CODdetails />} />
+          <Route path="hrnotify" element={<HrNotify />} />
+          <Route path="supnotify" element={<SupNotify />} />
+        </Route>
 
         
         {/* Customer Manager Routes */}
         <Route path="register" element={<Register />} />
         <Route path="customerlogin" element={<CustomerLogin />} />
-    
-
-    
-
-
-
-        <Route path="productlist" element={<ProductsList />} />
-        <Route path="product/:_id" element={<SingleProductView />} />
-        <Route path="cart" element={<Cart />} />
-        </Route>
-
-        {/* payment Manager Routes */}
-        <Route path="payment" element={<Payment />}>
-          <Route index element={<PaymentDashboard />} />
-          <Route path="paymentReport" element={<PaymentReport />} />
-          <Route path="coddetails" element={<CODdetails />} />
-          <Route path="checkout" element={<Checkout />} />
-          <Route path="hrnotify" element={<HrNotify />} />
-          <Route path="supnotify" element={<SupNotify />} />
-        </Route>
 
       </Routes>
 

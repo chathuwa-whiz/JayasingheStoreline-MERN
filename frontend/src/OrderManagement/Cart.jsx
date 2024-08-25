@@ -8,22 +8,7 @@ export default function Cart() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     
-    const cart = useSelector((state) => state.cart);
-
-    const { cartItems, itemsPrice, shippingPrice, taxPrice, totalPrice } = cart;
-
-    const { subTotal, total, discount} = cartItems.reduce((acc, item) => {
-        return {
-            subTotal: acc.subTotal + item.qty * item.sellingPrice,
-            total: acc.total + item.qty * item.sellingPrice - (item.sellingPrice * item.discount) / 100,
-            discount: acc.discount + (item.sellingPrice * item.discount) / 100,
-        }
-    }, {
-        subTotal: 0,
-        total: 0,
-        discount: 0,
-    });
-    
+    const cart = useSelector((state) => state.cart);    
 
     const { cartItems } = cart;
     
