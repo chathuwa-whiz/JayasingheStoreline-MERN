@@ -64,6 +64,7 @@ function App() {
           {/* <Route path="paymentmanagement" element={<PaymentManagement />} /> */}
           <Route path="home" element={<Home />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="checkout" element={<Checkout />} />
 
           {/* order manager part */}
           <Route path="productlist" element={<ProductsList />} />
@@ -99,7 +100,7 @@ function App() {
         </Route>        
 
         {/* Payment Manager Routes */}
-        <Route path="checkout" element={<Checkout />} />
+        
         <Route path="payment" element={<Payment />}>
           <Route index element={<PaymentDashboard />} />
           <Route path="paymentreport" element={<PaymentReport />} />
