@@ -30,6 +30,7 @@ import PlaceOrder from "./OrderManagement/PlaceOrder";
 import OrderHistory from "./OrderManagement/OrderHistory";
 import OrderInquiries from "./OrderManagement/OrderInquiries";
 import OrderByProducts from "./OrderManagement/OrderByProducts";
+import UpdateOrders from "./OrderManagement/UpdateOrder";
 
 // Payement
 import Checkout from "./PaymentManagement/Checkout";
