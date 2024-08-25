@@ -1,12 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
-import {
-    useUpdateProductMutation,
-    useDeleteProductMutation,
-    useGetProductByIdQuery,
-    useUploadProductImageMutation
-} from "../redux/api/productApiSlice";
-import {useFetchCategoriesQuery} from "../redux/api/categoryApiSlice";
+import { useGetProductByIdQuery } from "../redux/api/productApiSlice";
 import toast from "react-hot-toast";
 import { useDispatch } from 'react-redux';
 import {addToCart} from "../redux/features/cart/cartSlice";
@@ -35,11 +29,6 @@ export default function SingleProductView() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const [uploadProductImage] = useUploadProductImageMutation();
-    const { data: categories = [] } = useFetchCategoriesQuery();
-    const [updateProduct] = useUpdateProductMutation();
-    const [deleteProduct] = useDeleteProductMutation();
-
     useEffect(() => {
         if(productData && productData._id) {
             setName(productData.name);
@@ -64,8 +53,8 @@ export default function SingleProductView() {
         navigate('/cart');
     }
 
-  return (
-    <div className="container mx-auto p-6">
+    return (
+        <div className="container mx-auto p-6">
             {/* Product Details Wrapper */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Product Image */}
@@ -115,12 +104,12 @@ export default function SingleProductView() {
                         <button 
                             onClick={addToCartHandler}
                             disabled={quantity === 0}
-                            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                            className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                             Add to Cart
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-  )
+    )
 }

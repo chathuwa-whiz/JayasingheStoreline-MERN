@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaPen } from "react-icons/fa";
 import { useAllProductsQuery } from '../redux/api/productApiSlice';
+import { ProductsHeader } from '../Shared/Header';
 
 export default function Products() {
   // Fetch all products
@@ -27,6 +28,7 @@ export default function Products() {
 
   return (
     <div className="rounded-lg p-8">
+      <ProductsHeader products = {products} />
       <table className="min-w-full overflow-y-auto min-h-full border rounded-lg bg-white">
         <thead className="bg-orange-500 text-white">
           <tr>
