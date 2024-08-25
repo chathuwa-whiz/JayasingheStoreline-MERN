@@ -100,13 +100,7 @@ function App() {
           <Route path="orderinqiry" element={<OrderInquiries/>} />
           <Route path="orderByProduct" element={<OrderByProducts/>} />
           <Route path="orderhistory/update/:_id" element={<UpdateOrders />} />
-          
         </Route>
-        <Route path="productlist" element={<ProductsList />} /> 
-        <Route path="product/:_id" element={<SingleProductView />} />
-        <Route path="cart" element={<Cart />} />
-        <Route path="shipping" element={<Shipping />} />
-        <Route path="placeorder" element={<PlaceOrder />} />
         
 
         {/* Payment Manager Routes */}
@@ -116,12 +110,7 @@ function App() {
         {/* Customer Manager Routes */}
         <Route path="register" element={<Register />} />
         <Route path="customerlogin" element={<CustomerLogin />} />
-    
-
-    
-
-
-
+        
       </Routes>
     </BrowserRouter>
   );
