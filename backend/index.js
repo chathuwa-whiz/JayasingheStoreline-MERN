@@ -9,7 +9,7 @@ import connectDB from "./config/db.js";
 import productRoutes from "./routes/ProductRoutes.js";
 import categoryRoutes from "./routes/CategoryRoutes.js";
 import uploadRoutes from './routes/UploadRoutes.js';
-import userRoutes from './routes/UserRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 import orderRoutes from './routes/OrderRoutes.js';
 
 
