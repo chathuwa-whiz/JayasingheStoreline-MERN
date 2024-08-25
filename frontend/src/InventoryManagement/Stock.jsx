@@ -1,32 +1,34 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaPen } from "react-icons/fa";
 import { useAllProductsQuery } from '../redux/api/productApiSlice';
+import { useGetOrdersQuery } from '../redux/api/orderApiSlice';
 
 export default function Stock() {
 
-    // Fetch all products
-    const { data: products, isLoading, isError } = useAllProductsQuery();
-    console.log(products);
-    
+  // Fetch all orders
+  const { data: orders } = useGetOrdersQuery();
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const productsPerPage = 10;
+  // Fetch all products
+  const { data: products, isLoading, isError } = useAllProductsQuery();
+  // console.log("Products -> ",products);
+  
 
-    if (isLoading) return <div>Loading...</div>;
-    if (isError) return <div>Something went wrong</div>;
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 10;
 
-    // Calculate the indices of the products to display
-    const indexOfLastProduct = currentPage * productsPerPage;
-    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-    const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Something went wrong</div>;
 
-    // Calculate total pages
-    const totalPages = Math.ceil(products.length / productsPerPage);
+  // Calculate the indices of the products to display
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-    };
+  // Calculate total pages
+  const totalPages = Math.ceil(products.length / productsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+      setCurrentPage(pageNumber);
+  };
 
   return (
     <div className="rounded-lg p-8">
@@ -60,7 +62,7 @@ export default function Stock() {
                     {product.countInStock}
                 </span>
               </td>
-              <td className="py-2 px-4">{product.category}</td>
+              <td className="py-2 px-4">{product.currentQty}</td>
               <td className="py-2 px-4">{`Rs.${product.buyingPrice.toFixed(2)}`}</td>
               <td className="py-2 px-4">{product.updatedAt}</td>
             </tr>

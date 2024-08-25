@@ -13,7 +13,7 @@ export default function ProductsList() {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Products</h1>
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map((product) => (
           <div key={product._id} className="border rounded-lg p-4 shadow hover:shadow-lg transition duration-300">

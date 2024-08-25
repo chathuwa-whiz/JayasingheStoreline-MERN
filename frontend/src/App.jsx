@@ -27,9 +27,14 @@ import SingleProductView from "./OrderManagement/SingleProductView";
 import Cart from "./OrderManagement/Cart";
 import Shipping from "./OrderManagement/Shipping";
 import PlaceOrder from "./OrderManagement/PlaceOrder";
+import OrderHistory from "./OrderManagement/OrderHistory";
+import OrderInquiries from "./OrderManagement/OrderInquiries";
+import OrderByProducts from "./OrderManagement/OrderByProducts";
 
 // Payement
 import Checkout from "./PaymentManagement/Checkout";
+import Reports from "./InventoryManagement/Reports";
+
 
 //Customer
 import CustomerLogin from "./CustomerManagemet/CusLogin"; 
@@ -41,6 +46,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         <Route path="/" element={<Layout />}>
           <Route index element={<MainDashboard />} />
           <Route path="home" element={<Home />} />
@@ -48,6 +54,13 @@ function App() {
           <Route path="register" element={<Register />} />
           <Route path="customerlogin" element={<CustomerLogin />} />
           
+
+          {/* order manager part */}
+          <Route path="productlist" element={<ProductsList />} />
+          <Route path="product/:_id" element={<SingleProductView />} />
+          <Route path="cart" element={<Cart />} />
+          <Route path="shipping" element={<Shipping />} />
+          <Route path="placeorder" element={<PlaceOrder />} />
         </Route>
 
         {/* Inventory Manager Routes */}
@@ -58,6 +71,7 @@ function App() {
           <Route path="products/update/:_id" element={<UpdateProduct />} />
           <Route path="categories" element={<CategoryList />} />
           <Route path="stock" element={<Stock />} />
+          <Route path="reports" element={<Reports />} />
         </Route>
 
         {/*Delivery manager Routes */}
@@ -69,13 +83,10 @@ function App() {
         {/* Order Manager Routes */}
         <Route path="order" element={<Order />}>
           <Route index element={<OrderDashboard />} />
-        </Route>
-        <Route path="productlist" element={<ProductsList />} /> 
-        <Route path="product/:_id" element={<SingleProductView />} />
-        <Route path="cart" element={<Cart />} />
-        <Route path="shipping" element={<Shipping />} />
-        <Route path="placeorder" element={<PlaceOrder />} />
-        
+          <Route path="orderhistory" element={<OrderHistory />} />
+          <Route path="orderinqiry" element={<OrderInquiries/>} />
+          <Route path="orderByProduct" element={<OrderByProducts/>} />
+        </Route>        
 
         {/* Payment Manager Routes */}
         <Route path="checkout" element={<Checkout />} />
@@ -83,6 +94,8 @@ function App() {
         
         {/* Customer Manager Routes */}
     
+        <Route path="register" element={<Register />} />
+        <Route path="customerlogin" element={<CustomerLogin />} />
     
 
     
