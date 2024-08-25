@@ -51,7 +51,7 @@ function HrNotify() {
                 <td className="py-4 px-5 border-b">{notification.date}</td>
                 <td className="py-4 px-5 border-b">
                   <span className={`inline-block px-3 py-1 text-sm font-semibold rounded-full ${
-                    notification.status === 'Accepted' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'
+                    notification.status === 'Accepted' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800 '
                   }`}>
                     {notification.status}
                   </span>
@@ -66,10 +66,17 @@ function HrNotify() {
                   </button>
                   <button
                     onClick={() => updateStatus(notification.id, 'Pending')}
-                    className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600"
+                    className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 mr-2"
                     disabled={notification.status === 'Pending'}
                   >
                     Pending
+                  </button>
+                  <button
+                    onClick={() => updateStatus(notification.id, 'Delete')}
+                    className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                    disabled={notification.status === 'Delete'}
+                  >
+                    Delete
                   </button>
                 </td>
               </tr>
