@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { HomeIcon , CubeIcon , ArchiveBoxIcon , ClipboardDocumentListIcon , CogIcon , ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/solid'; // Replace with appropriate icons
+import logo from '../asset/logo.png';
 
 const Sidebar = () => {
   const [isProductsOpen, setIsProductsOpen] = useState(false);
@@ -14,7 +15,7 @@ const Sidebar = () => {
 
       <div className='p-4'>
 
-        <h2 className="text-xl font-bold mb-6">Menu</h2>
+        <img src={logo} alt="logo" className="w-20 h-20 rounded-full mb-5 mx-auto" />
 
         <nav>
 

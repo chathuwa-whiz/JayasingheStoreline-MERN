@@ -22,16 +22,21 @@ export default function Cart() {
         subTotal: 0,
         total: 0,
         discount: 0,
-    });    
+    });
 
     const proceedtoCheckout = () => {
-        
         navigate('/shipping');
     };
 
     console.log(cart);
     
-    
+    const decreaseQty = (item) => {
+        if (item.qty > 1) {
+            dispatch(removeFromCart(item._id));
+        } else {
+            dispatch(removeFromCart(item._id));
+        }
+    };
 
     return (
         <>
@@ -44,7 +49,6 @@ export default function Cart() {
                             <h1 className="text-2xl font-semibold">Shopping Cart</h1>
                             <div className="mt-4">
                                 {cartItems.map((item) => {
-                                    
                                     return (
                                         <div key={item._id} className="flex justify-between items-center border-b border-gray-300 py-2">
                                             <div className="flex items-center">
@@ -55,9 +59,11 @@ export default function Cart() {
                                                 </div>
                                             </div>
                                             <div className="flex items-center">
+                                            <div className="flex items-center">
                                                 <button onClick={() => dispatch(addToCart(item))} className="px-2 py-1 bg-gray-200 text-gray-800 mr-2">+</button>
                                                 <span>{item.qty}</span>
-                                                <button onClick={() => dispatch(removeFromCart(item._id))} className="px-2 py-1 bg-gray-200 text-gray-800 ml-2">-</button>
+                                                <button onClick={() => decreaseQty(item)} className="px-2 py-1 bg-gray-200 text-gray-800 ml-2">-</button>
+                                            </div>
                                             </div>
                                             <div>
                                                 <button onClick={() => dispatch(removeFromCart(item._id))} className="text-red-500"><FaTrash /></button>
