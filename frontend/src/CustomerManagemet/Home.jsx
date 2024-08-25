@@ -63,7 +63,7 @@ const Carousel = () => {
   );
 };
 
-export default function Dashboard() {
+export default function Home() {
   const products = [
     {
       img: 'https://cdn.thewirecutter.com/wp-content/media/2023/05/sofabuyingguide-2048px-benchmademoderncream.jpg',
