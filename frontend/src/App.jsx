@@ -92,12 +92,7 @@ function App() {
         {/* Customer Manager Routes */}
         <Route path="register" element={<Register />} />
         <Route path="customerlogin" element={<CustomerLogin />} />
-    
-
-    
-
-
-
+        
       </Routes>
     </BrowserRouter>
   );
