@@ -30,7 +30,6 @@ import PlaceOrder from "./OrderManagement/PlaceOrder";
 import OrderHistory from "./OrderManagement/OrderHistory";
 import OrderInquiries from "./OrderManagement/OrderInquiries";
 import OrderByProducts from "./OrderManagement/OrderByProducts";
-import UpdateOrders from "./OrderManagement/UpdateOrder";
 
 // Payement
 import Checkout from "./PaymentManagement/Checkout";
@@ -81,19 +80,11 @@ function App() {
         {/* Order Manager Routes */}
         <Route path="order" element={<Order />}>
           <Route index element={<OrderDashboard />} />
+          <Route path="orderhistory/update/:_id" element={<UpdateOrders />} />
           <Route path="orderhistory" element={<OrderHistory />} />
           <Route path="orderinqiry" element={<OrderInquiries/>} />
           <Route path="orderByProduct" element={<OrderByProducts/>} />
         </Route>        
-          <Route path="orderhistory/update/:_id" element={<UpdateOrders />} />
-          
-        </Route>
-        <Route path="productlist" element={<ProductsList />} /> 
-        <Route path="product/:_id" element={<SingleProductView />} />
-        <Route path="cart" element={<Cart />} />
-        <Route path="shipping" element={<Shipping />} />
-        <Route path="placeorder" element={<PlaceOrder />} />
-        
 
         {/* Payment Manager Routes */}
         <Route path="checkout" element={<Checkout />} />
