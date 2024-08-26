@@ -1,35 +1,29 @@
-import express from 'express';
-import Review from '../models/Review.js';
+import express from "express";
+import formidable from "express-formidable";
+const productRoutes = express.Router();
 
-const router = express.Router();
+import { addProduct, fetchProducts, fetchProductById, updateProduct, deleteProduct } from "../controllers/ProductController.js";
 
-// POST /api/reviews - Submit a new review
-router.post('/', async (req, res) => {
-  const { rating, comment, photos, video, checkboxes } = req.body;
+// addProduct
+productRoutes.post("/" , formidable(), addProduct);
 
-  try {
-    // Validate input
-    if (!rating || !comment.trim()) {
-      return res.status(400).json({ message: 'Rating and comment are required.' });
-    }
+// fetchProducts
+productRoutes.get("/" , fetchProducts);
 
-    // Create a new review
-    const newReview = new Review({
-      rating,
-      comment,
-      photos,
-      video,
-      checkboxes
-    });
+// fetchProductById
+productRoutes.get("/:id" , fetchProductById);
 
-    // Save the review to the database
-    await newReview.save();
+// updateProductDetails
+productRoutes.put("/:id" , formidable(), updateProduct);
 
-    res.status(201).json({ message: 'Review submitted successfully!' });
-  } catch (error) {
-    console.error('Error saving review:', error);
-    res.status(500).json({ message: 'Failed to submit review.', error });
-  }
-});
+// removeProduct
+productRoutes.delete("/:id" , deleteProduct);
 
-export default router;
+
+// fetchAllProducts
+// addProductReview
+// fetchTopProducts
+// fetchNewProducts
+// filterProducts
+
+export default productRoutes;

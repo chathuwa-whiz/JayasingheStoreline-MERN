@@ -1,12 +1,28 @@
 import React from 'react'
-import Header from './Header'
-import { Outlet } from 'react-router'
+import DefaultHeader, {HomeHeader, ProfileHeader} from './Header'
+import { Outlet, useLocation } from 'react-router'
 import Footer from './Footer'
 
 export default function Layout() {
+
+  const location = useLocation();
+
+  // Determine which header to display based on the current route
+  let header;
+
+  if(location.pathname === "/" || location.pathname === "/productlist" || location.pathname === "/cart" || location.pathname === "/shipping" || location.pathname === "/placeorder") {
+    header = <DefaultHeader />
+  } else if(location.pathname === "/home" || location.pathname === "/checkout") {
+    header = <HomeHeader />
+  } else if(location.pathname === "/profile") {
+    header = <ProfileHeader />
+  } else{
+    header = <DefaultHeader />
+  }
+
   return (
     <div>
-        <Header />
+        {header}
 
         <Outlet />  {/* This will render the child routes */}
         
