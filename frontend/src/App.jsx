@@ -33,6 +33,11 @@ import OrderByProducts from "./OrderManagement/OrderByProducts";
 // Payement
 import Checkout from "./PaymentManagement/Checkout";
 
+//Employee
+import EmployeeDashboard from "./EmployeeManagement/Dashboard";
+import Employee from "./EmployeeManagement/Employee";
+import AddEmployee from "./EmployeeManagement/AddEmployee";
+import DisplayEmployee from "./EmployeeManagement/DisplayEmployee";
 
 function App() {
   return (
@@ -73,12 +78,23 @@ function App() {
         <Route path="shipping" element={<Shipping />} />
         <Route path="placeorder" element={<PlaceOrder />} />
         
+        {/* HR Manager Routes */}
+        <Route path="employee" element={<Employee />}>
+          <Route index element={<EmployeeDashboard />} />
+          <Route path="addEmployee" element={<AddEmployee />} />
+          <Route path="displayEmployee" element={<DisplayEmployee />} />
+        </Route>
+      
 
         {/* Payment Manager Routes */}
         <Route path="checkout" element={<Checkout />} />
 
         
       </Routes>
+
+      
+
+      
     </BrowserRouter>
   );
 }
