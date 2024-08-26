@@ -32,13 +32,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Routes
-app.use('/api/reviewRoutes', reviewRoutes);  // Ensure this matches the frontend URL
-app.use('/api/inquiryRoutes', inquiryRoutes);
-app.use('/api/replyRoutes', replyRoutes);
-
 app.listen(port, () => console.log(`Server running on port: ${port}`));
-const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -52,6 +46,9 @@ app.use("/api/payment", paymentRoutes);
 app.use("/api/deliveries", deliveryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/drivers", driverRoutes); // Use driver routes
+app.use('/api/reviewRoutes', reviewRoutes);  // Ensure this matches the frontend URL
+app.use('/api/inquiryRoutes', inquiryRoutes);
+app.use('/api/replyRoutes', replyRoutes);
 
 const __dirname = path.resolve();
 app.use("/uploads/products", express.static(path.join(__dirname + '/uploads/products')));
