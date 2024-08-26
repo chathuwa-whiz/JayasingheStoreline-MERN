@@ -1,7 +1,7 @@
 import React from 'react'
 import SideNavbar from './SideNavbar'
 import { Outlet, useLocation } from 'react-router'
-import { DashboardHeader, DefaultHeadre, ProductsHeader, ReportsHeader, StockHeader } from '../Shared/Header';
+import { DashboardHeader, ProductsHeader, ReportsHeader, StockHeader } from '../Shared/Header';
 
 export default function Employee() {
 
@@ -19,7 +19,7 @@ export default function Employee() {
   } else if(location.pathname === "/inventory/reports") {
     header = <ReportsHeader />
   } else{
-    header = <DefaultHeadre />
+    // header = <DefaultHeadre />
   }
 
   return (
