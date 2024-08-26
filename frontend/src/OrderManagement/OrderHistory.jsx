@@ -30,6 +30,9 @@ export default function Orders() {
       <table className="min-w-full overflow-y-auto min-h-full border rounded-lg bg-white">
         <thead className="bg-orange-500 text-white">
           <tr>
+            <th className="py-2 px-4 text-left">Order Id</th>
+            {/* <th className="py-2 px-4 text-left">Product Names</th>
+            <th className="py-2 px-4 text-left">Product Quantity</th> */}
             <th className="py-2 px-4 text-left">#</th>
             <th className="py-2 px-4 text-left">Order ID</th>
             <th className="py-2 px-4 text-left">Items Price</th>
@@ -62,6 +65,8 @@ export default function Orders() {
           {currentOrders.map((order, index) => (
             <tr key={order._id} className="border-b border-gray-200">
               <td className="py-2 px-4">{indexOfFirstOrder + index + 1}</td>
+              {/* <td className="py-2 px-4"></td>
+              <td className="py-2 px-4"></td> */}
               <td className="py-2 px-4">{order._id}</td>
               <td className="py-2 px-4">{`Rs.${order.itemsPrice.toFixed(2)}`}</td>
               <td className="py-2 px-4">{`Rs.${order.discount.toFixed(2)}`}</td>
