@@ -11,16 +11,16 @@ import {
 const supplierRoutes = express.Router();
 
 // Add Supplier
-supplierRoutes.post("/", formidable(), addSupplier);
+supplierRoutes.post("/", formidable(), addSupplier);//insert
 
 // Fetch All Suppliers
-supplierRoutes.get("/", fetchSuppliers);
+supplierRoutes.get("/", fetchSuppliers);//display
 
 // Fetch Supplier By ID
-supplierRoutes.get("/:id", fetchSupplierById);
+supplierRoutes.get("/:id", fetchSupplierById);// 1person details disply
 
 // Update Supplier Details
-supplierRoutes.put("/:id", formidable(), updateSupplier);
+supplierRoutes.put("/:id", formidable(), updateSupplier);//update
 
 // Remove Supplier
 supplierRoutes.delete("/:id", deleteSupplier);

@@ -1,18 +1,91 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useGetSupplierByIdQuery, useUpdateSupplierMutation, useDeleteSupplierMutation } from "../redux/api/supplierApiSlice";
+import { useParams } from 'react-router';
+import toast from "react-hot-toast";
 
-const SupplierDetailsForm = () => {
-  const [supplierName, setSupplierName] = useState('');
-  const [ SupplierID, setSupplierID] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [Type ,setType] = useState('');
-  const [Date ,setDate] = useState('');
-  const [email, setEmail] = useState('');
-  const [Gender, setGender] = useState('');
-  const [supplierMedia, setSupplierMedia] = useState(null);
+export default function SupplierDetailsForm() {
 
-  const handleSubmit = () => {
+  const params = useParams();
+
+  const {data: supplierData} = useGetSupplierByIdQuery(params._id);
+  const[updateSupplier] = useUpdateSupplierMutation();
+  const [deleteSupplier] = useDeleteSupplierMutation();
+
+  console.log(supplierData);
+  
+
+  const [supplierName, setSupplierName] = useState(supplierData?.name);
+  const [SupplierID, setSupplierID] = useState(supplierData?._id);
+  const [phoneNumber, setPhoneNumber] = useState(supplierData?.phone);
+  const [Type ,setType] = useState(supplierData?.type);
+  const [Date ,setDate] = useState(supplierData?.updatedAt);
+  const [email, setEmail] = useState(supplierData?.email);
+  const [Gender, setGender] = useState(supplierData?.gender);
+  const [supplierMedia, setSupplierMedia] = useState(supplierData?.image);
+
+  useEffect(() => {
+    if(supplierData && supplierData._id) {
+      setSupplierName(supplierData.name);
+      setSupplierID(supplierData._id);
+      setPhoneNumber(supplierData.phone);
+      setType(supplierData.type);
+      setDate(supplierData.updatedAt);
+      setEmail(supplierData.email);
+      setGender(supplierData.gender);
+      setSupplierMedia(supplierData.image);
+    }
+  }, [supplierData]);
+
+  const handleDelete = async () => {
+    try {
+      let answer = window.confirm(
+        "Are you sure you want to delete this supplier?"
+      );
+      if (!answer) return;
+
+      const data = await deleteSupplier(params._id);
+
+      toast.success(`supplier is deleted`);
+
+      setTimeout(() => {
+        toast.dismiss();
+        window.location.href = "/supplier/supplierlist";
+      }, 2000);
+
+    } catch (err) {
+
+      console.log(err);
+      toast.error("Delete failed. Try again.");
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Supplier Details:', supplierName,  SupplierID, phoneNumber, Type, Date,email,Gender,supplierMedia);
+    
+    try {
+      const formData = new FormData();
+      formData.append("name", supplierName);
+      formData.append("image", supplierMedia);
+      formData.append("phone", phoneNumber);
+      formData.append("email", email);
+      formData.append("gender", Gender);
+      formData.append("type", Type);
+
+      const data = await updateSupplier({supplierId: params._id, formData});
+
+      if(data?.error) {
+        toast.error("Supplier update Failed");
+      } else {
+        toast.success("Supplier Updated");
+        setTimeout(() => {
+          toast.dismiss();
+          window.location.href = "/supplier/supplierlist";
+        })
+      }
+    } catch (error) {
+      console.log("ERROR : ", error);      
+    }
+
   };
   const handleMediaChange = (e) => {
     setSupplierMedia(e.target.files[0]);
@@ -122,14 +195,18 @@ const SupplierDetailsForm = () => {
         
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          type="Update"
+          type="submit"
         >
           Update
+        </button>
+        <button
+          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          onClick={handleDelete}
+        >
+          Delete
         </button>
       </form>
     </div>
     
   );
-};
-
-export default SupplierDetailsForm;
+}

@@ -73,16 +73,16 @@ try {
         
         const supplier = await Supplier.findByIdAndUpdate(req.params.id, {...req.fields}, { new : true });
         if(!supplier) {
-            return res.status(400).json( { msg : "Product not found" } )
+            return res.status(400).json( { msg : "supplier not found" } );
         }
-        await supplier.save();
+       await supplier.save();
         res.json( { msg : "Update Successful ", supplier } );
     } catch (error) {
         res.status(400).json( { msg : "Update Failed ", error } );
-    }}
+    }};
     // Delete supplier
 export const deleteSupplier = async (req, res) => {
-    try {const supplier = await Supplier.findByIdAndDelete(req,params.id);
+    try {const supplier = await Supplier.findByIdAndDelete(req.params.id);
         if (!supplier) {
             return res.status(404).json({ error: "Supplier not found" });}
         res.json({ msg: "Supplier deleted successfully" });

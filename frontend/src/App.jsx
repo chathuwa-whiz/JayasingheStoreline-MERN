@@ -87,7 +87,7 @@ function App() {
         {/* Supplier Management Routes */}
         <Route path="/supplier" element={<Supplier />}>
           <Route index element={<SupplierDashboard />} />
-          <Route path="update" element={<SupplierUpdate />} />
+          <Route path="update/:_id" element={<SupplierUpdate />} />
           <Route path="supplierlist" element={<SupplierList />} />
           <Route path="supplierdetails" element={<SupplierDetailsForm />} />
           <Route path="supplierform" element={<SupplierForm />} />
