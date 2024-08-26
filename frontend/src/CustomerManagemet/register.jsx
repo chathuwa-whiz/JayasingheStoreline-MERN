@@ -35,14 +35,15 @@ export default function RegisterPage() {
       address
     };
 
-    axios.post('http://localhost:4000/api/users/', payload)
+    axios.post('/api/users/', payload)
       .then(result => {
         console.log(result);
         setError(''); // Clear errors on success
       })
       .catch(err => {
-        console.error(err);
-        setError('An error occurred during registration. Please try again.'); // Display error message
+        console.log(err);
+        // setError('An error occurred during registration. Please try again.'); // Display error message
+        alert('User Already Exsits...!')
       });
   };
 
