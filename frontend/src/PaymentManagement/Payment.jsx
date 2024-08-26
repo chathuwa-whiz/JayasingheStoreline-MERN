@@ -1,10 +1,16 @@
-import React from 'react'
+import React from 'react';
+import SideNavbar from './SideNavbar';
+import { Outlet } from 'react-router';
 
-const Payment = () => {
+export default function Payment() {
+
   return (
-    <div>Payment hii yulbvcnv</div>
+    <div className='flex'>
+        <SideNavbar />
+        <div className='flex-grow'>
+
+            <Outlet /> {/* This will render the child routes */}
+        </div>
+    </div>
   )
-
 }
-
-export default Payment

@@ -1,7 +1,14 @@
 import React from 'react'
+import SideNavbar from './Sidebar'
+import { Outlet } from 'react-router'
 
-export default function Home() {
+export default function Delivery() {
   return (
-    <h1>Yasith Home Page</h1>
+    <div className='flex'>
+        <SideNavbar />
+        <div className='flex-grow'>
+            <Outlet /> {/* This will render the child routes */}
+        </div>
+    </div>
   )
 }
