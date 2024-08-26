@@ -41,6 +41,9 @@ app.use("/api/deliveries", deliveryRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/drivers", driverRoutes); // Use driver routes
+app.use('/api/reviewRoutes', reviewRoutes);  // Ensure this matches the frontend URL
+app.use('/api/inquiryRoutes', inquiryRoutes);
+app.use('/api/replyRoutes', replyRoutes);
 
 const __dirname = path.resolve();
 app.use("/uploads/products", express.static(path.join(__dirname + '/uploads/products')));
