@@ -14,33 +14,22 @@ router.get('/', async (req, res) => {
     res.status(500).json({ message: 'Server error, please try again later.' });
   }
 });
-// POST /api/inquiryRoutes
-router.post('/', async (req, res) => {
+// GET inquiries for a specific user
+router.get('/user/:userId', async (req, res) => {
   try {
-    const { message, userId } = req.body;
+    const { userId } = req.params;
 
-    // Validate that the message and userId are provided
-    if (!message || !userId) {
-      return res.status(400).json({ message: 'Message and user ID are required.' });
-    }
-
-    // Validate the userId is a valid MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: 'Invalid user ID format.' });
     }
 
-    // Create a new inquiry and save it to the database
-    const newInquiry = new Inquiry({ message, userId: mongoose.Types.ObjectId(userId) });
-    const savedInquiry = await newInquiry.save();
-
-    // Return the newly created inquiry
-    res.status(201).json(savedInquiry);
+    const inquiries = await Inquiry.find({ userId }).exec();
+    res.status(200).json(inquiries);
   } catch (err) {
-    console.error('Error saving inquiry:', err);
+    console.error('Error fetching inquiries for user:', err);
     res.status(500).json({ message: 'Server error, please try again later.' });
   }
 });
-
 
 // GET a specific inquiry by ID
 router.get('/:id', async (req, res) => {
@@ -63,7 +52,8 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ message: 'Server error, please try again later.' });
   }
 });
-// POST /api/inquiryRoutes
+
+// POST to create a new inquiry
 router.post('/', async (req, res) => {
   try {
     const { message, userId } = req.body;
@@ -89,6 +79,5 @@ router.post('/', async (req, res) => {
     res.status(500).json({ message: 'Server error, please try again later.' });
   }
 });
-
 
 export default router;
