@@ -16,6 +16,7 @@ import UserInquiry from './ReactReviews/userInquiry'; // Adjust the import path 
 import ToReview from './ReactReviews/toReview'; // Adjust the import path if necessary
 import History from './ReactReviews/History'; // Adjust the import path if necessary
 import DisplayReview from './ReactReviews/displayReview'; // Adjust the import path if necessary
+import UpdateReview from './ReactReviews/updateReview'; // Adjusted path
 
 function App() {
   return (
@@ -28,11 +29,12 @@ function App() {
           <Route path="dashboardgraph" element={<DashboardGraph />} />
           <Route path="dashboardinquiry" element={<DashboardInquiry />} />
           <Route path="chatbot" element={<ChatBot />} />
-          <Route path="userinquiry" element={<UserInquiry />} />
+          <Route path="/user-inquiry/:userId" element={<UserInquiry />} />
           <Route path="toreview" element={<ToReview />} />
           <Route path="/history" element={<History />} />
-          <Route path="reply/:id" element={<ReplyPage />} /> {/* Added route for ReplyPage */}
+          <Route path="reply/:id" element={<ReplyPage />} />
           <Route path="display" element={<DisplayReview />} />
+          <Route path="/update/:id" element={<UpdateReview />} />
           <Route path="inventorymanagement" element={<InventoryManagement />} />
           <Route path="suppliermanagement" element={<SupplierManagement />} />
           <Route path="ordermanagement" element={<OrderManagement />} />

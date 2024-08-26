@@ -1,58 +1,94 @@
 import express from 'express';
-import UserInquiry from '../models/Inquiry.js';  // Ensure correct path
+import mongoose from 'mongoose';
+import Inquiry from '../models/Inquiry.js';
 
 const router = express.Router();
 
-// POST route to create a new user inquiry
+// GET all inquiries
+router.get('/', async (req, res) => {
+  try {
+    const inquiries = await Inquiry.find().exec();
+    res.status(200).json(inquiries);
+  } catch (err) {
+    console.error('Error fetching inquiries:', err);
+    res.status(500).json({ message: 'Server error, please try again later.' });
+  }
+});
+// POST /api/inquiryRoutes
 router.post('/', async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, userId } = req.body;
 
-    // Validate required fields
-    if (!message || message.trim().length < 1 || message.trim().length > 200) {
-      return res.status(400).json({ message: "Message between 1 and 200 characters is required." });
+    // Validate that the message and userId are provided
+    if (!message || !userId) {
+      return res.status(400).json({ message: 'Message and user ID are required.' });
     }
 
-    // Create a new user inquiry with the validated data
-    const newInquiry = new UserInquiry({ message });
+    // Validate the userId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID format.' });
+    }
 
-    // Save the user inquiry to the database
+    // Create a new inquiry and save it to the database
+    const newInquiry = new Inquiry({ message, userId: mongoose.Types.ObjectId(userId) });
     const savedInquiry = await newInquiry.save();
 
-    // Return the saved inquiry in the response
+    // Return the newly created inquiry
     res.status(201).json(savedInquiry);
   } catch (err) {
     console.error('Error saving inquiry:', err);
-    res.status(500).json({ message: "Server error, please try again later." });
+    res.status(500).json({ message: 'Server error, please try again later.' });
   }
 });
 
-// GET route to fetch all user inquiries
-router.get('/', async (req, res) => {
-  try {
-    const inquiries = await UserInquiry.find();  // Fetch all inquiries from the database
-    res.status(200).json(inquiries);  // Return the list of inquiries in the response
-  } catch (err) {
-    console.error('Error fetching inquiries:', err);
-    res.status(500).json({ message: "Server error, please try again later." });
-  }
-});
 
-// GET route to fetch a specific user inquiry by ID
+// GET a specific inquiry by ID
 router.get('/:id', async (req, res) => {
-    try {
-      const { id } = req.params; // Get ID from URL parameters
-      const inquiry = await UserInquiry.findById(id); // Fetch inquiry by ID
-  
-      if (!inquiry) {
-        return res.status(404).json({ message: 'Inquiry not found.' }); // Handle case where inquiry is not found
-      }
-  
-      res.status(200).json(inquiry); // Return the found inquiry
-    } catch (err) {
-      console.error('Error fetching inquiry:', err);
-      res.status(500).json({ message: 'Server error, please try again later.' });
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid inquiry ID format.' });
     }
-  });
+
+    const inquiry = await Inquiry.findById(id).exec();
+
+    if (!inquiry) {
+      return res.status(404).json({ message: 'Inquiry not found.' });
+    }
+
+    res.status(200).json(inquiry);
+  } catch (err) {
+    console.error('Error fetching inquiry:', err);
+    res.status(500).json({ message: 'Server error, please try again later.' });
+  }
+});
+// POST /api/inquiryRoutes
+router.post('/', async (req, res) => {
+  try {
+    const { message, userId } = req.body;
+
+    // Validate that the message and userId are provided
+    if (!message || !userId) {
+      return res.status(400).json({ message: 'Message and user ID are required.' });
+    }
+
+    // Validate the userId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID format.' });
+    }
+
+    // Create a new inquiry and save it to the database
+    const newInquiry = new Inquiry({ message, userId: mongoose.Types.ObjectId(userId) });
+    const savedInquiry = await newInquiry.save();
+
+    // Return the newly created inquiry
+    res.status(201).json(savedInquiry);
+  } catch (err) {
+    console.error('Error saving inquiry:', err);
+    res.status(500).json({ message: 'Server error, please try again later.' });
+  }
+});
+
 
 export default router;

@@ -16,7 +16,8 @@ function App() {
         setComments(response.data); // Update state with fetched inquiries
         setLoading(false); // Set loading to false after data is fetched
       } catch (err) {
-        console.error('Error fetching comments:', err.response ? err.response.data : err.message);
+        // Log error details for debugging
+        console.error('Error fetching comments:', err);
         setError('Failed to load comments.');
         setLoading(false);
       }
