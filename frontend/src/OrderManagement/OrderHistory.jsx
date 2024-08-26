@@ -1,29 +1,29 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaPen } from "react-icons/fa";
-import { useAllProductsQuery } from '../redux/api/productApiSlice';
+import { useGetOrdersQuery } from '../redux/api/orderApiSlice';
 
-export default function Products() {
-  // Fetch all products
-  const { data: products, isLoading, isError } = useAllProductsQuery();
+export default function Orders() {
+  // Fetch all orders
+  const { data: orders, isLoading, isError } = useGetOrdersQuery();
 
+  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 10;
+  const ordersPerPage = 13; // Number of orders to display per page
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Something went wrong</div>;
 
-  // Calculate the indices of the products to display
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+  // Calculate the current orders
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
 
   // Calculate total pages
-  const totalPages = Math.ceil(products.length / productsPerPage);
+  const totalPages = Math.ceil(orders.length / ordersPerPage);
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+  // Handle pagination change
+  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div className="rounded-lg p-8">
@@ -31,27 +31,49 @@ export default function Products() {
         <thead className="bg-orange-500 text-white">
           <tr>
             <th className="py-2 px-4 text-left">Order Id</th>
-            <th className="py-2 px-4 text-left">Order</th>
-            <th className="py-2 px-4 text-left">Date</th>
-            <th className="py-2 px-4 text-left">Order Status</th>
-            <th className="py-2 px-4 text-left">Quantity</th>
-            <th className="py-2 px-4 text-left">Total Amount</th>
+            {/* <th className="py-2 px-4 text-left">Product Names</th>
+            <th className="py-2 px-4 text-left">Product Quantity</th> */}
+            <th className="py-2 px-4 text-left">#</th>
+            <th className="py-2 px-4 text-left">Order ID</th>
+            <th className="py-2 px-4 text-left">Items Price</th>
+            <th className="py-2 px-4 text-left">Discount</th>
+            <th className="py-2 px-4 text-left">Total Price</th>
+            <th className="py-2 px-4 text-left">Status</th>
             <th className="py-2 px-4 text-left">Action</th>
           </tr>
         </thead>
-        <tbody>
-          {currentProducts.map((product, index) => (
-            <tr key={product._id} className="border-b border-gray-200">
-              <td className="py-2 px-4">{indexOfFirstProduct + index + 1}</td>
+        {/* <tbody>
+          {currentOrders.map((order, index) => (
+            <tr key={order._id} className="border-b border-gray-200">
+              <td className="py-2 px-4">{indexOfFirstOrder + index + 1}</td>
+              <td className="py-2 px-4">{order.itemsPrice}</td>
+              <td className="py-2 px-4">{order.discount}</td>
+              <td className="py-2 px-4">{`Rs.${order.totalPrice.toFixed(2)}`}</td>
+              <td className="py-2 px-4">{order.status}</td>
               <td className="py-2 px-4">
-                <img src={product.image} alt={product.name} className="w-10 h-10" />
+                <Link to={`/inventory/products/update/${order._id}`}>
+                  <button className="text-green-500 hover:text-green-700 mx-2">
+                    <FaPen />
+                  </button>
+                </Link>
               </td>
-              <td className="py-2 px-4">{product.sku}</td>
-              <td className="py-2 px-4">{product.name}</td>
-              <td className="py-2 px-4">{product.category}</td>
-              <td className="py-2 px-4">{`Rs.${product.sellingPrice.toFixed(2)}`}</td>
+            </tr>
+          ))}
+        </tbody> */}
+
+         <tbody>
+          {currentOrders.map((order, index) => (
+            <tr key={order._id} className="border-b border-gray-200">
+              <td className="py-2 px-4">{indexOfFirstOrder + index + 1}</td>
+              {/* <td className="py-2 px-4"></td>
+              <td className="py-2 px-4"></td> */}
+              <td className="py-2 px-4">{order._id}</td>
+              <td className="py-2 px-4">{`Rs.${order.itemsPrice.toFixed(2)}`}</td>
+              <td className="py-2 px-4">{`Rs.${order.discount.toFixed(2)}`}</td>
+              <td className="py-2 px-4">{`Rs.${order.totalPrice.toFixed(2)}`}</td>
+              <td className="py-2 px-4">{order.status}</td>
               <td className="py-2 px-4">
-                <Link to={`/inventory/products/update/${product._id}`}>
+                <Link to={`/order/orderhistory/update/${order._id}`}>
                   <button className="text-green-500 hover:text-green-700 mx-2">
                     <FaPen />
                   </button>
@@ -64,15 +86,29 @@ export default function Products() {
 
       {/* Pagination Controls */}
       <div className="flex justify-center mt-4">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`mx-2 px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-orange-500 text-white hover:bg-orange-600'}`}
+        >
+          Previous
+        </button>
         {Array.from({ length: totalPages }, (_, i) => (
           <button
             key={i + 1}
             onClick={() => handlePageChange(i + 1)}
-            className={`mx-1 px-3 py-1 rounded-md ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+            className={`mx-2 px-3 py-1 rounded ${currentPage === i + 1 ? 'bg-orange-600 text-white' : 'bg-orange-500 text-white hover:bg-orange-600'}`}
           >
             {i + 1}
           </button>
         ))}
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={`mx-2 px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-300' : 'bg-orange-500 text-white hover:bg-orange-600'}`}
+        >
+          Next
+        </button>
       </div>
     </div>
   );

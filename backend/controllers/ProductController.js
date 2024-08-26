@@ -19,7 +19,7 @@ export const addProduct = async (req, res) => {
             case !barcode:
                 return res.json( { error: "Barcode is required" } );
         }
-        
+         
         const product = new Product({...req.fields});
         await product.save();
         res.status(201).json( { msg : "Product Added Successfully" } );
