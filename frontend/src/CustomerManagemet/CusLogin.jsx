@@ -1,10 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'tailwindcss/tailwind.css';
 import googleIcon from '../../../uploads/customerManagement/googleIcon.png';
 import loginBanner from '../../../uploads/customerManagement/LoginBanner.jpg';
 import './CusLogin.css';
+import { useLoginMutation } from '../redux/api/usersApiSlice';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { setCredentials } from '../redux/features/auth/authSlice';
 
 export default function LoginPage() {
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [login, {isLoading}] = useLoginMutation();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const userData = await login({ email, password }).unwrap();
+
+      // Save user data to Redux store
+      dispatch(setCredentials(userData));
+
+      // Redirect to the home page or dashboard after successful login
+      navigate('/profile');
+    } catch (err) {
+      console.log(err?.data?.message || 'Login failed. Please try again.');
+    }
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-slide">
       <div className="flex max-w-4xl w-full bg-white shadow-lg rounded-lg overflow-hidden">
@@ -22,6 +48,7 @@ export default function LoginPage() {
               <div>
                 <label htmlFor="username" className="sr-only">Username</label>
                 <input
+                  onChange={(e) => setEmail(e.target.value)}
                   id="username"
                   name="username"
                   type="text"
@@ -34,6 +61,7 @@ export default function LoginPage() {
               <div>
                 <label htmlFor="password" className="sr-only">Password</label>
                 <input
+                  onChange={(e) => setPassword(e.target.value)}
                   id="password"
                   name="password"
                   type="password"
@@ -46,10 +74,12 @@ export default function LoginPage() {
             </div>
             <div>
               <button
+                onClick={handleSubmit}
+                disabled={isLoading}
                 type="submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
               >
-                Login
+                {isLoading ? 'Logging in...' : 'Login'}
               </button>
             </div>
             <div>
