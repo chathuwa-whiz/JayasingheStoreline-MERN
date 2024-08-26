@@ -1,17 +1,8 @@
 import React, { useState } from 'react';
 import { useAllProductsQuery } from '../redux/api/productApiSlice';
-import { useGetOrdersQuery } from '../redux/api/orderApiSlice';
+import { StockHeader } from '../Shared/Header';
 
 export default function Stock() {
-
-  // Fetch all orders
-  const { data: orders } = useGetOrdersQuery();
-  console.log("Orders -> ",JSON.parse(orders[2].orderItems));
-  console.log(orders.length);
-  for (let index = 0; index < orders.length; index++) {
-    console.log("Order Items -> ",JSON.parse(orders[index].orderItems));
-    
-  }
 
   // Fetch all products
   const { data: products, isLoading, isError } = useAllProductsQuery();
@@ -38,6 +29,7 @@ export default function Stock() {
 
   return (
     <div className="rounded-lg p-8">
+      <StockHeader />
       <table className="min-w-full overflow-y-auto min-h-full border rounded-lg bg-white">
         <thead className="bg-orange-500 text-white">
           <tr>
