@@ -1,18 +1,16 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom'; // If you're using react-router for navigation
 
 export default function Logout() {
-  const history = useHistory();
+  
+  // const history = useHistory();
 
   const handleLogout = () => {
     // Perform logout logic, e.g., clearing user session/token
     // Redirect to login page after logout
-    history.push('/login');
   };
 
   const handleCancel = () => {
     // Redirect back to the delivery manager dashboard
-    history.push('/dashboard');
   };
 
   return (

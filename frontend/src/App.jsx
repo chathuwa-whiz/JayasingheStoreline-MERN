@@ -12,6 +12,7 @@ import Products from "./InventoryManagement/Products";
 import AddProducts from "./InventoryManagement/AddProducts";
 import UpdateProduct from "./InventoryManagement/UpdateProduct";
 import Stock from "./InventoryManagement/Stock";
+import Reports from "./InventoryManagement/Reports";
 
 //Delivery
 import Delivery from "./DeliveryManagement/delivery";
@@ -38,12 +39,6 @@ import OrderHistory from "./OrderManagement/OrderHistory";
 import OrderInquiries from "./OrderManagement/OrderInquiries";
 import OrderByProducts from "./OrderManagement/OrderByProducts";
 import UpdateOrders from "./OrderManagement/UpdateOrder";
-
-// Payement
-
-import Reports from "./InventoryManagement/Reports";
-
-
 
 //Customer
 import CustomerLogin from "./CustomerManagemet/CusLogin"; 
@@ -104,8 +99,6 @@ function App() {
           <Route path="reports" element={<DeliveryReports />} />
           <Route path="settings" element={<DeliverySettings />} />
           <Route path="logout" element={<Logout />} />
-          
-          
           <Route path="drivervehicledetails" element={<DriverVehicleDetails />} />
         </Route>
 
@@ -118,11 +111,8 @@ function App() {
           <Route path="orderByProduct" element={<OrderByProducts/>} />
           <Route path="orderhistory/update/:_id" element={<UpdateOrders />} />
         </Route>
-        
-        </Route>        
 
         {/* Payment Manager Routes */}
-        
         <Route path="payment" element={<Payment />}>
           <Route index element={<PaymentDashboard />} />
           <Route path="paymentreport" element={<PaymentReport />} />
