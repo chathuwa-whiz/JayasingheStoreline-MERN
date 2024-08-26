@@ -9,6 +9,7 @@ import connectDB from "./config/db.js";
 import productRoutes from "./routes/ProductRoutes.js";
 import categoryRoutes from "./routes/CategoryRoutes.js";
 import uploadRoutes from './routes/UploadRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
 import orderRoutes from './routes/OrderRoutes.js';
 
 
@@ -27,6 +28,7 @@ app.use(cookieParser())
 app.use("/api/category", categoryRoutes);
 app.use("/api/products" , productRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/payment", paymentRoutes);
 app.use("/api/orders", orderRoutes);
 
 

@@ -33,7 +33,7 @@ import OrderByProducts from "./OrderManagement/OrderByProducts";
 import UpdateOrders from "./OrderManagement/UpdateOrder";
 
 // Payement
-import Checkout from "./PaymentManagement/Checkout";
+
 import Reports from "./InventoryManagement/Reports";
 
 
@@ -43,6 +43,16 @@ import Register from "./CustomerManagemet/register";
 import Home from "./CustomerManagemet/Home";
 import Profile from "./CustomerManagemet/profile";
 
+//payment
+import PaymentReport from "./PaymentManagement/paymentReport";
+import CODdetails from "./PaymentManagement/CODdetails";
+import Checkout from "./PaymentManagement/Checkout";
+import PaymentDashboard from "./PaymentManagement/PaymentDashboard";
+import Payment from "./PaymentManagement/Payment";
+import HrNotify from "./PaymentManagement/HrNotify";
+import SupNotify from "./PaymentManagement/SupNotify";
+
+
 function App() {
   return (
     <BrowserRouter>
@@ -50,8 +60,12 @@ function App() {
 
         <Route path="/" element={<Layout />}>
           <Route index element={<MainDashboard />} />
+          <Route path="reactreviews" element={<ReactReviews />} />
+          <Route path="suppliermanagement" element={<SupplierManagement />} />
+          {/* <Route path="paymentmanagement" element={<PaymentManagement />} /> */}
           <Route path="home" element={<Home />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="checkout" element={<Checkout />} />
 
           {/* order manager part */}
           <Route path="productlist" element={<ProductsList />} />
@@ -88,14 +102,24 @@ function App() {
         </Route>        
 
         {/* Payment Manager Routes */}
-        <Route path="checkout" element={<Checkout />} />
+        
+        <Route path="payment" element={<Payment />}>
+          <Route index element={<PaymentDashboard />} />
+          <Route path="paymentreport" element={<PaymentReport />} />
+          <Route path="cod" element={<CODdetails />} />
+          <Route path="hrnotify" element={<HrNotify />} />
+          <Route path="supnotify" element={<SupNotify />} />
+        </Route>
 
         
         {/* Customer Manager Routes */}
         <Route path="register" element={<Register />} />
         <Route path="customerlogin" element={<CustomerLogin />} />
         
+
       </Routes>
+
+      
     </BrowserRouter>
   );
 }
