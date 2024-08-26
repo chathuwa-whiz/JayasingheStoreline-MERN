@@ -1,9 +1,9 @@
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { useState, useEffect } from 'react';
 
 const UserInquiry = () => {
-  const { userId } = useParams();
+  const { userId } = useParams(); // Get userId from URL
   const [inquiries, setInquiries] = useState([]);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
@@ -12,15 +12,13 @@ const UserInquiry = () => {
 
   useEffect(() => {
     const fetchInquiries = async () => {
-      console.log(`Fetching inquiries for userId: ${userId}`); // Debugging log
       try {
         const response = await axios.get(`http://localhost:4000/api/inquiryRoutes/user/${userId}`);
-        console.log('Inquiries response:', response.data); // Debugging log
         setInquiries(response.data);
-        setLoading(false);
       } catch (err) {
         console.error('Error fetching inquiries:', err.response ? err.response.data : err.message);
         setError('Failed to load inquiries.');
+      } finally {
         setLoading(false);
       }
     };
@@ -33,7 +31,7 @@ const UserInquiry = () => {
     if (message.trim() !== '') {
       try {
         const response = await axios.post('http://localhost:4000/api/inquiryRoutes', { message, userId });
-        setInquiries([response.data, ...inquiries]);  // Update the inquiries list
+        setInquiries([response.data, ...inquiries]);
         setMessage('');
         setSuccessMessage('Your inquiry has been submitted successfully!');
         setError('');
