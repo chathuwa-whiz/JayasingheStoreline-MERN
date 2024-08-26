@@ -13,10 +13,17 @@ import AddProducts from "./InventoryManagement/AddProducts";
 import UpdateProduct from "./InventoryManagement/UpdateProduct";
 import Stock from "./InventoryManagement/Stock";
 
-// Delivery
-import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
-import DeliveryDashboard from "./DeliveryManagement/Dashboard";
+//Delivery
 import Delivery from "./DeliveryManagement/delivery";
+import DeliveryDashboard from "./DeliveryManagement/Dashboard";
+import DeliveryDetail from "./DeliveryManagement/DeliveryDetail";
+import AddDelivery from "./DeliveryManagement/AddDelivery";
+import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
+import DeliveryNotification from "./DeliveryManagement/Notification";
+import DeliveryReports from "./DeliveryManagement/Reports";
+import DeliverySettings from "./DeliveryManagement/Settings";
+import Logout from "./DeliveryManagement/Logout";
+
 
 // Order
 import Order from "./OrderManagement/order";
@@ -35,6 +42,7 @@ import UpdateOrders from "./OrderManagement/UpdateOrder";
 // Payement
 
 import Reports from "./InventoryManagement/Reports";
+
 
 
 //Customer
@@ -89,6 +97,15 @@ function App() {
         {/*Delivery manager Routes */}
         <Route path="delivery" element={<Delivery />}>
           <Route index element={<DeliveryDashboard />} />
+          <Route path="deliverydetail" element={<DeliveryDetail />} />
+          <Route path="adddelivery" element={<AddDelivery />} />
+          <Route path="drivervehicle" element={<DriverVehicleDetails />} />
+          <Route path="notification" element={<DeliveryNotification />} />
+          <Route path="reports" element={<DeliveryReports />} />
+          <Route path="settings" element={<DeliverySettings />} />
+          <Route path="logout" element={<Logout />} />
+          
+          
           <Route path="drivervehicledetails" element={<DriverVehicleDetails />} />
         </Route>
 
@@ -99,6 +116,9 @@ function App() {
           <Route path="orderhistory" element={<OrderHistory />} />
           <Route path="orderinqiry" element={<OrderInquiries/>} />
           <Route path="orderByProduct" element={<OrderByProducts/>} />
+          <Route path="orderhistory/update/:_id" element={<UpdateOrders />} />
+        </Route>
+        
         </Route>        
 
         {/* Payment Manager Routes */}
@@ -115,6 +135,7 @@ function App() {
         {/* Customer Manager Routes */}
         <Route path="register" element={<Register />} />
         <Route path="customerlogin" element={<CustomerLogin />} />
+        
         
 
       </Routes>

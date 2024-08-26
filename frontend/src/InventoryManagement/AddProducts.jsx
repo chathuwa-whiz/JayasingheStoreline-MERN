@@ -26,7 +26,7 @@ export default function AddProducts() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         try {
           const productData = new FormData();
           productData.append("image", image);
@@ -44,20 +44,7 @@ export default function AddProducts() {
           
           const data = await createProduct(productData);
           console.log("data : ", data);
-    
-          if (data.error) {
-
-            toast.error("Product create failed. Try Again.");
-
-          } else {
-
-            toast.success(`product is created`);
-            setTimeout(() => {
-                toast.dismiss();
-                window.location.href = "/inventory/products";
-            }, 2000);
-
-          }
+          
         } catch (error) {
           console.error(error);
           toast.error("Product create failed. Try Again.");
