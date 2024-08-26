@@ -1,68 +1,95 @@
-import React, { useState } from 'react';
-import axios from 'axios';  // Import Axios
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
 
-function InquiryForm() {
+const UserInquiry = () => {
+  const { userId } = useParams();
+  const [inquiries, setInquiries] = useState([]);
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([]); // State to manage the list of messages
-  const [successMessage, setSuccessMessage] = useState(''); // State for success message
-  const [errorMessage, setErrorMessage] = useState(''); // State for error message
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  useEffect(() => {
+    const fetchInquiries = async () => {
+      console.log(`Fetching inquiries for userId: ${userId}`); // Debugging log
+      try {
+        const response = await axios.get(`http://localhost:4000/api/inquiryRoutes/user/${userId}`);
+        console.log('Inquiries response:', response.data); // Debugging log
+        setInquiries(response.data);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching inquiries:', err.response ? err.response.data : err.message);
+        setError('Failed to load inquiries.');
+        setLoading(false);
+      }
+    };
+
+    fetchInquiries();
+  }, [userId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (message.trim() !== '') {
       try {
-        // Make a POST request to the server with the inquiry message
-        const response = await axios.post('http://localhost:4000/api/inquiryRoutes', { message });
-
-        // Add new message to the top of the list
-        setMessages([response.data.message, ...messages]); 
-        setMessage(''); // Clear the message input field
-        setSuccessMessage('Your inquiry has been submitted successfully!'); // Set success message
-        setErrorMessage(''); // Clear any previous error message
-        setTimeout(() => setSuccessMessage(''), 3000); // Clear success message after 3 seconds
-      } catch (error) {
-        setErrorMessage('There was an error submitting your inquiry. Please try again.'); // Set error message
-        setTimeout(() => setErrorMessage(''), 3000); // Clear error message after 3 seconds
+        const response = await axios.post('http://localhost:4000/api/inquiryRoutes', { message, userId });
+        setInquiries([response.data, ...inquiries]);  // Update the inquiries list
+        setMessage('');
+        setSuccessMessage('Your inquiry has been submitted successfully!');
+        setError('');
+        setTimeout(() => setSuccessMessage(''), 3000);
+      } catch (err) {
+        console.error('Error submitting inquiry:', err);
+        setError('There was an error submitting your inquiry. Please try again.');
+        setTimeout(() => setError(''), 3000);
       }
     }
   };
 
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
     <div className="container mx-auto p-6 bg-[#FFFFFF] shadow-lg rounded-lg max-w-lg">
-      <h1 className="text-2xl font-bold mb-4 text-[#032539]">Submit Your Inquiry</h1>
-      
-      {/* Display success message */}
+      <h1 className="text-2xl font-bold mb-4 text-[#032539]">User Inquiries</h1>
+
       {successMessage && (
         <div className="mb-4 p-4 bg-[#E3F2FD] text-[#032539] border border-[#1C768F] rounded-lg shadow-md">
           {successMessage}
         </div>
       )}
 
-      {/* Display error message */}
-      {errorMessage && (
+      {error && (
         <div className="mb-4 p-4 bg-[#FFEBEE] text-[#D32F2F] border border-[#D32F2F] rounded-lg shadow-md">
-          {errorMessage}
+          {error}
         </div>
       )}
 
-      {/* Display submitted messages */}
-      <div className="mb-6 space-y-4">
-        {messages.map((msg, index) => (
-          <div key={index} className="bg-[#E3F2FD] p-4 rounded-lg shadow-md">
-            <p className="text-[#032539]">{msg}</p>
+      {inquiries.length === 0 ? (
+        <p className="text-gray-500">No inquiries found for this user.</p>
+      ) : (
+        inquiries.map((inquiry) => (
+          <div key={inquiry._id} className="bg-[#E3F2FD] p-4 rounded-lg shadow-md mb-4">
+            <p className="text-[#032539]">{inquiry.message}</p>
+            <div className="mt-4">
+              {inquiry.replies && inquiry.replies.map((reply) => (
+                <div key={reply._id} className="bg-[#E0F7FA] p-2 rounded-lg mb-2">
+                  <p className="text-[#032539]">{reply.replyText}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        ))}
-      </div>
+        ))
+      )}
 
-      {/* Inquiry form */}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 mt-6">
         <div>
-          <label htmlFor="message" className="block text-[#032539] font-medium mb-1">Message</label>
+          <label htmlFor="message" className="block text-[#032539] font-medium mb-1">New Inquiry</label>
           <textarea
             id="message"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Your Message"
+            placeholder="Your message here..."
             rows="4"
             className="w-full p-3 border border-[#1C768F] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FA991C]"
           />
@@ -76,6 +103,6 @@ function InquiryForm() {
       </form>
     </div>
   );
-}
+};
 
-export default InquiryForm;
+export default UserInquiry;

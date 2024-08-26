@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import StarRating from './StarRating'; // Import your StarRating component
 
 function App() {
   const [reviews, setReviews] = useState([]);
@@ -20,6 +21,9 @@ function App() {
 
     fetchReviews();
   }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -78,28 +82,20 @@ function App() {
           <div className="w-6 h-6 bg-[#1C768F] rounded-full"></div>
         </div>
         <div className="p-4">
-          {loading && <div>Loading...</div>}
-          {error && <div>{error}</div>}
           {reviews.length === 0 && !loading && !error && <p>No reviews available.</p>}
           {reviews.map((review) => (
-            <div key={review._id} className="mb-6 p-4 border-b border-gray-300">
+            <div key={review._id} className="mb-6 p-4 border-b border-gray-300 bg-white shadow-md rounded-md">
+              <h3 className="text-xl font-bold mb-2">Review ID: {review._id}</h3>
               <div className="mb-2">
-                <strong>Rating:</strong> {review.rating} / 5
+                <StarRating rating={review.rating} />
               </div>
-              <div className="mb-2">
-                <strong>Comment:</strong> {review.comment}
-              </div>
-              {review.photos.length > 0 && (
+              <p className="text-gray-700 mb-2">{review.comment}</p>
+              {review.photos && review.photos.length > 0 && (
                 <div className="mb-2">
                   <strong>Photos:</strong>
                   <div className="flex space-x-2 mt-2">
                     {review.photos.map((photo, index) => (
-                      <img
-                        key={index}
-                        src={photo}
-                        alt={`Review photo ${index + 1}`}
-                        className="w-20 h-20 object-cover rounded-md"
-                      />
+                      <img key={index} src={photo} alt={`Review photo ${index + 1}`} className="w-24 h-24 object-cover rounded-md" />
                     ))}
                   </div>
                 </div>
@@ -108,22 +104,21 @@ function App() {
                 <div className="mb-2">
                   <strong>Video:</strong>
                   <div className="mt-2">
-                    <video
-                      src={review.video}
-                      controls
-                      className="w-full h-40 object-cover rounded-md"
-                    />
+                    <video src={review.video} controls className="w-full h-40 object-cover rounded-md" />
                   </div>
                 </div>
               )}
-              <div className="mt-4">
-                <strong>Additional Feedback:</strong>
-                <ul className="list-disc list-inside">
-                  {Object.entries(review.checkboxes).map(([key, value]) =>
-                    value ? <li key={key}>{key.replace(/([A-Z])/g, ' $1')}</li> : null
-                  )}
-                </ul>
-              </div>
+              {Object.keys(review.checkboxes).length > 0 && (
+                <div className="mt-2">
+                  {Object.keys(review.checkboxes).map((key) => (
+                    review.checkboxes[key] && (
+                      <span key={key} className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full mr-2">
+                        {key.replace(/([A-Z])/g, ' $1')}
+                      </span>
+                    )
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>
