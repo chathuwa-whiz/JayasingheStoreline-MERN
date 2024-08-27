@@ -99,7 +99,7 @@ export const deleteProduct = async (req, res) => {
 export const addProductReview = async (req, res) => {
     try {
       const { rating, comment } = req.body;
-      res.json(req.user);
+      
       const product = await Product.findById(req.params.id);
   
       if (product) {

@@ -4,12 +4,8 @@ import cookieParser from 'cookie-parser';
 import path from "path";
 import cors from 'cors';
 import connectDB from './config/db.js';
-import reviewRoutes from './routes/reviewRoutes.js';  // Correctly import with ES modules
-import inquiryRoutes from './routes/inquiryRoutes.js';  // Adjust path as necessary
-import replyRoutes from './routes/replyRoutes.js'; // Adjust the path as needed
 
 // utiles
-import connectDB from "./config/db.js";
 import productRoutes from "./routes/ProductRoutes.js";
 import categoryRoutes from "./routes/CategoryRoutes.js";
 import uploadRoutes from './routes/UploadRoutes.js';
@@ -39,20 +35,8 @@ app.use("/api/deliveries", deliveryRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/drivers", driverRoutes); // Use driver routes
-app.use('/api/reviewRoutes', reviewRoutes);  // Ensure this matches the frontend URL
-app.use('/api/inquiryRoutes', inquiryRoutes);
-app.use('/api/replyRoutes', replyRoutes);
 
 const __dirname = path.resolve();
 app.use("/uploads/products", express.static(path.join(__dirname + '/uploads/products')));
 
 app.listen(port, () => console.log(`server running on port: ${port}`));
-
-// Middleware
-app.use(cors());  
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-
-
-app.listen(port, () => console.log(`Server running on port: ${port}`));
