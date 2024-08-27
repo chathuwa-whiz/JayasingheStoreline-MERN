@@ -1,18 +1,25 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
 export default function Checkout() {
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [deliveryPrice, setDeliveryPrice] = useState(0);
+  const [totalDiscount, setTotalDiscount] = useState(0);
+
+  const cart = useSelector((state) => state.cart);
+
+  console.log(cart);
+  
 
   useEffect(() => {
     // Fetch the total price from the database
     const fetchTotalPrice = async () => {
       try {
-        // Replace with your API call or database query
-        const response = await fetch('/api/getTotalPrice'); // Example API endpoint
-        const data = await response.json();
-        setTotalAmount(data.totalPrice); // Assuming the total price is in data.totalPrice
+        setTotalAmount(cart.totalPriceSum);
+        setDeliveryPrice(cart.deliveryPrice);
+        setTotalDiscount(cart.totalDiscount);
       } catch (error) {
         console.error('Error fetching total price:', error);
       }
