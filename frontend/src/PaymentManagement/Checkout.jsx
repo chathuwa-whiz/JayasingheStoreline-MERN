@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import React, { useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import toast from "react-hot-toast";
 
 export default function Checkout() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
@@ -12,11 +10,7 @@ export default function Checkout() {
 
   const cart = useSelector((state) => state.cart);
 
-  console.log(cart);
-  
-
   useEffect(() => {
-    // Fetch the total price from the database
     const fetchTotalPrice = async () => {
       try {
         setTotalAmount(cart.totalPriceSum);
@@ -24,6 +18,11 @@ export default function Checkout() {
         setTotalDiscount(cart.totalDiscount);
       } catch (error) {
         console.error('Error fetching total price:', error);
+      }
+    };
+    fetchTotalPrice();
+  }, []);
+
   const [cardNumber, setCardNumber] = useState('');
   const [cardName, setCardName] = useState('');
   const [expirationDate, setExpirationDate] = useState('');
@@ -122,7 +121,6 @@ export default function Checkout() {
   const handleExpirationDateChange = (e) => {
     let value = e.target.value.replace(/[^0-9/]/g, '');
 
-    // Automatically add slash after MM
     if (value.length === 2 && !value.includes('/')) {
       value += '/';
     }
@@ -138,8 +136,26 @@ export default function Checkout() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-200 via-blue-300 to-purple-300 flex flex-col">
-      <div className="flex justify-center items-start h-full py-8 flex-grow">
+    <div className="min-h-screen bg-gradient-to-r from-blue-200 via-blue-300 to-purple-300 flex flex-col relative">
+      {/* Order Summary */}
+      <div className="absolute top-8 right-8 w-72 bg-white shadow-md rounded-md p-6 z-10">
+        <h3 className="text-xl font-semibold text-blue-600 mb-4">Order Summary</h3>
+        <div className="flex justify-between mb-2">
+          <span className="text-gray-700">Subtotal</span>
+          <span className="text-gray-900">Rs. {totalAmount}</span>
+        </div>
+        <div className="flex justify-between mb-2">
+          <span className="text-gray-700">Shipping</span>
+          <span className="text-gray-900">Included</span>
+        </div>
+        <hr className="my-2" />
+        <div className="flex justify-between mt-4">
+          <span className="font-medium text-gray-900">Total Amount</span>
+          <span className="text-orange-500 text-xl font-semibold">Rs. {totalAmount}</span>
+        </div>
+      </div>
+
+      <div className="flex justify-center items-start h-full py-8 flex-grow ml-16">
         <form className="w-2/3 max-w-lg p-6 bg-white shadow-md rounded-md mr-4" onSubmit={handleSubmit}>
           <h2 className="text-xl font-semibold mb-4 text-center text-blue-600">Select Payment Method</h2>
           <div className="flex justify-between mb-4">
@@ -210,9 +226,12 @@ export default function Checkout() {
                   {errors.cvv && <p className="text-red-500 text-sm">{errors.cvv}</p>}
                 </div>
               </div>
-              <button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2 rounded-md hover:from-blue-600 hover:to-purple-600 focus:outline-none">
-                Pay Now
-              </button>
+              <button
+            type="submit"
+            className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md mt-4 hover:bg-blue-700"
+          >
+            Make Payment
+          </button>
             </div>
           )}
 
@@ -229,12 +248,8 @@ export default function Checkout() {
               </button>
             </div>
           )}
-
-          <ToastContainer />
         </form>
       </div>
     </div>
   );
 }
-
-
