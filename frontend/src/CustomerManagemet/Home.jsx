@@ -2,6 +2,7 @@ import React from 'react';
 import 'tailwindcss/tailwind.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/swiper-bundle.css';
+import {useLocation} from 'react-router-dom'
 // import 'swiper/modules/autoplay/autoplay.min.css'; // Import the autoplay styles
 import { Autoplay } from 'swiper/modules'; // Import Autoplay directly
 
@@ -64,6 +65,9 @@ const Carousel = () => {
 };
 
 export default function Home() {
+
+  const location = useLocation()
+
   const products = [
     {
       img: 'https://cdn.thewirecutter.com/wp-content/media/2023/05/sofabuyingguide-2048px-benchmademoderncream.jpg',

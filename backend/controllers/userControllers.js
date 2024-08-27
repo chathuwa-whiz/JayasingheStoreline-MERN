@@ -1,10 +1,9 @@
 import User from "../models/userModel.js";
 import asyncHandler from "../middlewares/asyncHandler.js";
-import bcrypt from "bcryptjs";
 import createToken from "../utils/createToken.js";
 
 const createUser = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
+  const { firstname, username, email, password, isAdmin } = req.body;
 
   if (!username || !email || !password) {
     throw new Error("Please fill all the inputs.");
@@ -13,9 +12,7 @@ const createUser = asyncHandler(async (req, res) => {
   const userExists = await User.findOne({ email });
   if (userExists) res.status(400).send("User already exists");
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-  const newUser = new User({ username, email, password: hashedPassword });
+  const newUser = new User({ firstname, username, email, password, isAdmin });
 
   try {
     await newUser.save();
@@ -23,13 +20,16 @@ const createUser = asyncHandler(async (req, res) => {
 
     res.status(201).json({
       _id: newUser._id,
+      // firstName: newUser.firstName,
+      // lastName: newUser.lastName,
       username: newUser.username,
       email: newUser.email,
+      // address: newUser.address,
       isAdmin: newUser.isAdmin,
     });
   } catch (error) {
     res.status(400);
-    throw new Error("Invalid user data");
+    // throw new Error("Invalid user data");
   }
 });
 
@@ -42,12 +42,8 @@ const loginUser = asyncHandler(async (req, res) => {
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
-    const isPasswordValid = await bcrypt.compare(
-      password,
-      existingUser.password
-    );
-
-    if (isPasswordValid) {
+    // Direct comparison of passwords (insecure)
+    if (password === existingUser.password) {
       createToken(res, existingUser._id);
 
       res.status(201).json({
@@ -57,9 +53,15 @@ const loginUser = asyncHandler(async (req, res) => {
         isAdmin: existingUser.isAdmin,
       });
       return;
+    } else {
+      res.status(400).json({ message: 'Invalid password' });
+      return;
     }
+  } else {
+    res.status(404).json({ message: 'User not found' });
   }
 });
+
 
 const logoutCurrentUser = asyncHandler(async (req, res) => {
   res.cookie("jwt", "", {
@@ -70,10 +72,10 @@ const logoutCurrentUser = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Logged out successfully" });
 });
 
-const getAllUsers = asyncHandler(async (req, res) => {
+const getAllUsers = async (req, res) => {
   const users = await User.find({});
   res.json(users);
-});
+};
 
 const getCurrentUserProfile = asyncHandler(async(req, res) => {
 
@@ -127,4 +129,66 @@ const updateCurrentUserProfile = asyncHandler(async(req, res) => {
   }
 });
 
-export {createUser, loginUser, logoutCurrentUser, getAllUsers, getCurrentUserProfile, updateCurrentUserProfile};
+const deleteUserbyId = asyncHandler(async(req, res) => {
+
+  const user = await User.findById(req.params.id)
+
+  if(user){
+
+    if(user.isAdmin){
+
+      res.status(400)
+      throw new Error("Admin user cannot be deleted")
+    }
+
+    await user.deleteOne({_id: user._id})
+    res.json({message: "User deleted successfully"})
+  }
+  else{
+
+    res.status(404)
+    throw new Error("User not found")
+  }
+})
+
+const getUserById = asyncHandler(async(req, res) => {
+
+  const user = await User.findById(req.params.id).select('-password')
+
+  if(user){
+
+    res.json(user)
+  }
+  else{
+    res.status(400)
+    throw new Error("User not found")
+  }
+})
+
+const updateUserById = asyncHandler(async(req, res) => {
+
+  const user = await User.findById(req.params.id)
+
+  if(user){
+
+    user.username = req.body.username || user.username
+    user.email = req.body.email || user.email
+    user.isAdmin = Boolean(req.body.isAdmin)
+
+    const updateUser = await user.save()
+
+    res.json({
+      _id: updateUser._id,
+      username: updateUser.username,
+      email: updateUser.email,
+      isAdmin: updateUser.isAdmin
+
+    })
+  }
+  else{
+    res.status(400)
+    throw new Error("User not found")
+  }
+})
+
+export {createUser, loginUser, logoutCurrentUser, getAllUsers, getCurrentUserProfile, updateCurrentUserProfile, deleteUserbyId, getUserById, updateUserById};
