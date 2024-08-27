@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 export default function OrderSummary() {
   const navigate = useNavigate();
   const cart = useSelector((state) => state.cart);
-  const { cartItems } = cart;
+  const { cartItems } = cart;  
 
   return (
     <div className="bg-gray-50 text-gray-800 min-h-screen p-8">

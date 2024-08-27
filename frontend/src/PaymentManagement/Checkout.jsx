@@ -1,9 +1,29 @@
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function Checkout() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [deliveryPrice, setDeliveryPrice] = useState(0);
+  const [totalDiscount, setTotalDiscount] = useState(0);
+
+  const cart = useSelector((state) => state.cart);
+
+  console.log(cart);
+  
+
+  useEffect(() => {
+    // Fetch the total price from the database
+    const fetchTotalPrice = async () => {
+      try {
+        setTotalAmount(cart.totalPriceSum);
+        setDeliveryPrice(cart.deliveryPrice);
+        setTotalDiscount(cart.totalDiscount);
+      } catch (error) {
+        console.error('Error fetching total price:', error);
   const [cardNumber, setCardNumber] = useState('');
   const [cardName, setCardName] = useState('');
   const [expirationDate, setExpirationDate] = useState('');
