@@ -10,6 +10,8 @@ const createPayment = asyncHandler(async (req, res) => {
       res.status(400);
       throw new Error('All card details are required');
     }
+  } else if (paymentMethod === 'cod') {
+    // Additional validation or handling for COD can be added here if needed
   }
 
   if (!paymentMethod) {
@@ -19,10 +21,10 @@ const createPayment = asyncHandler(async (req, res) => {
 
   // Create new payment document
   const payment = new Payment({
-    cardNumber,
-    cardName,
-    expirationDate,
-    cvv,
+    cardNumber: paymentMethod === 'card' ? cardNumber : undefined,
+    cardName: paymentMethod === 'card' ? cardName : undefined,
+    expirationDate: paymentMethod === 'card' ? expirationDate : undefined,
+    cvv: paymentMethod === 'card' ? cvv : undefined,
     paymentMethod
   });
 

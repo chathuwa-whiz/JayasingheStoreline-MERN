@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import toast from "react-hot-toast";
+import { useNavigate } from 'react-router-dom';
+import visa from "../../../uploads/products/paymentPh/visa.png";
+import mastercard from "../../../uploads/products/paymentPh/mastercard.png";
 
 export default function Checkout() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
@@ -9,6 +12,7 @@ export default function Checkout() {
   const [totalDiscount, setTotalDiscount] = useState(0);
 
   const cart = useSelector((state) => state.cart);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTotalPrice = async () => {
@@ -21,13 +25,14 @@ export default function Checkout() {
       }
     };
     fetchTotalPrice();
-  }, []);
+  }, [cart]);
 
   const [cardNumber, setCardNumber] = useState('');
   const [cardName, setCardName] = useState('');
   const [expirationDate, setExpirationDate] = useState('');
   const [cvv, setCvv] = useState('');
   const [errors, setErrors] = useState({});
+  const [cardType, setCardType] = useState('');
 
   const validateForm = () => {
     const errors = {};
@@ -66,6 +71,20 @@ export default function Checkout() {
     e.preventDefault();
 
     if (!validateForm()) {
+      return;
+    }
+
+    if (selectedPaymentMethod === 'cod') {
+      toast.success('Order confirmed successfully!');
+      setSelectedPaymentMethod(null);
+      setCardNumber('');
+      setCardName('');
+      setExpirationDate('');
+      setCvv('');
+      setErrors({});
+      setTimeout(() => {
+        navigate('/order-confirmation'); // Dummy link, replace with actual route
+      }, 2000);
       return;
     }
 
@@ -111,6 +130,15 @@ export default function Checkout() {
       .replace(/(.{4})(?=.)/g, '$1-')
       .trim();
     setCardNumber(formattedValue);
+
+    // Determine card type
+    if (value.startsWith('4')) {
+      setCardType('visa');
+    } else if (value.startsWith('5')) {
+      setCardType('mastercard');
+    } else {
+      setCardType('');
+    }
   };
 
   const handleCardNameChange = (e) => {
@@ -182,28 +210,38 @@ export default function Checkout() {
               <h3 className="text-lg font-semibold mb-2 text-blue-600">Card Details</h3>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">Card number</label>
-                <input
-                  type="text"
-                  className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${errors.cardNumber ? 'border-red-500' : 'border-gray-300'}`}
-                  placeholder="Card number"
-                  value={cardNumber}
-                  onChange={handleCardNumberChange}
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${errors.cardNumber ? 'border-red-500' : 'border-gray-300'}`}
+                    placeholder="Card number"
+                    value={cardNumber}
+                    onChange={handleCardNumberChange}
+                  />
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                    {cardType === 'visa' && (
+                      <img src={visa} alt="Visa" className="h-6" />
+                    )}
+                    {cardType === 'mastercard' && (
+                      <img src={mastercard} alt="MasterCard" className="h-6" />
+                    )}
+                  </div>
+                </div>
                 {errors.cardNumber && <p className="text-red-500 text-sm">{errors.cardNumber}</p>}
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Name on card</label>
+                <label className="block text-sm font-medium text-gray-700">Card name</label>
                 <input
                   type="text"
                   className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${errors.cardName ? 'border-red-500' : 'border-gray-300'}`}
-                  placeholder="Name on card"
+                  placeholder="Card name"
                   value={cardName}
                   onChange={handleCardNameChange}
                 />
                 {errors.cardName && <p className="text-red-500 text-sm">{errors.cardName}</p>}
               </div>
-              <div className="flex space-x-4 mb-4">
-                <div className="w-1/2">
+              <div className="mb-4 flex">
+                <div className="w-1/2 pr-2">
                   <label className="block text-sm font-medium text-gray-700">Expiration date</label>
                   <input
                     type="text"
@@ -214,7 +252,7 @@ export default function Checkout() {
                   />
                   {errors.expirationDate && <p className="text-red-500 text-sm">{errors.expirationDate}</p>}
                 </div>
-                <div className="w-1/2">
+                <div className="w-1/2 pl-2">
                   <label className="block text-sm font-medium text-gray-700">CVV</label>
                   <input
                     type="text"
@@ -226,28 +264,24 @@ export default function Checkout() {
                   {errors.cvv && <p className="text-red-500 text-sm">{errors.cvv}</p>}
                 </div>
               </div>
-              <button
-            type="submit"
-            className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md mt-4 hover:bg-blue-700"
-          >
-            Make Payment
-          </button>
             </div>
           )}
 
           {selectedPaymentMethod === 'cod' && (
-            <div className="border rounded-md p-4 bg-blue-50">
-              <ul className="list-disc pl-6 mb-4 text-gray-700">
-                <li>You may pay in cash to our courier upon receiving your parcel at the doorstep.</li>
-                <li>Before agreeing to receive the parcel, check if your delivery status has been updated to 'Out for Delivery'.</li>
-                <li>Before receiving, confirm that the airway bill shows that the parcel is from Daraz.</li>
-                <li>Before you make payment to the courier, confirm your order number, sender information, and tracking number on the parcel.</li>
-              </ul>
-              <button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2 mt-4 rounded-md hover:from-blue-600 hover:to-purple-600 focus:outline-none">
-                Confirm Order
-              </button>
+            <div className="mb-4 p-4 border border-gray-300 rounded-md">
+              <h3 className="text-lg font-semibold text-blue-600">Cash On Delivery Instructions</h3>
+              <p className="mt-2 text-gray-700">1. Ensure you have the exact amount ready for payment on delivery.</p>
+              <p className="mt-2 text-gray-700">2. Our delivery person will confirm the amount before handing over the order.</p>
+              <p className="mt-2 text-gray-700">3. If you have any issues with the payment, please contact our support team.</p>
             </div>
           )}
+
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          >
+            Confirm Order
+          </button>
         </form>
       </div>
     </div>
