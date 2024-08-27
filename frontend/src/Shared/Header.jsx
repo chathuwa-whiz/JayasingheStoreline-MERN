@@ -10,13 +10,13 @@ export default function DefaultHeader() {
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo and Brand Name */}
         <div className="flex items-center space-x-2">
-          <img src={logo} alt="Logo" className="h-8 w-8" />
+          {/* <img src={logo} alt="Logo" className="h-8 w-8" /> */}
           <span className="text-2xl font-bold">JAYASINGHE STORLINES</span>
         </div>
 
         {/* Navigation Links */}
         <nav className="space-x-6 mr-32">
-          <a href="#" className="hover:text-yellow-400">HOME</a>
+          <a href="/home" className="hover:text-yellow-400">HOME</a>
           <a href="#" className="hover:text-yellow-400">STORE</a>
           <a href="#" className="hover:text-yellow-400">CATALOG</a>
           <a href="#" className="hover:text-yellow-400">MAP</a>
@@ -43,13 +43,13 @@ export function HomeHeader() {
       <div className="container mx-auto flex justify-between items-center -mt-3">
         {/* Logo and Brand Name */}
         <div className="flex items-center space-x-2">
-          <img src={logo} alt="Logo" className="h-8 w-8" />
+          {/* <img src={logo} alt="Logo" className="h-8 w-8" /> */}
           <span className="text-2xl font-bold">JAYASINGHE STORLINES</span>
         </div>
 
         {/* Navigation Links */}
         <nav className="space-x-6">
-          <a href="#" className="hover:text-yellow-400 ml-48">HOME</a>
+          <a href="/home" className="hover:text-yellow-400 ml-48">HOME</a>
           <a href="#" className="hover:text-yellow-400">STORE</a>
           <a href="#" className="hover:text-yellow-400">CATALOG</a>
           <a href="#" className="hover:text-yellow-400">MAP</a>
@@ -86,7 +86,7 @@ export function ProfileHeader() {
 
         {/* Navigation Links */}
         <nav className="space-x-6">
-          <a href="#" className="hover:text-yellow-400 ml-10">HOME</a>
+          <a href="/home" className="hover:text-yellow-400 ml-10">HOME</a>
           <a href="#" className="hover:text-yellow-400">STORE</a>
           <a href="#" className="hover:text-yellow-400">CATALOG</a>
           <a href="#" className="hover:text-yellow-400">MAP</a>
@@ -103,6 +103,58 @@ export function ProfileHeader() {
           <span className="text-white text-lg font-semibold -ml-48">Akash Jayasinghe</span>
 
         
+      </div>
+    </header>
+  );
+}
+
+// Register Header
+export function RegisterHeader() {
+  return (
+    <header className="bg-blue-900 text-white p-4 h-20 ">
+      <div className="container mx-auto flex justify-between items-center mt-1">
+        {/* Logo and Brand Name */}
+        <div className="flex items-center space-x-2">
+          {/* <img src={logo} alt="Logo" className="h-8 w-8" /> */}
+          <span className="text-2xl font-bold">JAYASINGHE STORLINES</span>
+        </div>
+
+        {/* Navigation Links */}
+        <nav className="space-x-6 ">
+          <a href="/" className="hover:text-yellow-400 ">HOME</a>
+          <a href="#" className="hover:text-yellow-400">STORE</a>
+          <a href="#" className="hover:text-yellow-400">CATALOG</a>
+          <a href="#" className="hover:text-yellow-400">MAP</a>
+          <a href="#" className="hover:text-yellow-400">CONTACT</a>
+        </nav>
+
+        <div className="w-72"></div>
+      </div>
+    </header>
+  );
+}
+
+// Login Header
+export function LoginHeader() {
+  return (
+    <header className="bg-blue-900 text-white p-4 h-20 ">
+      <div className="container mx-auto flex justify-between items-center mt-1">
+        {/* Logo and Brand Name */}
+        <div className="flex items-center space-x-2">
+          <img src={logo} alt="Logo" className="h-8 w-8" />
+          <span className="text-2xl font-bold">JAYASINGHE STORLINES</span>
+        </div>
+
+        {/* Navigation Links */}
+        <nav className="space-x-6 ">
+          <a href="#" className="hover:text-yellow-400 ">HOME</a>
+          <a href="#" className="hover:text-yellow-400">STORE</a>
+          <a href="#" className="hover:text-yellow-400">CATALOG</a>
+          <a href="#" className="hover:text-yellow-400">MAP</a>
+          <a href="#" className="hover:text-yellow-400">CONTACT</a>
+        </nav>
+
+        <div className="w-72"></div>
       </div>
     </header>
   );
