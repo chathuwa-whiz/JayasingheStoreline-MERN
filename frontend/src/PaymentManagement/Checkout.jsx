@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import visa from "../../../uploads/products/paymentPh/visa.png";
 import mastercard from "../../../uploads/products/paymentPh/mastercard.png";
 
-export default function Checkout() {
+const Checkout = () => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [totalAmount, setTotalAmount] = useState(0);
   const [deliveryPrice, setDeliveryPrice] = useState(0);
@@ -88,38 +88,98 @@ export default function Checkout() {
       return;
     }
 
-    const paymentData = {
-      paymentMethod: selectedPaymentMethod,
-      cardNumber,
-      cardName,
-      expirationDate,
-      cvv
-    };
+    if (selectedPaymentMethod === 'card') {
+      const paymentData = {
+        paymentMethod: selectedPaymentMethod,
+        cardNumber,
+        cardName,
+        expirationDate,
+        cvv
+      };
 
-    try {
-      const response = await fetch('api/payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(paymentData)
-      });
+      try {
+        const response = await fetch('api/payment', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(paymentData)
+        });
 
-      const result = await response.json();
-      if (response.ok) {
-        toast.success('Payment successful');
-        setSelectedPaymentMethod(null);
-        setCardNumber('');
-        setCardName('');
-        setExpirationDate('');
-        setCvv('');
-        setErrors({});
-      } else {
-        toast.error(result.message || 'Payment failed');
+        const result = await response.json();
+        if (response.ok) {
+          toast.success('Payment successful');
+          setSelectedPaymentMethod(null);
+          setCardNumber('');
+          setCardName('');
+          setExpirationDate('');
+          setCvv('');
+          setErrors({});
+          navigate('/order-confirmation');
+        } else {
+          toast.error(result.message || 'Payment failed');
+        }
+      } catch (error) {
+        console.error('Error processing payment:', error);
+        toast.error('Payment failed');
       }
-    } catch (error) {
-      console.error('Error processing payment:', error);
-      toast.error('Payment failed');
+    }
+
+    if (selectedPaymentMethod === 'payhere') {
+      const payment = {
+        sandbox: true, // Set to false for live environment
+        merchant_id: "1228044", // Replace with your PayHere Merchant ID
+        return_url: "http://localhost:5173/checkout", // Placeholder URL
+        cancel_url: "http://localhost:5173/checkout", // Placeholder URL
+        notify_url: "http://example.com/notify", // Replace with your notify URL
+        order_id: Date.now(), // Unique order ID
+        items: "Order Description",
+        amount: totalAmount,
+        currency: "LKR",
+        first_name: "viduura",
+        last_name: "rathnayaka",
+        email: "customer@example.com",
+        phone: "1234567890",
+        address: "Address Line",
+        city: "City",
+        country: "Country",
+        delivery_address: "Delivery Address",
+        delivery_city: "Delivery City",
+        delivery_country: "Delivery Country",
+      };
+
+      if (window.PayHere) {
+        console.log('Starting PayHere payment with', payment); // Debug info
+  
+        window.PayHere.onCompleted = (response) => {
+          // Handle successful payment
+          console.log('Payment completed:', response);
+          toast.success('Payment successful');
+          setSelectedPaymentMethod(null);
+          setCardNumber('');
+          setCardName('');
+          setExpirationDate('');
+          setCvv('');
+          setErrors({});
+          navigate('/order-confirmation');
+        };
+  
+        window.PayHere.onDismissed = () => {
+          // Handle payment cancellation
+          toast.error('Payment cancelled');
+        };
+  
+        window.PayHere.onError = (error) => {
+          // Handle payment error
+          console.error('Payment error:', error);
+          toast.error('Payment failed');
+        };
+  
+        window.PayHere.startPayment(payment);
+      } else {
+        console.error('PayHere SDK not loaded');
+        toast.error('PayHere SDK not loaded');
+      }
     }
   };
 
@@ -188,20 +248,31 @@ export default function Checkout() {
           <h2 className="text-xl font-semibold mb-4 text-center text-blue-600">Select Payment Method</h2>
           <div className="flex justify-between mb-4">
             <div
-              className={`flex flex-col items-center p-4 cursor-pointer border rounded-md 
-              ${selectedPaymentMethod === 'card' ? 'border-blue-500 bg-blue-50' : 'border-gray-300'}`}
+              className={`flex flex-col items-center p-4 cursor-pointer border rounded-md ${
+                selectedPaymentMethod === 'card' ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+              }`}
               onClick={() => handlePaymentSelection('card')}
             >
               <div className="text-blue-500 text-3xl">💳</div>
               <span className="mt-2 font-medium">Credit/Debit Card</span>
             </div>
             <div
-              className={`flex flex-col items-center p-4 cursor-pointer border rounded-md 
-              ${selectedPaymentMethod === 'cod' ? 'border-blue-500 bg-blue-50' : 'border-gray-300'}`}
+              className={`flex flex-col items-center p-4 cursor-pointer border rounded-md ${
+                selectedPaymentMethod === 'cod' ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+              }`}
               onClick={() => handlePaymentSelection('cod')}
             >
               <div className="text-blue-500 text-3xl">💵</div>
               <span className="mt-2 font-medium">Cash On Delivery</span>
+            </div>
+            <div
+              className={`flex flex-col items-center p-4 cursor-pointer border rounded-md ${
+                selectedPaymentMethod === 'payhere' ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+              }`}
+              onClick={() => handlePaymentSelection('payhere')}
+            >
+              <div className="text-blue-500 text-3xl">💳</div>
+              <span className="mt-2 font-medium">PayHere</span>
             </div>
           </div>
 
@@ -213,7 +284,9 @@ export default function Checkout() {
                 <div className="relative">
                   <input
                     type="text"
-                    className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${errors.cardNumber ? 'border-red-500' : 'border-gray-300'}`}
+                    className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${
+                      errors.cardNumber ? 'border-red-500' : 'border-gray-300'
+                    }`}
                     placeholder="Card number"
                     value={cardNumber}
                     onChange={handleCardNumberChange}
@@ -229,34 +302,43 @@ export default function Checkout() {
                 </div>
                 {errors.cardNumber && <p className="text-red-500 text-sm">{errors.cardNumber}</p>}
               </div>
+
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Card name</label>
+                <label className="block text-sm font-medium text-gray-700">Cardholder Name</label>
                 <input
                   type="text"
-                  className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${errors.cardName ? 'border-red-500' : 'border-gray-300'}`}
-                  placeholder="Card name"
+                  className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${
+                    errors.cardName ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="Cardholder name"
                   value={cardName}
                   onChange={handleCardNameChange}
                 />
                 {errors.cardName && <p className="text-red-500 text-sm">{errors.cardName}</p>}
               </div>
-              <div className="mb-4 flex">
+
+              <div className="flex mb-4">
                 <div className="w-1/2 pr-2">
-                  <label className="block text-sm font-medium text-gray-700">Expiration date</label>
+                  <label className="block text-sm font-medium text-gray-700">Expiration Date</label>
                   <input
                     type="text"
-                    className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${errors.expirationDate ? 'border-red-500' : 'border-gray-300'}`}
+                    className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${
+                      errors.expirationDate ? 'border-red-500' : 'border-gray-300'
+                    }`}
                     placeholder="MM/YY"
                     value={expirationDate}
                     onChange={handleExpirationDateChange}
                   />
                   {errors.expirationDate && <p className="text-red-500 text-sm">{errors.expirationDate}</p>}
                 </div>
+
                 <div className="w-1/2 pl-2">
                   <label className="block text-sm font-medium text-gray-700">CVV</label>
                   <input
                     type="text"
-                    className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${errors.cvv ? 'border-red-500' : 'border-gray-300'}`}
+                    className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${
+                      errors.cvv ? 'border-red-500' : 'border-gray-300'
+                    }`}
                     placeholder="CVV"
                     value={cvv}
                     onChange={handleCvvChange}
@@ -264,26 +346,44 @@ export default function Checkout() {
                   {errors.cvv && <p className="text-red-500 text-sm">{errors.cvv}</p>}
                 </div>
               </div>
+              <button
+                type="submit"
+                className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md mt-4 hover:bg-blue-700"
+              >
+                Make Payment
+              </button>
             </div>
           )}
 
           {selectedPaymentMethod === 'cod' && (
-            <div className="mb-4 p-4 border border-gray-300 rounded-md">
-              <h3 className="text-lg font-semibold text-blue-600">Cash On Delivery Instructions</h3>
-              <p className="mt-2 text-gray-700">1. Ensure you have the exact amount ready for payment on delivery.</p>
-              <p className="mt-2 text-gray-700">2. Our delivery person will confirm the amount before handing over the order.</p>
-              <p className="mt-2 text-gray-700">3. If you have any issues with the payment, please contact our support team.</p>
+            <div>
+              <ul className="list-disc pl-6 mb-4 text-gray-700">
+                <li>You may pay in cash to our courier upon receiving your parcel at the doorstep.</li>
+                <li>Before agreeing to receive the parcel, check if your delivery status has been updated to 'Out for Delivery'.</li>
+                <li>Before receiving, confirm that the airway bill shows that the parcel is from Daraz.</li>
+                <li>Before you make payment to the courier, confirm your order number, sender information, and tracking number on the parcel.</li>
+              </ul>
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2 mt-4 rounded-md hover:from-blue-600 hover:to-purple-600 focus:outline-none"
+              >
+                Confirm Order
+              </button>
             </div>
           )}
 
-          <button
-            type="submit"
-            className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-          >
-            Confirm Order
-          </button>
+          {selectedPaymentMethod === 'payhere' && (
+            <button
+              type="submit"
+              className="w-full bg-green-600 text-white font-semibold py-2 rounded-md mt-4 hover:bg-green-700"
+            >
+              Pay Now
+            </button>
+          )}
         </form>
       </div>
     </div>
   );
-}
+};
+
+export default Checkout;
