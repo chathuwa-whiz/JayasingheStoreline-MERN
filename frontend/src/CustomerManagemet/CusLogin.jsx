@@ -25,7 +25,7 @@ export default function LoginPage() {
       dispatch(setCredentials(userData));
 
       // Redirect to the home page or dashboard after successful login
-      navigate('/profile');
+      navigate('/home');
     } catch (err) {
       console.log(err?.data?.message || 'Login failed. Please try again.');
     }

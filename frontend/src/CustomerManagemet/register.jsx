@@ -4,6 +4,10 @@ import googleIcon from '../../../uploads/customerManagement/googleIcon.png';
 import registerBanner from '../../../uploads/customerManagement/regBanner.jpg';
 import './register.css';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
+
 
 export default function RegisterPage() {
   // State management
@@ -13,6 +17,7 @@ export default function RegisterPage() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [address, setAddress] = useState('');
+  const navigate = useNavigate();
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState('');
 
@@ -37,13 +42,16 @@ export default function RegisterPage() {
 
     axios.post('/api/users/', payload)
       .then(result => {
-        console.log(result);
-        setError(''); // Clear errors on success
+        
+        // setError(''); // Clear errors on success
+        toast.success('User Registered Successfully...!') // Display success message'
+        navigate('/home');
       })
       .catch(err => {
-        console.log(err);
-        // setError('An error occurred during registration. Please try again.'); // Display error message
-        alert('User Already Exsits...!')
+        console.log(error);
+        console.error("Error reg", error)
+        toast.error('User Already Exsits...!') // Display error message
+    
       });
   };
 
@@ -64,6 +72,7 @@ export default function RegisterPage() {
                     id="firstname"
                     name="firstname"
                     type="text"
+                    required
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm"
@@ -76,6 +85,7 @@ export default function RegisterPage() {
                     id="lastname"
                     name="lastname"
                     type="text"
+                    required
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm"
@@ -117,6 +127,7 @@ export default function RegisterPage() {
                   id="password"
                   name="password"
                   type="password"
+                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
@@ -131,6 +142,7 @@ export default function RegisterPage() {
                   id="address"
                   name="address"
                   type="text"
+                  required
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm"
@@ -142,6 +154,7 @@ export default function RegisterPage() {
                   id="terms"
                   name="terms"
                   type="checkbox"
+                  required
                   checked={termsAccepted}
                   onChange={(e) => setTermsAccepted(e.target.checked)}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
@@ -168,6 +181,7 @@ export default function RegisterPage() {
                   Register with Google
                 </button>
               </div>
+              <ToastContainer />
             </form>
             <div className="text-center text-sm text-gray-600 mt-4">
               <a href="/customerlogin" className="font-medium text-blue-600 hover:text-blue-500">

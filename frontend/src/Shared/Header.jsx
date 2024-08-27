@@ -16,7 +16,7 @@ export default function DefaultHeader() {
 
         {/* Navigation Links */}
         <nav className="space-x-6 mr-32">
-          <a href="#" className="hover:text-yellow-400">HOME</a>
+          <a href="/home" className="hover:text-yellow-400">HOME</a>
           <a href="#" className="hover:text-yellow-400">STORE</a>
           <a href="#" className="hover:text-yellow-400">CATALOG</a>
           <a href="#" className="hover:text-yellow-400">MAP</a>
@@ -49,7 +49,7 @@ export function HomeHeader() {
 
         {/* Navigation Links */}
         <nav className="space-x-6">
-          <a href="#" className="hover:text-yellow-400 ml-48">HOME</a>
+          <a href="/home" className="hover:text-yellow-400 ml-48">HOME</a>
           <a href="#" className="hover:text-yellow-400">STORE</a>
           <a href="#" className="hover:text-yellow-400">CATALOG</a>
           <a href="#" className="hover:text-yellow-400">MAP</a>
@@ -86,7 +86,7 @@ export function ProfileHeader() {
 
         {/* Navigation Links */}
         <nav className="space-x-6">
-          <a href="#" className="hover:text-yellow-400 ml-10">HOME</a>
+          <a href="/home" className="hover:text-yellow-400 ml-10">HOME</a>
           <a href="#" className="hover:text-yellow-400">STORE</a>
           <a href="#" className="hover:text-yellow-400">CATALOG</a>
           <a href="#" className="hover:text-yellow-400">MAP</a>
@@ -121,7 +121,7 @@ export function RegisterHeader() {
 
         {/* Navigation Links */}
         <nav className="space-x-6 ">
-          <a href="#" className="hover:text-yellow-400 ">HOME</a>
+          <a href="/" className="hover:text-yellow-400 ">HOME</a>
           <a href="#" className="hover:text-yellow-400">STORE</a>
           <a href="#" className="hover:text-yellow-400">CATALOG</a>
           <a href="#" className="hover:text-yellow-400">MAP</a>
