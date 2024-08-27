@@ -1,116 +1,130 @@
 import React, { useState } from 'react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 function Notification() {
   const [notifications, setNotifications] = useState([
-    { id: 'NO1', deliveryId: 'D10', time: '12.45 pm', status: 'Delivered Successfully' },
-    { id: 'NO1', deliveryId: 'D10', time: '12.45 pm', status: 'Delivered Successfully' },
-    { id: 'NO1', deliveryId: 'D10', time: '12.45 pm', status: 'Delivered Successfully' },
-    { id: 'NO1', deliveryId: 'D10', time: '12.45 pm', status: 'Delivered Successfully' },
-    { id: 'NO1', deliveryId: 'D10', time: '12.45 pm', status: 'Delivered Successfully' },
-    { id: 'NO1', deliveryId: 'D10', time: '12.45 pm', status: 'Delivered Successfully' },
+    { id: 'NO1', deliveryId: 'D10', time: '12:45 PM', status: 'Delivered Successfully', type: 'success', date: '2024-08-24', driver: 'John Doe', additionalDetails: 'Package delivered to address XYZ on time.' },
+    { id: 'NO2', deliveryId: 'D11', time: '01:00 PM', status: 'Delivery Failed', type: 'danger', date: '2024-08-25', driver: 'Jane Smith', additionalDetails: 'Package could not be delivered due to incorrect address.' },
+    { id: 'NO1', deliveryId: 'D10', time: '12:45 PM', status: 'Delivered Successfully', type: 'success', date: '2024-08-24', driver: 'John Doe', additionalDetails: 'Package delivered to address XYZ on time.' },
+    { id: 'NO2', deliveryId: 'D11', time: '01:00 PM', status: 'Delivery Failed', type: 'danger', date: '2024-08-25', driver: 'Jane Smith', additionalDetails: 'Package could not be delivered due to incorrect address.' },
+    { id: 'NO1', deliveryId: 'D10', time: '12:45 PM', status: 'Delivered Successfully', type: 'success', date: '2024-08-24', driver: 'John Doe', additionalDetails: 'Package delivered to address XYZ on time.' },
+    { id: 'NO2', deliveryId: 'D11', time: '01:00 PM', status: 'Delivery Failed', type: 'danger', date: '2024-08-25', driver: 'Jane Smith', additionalDetails: 'Package could not be delivered due to incorrect address.' },
+    
+    // Add more notifications as needed
   ]);
 
+  const [filteredNotifications, setFilteredNotifications] = useState(notifications);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [expandedNotifications, setExpandedNotifications] = useState({});
+
   const handleDeleteNotification = (id) => {
-    setNotifications(notifications.filter((notification) => notification.id !== id));
+    const updatedNotifications = notifications.filter((notification) => notification.id !== id);
+    setNotifications(updatedNotifications);
+    setFilteredNotifications(updatedNotifications.filter((notification) => notification.id !== id));
+  };
+
+  const handleToggleExpand = (id) => {
+    setExpandedNotifications(prevState => ({
+      ...prevState,
+      [id]: !prevState[id]
+    }));
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    const content = document.getElementById('notifications-content');
+
+    html2canvas(content).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const imgWidth = 210; // A4 width in mm
+      const pageHeight = 295; // A4 height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+
+      let position = 0;
+
+      doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        doc.addPage();
+        doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      doc.save('notifications.pdf');
+    });
+  };
+
+  const handleDateChange = (e) => {
+    const date = e.target.value;
+    setSelectedDate(date);
+
+    if (date) {
+      setFilteredNotifications(notifications.filter(notification => notification.date === date));
+    } else {
+      setFilteredNotifications(notifications);
+    }
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Notification</h2>
-        <div className="flex gap-4">
-          <button className="bg-gray-200 rounded-md p-2 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path
-                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L10 10.414l7 7a1 1 0 001.414-1.414l-7-7a1 1 0 00-1.414 0z"
-                clipRule="evenodd"
-              />
+    <div className="flex flex-col gap-6 bg-gray-100 min-h-screen p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-3xl font-bold text-gray-800">Notifications</h2>
+        <div className="flex gap-4 items-center">
+          <input 
+            type="date" 
+            value={selectedDate}
+            onChange={handleDateChange}
+            className="border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button className="bg-gray-200 rounded-md p-3 flex items-center gap-2 hover:bg-gray-300 transition-colors duration-300" onClick={exportToPDF}>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M14 3a1 1 0 01.707.293l3 3a1 1 0 01.293.707V17a1 1 0 01-1 1H4a1 1 0 01-1-1V7a1 1 0 01.293-.707l3-3A1 1 0 017 3h7zm-2 0H8v4h4V3zm6 6H4v8h14V9zM9 6H7v4h2V6z"/>
             </svg>
-            Filters
+            Export to PDF
           </button>
-          <button className="bg-gray-200 rounded-md p-2 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path
-                d="M8 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm4 0a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Select Date
-          </button>
-          <div className="flex items-center gap-2">
-            <img
-              src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200"
-              alt="User Profile"
-              className="rounded-full w-8 h-8"
-            />
-            <span className="font-medium">Yasith JY</span>
-          </div>
         </div>
       </div>
-      <div className="bg-white rounded-md shadow-md p-4 overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="text-left text-gray-500 text-xs font-medium uppercase tracking-wider">
-              <th className="px-4 py-3">ID</th>
-              <th className="px-4 py-3">Delivery ID</th>
-              <th className="px-4 py-3">Time</th>
-              <th className="px-4 py-3">Delivery Status</th>
-              <th className="px-4 py-3"></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {notifications.map((notification) => (
-              <tr key={notification.id} className="hover:bg-gray-100">
-                <td className="px-4 py-3">{notification.id}</td>
-                <td className="px-4 py-3">{notification.deliveryId}</td>
-                <td className="px-4 py-3">{notification.time}</td>
-                <td className="px-4 py-3">{notification.status}</td>
-                <td className="px-4 py-3 flex gap-2">
-                  <button className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded">
-                    More
-                  </button>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path
-                      d="M17.414 2.586a2 2 0 012.828 0l-7.778 7.778a2 2 0 01-2.828 0L2.586 17.414a2 2 0 010 2.828l7.778 7.778a2 2 0 012.828 0l7.778-7.778a2 2 0 010-2.828z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path
-                      d="M5 3a2 2 0 012-2h10a2 2 0 012 2v3a2 2 0 01-2 2H7a2 2 0 01-2-2V3zM5 10a2 2 0 012-2h10a2 2 0 012 2v3a2 2 0 01-2 2H7a2 2 0 01-2-2V10zm5 5a2 2 0 012-2h6a2 2 0 012 2v3a2 2 0 01-2 2h-6a2 2 0 01-2-2v-3z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 cursor-pointer"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    onClick={() => handleDeleteNotification(notification.id)}
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 009 2zm11 5a1 1 0 01-1.414.146L10 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l4.293-4.293L7.586 5.414a1 1 0 01.146-1.414l5-5a1 1 0 011.414 0l5 5a1 1 0 010 1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="flex justify-center gap-4">
-        <button className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <button className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5-5 5" />
-          </svg>
-        </button>
+      <div id="notifications-content" className="bg-white rounded-md shadow-lg p-6 overflow-x-auto">
+        {filteredNotifications.map((notification) => (
+          <div key={notification.id} className={`p-4 mb-4 ${notification.type === 'success' ? 'text-green-800 border-green-300 bg-green-50' : 'text-red-800 border-red-300 bg-red-50'} border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300`} role="alert">
+            <div className="flex items-center">
+              <svg className="flex-shrink-0 w-5 h-5 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+              </svg>
+              <span className="sr-only">{notification.type}</span>
+              <h3 className="text-lg font-medium">{`Delivery ${notification.status === 'Delivered Successfully' ? 'Successful' : 'Failed'}`}</h3>
+            </div>
+            <div className="mt-2 mb-4 text-sm">
+              {`Delivery ID: ${notification.deliveryId} at ${notification.time} by ${notification.driver}`}
+            </div>
+            {expandedNotifications[notification.id] && notification.additionalDetails && (
+              <div className="mt-2 text-sm text-gray-700">
+                {notification.additionalDetails}
+              </div>
+            )}
+            <div className="flex gap-2 mt-2">
+              <button 
+                type="button" 
+                className={`text-${notification.type === 'success' ? 'green' : 'red'}-800 bg-transparent border border-${notification.type === 'success' ? 'green' : 'red'}-300 hover:bg-${notification.type === 'success' ? 'green' : 'red'}-600 hover:text-white focus:ring-4 focus:outline-none focus:ring-${notification.type === 'success' ? 'green' : 'red'}-200 font-medium rounded-lg text-xs px-4 py-2 transition-colors duration-300`}
+                onClick={() => handleToggleExpand(notification.id)}
+              >
+                {expandedNotifications[notification.id] ? 'Show Less' : 'View More'}
+              </button>
+              <button 
+                type="button" 
+                className={`text-${notification.type === 'success' ? 'green' : 'red'}-800 bg-transparent border border-${notification.type === 'success' ? 'green' : 'red'}-300 hover:bg-${notification.type === 'success' ? 'green' : 'red'}-600 hover:text-white focus:ring-4 focus:outline-none focus:ring-${notification.type === 'success' ? 'green' : 'red'}-200 font-medium rounded-lg text-xs px-4 py-2 transition-colors duration-300`}
+                onClick={() => handleDeleteNotification(notification.id)}
+                aria-label="Close"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

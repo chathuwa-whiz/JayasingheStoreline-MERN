@@ -1,46 +1,132 @@
-import React from 'react';
-import { FaTrash, FaEdit, FaEye, FaMapMarkerAlt } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { FaTrash, FaEdit } from 'react-icons/fa';
 
-const deliveries = [
-  { id: 'D10', type: 'Electronics', vehicle: 'Lorry A', driver: 'Mr.Sam', cost: '15000 LKR', destination: 'J Hettipola – Kurunegala' },
-  { id: 'D15', type: 'Furniture', vehicle: 'Lorry B', driver: 'Mr.Lucky', cost: '30000 LKR', destination: 'J Hettipola – Wennappuwa' },
-  { id: 'D20', type: 'Electronics', vehicle: 'Lorry C', driver: 'Mr.Jake', cost: '10000 LKR', destination: 'J Hettipola – Minuwangoda' },
-  { id: 'D25', type: 'Electronics', vehicle: 'D Bike', driver: 'Mr.Hash', cost: '2500 LKR', destination: 'J Hettipola – Kurunegala' },
-  { id: 'D30', type: 'Electronics', vehicle: 'D Tuk', driver: 'Mr.Ciao', cost: '3000 LKR', destination: 'J Hettipola – Kandy' },
-  { id: 'D35', type: 'Electronics', vehicle: 'D Tuk', driver: 'Mr.Mac', cost: '3000 LKR', destination: 'J Hettipola – Kalutara' }
-];
+export default function DeliveryDetail({ onEditDelivery }) {
+  const [deliveries, setDeliveries] = useState([]);
 
-export default function DeliveryDetail() {
+  useEffect(() => {
+    fetchDeliveries();
+  }, []);
+
+  const fetchDeliveries = async () => {
+    try {
+      const response = await fetch('/api/deliveries');
+      const data = await response.json();
+      setDeliveries(data);
+    } catch (error) {
+      console.error('Error fetching deliveries:', error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`/api/deliveries/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete delivery.");
+      }
+      setDeliveries(deliveries.filter((delivery) => delivery._id !== id));
+    } catch (error) {
+      console.error('Error deleting delivery:', error);
+    }
+  };
+
+  const handleStatusChange = async (id, status) => {
+    try {
+      const response = await fetch(`/api/deliveries/${id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update delivery status.");
+      }
+      setDeliveries(deliveries.map((delivery) => 
+        delivery._id === id ? { ...delivery, status } : delivery
+      ));
+    } catch (error) {
+      console.error('Error updating delivery status:', error);
+    }
+  };
+
+  const getRowClass = (status) => {
+    switch (status) {
+      case 'Delayed':
+        return 'bg-blue-50 border-blue-300 text-blue-700'; // Light blue for delayed
+      case 'Completed':
+        return 'bg-green-50 border-green-300 text-green-700'; // Light green for completed
+      default:
+        return 'bg-white border-gray-300 text-gray-700'; // White for pending
+    }
+  };
+
   return (
-    <div className="bg-white shadow-md rounded p-6">
-      <h1 className="text-xl font-bold mb-4">Deliveries</h1>
-      <input type="text" placeholder="Search Deliveries" className="p-2 border border-gray-300 rounded mb-4 w-full" />
-      <table className="w-full bg-white shadow-md rounded">
-        <thead>
+    <div className="shadow-lg rounded-lg p-6 bg-gray-100 h-screen overflow-auto">
+      <h1 className="text-2xl font-semibold mb-6 text-gray-800">Deliveries</h1>
+
+      <input 
+        type="text" 
+        placeholder="Search Deliveries" 
+        className="p-3 border border-gray-300 rounded-lg mb-6 w-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow duration-300"
+      />
+
+      <table className="w-full bg-white shadow-lg rounded-lg border border-gray-300">
+        <thead className="bg-gray-200 text-gray-700">
           <tr>
-            <th className="border p-2">ID</th>
-            <th className="border p-2">Delivery Type</th>
-            <th className="border p-2">Vehicle Type</th>
-            <th className="border p-2">Driver</th>
-            <th className="border p-2">Cost</th>
-            <th className="border p-2">Destination</th>
-            <th className="border p-2">Actions</th>
+            <th className="border p-3 text-left">ID</th>
+            <th className="border p-3 text-left">Delivery Item</th>
+            <th className="border p-3 text-left">Items Price</th>
+            <th className="border p-3 text-left">Delivery Price</th>
+            <th className="border p-3 text-left">Total Price</th>
+            <th className="border p-3 text-left">Driver</th>
+            <th className="border p-3 text-left">Status</th>
+            <th className="border p-3 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
           {deliveries.map((delivery) => (
-            <tr key={delivery.id}>
-              <td className="border p-2">{delivery.id}</td>
-              <td className="border p-2">{delivery.type}</td>
-              <td className="border p-2">{delivery.vehicle}</td>
-              <td className="border p-2">{delivery.driver}</td>
-              <td className="border p-2">{delivery.cost}</td>
-              <td className="border p-2">{delivery.destination}</td>
-              <td className="border p-2">
-                <button className="p-1 mx-1 text-blue-500"><FaMapMarkerAlt /></button>
-                <button className="p-1 mx-1 text-yellow-500"><FaEdit /></button>
-                <button className="p-1 mx-1 text-gray-500"><FaEye /></button>
-                <button className="p-1 mx-1 text-red-500"><FaTrash /></button>
+            <tr key={delivery._id} className={`border-b ${getRowClass(delivery.status)} hover:bg-orange-100 transition-colors duration-300`}>
+              <td className="border p-3">{delivery._id}</td>
+              <td className="border p-3">{delivery.deliveryItem}</td>
+              <td className="border p-3">{delivery.itemsPrice} LKR</td>
+              <td className="border p-3">{delivery.deliveryPrice} LKR</td>
+              <td className="border p-3">{delivery.totalPrice} LKR</td>
+              <td className="border p-3">{delivery.driver}</td>
+              <td className="border p-3">{delivery.status || 'Pending'}</td>
+              <td className="border p-3 flex space-x-2">
+                <button
+                  className="p-2 text-yellow-500 hover:bg-yellow-100 rounded-lg transition-colors duration-300"
+                  onClick={() => handleStatusChange(delivery._id, 'Pending')}
+                >
+                  Pending
+                </button>
+                <button
+                  className="p-2 text-blue-500 hover:bg-blue-100 rounded-lg transition-colors duration-300"
+                  onClick={() => handleStatusChange(delivery._id, 'Delayed')}
+                >
+                  Delay
+                </button>
+                <button
+                  className="p-2 text-green-500 hover:bg-green-100 rounded-lg transition-colors duration-300"
+                  onClick={() => handleStatusChange(delivery._id, 'Completed')}
+                >
+                  Done
+                </button>
+                <button 
+                  className="p-2 text-yellow-500 hover:bg-yellow-100 rounded-lg transition-colors duration-300"
+                  onClick={() => onEditDelivery(delivery)}
+                >
+                  <FaEdit />
+                </button>
+                <button 
+                  className="p-2 text-red-500 hover:bg-red-100 rounded-lg transition-colors duration-300"
+                  onClick={() => handleDelete(delivery._id)}
+                >
+                  <FaTrash />
+                </button>
               </td>
             </tr>
           ))}
