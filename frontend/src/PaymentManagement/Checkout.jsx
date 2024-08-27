@@ -1,41 +1,128 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Checkout() {
-
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
-  const [totalAmount, setTotalAmount] = useState(0);
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardName, setCardName] = useState('');
+  const [expirationDate, setExpirationDate] = useState('');
+  const [cvv, setCvv] = useState('');
+  const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    // Fetch the total price from the database
-    const fetchTotalPrice = async () => {
-      try {
-        // Replace with your API call or database query
-        const response = await fetch('/api/getTotalPrice'); // Example API endpoint
-        const data = await response.json();
-        setTotalAmount(data.totalPrice); // Assuming the total price is in data.totalPrice
-      } catch (error) {
-        console.error('Error fetching total price:', error);
+  const validateForm = () => {
+    const errors = {};
+
+    if (selectedPaymentMethod === 'card') {
+      const cardNumberPattern = /^\d{4}-\d{4}-\d{4}-\d{4}$/;
+      if (!cardNumberPattern.test(cardNumber) || cardNumber.replace(/-/g, '').length > 16) {
+        errors.cardNumber = 'Card number must be up to 16 digits with hyphens';
       }
-    };
 
-    fetchTotalPrice();
-  }, []);
+      const cardNamePattern = /^[a-zA-Z\s]+$/;
+      if (!cardNamePattern.test(cardName)) {
+        errors.cardName = 'Card name must only contain letters and spaces';
+      }
+
+      const expirationDatePattern = /^\d{2}\/\d{2}$/;
+      if (!expirationDatePattern.test(expirationDate)) {
+        errors.expirationDate = 'Invalid expiration date format';
+      }
+
+      const cvvPattern = /^\d{3,4}$/;
+      if (!cvvPattern.test(cvv)) {
+        errors.cvv = 'CVV must be 3 or 4 digits';
+      }
+    }
+
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handlePaymentSelection = (method) => {
     setSelectedPaymentMethod(method);
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    const paymentData = {
+      paymentMethod: selectedPaymentMethod,
+      cardNumber,
+      cardName,
+      expirationDate,
+      cvv
+    };
+
+    try {
+      const response = await fetch('api/payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(paymentData)
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        toast.success('Payment successful');
+        setSelectedPaymentMethod(null);
+        setCardNumber('');
+        setCardName('');
+        setExpirationDate('');
+        setCvv('');
+        setErrors({});
+      } else {
+        toast.error(result.message || 'Payment failed');
+      }
+    } catch (error) {
+      console.error('Error processing payment:', error);
+      toast.error('Payment failed');
+    }
+  };
+
+  const handleCardNumberChange = (e) => {
+    const value = e.target.value.replace(/[^0-9]/g, '');
+    const formattedValue = value
+      .slice(0, 16) // limit to 16 digits
+      .replace(/(.{4})(?=.)/g, '$1-')
+      .trim();
+    setCardNumber(formattedValue);
+  };
+
+  const handleCardNameChange = (e) => {
+    const value = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+    setCardName(value);
+  };
+
+  const handleExpirationDateChange = (e) => {
+    let value = e.target.value.replace(/[^0-9/]/g, '');
+
+    // Automatically add slash after MM
+    if (value.length === 2 && !value.includes('/')) {
+      value += '/';
+    }
+
+    if (value.length <= 5) {
+      setExpirationDate(value);
+    }
+  };
+
+  const handleCvvChange = (e) => {
+    const value = e.target.value.replace(/[^0-9]/g, '');
+    setCvv(value.slice(0, 3)); // limit to 3 digits
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-200 via-blue-300 to-purple-300 flex flex-col">
-      {/* <header className="py-4 bg-blue-600 text-white text-center">
-        <h1 className="text-3xl font-semibold">Checkout</h1>
-      </header> */}
-
       <div className="flex justify-center items-start h-full py-8 flex-grow">
-        <div className="w-2/3 max-w-lg p-6 bg-white shadow-md rounded-md mr-4">
+        <form className="w-2/3 max-w-lg p-6 bg-white shadow-md rounded-md mr-4" onSubmit={handleSubmit}>
           <h2 className="text-xl font-semibold mb-4 text-center text-blue-600">Select Payment Method</h2>
           <div className="flex justify-between mb-4">
-            {/* Credit/Debit Card Option */}
             <div
               className={`flex flex-col items-center p-4 cursor-pointer border rounded-md 
               ${selectedPaymentMethod === 'card' ? 'border-blue-500 bg-blue-50' : 'border-gray-300'}`}
@@ -44,8 +131,6 @@ export default function Checkout() {
               <div className="text-blue-500 text-3xl">💳</div>
               <span className="mt-2 font-medium">Credit/Debit Card</span>
             </div>
-
-            {/* Cash On Delivery Option */}
             <div
               className={`flex flex-col items-center p-4 cursor-pointer border rounded-md 
               ${selectedPaymentMethod === 'cod' ? 'border-blue-500 bg-blue-50' : 'border-gray-300'}`}
@@ -56,7 +141,6 @@ export default function Checkout() {
             </div>
           </div>
 
-          {/* Card Payment Details Form */}
           {selectedPaymentMethod === 'card' && (
             <div>
               <h3 className="text-lg font-semibold mb-2 text-blue-600">Card Details</h3>
@@ -64,45 +148,54 @@ export default function Checkout() {
                 <label className="block text-sm font-medium text-gray-700">Card number</label>
                 <input
                   type="text"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${errors.cardNumber ? 'border-red-500' : 'border-gray-300'}`}
                   placeholder="Card number"
+                  value={cardNumber}
+                  onChange={handleCardNumberChange}
                 />
+                {errors.cardNumber && <p className="text-red-500 text-sm">{errors.cardNumber}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">Name on card</label>
                 <input
                   type="text"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${errors.cardName ? 'border-red-500' : 'border-gray-300'}`}
                   placeholder="Name on card"
+                  value={cardName}
+                  onChange={handleCardNameChange}
                 />
+                {errors.cardName && <p className="text-red-500 text-sm">{errors.cardName}</p>}
               </div>
               <div className="flex space-x-4 mb-4">
                 <div className="w-1/2">
                   <label className="block text-sm font-medium text-gray-700">Expiration date</label>
                   <input
                     type="text"
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${errors.expirationDate ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder="MM/YY"
+                    value={expirationDate}
+                    onChange={handleExpirationDateChange}
                   />
+                  {errors.expirationDate && <p className="text-red-500 text-sm">{errors.expirationDate}</p>}
                 </div>
                 <div className="w-1/2">
                   <label className="block text-sm font-medium text-gray-700">CVV</label>
                   <input
                     type="text"
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${errors.cvv ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder="CVV"
+                    value={cvv}
+                    onChange={handleCvvChange}
                   />
+                  {errors.cvv && <p className="text-red-500 text-sm">{errors.cvv}</p>}
                 </div>
               </div>
-              <a href="success" className="w-full">
-                <button className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2 rounded-md hover:from-blue-600 hover:to-purple-600 focus:outline-none">
-                  Pay Now
-                </button>
-              </a>
+              <button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2 rounded-md hover:from-blue-600 hover:to-purple-600 focus:outline-none">
+                Pay Now
+              </button>
             </div>
           )}
 
-          {/* Cash On Delivery Details */}
           {selectedPaymentMethod === 'cod' && (
             <div className="border rounded-md p-4 bg-blue-50">
               <ul className="list-disc pl-6 mb-4 text-gray-700">
@@ -111,39 +204,17 @@ export default function Checkout() {
                 <li>Before receiving, confirm that the airway bill shows that the parcel is from Daraz.</li>
                 <li>Before you make payment to the courier, confirm your order number, sender information, and tracking number on the parcel.</li>
               </ul>
-              <div className="flex justify-between mt-4 text-blue-600">
-                <span className="font-medium">Total Amount:</span>
-                <span className="text-blue-800 font-semibold">Rs. {totalAmount}</span>
-              </div>
-              <button className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2 mt-4 rounded-md hover:from-blue-600 hover:to-purple-600 focus:outline-none">
+              <button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2 mt-4 rounded-md hover:from-blue-600 hover:to-purple-600 focus:outline-none">
                 Confirm Order
               </button>
             </div>
           )}
-        </div>
 
-        {/* Order Summary */}
-        <div className="w-1/3 bg-white shadow-md rounded-md p-6">
-          <h3 className="text-xl font-semibold text-blue-600 mb-4">Order Summary</h3>
-          <div className="flex justify-between mb-2">
-            <span className="text-gray-700">Subtotal</span>
-            <span className="text-gray-900">Rs. {totalAmount}</span>
-          </div>
-          <div className="flex justify-between mb-2">
-            <span className="text-gray-700">Shipping</span>
-            <span className="text-gray-900">Included</span>
-          </div>
-          <hr className="my-2" />
-          <div className="flex justify-between mt-4">
-            <span className="font-medium text-gray-900">Total Amount</span>
-            <span className="text-orange-500 text-xl font-semibold">Rs. {totalAmount}</span>
-          </div>
-        </div>
+          <ToastContainer />
+        </form>
       </div>
-
-      {/* <footer className="py-4 bg-blue-600 text-white text-center w-full fixed bottom-0">
-        <p className="text-sm">© 2024 Your Company. All rights reserved.</p>
-      </footer> */}
     </div>
   );
 }
+
+
