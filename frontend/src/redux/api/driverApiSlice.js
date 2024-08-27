@@ -1,3 +1,5 @@
+// driverApiSlice.js
+
 import { apiSlice } from './apiSlice';
 import { DRIVER_URL } from '../constants';
 
@@ -17,7 +19,15 @@ export const driverApiSlice = apiSlice.injectEndpoints({
         method: 'POST',
         body: driverData,
       }),
-      invalidatesTags: ['Driver'],
+      async onQueryStarted(driverData, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(apiSlice.util.invalidateTags(['Driver']));
+        } catch (error) {
+          console.error('Error creating driver:', error);
+          throw new Error('Adding unsuccessful. Please try again.');
+        }
+      },
     }),
     updateDriver: builder.mutation({
       query: ({ driverId, driverData }) => ({
@@ -34,7 +44,6 @@ export const driverApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Driver'],
     }),
-    // Similar endpoints for vehicles
   }),
 });
 
@@ -44,5 +53,4 @@ export const {
   useCreateDriverMutation,
   useUpdateDriverMutation,
   useDeleteDriverMutation,
-  // Similar exports for vehicles
 } = driverApiSlice;
