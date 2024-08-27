@@ -21,11 +21,13 @@ const createUser = asyncHandler(async (req, res) => {
 
     res.status(201).json({
       _id: newUser._id,
-      // firstName: newUser.firstName,
-      // lastName: newUser.lastName,
+      firstname: newUser.firstname,
+      lastname: newUser.lastname,
       username: newUser.username,
       email: newUser.email,
-      // address: newUser.address,
+      NIC: newUser.NIC, // Add this line
+      address: newUser.address, // Add this line
+      phone: newUser.phone, // Add this line
       isAdmin: newUser.isAdmin,
     });
   } catch (error) {
@@ -51,6 +53,9 @@ const loginUser = asyncHandler(async (req, res) => {
         _id: existingUser._id,
         username: existingUser.username,
         email: existingUser.email,
+        NIC: existingUser.NIC, // Add this line
+        address: existingUser.address, // Add this line
+        phone: existingUser.phone, // Add this line
         isAdmin: existingUser.isAdmin,
       });
       return;
@@ -87,8 +92,15 @@ const getCurrentUserProfile = asyncHandler(async(req, res) => {
     res.json({
 
       _id: user._id,
+      firstName: user.firstname,
+      lastName: user.lastname,
       username: user.username,
       email: user.email,
+      NIC: user.NIC, // Add this line
+      address: user.address, // Add this line
+      phone: user.phone, // Add this line
+      address: user.address,
+      isAdmin: user.isAdmin,
     })
   }
   else{
@@ -106,6 +118,9 @@ const updateCurrentUserProfile = asyncHandler(async(req, res) => {
 
     user.username = req.body.username || user.username
     user.email = req.body.email || user.email
+    user.NIC = req.body.NIC || user.NIC; // Add this line
+    user.phone = req.body.phone || user.phone; // Add this line
+    user.address = req.body.address || user.address; // Add this line
 
     if(req.body.password){
       const salt = await bcrypt.genSalt(10);
@@ -118,8 +133,13 @@ const updateCurrentUserProfile = asyncHandler(async(req, res) => {
     res.json({
 
       _id: updateUser._id,
+      firstname: updateUser.firstname,
+      lastname: updateUser.lastname,
       username: updateUser.username,
       email: updateUser.email,
+      NIC: updateUser.NIC, // Add this line
+      phone: updateUser.phone, // Add this line
+      address: updateUser.address, // Add this line
       isAdmin: updateUser.isAdmin
     })
   }
