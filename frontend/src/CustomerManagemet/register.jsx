@@ -3,47 +3,53 @@ import 'tailwindcss/tailwind.css';
 import googleIcon from '../../../uploads/customerManagement/googleIcon.png';
 import registerBanner from '../../../uploads/customerManagement/regBanner.jpg';
 import './register.css';
-import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import  { useRegisterMutation } from '../redux/api/usersApiSlice';
+import { setCredentials } from '../redux/features/auth/authSlice';
+import { useDispatch } from 'react-redux';
 
 export default function RegisterPage() {
+
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [firstname, setFirstName] = useState('');
+  const [lastname, setLastName] = useState('');
   const [address, setAddress] = useState('');
-  const [nic, setNic] = useState('');
+  const [NIC, setNIC] = useState('');
   const [phone, setPhone] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
+
   const [error, setError] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const [NICVersion, setNICVersion] = useState('10-digit');
+
   const navigate = useNavigate();
-  const [nicVersion, setNicVersion] = useState('10-digit');
+  const dispatch = useDispatch();
 
+  const [register, {isLoading, isError, isSuccess}] = useRegisterMutation();
 
-  const handleNicChange = (e) => {
+  const handleNICChange = (e) => {
     let value = e.target.value;
 
-    if (nicVersion === '10-digit') {
+    if (NICVersion === '10-digit') {
       // Allow only numbers and limit to 9 characters
       value = value.replace(/[^0-9]/g, '').slice(0, 9);
-      setNic(value + 'v');
-    } else if (nicVersion === '12-digit') {
+      setNIC(value + 'v');
+    } else if (NICVersion === '12-digit') {
       // Allow only numbers and limit to 12 characters
       value = value.replace(/[^0-9]/g, '').slice(0, 12);
-      setNic(value);
+      setNIC(value);
     }
   }
 
   // Validation functions
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const validateNIC = (nic) => /(^\d{9}[vV]$)|(^\d{12}$)/.test(nic);
+  const validateNIC = (NIC) => /(^\d{9}[vV]$)|(^\d{12}$)/.test(NIC);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();    
 
     // Check if terms are accepted
     if (!termsAccepted) {
@@ -56,7 +62,7 @@ export default function RegisterPage() {
 
     if (!validateEmail(email)) errors.email = 'Invalid email address format.';
 
-    if (!validateNIC(nic)) errors.nic = 'NIC should be either 9 digits followed by "v" or 12 digits.';
+    if (!validateNIC(NIC)) errors.NIC = 'NIC should be either 9 digits followed by "v" or 12 digits.';
 
     // If there are any errors, show them
     if (Object.keys(errors).length > 0) {
@@ -69,22 +75,27 @@ export default function RegisterPage() {
       username,
       email,
       password,
-      firstName,
-      lastName,
+      firstname,
+      lastname,
       address,
-      nic,
+      NIC,
       phone
     };
 
-    axios.post('/api/users/', payload)
-      .then(result => {
-        toast.success('User Registered Successfully...!');
-        navigate('/home');
-      })
-      .catch(err => {
-        console.error("Registration error", err);
-        toast.error('User already exists or registration failed.');
-      });
+    console.log('Payload:', payload);
+
+    try {
+      const res = await register(payload).unwrap();
+      dispatch(setCredentials({res}));
+      toast.success('Registration successful!');
+      setTimeout(() => {
+        navigate('/customerlogin');
+      }, 2000);
+    } catch (error) {
+      console.error('Registration failed:', error);
+      toast.error('Registration failed! Please try again.');
+    }
+    
   };
 
   return (
@@ -111,7 +122,7 @@ export default function RegisterPage() {
                         e.preventDefault();
                       }
                     }}
-                    value={firstName}
+                    value={firstname}
                     onChange={(e) => setFirstName(e.target.value)}
                     className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
                       error.firstName ? 'border-red-500' : 'border-gray-300'
@@ -134,7 +145,7 @@ export default function RegisterPage() {
                         e.preventDefault();
                       }
                     }}
-                    value={lastName}
+                    value={lastname}
                     onChange={(e) => setLastName(e.target.value)}
                     className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
                       error.lastName ? 'border-red-500' : 'border-gray-300'
@@ -257,16 +268,16 @@ export default function RegisterPage() {
 
               {/* NIC */}
               <div>
-      <label htmlFor="nic-version" className="block text-sm font-medium text-gray-700">
+      <label htmlFor="NIC-version" className="block text-sm font-medium text-gray-700">
         NIC Version
       </label>
       <select
-        id="nic-version"
-        name="nic-version"
-        value={nicVersion}
+        id="NIC-version"
+        name="NIC-version"
+        value={NICVersion}
         onChange={(e) => {
-          setNicVersion(e.target.value);
-          setNic(''); // Reset NIC input when version changes
+          setNICVersion(e.target.value);
+          setNIC(''); // Reset NIC input when version changes
         }}
         className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
       >
@@ -274,20 +285,20 @@ export default function RegisterPage() {
         <option value="12-digit">12-Digit (New)</option>
       </select>
 
-      <label htmlFor="nic" className="block text-sm font-medium text-gray-700 mt-4">
+      <label htmlFor="NIC" className="block text-sm font-medium text-gray-700 mt-4">
         NIC
       </label>
       <input
-        id="nic"
-        name="nic"
+        id="NIC"
+        name="NIC"
         type="text"
-        value={nic}
-        onChange={handleNicChange}
+        value={NIC}
+        onChange={handleNICChange}
         required
-        className={`mt-1 block w-full px-3 py-2 border ${error.nic ? 'border-red-500' : 'border-gray-300'} placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm rounded-md`}
-        placeholder={nicVersion === '10-digit' ? '123456789v' : '123456789012'}
+        className={`mt-1 block w-full px-3 py-2 border ${error.NIC ? 'border-red-500' : 'border-gray-300'} placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm rounded-md`}
+        placeholder={NICVersion === '10-digit' ? '123456789v' : '123456789012'}
       />
-      {error.nic && <p className="text-red-600 text-sm">{error.nic}</p>}
+      {error.NIC && <p className="text-red-600 text-sm">{error.NIC}</p>}
     </div>
 
               {/* Phone */}
@@ -384,7 +395,7 @@ export default function RegisterPage() {
           </div>
         </div>
       </div>
-      <ToastContainer />
+
     </div>
   );
 }

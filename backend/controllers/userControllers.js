@@ -13,6 +13,7 @@ const createUser = asyncHandler(async (req, res) => {
   if (userExists) res.status(400).send("User already exists");
 
   const newUser = new User({ firstname, lastname, username, email, NIC, password, address, phone, isAdmin });
+  
 
   try {
     await newUser.save();
@@ -28,7 +29,7 @@ const createUser = asyncHandler(async (req, res) => {
       isAdmin: newUser.isAdmin,
     });
   } catch (error) {
-    res.status(400);
+    res.status(400).json({ message: error.message });
     // throw new Error("Invalid user data");
   }
 });
