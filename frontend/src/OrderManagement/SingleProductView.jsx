@@ -9,8 +9,8 @@ import {useCreateReviewMutation} from "../redux/api/productApiSlice";
 
 export default function SingleProductView() {
 
-    const params = useParams();
-    const { data: productData, isLoading, isError, refetch } = useGetProductByIdQuery(params._id);
+    const { _id: productId }= useParams();
+    const { data: productData, isLoading, isError, refetch } = useGetProductByIdQuery(productId);
     const [image, setImage] = useState(productData?.image);
     const [name, setName] = useState(productData?.name || '');
     const [description, setDescription] = useState(productData?.description || '');
@@ -18,8 +18,7 @@ export default function SingleProductView() {
     const [discount, setDiscount] = useState(productData?.discount || 0);
     const [category, setCategory] = useState('');
     const [quantity, setQuantity] = useState(productData?.quantity || 0);
-    const [qty, setQty] = useState(1);
-    // console.log(productData);
+    const [qty, setQty] = useState(1);   
     
     // Review State
     const [rating, setRating] = useState(0);
@@ -63,12 +62,11 @@ export default function SingleProductView() {
         }
 
         try {
-            await createReview({ rating, comment }).unwrap();
+            await createReview({ productId, rating, comment }).unwrap();
             refetch();
             toast.success("Review submitted successfully!");
         } catch (error) {
-            toast.error("Failed to submit review. Please try again.");
-            console.log(error?.data || error.message);            
+            toast.error(error?.data || error.message);         
         }
     };
 

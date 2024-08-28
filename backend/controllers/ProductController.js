@@ -97,7 +97,6 @@ export const deleteProduct = async (req, res) => {
 
 // add product review
 export const addProductReview = async (req, res) => {
-    console.log("addProductReview controller called");
     try {
       const { rating, comment } = req.body;
 
