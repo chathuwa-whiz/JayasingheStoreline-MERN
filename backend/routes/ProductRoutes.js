@@ -2,7 +2,7 @@ import express from "express";
 import formidable from "express-formidable";
 const productRoutes = express.Router();
 
-import { addProduct, fetchProducts, fetchProductById, updateProduct, deleteProduct, addProductReview , fetchProductReviews} from "../controllers/ProductController.js";
+import { addProduct, fetchProducts, fetchProductById, updateProduct, deleteProduct, addProductReview } from "../controllers/ProductController.js";
 
 // addProduct
 productRoutes.post("/" , formidable(), addProduct);
@@ -19,14 +19,8 @@ productRoutes.put("/:id" , formidable(), updateProduct);
 // removeProduct
 productRoutes.delete("/:id" , deleteProduct);
 
-
-
-
 // addProductReview
-productRoutes.post("/:id/reviews", addProductReview);
-
-// fetch all reviews for a product
-productRoutes.get("/:id/reviews", fetchProductReviews);
+productRoutes.post("/:id", addProductReview);
 
 
 

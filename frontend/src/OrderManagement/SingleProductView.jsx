@@ -5,11 +5,12 @@ import { useDispatch } from 'react-redux';
 import { addToCart } from "../redux/features/cart/cartSlice";
 import toast from "react-hot-toast";
 import Ratings from "./Ratings";
+import {useCreateReviewMutation} from "../redux/api/productApiSlice";
 
 export default function SingleProductView() {
 
     const params = useParams();
-    const { data: productData, isLoading, isError } = useGetProductByIdQuery(params._id);
+    const { data: productData, isLoading, isError, refetch } = useGetProductByIdQuery(params._id);
     const [image, setImage] = useState(productData?.image);
     const [name, setName] = useState(productData?.name || '');
     const [description, setDescription] = useState(productData?.description || '');
@@ -18,7 +19,8 @@ export default function SingleProductView() {
     const [category, setCategory] = useState('');
     const [quantity, setQuantity] = useState(productData?.quantity || 0);
     const [qty, setQty] = useState(1);
-
+    // console.log(productData);
+    
     // Review State
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
@@ -47,7 +49,9 @@ export default function SingleProductView() {
         navigate('/cart');
     };
 
-    const submitReviewHandler = (e) => {
+    const [createReview] = useCreateReviewMutation();
+
+    const submitReviewHandler = async (e) => {
         e.preventDefault();
         if (rating < 1 || rating > 5) {
             toast.error("Please select a rating between 1 and 5 stars.");
@@ -58,10 +62,14 @@ export default function SingleProductView() {
             return;
         }
 
-        // Handle review submission logic here (e.g., dispatch an action or call an API)
-        toast.success("Review submitted successfully!");
-        setRating(0);
-        setComment('');
+        try {
+            await createReview({ rating, comment }).unwrap();
+            refetch();
+            toast.success("Review submitted successfully!");
+        } catch (error) {
+            toast.error("Failed to submit review. Please try again.");
+            console.log(error?.data || error.message);            
+        }
     };
 
     return (
@@ -128,27 +136,27 @@ export default function SingleProductView() {
 
 
             {/* Display Reviews */}
-<div className="mt-10">
-    <h2 className="text-2xl font-bold text-gray-800">Customer Reviews</h2>
-    {productData?.reviews && productData.reviews.length > 0 ? (
-        productData.reviews.map((review) => (
-            <div key={review._id} className="mt-4 p-4 border rounded-lg shadow-sm bg-gray-50">
-                <div className="flex items-center">
-                    <p className="text-lg font-semibold">{review.name}</p>
-                    <p className="ml-4 text-sm text-gray-500">{new Date(review.createdAt).toLocaleDateString()}</p>
-                </div>
-                <div className="mt-2 flex items-center">
-                    <div className="text-yellow-400">
-                        {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
-                    </div>
-                    <p className="ml-2 text-gray-700">{review.comment}</p>
-                </div>
+            <div className="mt-10">
+                <h2 className="text-2xl font-bold text-gray-800">Customer Reviews</h2>
+                {productData?.reviews && productData.reviews.length > 0 ? (
+                    productData.reviews.map((review) => (
+                        <div key={review._id} className="mt-4 p-4 border rounded-lg shadow-sm bg-gray-50">
+                            <div className="flex items-center">
+                                <p className="text-lg font-semibold">{review.name}</p>
+                                <p className="ml-4 text-sm text-gray-500">{new Date(review.createdAt).toLocaleDateString()}</p>
+                            </div>
+                            <div className="mt-2 flex items-center">
+                                <div className="text-yellow-400">
+                                    {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                                </div>
+                                <p className="ml-2 text-gray-700">{review.comment}</p>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <p className="mt-4 text-gray-500">No reviews yet.</p>
+                )}
             </div>
-        ))
-    ) : (
-        <p className="mt-4 text-gray-500">No reviews yet.</p>
-    )}
-</div>
 
             {/* Review Form */}
             <div className="mt-10">

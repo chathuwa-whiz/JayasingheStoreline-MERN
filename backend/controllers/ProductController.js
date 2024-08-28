@@ -97,6 +97,7 @@ export const deleteProduct = async (req, res) => {
 
 // add product review
 export const addProductReview = async (req, res) => {
+    console.log("addProductReview controller called");
     try {
       const { rating, comment } = req.body;
 
@@ -138,24 +139,6 @@ export const addProductReview = async (req, res) => {
     } catch (error) {
       console.error(error);
       res.status(400).json(error.message);
-    }
-};
-
-// fetch all reviews for a product
-export const fetchProductReviews = async (req, res) => {
-    try {
-        // Fetch the product by ID
-        const product = await Product.findById(req.params.id);
-        
-        // Check if the product exists
-        if (!product) {
-            return res.status(404).json({ msg: "Product Not Found" });
-        }
-        
-        // Respond with the product's reviews
-        res.json(product.reviews);
-    } catch (error) {
-        res.status(400).json({ msg: "Failed to fetch reviews", error: error.message });
     }
 };
 
