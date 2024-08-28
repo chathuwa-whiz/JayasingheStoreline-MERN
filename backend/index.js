@@ -38,8 +38,21 @@ app.use("/api/payment", paymentRoutes);
 app.use("/api/deliveries", deliveryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/drivers", driverRoutes); // Use driver routes
+
+//Employee
 app.use("/api/employee",employeeRouter);
 app.use("/api/authEmployee",authEmployeeRouter);
+
+app.use((err, req, res, next) => {
+    const statusCode = err.statusCode || 500;
+    const message = err.message || 'Internal Server Error';
+    return res.status(statusCode).json({
+        success:false,
+        statusCode,
+        message,
+    });
+});
+
 
 const __dirname = path.resolve();
 app.use("/uploads/products", express.static(path.join(__dirname + '/uploads/products')));
