@@ -62,7 +62,6 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-
 const logoutCurrentUser = asyncHandler(async (req, res) => {
   res.cookie("jwt", "", {
     httyOnly: true,
