@@ -10,7 +10,6 @@ import connectDB from "./config/db.js";
 import productRoutes from "./routes/ProductRoutes.js";
 import categoryRoutes from "./routes/CategoryRoutes.js";
 import uploadRoutes from './routes/UploadRoutes.js';
-import employeeRoutes from './routes/EmployeeRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import deliveryRoutes from './routes/DeliveryRoutes.js';
 import orderRoutes from './routes/OrderRoutes.js';
@@ -29,15 +28,10 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(cors()) // Make sure cors is enabled
 
+
 app.use("/api/category", categoryRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/upload", uploadRoutes);
-app.use("/employees",employeeRoutes);
-
-//Employee Management
-app.use(express.json());
-app.use(cors());
-
 app.use("/api/payment", paymentRoutes);
 app.use("/api/deliveries", deliveryRoutes);
 app.use("/api/orders", orderRoutes);

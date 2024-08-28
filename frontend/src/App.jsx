@@ -55,11 +55,12 @@ import Payment from "./PaymentManagement/Payment";
 import HrNotify from "./PaymentManagement/HrNotify";
 import SupNotify from "./PaymentManagement/SupNotify";
 
-//Employee
-import EmployeeDashboard from "./EmployeeManagement/Dashboard";
-import Employee from "./EmployeeManagement/Employee";
-import AddEmployee from "./EmployeeManagement/AddEmployee";
-import DisplayEmployee from "./EmployeeManagement/DisplayEmployee";
+//Employee Management
+import Employee from './EmployeeManagement/Employee';
+import EmployeeSignIn from './EmployeeManagement/EmployeeSignIn';
+import EmployeeSignUp from './EmployeeManagement/EmployeeSignUp';
+import EmployeeAbout from './EmployeeManagement/EmployeeAbout';
+import EmployeeProfile from './EmployeeManagement/EmployeeProfile';
 
 function App() {
   return (
@@ -121,13 +122,6 @@ function App() {
         <Route path="cart" element={<Cart />} />
         <Route path="shipping" element={<Shipping />} />
         <Route path="placeorder" element={<PlaceOrder />} />
-        
-        {/* HR Manager Routes */}
-        <Route path="employee" element={<Employee />}>
-          <Route index element={<EmployeeDashboard />} />
-          <Route path="addEmployee" element={<AddEmployee />} />
-          <Route path="displayEmployee" element={<DisplayEmployee />} />
-        </Route>
       
 
         {/* Payment Manager Routes */}
@@ -144,9 +138,21 @@ function App() {
         <Route path="register" element={<Register />} />
         <Route path="customerlogin" element={<CustomerLogin />} />
         
+
+
+        {/* Employee Management Routes */}
+        <Route path="/employee" element={<Employee />} />
+        <Route path="/employeeSignIn" element={<EmployeeSignIn />} />
+        <Route path="/employeeSignUp" element={<EmployeeSignUp />} />
+        <Route path="/employeeAbout" element={<EmployeeAbout />} />
+        <Route path="/employeeProfile" element={<EmployeeProfile />} />
         
 
       </Routes>
+
+      
+
+      
 
       
     </BrowserRouter>

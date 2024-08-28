@@ -1,10 +1,11 @@
 import React from 'react'
 
-export default function Employee() {
+export default function EmployeeProfile() {
   return (
     <div>
-      Home
+      Profile
     </div>
   )
 }
+
 

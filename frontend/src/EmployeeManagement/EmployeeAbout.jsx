@@ -1,9 +1,9 @@
 import React from 'react'
 
-export default function Employee() {
+export default function EmployeeAbout() {
   return (
     <div>
-      Home
+      About
     </div>
   )
 }

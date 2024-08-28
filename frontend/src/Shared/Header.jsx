@@ -108,7 +108,6 @@ export function ProfileHeader() {
   );
 }
 
-
 // inventory management
 export function DashboardHeader() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
