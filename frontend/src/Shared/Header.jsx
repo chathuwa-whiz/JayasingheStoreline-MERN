@@ -1,6 +1,12 @@
 import React, {useState, useRef, useEffect} from 'react';
-import { FaSearch, FaBell } from "react-icons/fa";
+// import { FaSearch, FaBell } from "react-icons/fa";
 import logo from "../asset/logo.png" // Adjust the path to your logo image
+import { useDispatch, useSelector } from 'react-redux';
+// import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import { logout } from '../redux/features/auth/authSlice';
+import { useProfileMutation } from '../redux/api/usersApiSlice';
+
 
 
 // main home
@@ -35,9 +41,40 @@ export default function DefaultHeader() {
 
 
 import profilePhoto from "../../../uploads/customerManagement/profilePhoto.png"; // Adjust the path to the user's profile photo
+import toast from 'react-hot-toast';
 
 // Home Header
 export function HomeHeader() {
+
+  const [username, setUsername] = useState("");
+
+  const { userInfo } = useSelector((state) => state.auth);
+  const [logoutUser, { isLoading }] = useProfileMutation();
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if(userInfo){
+      setUsername(userInfo.username);
+    }
+
+  }, [userInfo]);
+
+  const handleLogout = async (e) => {
+    e.preventDefault();
+
+    try {
+      await logoutUser().unwrap();
+      dispatch(logout());
+      toast.success("Logged out successfully");
+      setTimeout(() => {
+        navigate('/');
+      },1000);
+    } catch (error) {
+      toast.error("Failed to logout");
+    }
+  } 
   return (
     <header className="bg-blue-900 text-white p-4 h-20">
       <div className="container mx-auto flex justify-between items-center -mt-3">
@@ -63,10 +100,17 @@ export function HomeHeader() {
             className="h-16 w-30 rounded-full cursor-pointer ml-24"
           />
           
-          <span className="text-white text-lg font-semibold -m-20">Akash Jayasinghe</span>
-
+          <span className="text-white text-2xl font-semibold -m-20">
+            {username}
+          </span>
+        {/* <div className='w-32'></div> */}
         <div className="flex items-center ">
-          <a href="profile"><button className="bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-50 ml-10">Profile</button></a>
+          <a href="profile"><button className="bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-50 ml-10 -mr-20">Profile</button></a>
+        </div>
+        <div 
+        
+        className="flex items-center ">
+          <a href="profile"><button onClick={handleLogout} className="bg-red-500 text-black px-4 py-2 rounded hover:bg-yellow-50">Logout</button></a>
         </div>
       </div>
     </header>
@@ -75,6 +119,18 @@ export function HomeHeader() {
 
 // Profile Header
 export function ProfileHeader() {
+
+  const [username, setUsername] = useState("");
+
+  const { userInfo } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if(userInfo){
+      setUsername(userInfo.username);
+    }
+
+  }, [userInfo]);
+
   return (
     <header className="bg-blue-900 text-white p-4 h-20">
       <div className="container mx-auto flex justify-between items-center -mt-3">
@@ -100,7 +156,7 @@ export function ProfileHeader() {
             className="h-16 w-30 rounded-full cursor-pointer ml-24"
           />
           
-          <span className="text-white text-lg font-semibold -ml-48">Akash Jayasinghe</span>
+          <span className="text-white text-2xl font-semibold -ml-48">{username}</span>
 
         
       </div>

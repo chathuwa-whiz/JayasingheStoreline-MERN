@@ -59,8 +59,11 @@ export default function ProfileManagementPage() {
 
     try {
       await updateProfile({ username, email, NIC, phone, address }).unwrap();
-      toast.success('Profile updated successfully');
       dispatch(setCredentials({ ...userInfo, username, email, NIC, phone, address }));
+      toast.success('Profile updated successfully');
+      setTimeout(() => {
+        window.location.reload();
+      },1000);
     } catch (error) {
       toast.error('Failed to update profile');
     }
@@ -69,7 +72,22 @@ export default function ProfileManagementPage() {
   const handleChangePassword = async (e) => {
     e.preventDefault();
 
-    if (newPassword !== confirmPassword) {
+    if (newPassword.length === 0 || confirmPassword.length === 0 || oldPassword.length === 0) {
+
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        password: 'Please fill all the fields...',
+      }));
+      return;
+    }
+    else if (oldPassword !== userInfo.password) {
+
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        password: 'Old Password does not match...',
+      }));
+      return;
+    }else if (newPassword !== confirmPassword) {
       setErrors((prevErrors) => ({
         ...prevErrors,
         password: 'New password and confirm password do not match.',
@@ -79,7 +97,12 @@ export default function ProfileManagementPage() {
 
     try {
       // Implement your password change logic here
+      await updateProfile({ password: newPassword }).unwrap();
+      dispatch(setCredentials({ ...userInfo, password: newPassword }));
       toast.success('Password changed successfully');
+      setTimeout(() => {
+        window.location.reload();
+      },1000);
     } catch (error) {
       toast.error('Failed to change password');
     }
@@ -102,6 +125,11 @@ export default function ProfileManagementPage() {
                   id="username"
                   name="username"
                   type="text"
+                  onKeyPress={(e) => {
+                    if (!/^[a-zA-Z]+$/.test(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
                   value={username || ''}  // Ensure fallback to empty string
                   onChange={(e) => setUsername(e.target.value)}
                   className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm"
@@ -194,7 +222,7 @@ export default function ProfileManagementPage() {
                     type="password"
                     value={newPassword || ''}  // Ensure fallback to empty string
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm"
+                    className="appearance-none mt-3 rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm"
                     placeholder="New Password"
                   />
                 </div>
@@ -206,7 +234,7 @@ export default function ProfileManagementPage() {
                     type="password"
                     value={confirmPassword || ''}  // Ensure fallback to empty string
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm"
+                    className="appearance-none mt-3 rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm"
                     placeholder="Confirm Password"
                   />
                 </div>
