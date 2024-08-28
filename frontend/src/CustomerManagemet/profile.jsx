@@ -15,6 +15,7 @@ export default function ProfileManagementPage() {
   const [NIC, setNIC] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
