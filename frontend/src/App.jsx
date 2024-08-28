@@ -55,8 +55,6 @@ function App() {
           <Route path="register" element={<Register />} />
           <Route path="customerlogin" element={<CustomerLogin />} />
 
-          
-
           {/* order manager part */}
           <Route path="productlist" element={<ProductsList />} />
           <Route path="product/:_id" element={<SingleProductView />} />
