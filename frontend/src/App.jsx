@@ -55,6 +55,9 @@ import Payment from "./PaymentManagement/Payment";
 import HrNotify from "./PaymentManagement/HrNotify";
 import SupNotify from "./PaymentManagement/SupNotify";
 
+//reviews
+import ReviewsPage from "./Reviews/ReviewForm";
+
 
 function App() {
   return (
@@ -129,6 +132,10 @@ function App() {
     
         <Route path="register" element={<Register />} />
         <Route path="customerlogin" element={<CustomerLogin />} />
+
+        {/* Customer Reviews Routes */}
+        <Route path="reviewreact" element={<ReviewsPage />} />
+
 
       </Routes>
 

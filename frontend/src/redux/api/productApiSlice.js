@@ -64,7 +64,9 @@ export const productApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ["Product"],
         }),
-    
+
+        
+    //review
         createReview: builder.mutation({
             query: (data) => ({
                 url: `${PRODUCT_URL}/${data.productId}/reviews`,
@@ -90,6 +92,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
               body: { checked, radio },
             }),
         }),
+
 
     }),
 });
