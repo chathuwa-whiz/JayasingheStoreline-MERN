@@ -27,6 +27,26 @@ const Checkout = () => {
     fetchTotalPrice();
   }, [cart]);
 
+  useEffect(() => {
+    // Load PayHere SDK dynamically
+    const loadPayHereSDK = () => {
+      const script = document.createElement('script');
+      script.src = 'https://www.payhere.lk/lib/payhere.js';
+      script.async = true;
+      script.onload = () => {
+        if (window.payhere) {
+          console.log('PayHere SDK loaded');
+        } else {
+          console.error('PayHere SDK failed to load');
+          toast.error('PayHere SDK failed to load');
+        }
+      };
+      document.body.appendChild(script);
+    };
+
+    loadPayHereSDK();
+  }, []);
+
   const [cardNumber, setCardNumber] = useState('');
   const [cardName, setCardName] = useState('');
   const [expirationDate, setExpirationDate] = useState('');
@@ -124,63 +144,59 @@ const Checkout = () => {
         toast.error('Payment failed');
       }
     }
-
     if (selectedPaymentMethod === 'payhere') {
       const payment = {
         sandbox: true, // Set to false for live environment
-        merchant_id: "1228044", // Replace with your PayHere Merchant ID
-        return_url: "http://localhost:5173/checkout", // Placeholder URL
-        cancel_url: "http://localhost:5173/checkout", // Placeholder URL
-        notify_url: "http://example.com/notify", // Replace with your notify URL
-        order_id: Date.now(), // Unique order ID
+        merchant_id: "1228044",
+        return_url: "http://localhost:5173/checkout",
+        cancel_url: "http://localhost:5173/checkout",
+        notify_url: "http://localhost:5000/payhere/notify", // Ensure this matches your server route
+        order_id: Date.now(),
         items: "Order Description",
         amount: totalAmount,
         currency: "LKR",
         first_name: "viduura",
         last_name: "rathnayaka",
-        email: "customer@example.com",
-        phone: "1234567890",
+        email: "vidura@gmail.com",
+        phone: "0772909990",
         address: "Address Line",
-        city: "City",
-        country: "Country",
-        delivery_address: "Delivery Address",
-        delivery_city: "Delivery City",
-        delivery_country: "Delivery Country",
+        city: "Malabe",
+        country: "Sri Lanka",
+        delivery_address: "", // Optional, ensure it's valid or remove it if not needed
+        delivery_city: "",    // Optional, ensure it's valid or remove it if not needed
+        delivery_country: "", // Optional, ensure it's valid or remove it if not needed
       };
-
-      if (window.PayHere) {
+    
+      if (window.payhere) {
         console.log('Starting PayHere payment with', payment); // Debug info
   
-        window.PayHere.onCompleted = (response) => {
+        window.payhere.onCompleted = (response) => {
           // Handle successful payment
           console.log('Payment completed:', response);
           toast.success('Payment successful');
-          setSelectedPaymentMethod(null);
-          setCardNumber('');
-          setCardName('');
-          setExpirationDate('');
-          setCvv('');
-          setErrors({});
+          // Clear payment method and other fields as needed
+          // Navigate to confirmation page or handle post-payment logic
           navigate('/order-confirmation');
         };
   
-        window.PayHere.onDismissed = () => {
+        window.payhere.onDismissed = () => {
           // Handle payment cancellation
           toast.error('Payment cancelled');
         };
   
-        window.PayHere.onError = (error) => {
+        window.payhere.onError = (error) => {
           // Handle payment error
           console.error('Payment error:', error);
           toast.error('Payment failed');
         };
   
-        window.PayHere.startPayment(payment);
+        window.payhere.startPayment(payment);
       } else {
         console.error('PayHere SDK not loaded');
         toast.error('PayHere SDK not loaded');
       }
     }
+
   };
 
   const handleCardNumberChange = (e) => {
