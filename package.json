@@ -9,12 +9,12 @@
     "frontend": "npm run dev --prefix frontend",
     "dev": "concurrently \"npm run frontend\" \"npm run backend\""
   },
-
   "keywords": [],
   "author": "",
   "license": "ISC",
-  
   "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "axios": "^1.7.5",
     "bcryptjs": "^2.4.3",
     "chart.js": "^4.4.4",

@@ -41,6 +41,7 @@ import CustomerLogin from "./CustomerManagemet/CusLogin";
 import Register from "./CustomerManagemet/register";
 import Home from "./CustomerManagemet/Home";
 import Profile from "./CustomerManagemet/profile";
+import CustomerManDashboard from "./CustomerManagemet/CustomerManDashboard";
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="register" element={<Register />} />
           <Route path="customerlogin" element={<CustomerLogin />} />
+
           
 
           {/* order manager part */}
@@ -96,6 +98,7 @@ function App() {
     
         <Route path="register" element={<Register />} />
         <Route path="customerlogin" element={<CustomerLogin />} />
+        <Route path="customermandashboard" element={<CustomerManDashboard />} />
     
 
     

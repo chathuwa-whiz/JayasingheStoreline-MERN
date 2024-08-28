@@ -1,11 +1,12 @@
 import React, {useState, useRef, useEffect} from 'react';
-// import { FaSearch, FaBell } from "react-icons/fa";
 import logo from "../asset/logo.png" // Adjust the path to your logo image
 import { useDispatch, useSelector } from 'react-redux';
 // import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../redux/features/auth/authSlice';
 import { useProfileMutation } from '../redux/api/usersApiSlice';
+import profilePhoto from "../../../uploads/customerManagement/profilePhoto.png"; // Adjust the path to the user's profile photo
+import toast from 'react-hot-toast';
 
 
 
@@ -39,9 +40,6 @@ export default function DefaultHeader() {
   )
 }
 
-
-import profilePhoto from "../../../uploads/customerManagement/profilePhoto.png"; // Adjust the path to the user's profile photo
-import toast from 'react-hot-toast';
 
 // Home Header
 export function HomeHeader() {
