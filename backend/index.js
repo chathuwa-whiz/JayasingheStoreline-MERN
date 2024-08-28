@@ -15,6 +15,7 @@ import deliveryRoutes from './routes/DeliveryRoutes.js';
 import orderRoutes from './routes/OrderRoutes.js';
 import driverRoutes from './routes/DriverRoutes.js'; // Import driver routes
 import employeeRouter from './routes/EmployeeRoutes.js';
+import authEmployeeRouter from './routes/AuthEmployeeRoutes.js';
 
 // load the .env file
 dotenv.config();
@@ -38,6 +39,7 @@ app.use("/api/deliveries", deliveryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/drivers", driverRoutes); // Use driver routes
 app.use("/api/employee",employeeRouter);
+app.use("/api/authEmployee",authEmployeeRouter);
 
 const __dirname = path.resolve();
 app.use("/uploads/products", express.static(path.join(__dirname + '/uploads/products')));
