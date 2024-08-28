@@ -2,6 +2,7 @@ import User from "../models/userModel.js";
 import asyncHandler from "../middlewares/asyncHandler.js";
 import createToken from "../utils/createToken.js";
 
+
 const createUser = asyncHandler(async (req, res) => {
   const { firstname, lastname, username, email, password,NIC, address, phone, isAdmin } = req.body;
 
@@ -28,6 +29,7 @@ const createUser = asyncHandler(async (req, res) => {
       NIC: newUser.NIC, // Add this line
       address: newUser.address, // Add this line
       phone: newUser.phone, // Add this line
+      password: newUser.password,
       isAdmin: newUser.isAdmin,
     });
   } catch (error) {
@@ -56,6 +58,7 @@ const loginUser = asyncHandler(async (req, res) => {
         NIC: existingUser.NIC, // Add this line
         address: existingUser.address, // Add this line
         phone: existingUser.phone, // Add this line
+        password: existingUser.password,
         isAdmin: existingUser.isAdmin,
       });
       return;
@@ -98,6 +101,7 @@ const getCurrentUserProfile = asyncHandler(async(req, res) => {
       NIC: user.NIC, // Add this line
       address: user.address, // Add this line
       phone: user.phone, // Add this line
+      password: user.password,
       address: user.address,
       isAdmin: user.isAdmin,
     })
@@ -120,12 +124,13 @@ const updateCurrentUserProfile = asyncHandler(async(req, res) => {
     user.NIC = req.body.NIC || user.NIC; // Add this line
     user.phone = req.body.phone || user.phone; // Add this line
     user.address = req.body.address || user.address; // Add this line
+    user.password = req.body.password || user.password
 
-    if(req.body.password){
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(req.body.password, salt);
-      user.password = hashedPassword
-    }
+    // if(req.body.password){
+    //   const salt = await bcrypt.genSalt(10);
+    //   const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    //   user.password = hashedPassword
+    // }
 
     const updateUser = await user.save()
 
@@ -139,6 +144,7 @@ const updateCurrentUserProfile = asyncHandler(async(req, res) => {
       NIC: updateUser.NIC, // Add this line
       phone: updateUser.phone, // Add this line
       address: updateUser.address, // Add this line
+      password: updateUser.password,
       isAdmin: updateUser.isAdmin
     })
   }
