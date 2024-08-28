@@ -35,13 +35,13 @@ import OrderByProducts from "./OrderManagement/OrderByProducts";
 import Checkout from "./PaymentManagement/Checkout";
 import Reports from "./InventoryManagement/Reports";
 
+
 //Customer
 import CustomerLogin from "./CustomerManagemet/CusLogin"; 
 import Register from "./CustomerManagemet/register";
 import Home from "./CustomerManagemet/Home";
 import Profile from "./CustomerManagemet/profile";
-import CustomerDashboard from "./CustomerManagemet/CustomerManDashboard";
-import Customer from "./CustomerManagemet/Customer";
+import CustomerManDashboard from "./CustomerManagemet/CustomerManDashboard";
 
 function App() {
   return (
@@ -54,6 +54,8 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="register" element={<Register />} />
           <Route path="customerlogin" element={<CustomerLogin />} />
+
+          
 
           {/* order manager part */}
           <Route path="productlist" element={<ProductsList />} />
@@ -93,12 +95,14 @@ function App() {
 
         
         {/* Customer Manager Routes */}
+    
         <Route path="register" element={<Register />} />
         <Route path="customerlogin" element={<CustomerLogin />} />
+        <Route path="customermandashboard" element={<CustomerManDashboard />} />
+    
 
-        <Route path="customer" element={<Customer />}>
-          <Route index element={<CustomerDashboard />} />
-        </Route>
+    
+
 
 
       </Routes>
