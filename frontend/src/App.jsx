@@ -61,6 +61,7 @@ import EmployeeSignIn from './EmployeeManagement/EmployeeSignIn';
 import EmployeeSignUp from './EmployeeManagement/EmployeeSignUp';
 import EmployeeAbout from './EmployeeManagement/EmployeeAbout';
 import EmployeeProfile from './EmployeeManagement/EmployeeProfile';
+import Header from './EmployeeManagement/Header';
 
 function App() {
   return (
@@ -140,16 +141,21 @@ function App() {
         
 
 
-        {/* Employee Management Routes */}
-        <Route path="/employee" element={<Employee />} />
+       
+      
+
+      </Routes>
+
+
+    <Header />
+    <Routes>
+       {/* Employee Management Routes */}
+       <Route path="/employee" element={<Employee />} />
         <Route path="/employeeSignIn" element={<EmployeeSignIn />} />
         <Route path="/employeeSignUp" element={<EmployeeSignUp />} />
         <Route path="/employeeAbout" element={<EmployeeAbout />} />
         <Route path="/employeeProfile" element={<EmployeeProfile />} />
-        
-
-      </Routes>
-
+    </Routes>
       
 
       
