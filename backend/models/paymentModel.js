@@ -32,6 +32,10 @@ const paymentSchema = new mongoose.Schema({
     type: String,
     enum: ['card', 'cod'],
     required: true
+  },
+  orderId: {
+    type: String,
+    required: function() { return this.paymentMethod === 'cod'; } // Make orderId required for COD
   }
 }, { timestamps: true });
 

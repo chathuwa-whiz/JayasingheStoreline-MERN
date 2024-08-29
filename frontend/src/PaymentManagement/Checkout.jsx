@@ -22,6 +22,7 @@ const Checkout = () => {
         setTotalDiscount(cart.totalDiscount);
       } catch (error) {
         console.error('Error fetching total price:', error);
+        toast.error('Error fetching total price');
       }
     };
     fetchTotalPrice();
@@ -89,12 +90,13 @@ const Checkout = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!validateForm()) {
       return;
     }
-
+  
     if (selectedPaymentMethod === 'cod') {
+      // Handle COD
       toast.success('Order confirmed successfully!');
       setSelectedPaymentMethod(null);
       setCardNumber('');
@@ -102,13 +104,12 @@ const Checkout = () => {
       setExpirationDate('');
       setCvv('');
       setErrors({});
-      setTimeout(() => {
-        navigate('/order-confirmation'); // Dummy link, replace with actual route
-      }, 2000);
+      navigate('/order-confirmation'); // Navigate to confirmation page
       return;
     }
-
+  
     if (selectedPaymentMethod === 'card') {
+      // Handle Card payment
       const paymentData = {
         paymentMethod: selectedPaymentMethod,
         cardNumber,
@@ -116,7 +117,7 @@ const Checkout = () => {
         expirationDate,
         cvv
       };
-
+  
       try {
         const response = await fetch('api/payment', {
           method: 'POST',
@@ -125,7 +126,7 @@ const Checkout = () => {
           },
           body: JSON.stringify(paymentData)
         });
-
+  
         const result = await response.json();
         if (response.ok) {
           toast.success('Payment successful');
@@ -144,13 +145,15 @@ const Checkout = () => {
         toast.error('Payment failed');
       }
     }
+  
     if (selectedPaymentMethod === 'payhere') {
+      // Handle PayHere payment
       const payment = {
         sandbox: true, // Set to false for live environment
         merchant_id: "1228044",
         return_url: "http://localhost:5173/checkout",
         cancel_url: "http://localhost:5173/checkout",
-        notify_url: "http://localhost:5000/payhere/notify", // Ensure this matches your server route
+        notify_url: "http://localhost:5173/api/payhere/notify",
         order_id: Date.now(),
         items: "Order Description",
         amount: totalAmount,
@@ -162,42 +165,31 @@ const Checkout = () => {
         address: "Address Line",
         city: "Malabe",
         country: "Sri Lanka",
-        delivery_address: "", // Optional, ensure it's valid or remove it if not needed
-        delivery_city: "",    // Optional, ensure it's valid or remove it if not needed
-        delivery_country: "", // Optional, ensure it's valid or remove it if not needed
       };
-    
-      if (window.payhere) {
-        console.log('Starting PayHere payment with', payment); // Debug info
   
+      if (window.payhere) {
         window.payhere.onCompleted = (response) => {
-          // Handle successful payment
           console.log('Payment completed:', response);
           toast.success('Payment successful');
-          // Clear payment method and other fields as needed
-          // Navigate to confirmation page or handle post-payment logic
           navigate('/order-confirmation');
         };
   
         window.payhere.onDismissed = () => {
-          // Handle payment cancellation
           toast.error('Payment cancelled');
         };
   
         window.payhere.onError = (error) => {
-          // Handle payment error
           console.error('Payment error:', error);
           toast.error('Payment failed');
         };
   
         window.payhere.startPayment(payment);
       } else {
-        console.error('PayHere SDK not loaded');
         toast.error('PayHere SDK not loaded');
       }
     }
-
   };
+  
 
   const handleCardNumberChange = (e) => {
     const value = e.target.value.replace(/[^0-9]/g, '');
