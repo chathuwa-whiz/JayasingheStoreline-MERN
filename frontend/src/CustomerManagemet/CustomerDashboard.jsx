@@ -1,115 +1,80 @@
 import React from 'react';
-import { useAllProductsQuery } from '../redux/api/productApiSlice';
-import { useGetOrdersQuery } from '../redux/api/orderApiSlice';
+import { useGetUsersQuery } from '../redux/api/usersApiSlice';
 import { Pie, Line } from 'react-chartjs-2';
 
-export default function Dashboard() {
+export default function CustomerManagementDashboard() {
 
-  // Fetch all products
-  const { data: products, isLoading: productsLoading, isError: productsError } = useAllProductsQuery();
+  // Fetch all users
+  const { data: users, isLoading: usersLoading, isError: usersError } = useGetUsersQuery();
 
-  // Fetch all orders
-  const { data: orders, isLoading: ordersLoading, isError: ordersError } = useGetOrdersQuery();
-
-  if (productsLoading || ordersLoading) return <div>Loading...</div>;
-  if (productsError || ordersError) return <div>Something went wrong</div>;
-
-  // Data calculations
-  const categoryList = [];
-  let stockValue = 0;
-  let lowStock = 0;
-
-  for (const product of products) {
-    categoryList.push(product.category);
-    stockValue += product.buyingPrice * product.currentQty;
-    if (product.currentQty < 5) {
-      lowStock++;
-    }
-  }
-  const categories = [...new Set(categoryList)];
-  
-  const totalRevenue = orders.reduce((acc, order) => acc + order.totalPrice, 0);
-
-  // Data for charts
-  const salesByCategoryData = {
-    labels: categories,
-    datasets: [{
-      data: categories.map(category => 
-        products.filter(product => product.category === category).length),
-      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
-    }]
-  };
-
-  const revenueData = {
-    labels: orders.map(order => new Date(order.createdAt).toLocaleDateString()),
-    datasets: [{
-      label: 'Revenue',
-      data: orders.map(order => order.totalPrice),
-      fill: false,
-      backgroundColor: 'rgba(75,192,192,0.4)',
-      borderColor: 'rgba(75,192,192,1)',
-    }]
-  };
+  // Example statistics data (you can replace these with real data if available)
+  const loggedInUsers = users?.filter(user => user.isLoggedIn).length || 0;
+  const totalVisitors = 10234; // Placeholder value for total website visitors
+  const newRegistrations = 120; // New user registrations this month
+  const avgSessionDuration = '5m 12s'; // Average session duration
 
   return (
-    <div className="overflow-auto bg-gray-100 p-5 rounded-lg">
-
+    <div className="overflow-auto bg-gray-50 p-6 rounded-lg shadow-md">
+      
+      {/* Statistics Cards */}
       <div className="grid grid-cols-4 gap-6 mb-8">
-        <div className="bg-green-100 p-4 rounded-lg text-center">
-          <h2 className="text-4xl font-bold">{products.length}</h2>
-          <p className="text-lg">Total Products</p>
-          <p className="text-green-600">+18% +3.8k this week</p>
+        <div className="bg-blue-100 p-4 rounded-lg text-center shadow-sm">
+          <h2 className="text-4xl font-bold">{loggedInUsers}</h2>
+          <p className="text-lg">Logged In Users</p>
+          <p className="text-blue-600">+12% compared to last week</p>
         </div>
-        <div className="bg-yellow-100 p-4 rounded-lg text-center">
-          <h2 className="text-4xl font-bold">{categories.length}</h2>
-          <p className="text-lg">Total Categories</p>
-          <p className="text-yellow-600">+18% +2.8k this week</p>
+        <div className="bg-purple-100 p-4 rounded-lg text-center shadow-sm">
+          <h2 className="text-4xl font-bold">{totalVisitors.toLocaleString()}</h2>
+          <p className="text-lg">Total Website Visitors</p>
+          <p className="text-purple-600">+8% increase</p>
         </div>
-        <div className="bg-blue-100 p-4 rounded-lg text-center">
-          <h2 className="text-4xl font-bold">{stockValue}</h2>
-          <p className="text-lg">Total Stock Value</p>
-          <p className="text-blue-600">+18% +7.8k this week</p>
+        <div className="bg-green-100 p-4 rounded-lg text-center shadow-sm">
+          <h2 className="text-4xl font-bold">{newRegistrations}</h2>
+          <p className="text-lg">New Registrations</p>
+          <p className="text-green-600">+20% this month</p>
         </div>
-        <div className="bg-red-100 p-4 rounded-lg text-center">
-          <h2 className="text-4xl font-bold">{lowStock}</h2>
-          <p className="text-lg">Low Stock</p>
-          <p className="text-red-600">+18% +1.2k this week</p>
+        <div className="bg-orange-100 p-4 rounded-lg text-center shadow-sm">
+          <h2 className="text-2xl font-bold">{avgSessionDuration}</h2>
+          <p className="text-lg">Avg. Session Duration</p>
+          <p className="text-orange-600">Stable</p>
         </div>
       </div>
 
+      {/* Charts Section */}
       <div className="grid grid-cols-2 gap-6 mb-8">
-        <div className="bg-white p-4 rounded-lg">
-          <h3 className="text-xl font-bold mb-4">Revenue Stats</h3>
+        <div className="bg-white p-4 rounded-lg shadow-md">
+          <h3 className="text-xl font-bold mb-4">User Engagement Over Time</h3>
           <div className="relative h-64">
-            <Line data={revenueData} />
+            {/* <Line data={userEngagementData} /> */}
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg">
-          <h3 className="text-xl font-bold mb-4">Sales by Category</h3>
+        <div className="bg-white p-4 rounded-lg shadow-md">
+          <h3 className="text-xl font-bold mb-4">User Demographics</h3>
           <div className="relative h-64 flex items-center justify-center">
-            <Pie data={salesByCategoryData} />
+            {/* <Pie data={userDemographicsData} /> */}
           </div>
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded-lg">
-        <h3 className="text-xl font-bold mb-4">Recent Orders</h3>
+      {/* Recent Activity Table */}
+      <div className="bg-white p-4 rounded-lg shadow-md">
+        <h3 className="text-xl font-bold mb-4">Recent User Activities</h3>
         <table className="w-full table-auto">
           <thead>
-            <tr>
-              <th className="px-4 py-2">Order ID</th>
-              <th className="px-4 py-2">Date</th>
-              <th className="px-4 py-2">Total</th>
+            <tr className="bg-gray-100">
+              <th className="px-4 py-2">User ID</th>
+              <th className="px-4 py-2">Name</th>
+              <th className="px-4 py-2">Last Login</th>
               <th className="px-4 py-2">Status</th>
             </tr>
           </thead>
           <tbody>
-            {orders.slice(0, 5).map(order => (
-              <tr key={order._id} className="text-center">
-                <td className="border px-4 py-2">{order._id}</td>
-                <td className="border px-4 py-2">{new Date(order.createdAt).toLocaleDateString()}</td>
-                <td className="border px-4 py-2">{order.totalPrice}</td>
-                <td className="border px-4 py-2">{order.status}</td>
+            {users?.slice(0, 5).map(user => (
+              <tr key={user._id} className="text-center">
+                <td className="border px-4 py-2">{user._id}</td>
+                <td className="border px-4 py-2">{user.name}</td>
+                <td className="border px-4 py-2">{new Date(user.lastLogin).toLocaleDateString()}</td>
+                <td className="border px-4 py-2">{user.isLoggedIn ? 'Online' : 'Offline'}</td>
               </tr>
             ))}
           </tbody>
