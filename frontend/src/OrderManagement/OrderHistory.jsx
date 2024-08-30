@@ -34,7 +34,7 @@ export default function Orders() {
             {/* <th className="py-2 px-4 text-left">Product Names</th>
             <th className="py-2 px-4 text-left">Product Quantity</th> */}
             <th className="py-2 px-4 text-left">#</th>
-            <th className="py-2 px-4 text-left">Order ID</th>
+            {/* <th className="py-2 px-4 text-left">Order ID</th> */}
             <th className="py-2 px-4 text-left">Items Price</th>
             <th className="py-2 px-4 text-left">Discount</th>
             <th className="py-2 px-4 text-left">Total Price</th>
