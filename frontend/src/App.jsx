@@ -1,8 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ReactReviews from "./ReactReviews/reactReviews";
 import SupplierManagement from "./SupplierManagement/supplier";
 import Layout from "./Shared/Layout";
-import Dashboard from "./Dashboard/Dashboard";
 import MainDashboard from "./Dashboard/Dashboard";
 
 // inventory
@@ -75,9 +73,7 @@ function App() {
       <Routes>
 
         <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
           <Route index element={<MainDashboard />} />
-          <Route path="reactreviews" element={<ReactReviews />} />
           {/* <Route path="suppliermanagement" element={<SupplierManagement />} /> */}
           <Route path="suppliermanagement" element={<SupplierManagement />} />
           {/* <Route path="paymentmanagement" element={<PaymentManagement />} /> */}
@@ -155,7 +151,6 @@ function App() {
           <Route path="SupplierForm" element={<SupplierForm />} />
           <Route path="SupplierList" element={<SupplierList />} />
           <Route path="update/:_id" element={<SupplierUpdate />} />
-
         </Route>
 
       </Routes>

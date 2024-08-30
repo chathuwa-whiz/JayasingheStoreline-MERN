@@ -49,6 +49,5 @@ app.use("/api/payhere", payhereRoutes); // Use PayHere route
 const __dirname = path.resolve();
 app.use("/uploads/products", express.static(path.join(__dirname + '/uploads/products')));
 app.use("/uploads/supplierupload", express.static(path.join(__dirname + '/uploads/supplierupload')));
-app.use("/uploads/products", express.static(path.join(__dirname, '/uploads/products')));
 
 app.listen(port, () => console.log(`Server running on port: ${port}`));
