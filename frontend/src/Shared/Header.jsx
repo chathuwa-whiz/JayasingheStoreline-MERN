@@ -7,6 +7,7 @@ import { logout } from '../redux/features/auth/authSlice';
 import { useProfileMutation } from '../redux/api/usersApiSlice';
 import profilePhoto from "../../../uploads/customerManagement/profilePhoto.png"; // Adjust the path to the user's profile photo
 import toast from 'react-hot-toast';
+import { FaBell } from 'react-icons/fa';
 
 
 

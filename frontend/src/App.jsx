@@ -38,10 +38,6 @@ import PlaceOrder from "./OrderManagement/PlaceOrder";
 import OrderHistory from "./OrderManagement/OrderHistory";
 import OrderInquiries from "./OrderManagement/OrderInquiries";
 import OrderByProducts from "./OrderManagement/OrderByProducts";
-
-// Payement
-import Checkout from "./PaymentManagement/Checkout";
-import Reports from "./InventoryManagement/Reports";
 import UpdateOrders from "./OrderManagement/UpdateOrder";
 
 //Customer
