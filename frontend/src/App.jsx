@@ -38,13 +38,19 @@ import PlaceOrder from "./OrderManagement/PlaceOrder";
 import OrderHistory from "./OrderManagement/OrderHistory";
 import OrderInquiries from "./OrderManagement/OrderInquiries";
 import OrderByProducts from "./OrderManagement/OrderByProducts";
+
+// Payement
+import Checkout from "./PaymentManagement/Checkout";
+import Reports from "./InventoryManagement/Reports";
 import UpdateOrders from "./OrderManagement/UpdateOrder";
 
 //Customer
 import CustomerLogin from "./CustomerManagemet/CusLogin"; 
 import Register from "./CustomerManagemet/register";
 import Home from "./CustomerManagemet/Home";
+import Customer from "./CustomerManagemet/Customer";
 import Profile from "./CustomerManagemet/profile";
+import CustomerDashboard from "./CustomerManagemet/CustomerDashboard";
 
 //payment
 import PaymentReport from "./PaymentManagement/paymentReport";
@@ -71,7 +77,6 @@ function App() {
           <Route path="checkout" element={<Checkout />} />
           <Route path="register" element={<Register />} />
           <Route path="customerlogin" element={<CustomerLogin />} />
-          
 
           {/* order manager part */}
           <Route path="productlist" element={<ProductsList />} />
@@ -116,6 +121,8 @@ function App() {
         </Route>
 
         {/* Payment Manager Routes */}
+        <Route path="checkout" element={<Checkout />} />
+
         <Route path="payment" element={<Payment />}>
           <Route index element={<PaymentDashboard />} />
           <Route path="paymentreport" element={<PaymentReport />} />
@@ -126,9 +133,13 @@ function App() {
 
         
         {/* Customer Manager Routes */}
-    
         <Route path="register" element={<Register />} />
         <Route path="customerlogin" element={<CustomerLogin />} />
+
+        <Route path="customer" element={<Customer />}>
+          <Route index element={<CustomerDashboard />} />
+          
+        </Route>
 
       </Routes>
 

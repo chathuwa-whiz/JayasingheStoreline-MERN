@@ -2,8 +2,9 @@ import User from "../models/userModel.js";
 import asyncHandler from "../middlewares/asyncHandler.js";
 import createToken from "../utils/createToken.js";
 
+
 const createUser = asyncHandler(async (req, res) => {
-  const { firstname, username, email, password, isAdmin } = req.body;
+  const { firstname, lastname, username, email, password,NIC, address, phone, isAdmin } = req.body;
 
   if (!username || !email || !password) {
     throw new Error("Please fill all the inputs.");
@@ -12,7 +13,8 @@ const createUser = asyncHandler(async (req, res) => {
   const userExists = await User.findOne({ email });
   if (userExists) res.status(400).send("User already exists");
 
-  const newUser = new User({ firstname, username, email, password, isAdmin });
+  const newUser = new User({ firstname, lastname, username, email, NIC, password, address, phone, isAdmin });
+  
 
   try {
     await newUser.save();
@@ -20,15 +22,18 @@ const createUser = asyncHandler(async (req, res) => {
 
     res.status(201).json({
       _id: newUser._id,
-      // firstName: newUser.firstName,
-      // lastName: newUser.lastName,
+      firstname: newUser.firstname,
+      lastname: newUser.lastname,
       username: newUser.username,
       email: newUser.email,
-      // address: newUser.address,
+      NIC: newUser.NIC, // Add this line
+      address: newUser.address, // Add this line
+      phone: newUser.phone, // Add this line
+      password: newUser.password,
       isAdmin: newUser.isAdmin,
     });
   } catch (error) {
-    res.status(400);
+    res.status(400).json({ message: error.message });
     // throw new Error("Invalid user data");
   }
 });
@@ -50,6 +55,10 @@ const loginUser = asyncHandler(async (req, res) => {
         _id: existingUser._id,
         username: existingUser.username,
         email: existingUser.email,
+        NIC: existingUser.NIC, // Add this line
+        address: existingUser.address, // Add this line
+        phone: existingUser.phone, // Add this line
+        password: existingUser.password,
         isAdmin: existingUser.isAdmin,
       });
       return;
@@ -61,7 +70,6 @@ const loginUser = asyncHandler(async (req, res) => {
     res.status(404).json({ message: 'User not found' });
   }
 });
-
 
 const logoutCurrentUser = asyncHandler(async (req, res) => {
   res.cookie("jwt", "", {
@@ -86,8 +94,16 @@ const getCurrentUserProfile = asyncHandler(async(req, res) => {
     res.json({
 
       _id: user._id,
+      firstName: user.firstname,
+      lastName: user.lastname,
       username: user.username,
       email: user.email,
+      NIC: user.NIC, // Add this line
+      address: user.address, // Add this line
+      phone: user.phone, // Add this line
+      password: user.password,
+      address: user.address,
+      isAdmin: user.isAdmin,
     })
   }
   else{
@@ -105,20 +121,30 @@ const updateCurrentUserProfile = asyncHandler(async(req, res) => {
 
     user.username = req.body.username || user.username
     user.email = req.body.email || user.email
+    user.NIC = req.body.NIC || user.NIC; // Add this line
+    user.phone = req.body.phone || user.phone; // Add this line
+    user.address = req.body.address || user.address; // Add this line
+    user.password = req.body.password || user.password
 
-    if(req.body.password){
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(req.body.password, salt);
-      user.password = hashedPassword
-    }
+    // if(req.body.password){
+    //   const salt = await bcrypt.genSalt(10);
+    //   const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    //   user.password = hashedPassword
+    // }
 
     const updateUser = await user.save()
 
     res.json({
 
       _id: updateUser._id,
+      firstname: updateUser.firstname,
+      lastname: updateUser.lastname,
       username: updateUser.username,
       email: updateUser.email,
+      NIC: updateUser.NIC, // Add this line
+      phone: updateUser.phone, // Add this line
+      address: updateUser.address, // Add this line
+      password: updateUser.password,
       isAdmin: updateUser.isAdmin
     })
   }

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'tailwindcss/tailwind.css';
 import googleIcon from '../../../uploads/customerManagement/googleIcon.png';
 import loginBanner from '../../../uploads/customerManagement/LoginBanner.jpg';
 import './CusLogin.css';
 import { useLoginMutation } from '../redux/api/usersApiSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setCredentials } from '../redux/features/auth/authSlice';
 
@@ -12,9 +12,19 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [login, {isLoading}] = useLoginMutation();
+
+  const { userInfo } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate('/home');
+    }
+  }, [userInfo, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +32,7 @@ export default function LoginPage() {
       const userData = await login({ email, password }).unwrap();
 
       // Save user data to Redux store
-      dispatch(setCredentials(userData));
+      dispatch(setCredentials({ ...userData }));
 
       // Redirect to the home page or dashboard after successful login
       navigate('/home');
