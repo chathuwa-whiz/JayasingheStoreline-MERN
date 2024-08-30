@@ -72,7 +72,7 @@ import EmployeeSignIn from './EmployeeManagement/EmployeeSignIn';
 import EmployeeSignUp from './EmployeeManagement/EmployeeSignUp';
 import EmployeeAbout from './EmployeeManagement/EmployeeAbout';
 import EmployeeProfile from './EmployeeManagement/EmployeeProfile';
-import Header from './EmployeeManagement/Header';
+import EmployeeDashboard from "./EmployeeManagement/EmployeeDashboard";
 
 function App() {
   return (
@@ -149,12 +149,7 @@ function App() {
 
         {/* Customer Manager Routes */}
         <Route path="register" element={<Register />} />
-        <Route path="customerlogin" element={<CustomerLogin />} />
-        
-
-
-       
-      
+        <Route path="customerlogin" element={<CustomerLogin />} />      
         <Route path="customer" element={<Customer />}>
           <Route index element={<CustomerDashboard />} />
         </Route>
@@ -171,23 +166,16 @@ function App() {
           <Route path="update/:_id" element={<SupplierUpdate />} />
         </Route>
 
+        {/* Employee Management Routes */}
+        <Route path="employee" element={<Employee />}>
+          <Route index element={<EmployeeDashboard />} />
+          <Route path="employeeSignIn" element={<EmployeeSignIn />} />
+          <Route path="employeeSignUp" element={<EmployeeSignUp />} />
+          <Route path="employeeAbout" element={<EmployeeAbout />} />
+          <Route path="employeeProfile" element={<EmployeeProfile />} />
+        </Route>
+
       </Routes>
-
-
-    <Header />
-    <Routes>
-       {/* Employee Management Routes */}
-       <Route path="/employee" element={<Employee />} />
-        <Route path="/employeeSignIn" element={<EmployeeSignIn />} />
-        <Route path="/employeeSignUp" element={<EmployeeSignUp />} />
-        <Route path="/employeeAbout" element={<EmployeeAbout />} />
-        <Route path="/employeeProfile" element={<EmployeeProfile />} />
-    </Routes>
-      
-
-      
-
-      
     </BrowserRouter>
   );
 }

@@ -35,11 +35,6 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(cors()) // Make sure cors is enabled
 
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-
 // Define routes
 app.use("/api/category", categoryRoutes);
 app.use("/api/products", productRoutes);
@@ -51,8 +46,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/supplier", supplierRoutes);
 app.use("/api/drivers", driverRoutes); // Use driver routes
-
-//Employee
+app.use("/api/payhere", payhereRoutes); // Use PayHere route
 app.use("/api/employee",employeeRouter);
 app.use("/api/authEmployee",authEmployeeRouter);
 
@@ -66,17 +60,8 @@ app.use((err, req, res, next) => {
     });
 });
 
-
-app.use("/api/payhere", payhereRoutes); // Use PayHere route
-
 const __dirname = path.resolve();
 app.use("/uploads/products", express.static(path.join(__dirname + '/uploads/products')));
 app.use("/uploads/supplierupload", express.static(path.join(__dirname + '/uploads/supplierupload')));
 
 app.listen(port, () => console.log(`server running on port: ${port}`));
-
-
-
-
-
-app.listen(port, () => console.log(`Server running on port: ${port}`));
