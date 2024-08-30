@@ -43,7 +43,7 @@ const Sidebar = () => {
 
                   <li>
                     <NavLink
-                      to="supplierdetails"
+                      to="supplierDetailsForm"
                       className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
                     >
                       Supplier Details

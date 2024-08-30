@@ -72,7 +72,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<MainDashboard />} />
           <Route path="reactreviews" element={<ReactReviews />} />
-          <Route path="suppliermanagement" element={<SupplierManagement />} />
+          {/* <Route path="suppliermanagement" element={<SupplierManagement />} /> */}
           {/* <Route path="paymentmanagement" element={<PaymentManagement />} /> */}
           <Route path="home" element={<Home />} />
           <Route path="profile" element={<Profile />} />
@@ -133,6 +133,16 @@ function App() {
         {/* Customer Manager Routes */}
         <Route path="register" element={<Register />} />
         <Route path="customerlogin" element={<CustomerLogin />} />
+
+        {/* Supplier Manager Routes */}
+        <Route path="supplier" element={<Supplier/>}>
+          <Route index element={<SupplierDashboard />} />
+          <Route path="supplierDetailsForm" element={<SupplierDetailsForm />} />
+          <Route path="SupplierForm" element={<SupplierForm />} />
+          <Route path="SupplierList" element={<SupplierList />} />
+          <Route path="SupplierUpdate" element={<SupplierUpdate />} />
+
+        </Route>
 
       </Routes>
 

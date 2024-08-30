@@ -14,6 +14,7 @@ import paymentRoutes from './routes/paymentRoutes.js';
 import deliveryRoutes from './routes/DeliveryRoutes.js';
 import orderRoutes from './routes/OrderRoutes.js';
 import driverRoutes from './routes/DriverRoutes.js'; // Import driver routes
+import supplierRoutes from './routes/SupplierRoutes.js';
 
 // load the .env file
 dotenv.config();
@@ -34,7 +35,9 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/deliveries", deliveryRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/supplier", supplierRoutes);
 app.use("/api/drivers", driverRoutes); // Use driver routes
+
 
 const __dirname = path.resolve();
 app.use("/uploads/products", express.static(path.join(__dirname + '/uploads/products')));
