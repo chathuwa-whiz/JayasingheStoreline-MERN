@@ -3,6 +3,7 @@ export const USERS_URL = "/api/users";
 export const CATEGORY_URL = "/api/category";
 export const PRODUCT_URL = "/api/products";
 export const UPLOAD_URL = "/api/upload";
+export const SUPPLIER_UPLOAD_URL = "/api/supplierupload";
 export const ORDERS_URL = "/api/orders";
 export const SUPPLIER_URL = "/api/supplier";
 export const DELIVERY_URL = "/api/deliveries";

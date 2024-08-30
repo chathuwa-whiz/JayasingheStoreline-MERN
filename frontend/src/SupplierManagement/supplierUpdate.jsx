@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useGetSupplierByIdQuery, useUpdateSupplierMutation, useDeleteSupplierMutation } from "../redux/api/supplierApiSlice";
+import { useGetSupplierByIdQuery, useUpdateSupplierMutation, useDeleteSupplierMutation, useUploadSupplierImageMutation } from "../redux/api/supplierApiSlice";
 import { useParams } from 'react-router';
 import toast from "react-hot-toast";
 
@@ -8,8 +8,9 @@ export default function SupplierDetailsForm() {
   const params = useParams();
 
   const {data: supplierData} = useGetSupplierByIdQuery(params._id);
-  const[updateSupplier] = useUpdateSupplierMutation();
+  const [updateSupplier] = useUpdateSupplierMutation();
   const [deleteSupplier] = useDeleteSupplierMutation();
+  const [uploadSupplierImage] = useUploadSupplierImageMutation();
 
   console.log(supplierData);
   
@@ -22,6 +23,7 @@ export default function SupplierDetailsForm() {
   const [email, setEmail] = useState(supplierData?.email);
   const [Gender, setGender] = useState(supplierData?.gender);
   const [supplierMedia, setSupplierMedia] = useState(supplierData?.image);
+  const [imageUrl, setImageUrl] = useState(null);
 
   useEffect(() => {
     if(supplierData && supplierData._id) {
@@ -45,12 +47,16 @@ export default function SupplierDetailsForm() {
 
       const data = await deleteSupplier(params._id);
 
-      toast.success(`supplier is deleted`);
-
-      setTimeout(() => {
-        toast.dismiss();
-        window.location.href = "/supplier/supplierlist";
-      }, 2000);
+      if(data.error) {
+        toast.error("Delete failed. Try again.", data.error);
+        return;
+      } else {
+        toast.success(`supplier is deleted`);
+        setTimeout(() => {
+          toast.dismiss();
+          window.location.href = "/supplier/supplierlist";
+        }, 2000);
+      }      
 
     } catch (err) {
 
@@ -87,8 +93,19 @@ export default function SupplierDetailsForm() {
     }
 
   };
-  const handleMediaChange = (e) => {
-    setSupplierMedia(e.target.files[0]);
+  
+  const handleMediaChange = async (e) => {
+    const formData = new FormData();
+    formData.append("image", e.target.files[0]);
+
+    try {
+        const res = await uploadSupplierImage(formData).unwrap();
+        toast.success(res.message);
+        setSupplierMedia(res.image);
+        setImageUrl(res.image);
+    } catch (error) {
+        toast.error(error?.data?.message || error.error);
+    }
   };
 
   return (
@@ -188,14 +205,19 @@ export default function SupplierDetailsForm() {
           <input
             className="supplier-media shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="supplierMedia"
-            type="file"
+            type="file" 
+            name='image'
+            accept='image/*'
             onChange={handleMediaChange}
           />
+          {imageUrl && (
+            <img src={imageUrl} alt="Supplier Media" className="mt-2 h-20" />
+          )}
         </div>
         
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          type="submit"
+          onClick={handleSubmit}
         >
           Update
         </button>

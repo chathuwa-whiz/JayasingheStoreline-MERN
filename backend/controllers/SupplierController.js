@@ -21,7 +21,7 @@ export const addSupplier = async (req, res) => {
         }
 
         const supplier = new Supplier({ ...req.fields });
-        await supplier.save();
+        const data = await supplier.save();
         res.status(201).json({ msg: "Supplier added successfully" });
     } catch (error) {
         res.status(400).json({ msg: "Supplier adding failed", error });

@@ -1,4 +1,4 @@
-import { SUPPLIER_URL } from "../constants";
+import { SUPPLIER_URL, SUPPLIER_UPLOAD_URL } from "../constants";
 import { apiSlice } from "./apiSlice";
 
 export const supplierApiSlice = apiSlice.injectEndpoints({
@@ -53,6 +53,15 @@ export const supplierApiSlice = apiSlice.injectEndpoints({
             keepUnusedDataFor: 5,
         }),
 
+        uploadSupplierImage: builder.mutation({
+            query: (data) => ({
+                url: `${SUPPLIER_UPLOAD_URL}`,
+                method: "POST",
+                body: data,
+            }),
+        }),
+    
+
     }),
 });
 
@@ -63,4 +72,5 @@ export const {
     useUpdateSupplierMutation,
     useDeleteSupplierMutation,
     useGetTopSuppliersQuery,
+    useUploadSupplierImageMutation,
 } = supplierApiSlice;

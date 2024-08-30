@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useCreateSupplierMutation } from "../redux/api/supplierApiSlice";
+import { useCreateSupplierMutation, useUploadSupplierImageMutation } from "../redux/api/supplierApiSlice";
+import toast from 'react-hot-toast';
 
 export default function SupplierDetailsForm() {
   const navigate = useNavigate();
   const [createSupplier] = useCreateSupplierMutation();
+  const [uploadSupplierImage] = useUploadSupplierImageMutation();
 
   const [supplierName, setSupplierName] = useState('');
   const [SupplierID, setSupplierID] = useState('');
@@ -14,29 +16,54 @@ export default function SupplierDetailsForm() {
   const [email, setEmail] = useState('');
   const [Gender, setGender] = useState('');
   const [supplierMedia, setSupplierMedia] = useState('');
+  const [imageUrl, setImageUrl] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    const supplierData = new FormData();
-    supplierData.append("name", supplierName);
-    supplierData.append("email", email);
-    supplierData.append("gender", Gender);
-    supplierData.append("phone", phoneNumber);
-    supplierData.append("type", Type);
-    supplierData.append("image", supplierMedia);
+    try {
+      const supplierData = new FormData();
+      supplierData.append("name", supplierName);
+      supplierData.append("email", email);
+      supplierData.append("gender", Gender);
+      supplierData.append("phone", phoneNumber);
+      supplierData.append("type", Type);
+      supplierData.append("image", supplierMedia);
 
-    await createSupplier(supplierData);
-    navigate("/supplier/supplierlist");
+      const data = await createSupplier(supplierData);
+      if(data.error) {
+        console.log("error data : ", data);
+        toast.error("Supplier create failed. Try Again.");
+      } else {
+        toast.success("Supplier created successfully");
+        setTimeout(() => {
+          navigate("/supplier/SupplierList");
+        }, 2000);
+      }
+      console.log("data : ", data);
+      
+    } catch (error) {
+      console.log("error : ", error);
+      
+    }
   };
 
-  const handleMediaChange = (e) => {
-    setSupplierMedia(e.target.files[0]);
+  const handleMediaChange = async (e) => {
+    const formData = new FormData();
+    formData.append("image", e.target.files[0]);
+
+    try {
+        const res = await uploadSupplierImage(formData).unwrap();
+        toast.success(res.message);
+        setSupplierMedia(res.image);
+        setImageUrl(res.image);
+    } catch (error) {
+        toast.error(error?.data?.message || error.error);
+    }
   };
 
   return (
     <div className="flex bg-gray-100 min-h-screen">
-      
       
       <div className="w-3/4 p-8">
         <h2 className="text-2xl font-bold mb-6">Supplier Details</h2>
@@ -89,7 +116,7 @@ export default function SupplierDetailsForm() {
                 <input
                   className="w-full p-2 border border-gray-300 rounded"
                   id="Date"
-                  type="text"
+                  type="date"
                   value={Date}
                   onChange={(e) => setDate(e.target.value)}
                 />
@@ -137,9 +164,16 @@ export default function SupplierDetailsForm() {
               <input
                 className="hidden"
                 id="supplierMedia"
-                type="file"
+                type="file" 
+                name='image'
+                accept='image/*'
                 onChange={handleMediaChange}
               />
+              {imageUrl && (
+                  <div className="mt-4">
+                      <img src={imageUrl} alt="Product" className="max-h-40 object-contain mx-auto" />
+                  </div>
+              )}
             </div>
           </div>
         </div>

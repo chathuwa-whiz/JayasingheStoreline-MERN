@@ -140,7 +140,7 @@ function App() {
           <Route path="supplierDetailsForm" element={<SupplierDetailsForm />} />
           <Route path="SupplierForm" element={<SupplierForm />} />
           <Route path="SupplierList" element={<SupplierList />} />
-          <Route path="SupplierUpdate" element={<SupplierUpdate />} />
+          <Route path="update/:_id" element={<SupplierUpdate />} />
 
         </Route>
 
