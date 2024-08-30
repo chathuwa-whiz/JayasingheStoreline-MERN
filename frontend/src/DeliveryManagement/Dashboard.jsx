@@ -1,51 +1,156 @@
-import React from 'react';
-import { FaTrash, FaEdit, FaEye, FaMapMarkerAlt } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import { Line } from "react-chartjs-2";
+import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, Title, Tooltip } from "chart.js";
+import { FaBox, FaClock, FaCheck, FaExclamationCircle } from 'react-icons/fa';
 
-const deliveries = [
-  { id: 'D10', type: 'Electronics', vehicle: 'Lorry A', driver: 'Mr.Sam', cost: '15000 LKR', destination: 'J Hettipola – Kurunegala' },
-  { id: 'D15', type: 'Furniture', vehicle: 'Lorry B', driver: 'Mr.Lucky', cost: '30000 LKR', destination: 'J Hettipola – Wennappuwa' },
-  { id: 'D20', type: 'Electronics', vehicle: 'Lorry C', driver: 'Mr.Jake', cost: '10000 LKR', destination: 'J Hettipola – Minuwangoda' },
-  { id: 'D25', type: 'Electronics', vehicle: 'D Bike', driver: 'Mr.Hash', cost: '2500 LKR', destination: 'J Hettipola – Kurunegala' },
-  { id: 'D30', type: 'Electronics', vehicle: 'D Tuk', driver: 'Mr.Ciao', cost: '3000 LKR', destination: 'J Hettipola – Kandy' },
-  { id: 'D35', type: 'Electronics', vehicle: 'D Tuk', driver: 'Mr.Mac', cost: '3000 LKR', destination: 'J Hettipola – Kalutara' }
-];
+ChartJS.register(LineElement, CategoryScale, LinearScale, Title, Tooltip);
 
 export default function DeliveryDashboard() {
+  const [deliveries, setDeliveries] = useState([]);
+  const [pendingDeliveries, setPendingDeliveries] = useState(0);
+  const [completedDeliveries, setCompletedDeliveries] = useState(0);
+  const [delayedDeliveries, setDelayedDeliveries] = useState(0);
+
+  const fetchDeliveries = async () => {
+    try {
+      const response = await fetch("/api/deliveries");
+      const data = await response.json();
+      setDeliveries(data);
+
+      const pending = data.filter(d => d.status === 'Pending').length;
+      const completed = data.filter(d => d.status === 'Completed').length;
+      const delayed = data.filter(d => d.status === 'Delayed').length;
+
+      setPendingDeliveries(pending);
+      setCompletedDeliveries(completed);
+      setDelayedDeliveries(delayed);
+    } catch (error) {
+      console.error("Error fetching deliveries:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDeliveries();
+  }, []);
+
+  const deliveryTrendsData = {
+    labels: ['Last Week', 'Current Week'],
+    datasets: [
+      {
+        label: 'Deliveries',
+        data: [10, 20],
+        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        fill: true,
+      },
+    ],
+  };
+
+  const deliveryTrendsOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+      },
+      title: {
+        display: true,
+        text: 'Delivery Trends',
+      },
+    },
+    scales: {
+      x: {
+        beginAtZero: true,
+      },
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+
   return (
-    <div className="bg-white shadow-md rounded p-6">
-      <h1 className="text-xl font-bold mb-4">Deliveries</h1>
-      <input type="text" placeholder="Search Deliveries" className="p-2 border border-gray-300 rounded mb-4 w-full" />
-      <table className="w-full bg-white shadow-md rounded">
-        <thead>
-          <tr>
-            <th className="border p-2">ID</th>
-            <th className="border p-2">Delivery Type</th>
-            <th className="border p-2">Vehicle Type</th>
-            <th className="border p-2">Driver</th>
-            <th className="border p-2">Cost</th>
-            <th className="border p-2">Destination</th>
-            <th className="border p-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {deliveries.map((delivery) => (
-            <tr key={delivery.id}>
-              <td className="border p-2">{delivery.id}</td>
-              <td className="border p-2">{delivery.type}</td>
-              <td className="border p-2">{delivery.vehicle}</td>
-              <td className="border p-2">{delivery.driver}</td>
-              <td className="border p-2">{delivery.cost}</td>
-              <td className="border p-2">{delivery.destination}</td>
-              <td className="border p-2">
-                <button className="p-1 mx-1 text-blue-500"><FaMapMarkerAlt /></button>
-                <button className="p-1 mx-1 text-yellow-500"><FaEdit /></button>
-                <button className="p-1 mx-1 text-gray-500"><FaEye /></button>
-                <button className="p-1 mx-1 text-red-500"><FaTrash /></button>
-              </td>
+    <div className="min-h-screen bg-gray-50 p-8 overflow-y-auto">
+      <header className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-800">Welcome back, Yasith JY</h1>
+        <p className="text-gray-500">Track and manage your deliveries efficiently</p>
+      </header>
+
+      {/* Statistics Section */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="bg-white p-6 rounded-lg shadow-md flex items-center hover:shadow-lg transform transition duration-300 ease-in-out hover:scale-105">
+          <FaBox className="text-4xl text-green-500 mr-4" />
+          <div>
+            <h2 className="text-3xl font-semibold text-green-600">{deliveries.length}</h2>
+            <p className="text-gray-600">Total Deliveries</p>
+          </div>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md flex items-center hover:shadow-lg transform transition duration-300 ease-in-out hover:scale-105">
+          <FaClock className="text-4xl text-yellow-500 mr-4" />
+          <div>
+            <h2 className="text-3xl font-semibold text-yellow-600">{pendingDeliveries}</h2>
+            <p className="text-gray-600">Pending Deliveries</p>
+          </div>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md flex items-center hover:shadow-lg transform transition duration-300 ease-in-out hover:scale-105">
+          <FaCheck className="text-4xl text-blue-500 mr-4" />
+          <div>
+            <h2 className="text-3xl font-semibold text-blue-600">{completedDeliveries}</h2>
+            <p className="text-gray-600">Completed Deliveries</p>
+          </div>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md flex items-center hover:shadow-lg transform transition duration-300 ease-in-out hover:scale-105">
+          <FaExclamationCircle className="text-4xl text-red-500 mr-4" />
+          <div>
+            <h2 className="text-3xl font-semibold text-red-600">{delayedDeliveries}</h2>
+            <p className="text-gray-600">Delayed Deliveries</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Deliveries Section */}
+      <div className="bg-white p-6 rounded-lg shadow-md mb-8 hover:shadow-lg transform transition duration-300 ease-in-out hover:scale-100">
+        <h2 className="text-2xl font-semibold mb-4">Recent Deliveries</h2>
+        <table className="w-full table-auto">
+          <thead>
+            <tr className="text-left">
+              <th className="px-4 py-2">ID</th>
+              <th className="px-4 py-2">Delivery Item</th>
+              <th className="px-4 py-2">Items Price</th>
+              <th className="px-4 py-2">Delivery Price</th>
+              <th className="px-4 py-2">Total Price</th>
+              <th className="px-4 py-2">Driver</th>
+              <th className="px-4 py-2">Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {deliveries.slice(0, 5).map(delivery => (
+              <tr key={delivery._id} className="text-center hover:bg-gray-100">
+                <td className="border px-4 py-2">{delivery._id}</td>
+                <td className="border px-4 py-2">{delivery.itemName}</td>
+                <td className="border px-4 py-2">{delivery.itemsPrice.toFixed(2)}</td>
+                <td className="border px-4 py-2">{delivery.deliveryPrice.toFixed(2)}</td>
+                <td className="border px-4 py-2">{(delivery.itemsPrice + delivery.deliveryPrice).toFixed(2)}</td>
+                <td className="border px-4 py-2">{delivery.driverName}</td>
+                <td className={`border px-4 py-2 ${delivery.status === 'Completed' ? 'text-green-600' : delivery.status === 'Delayed' ? 'text-red-600' : 'text-yellow-600'}`}>
+                  {delivery.status}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Delivery Insights Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transform transition duration-300 ease-in-out hover:scale-105">
+          <h2 className="text-xl font-semibold mb-4">Upcoming Deliveries</h2>
+          <p className="text-gray-500">You have {pendingDeliveries} upcoming deliveries.</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transform transition duration-300 ease-in-out hover:scale-105">
+          <h2 className="text-xl font-semibold mb-4">Delivery Performance</h2>
+          <p className="text-gray-500">Keep track of how your delivery performance is improving over time.</p>
+        </div>
+      </div>
     </div>
   );
 }

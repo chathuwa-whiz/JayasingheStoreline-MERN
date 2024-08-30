@@ -1,40 +1,32 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { FaPen } from "react-icons/fa";
 import { useAllProductsQuery } from '../redux/api/productApiSlice';
-import { useGetOrdersQuery } from '../redux/api/orderApiSlice';
 
 export default function Stock() {
 
-  // Fetch all orders
-  const { data: orders } = useGetOrdersQuery();
-  // console.log("Orders -> ",JSON.parse(orders[2].orderItems));
-  console.log(orders.length);
-  for (let index = 0; index < orders.length; index++) {
-    console.log("Order Items -> ",JSON.parse(orders[index].orderItems));
+    // Fetch all products
+    const { data: products, isLoading, isError } = useAllProductsQuery();
+    console.log(products);
     
-  }
 
-  // Fetch all products
-  const { data: products, isLoading, isError } = useAllProductsQuery();
-  // console.log("Products -> ",products);
-  
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 10;
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 10;
+    if (isLoading) return <div>Loading...</div>;
+    if (isError) return <div>Something went wrong</div>;
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Something went wrong</div>;
+    // Calculate the indices of the products to display
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
-  // Calculate the indices of the products to display
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+    // Calculate total pages
+    const totalPages = Math.ceil(products.length / productsPerPage);
 
-  // Calculate total pages
-  const totalPages = Math.ceil(products.length / productsPerPage);
-
-  const handlePageChange = (pageNumber) => {
-      setCurrentPage(pageNumber);
-  };
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
   return (
     <div className="rounded-lg p-8">
@@ -68,7 +60,7 @@ export default function Stock() {
                     {product.countInStock}
                 </span>
               </td>
-              <td className="py-2 px-4">{product.currentQty}</td>
+              <td className="py-2 px-4">{product.category}</td>
               <td className="py-2 px-4">{`Rs.${product.buyingPrice.toFixed(2)}`}</td>
               <td className="py-2 px-4">{product.updatedAt}</td>
             </tr>

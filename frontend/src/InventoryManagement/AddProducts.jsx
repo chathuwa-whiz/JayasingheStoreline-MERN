@@ -26,7 +26,7 @@ export default function AddProducts() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         try {
           const productData = new FormData();
           productData.append("image", image);
@@ -44,39 +44,26 @@ export default function AddProducts() {
           
           const data = await createProduct(productData);
           console.log("data : ", data);
-    
-          if (data.error) {
-
-            toast.error("Product create failed. Try Again.");
-
-          } else {
-
-            toast.success(`product is created`);
-            setTimeout(() => {
-                toast.dismiss();
-                window.location.href = "/inventory/products";
-            }, 2000);
-
-          }
+          
         } catch (error) {
           console.error(error);
           toast.error("Product create failed. Try Again.");
         }
     };
     
-      const uploadFileHandler = async (e) => {
+    const uploadFileHandler = async (e) => {
         const formData = new FormData();
         formData.append("image", e.target.files[0]);
-    
+
         try {
-          const res = await uploadProductImage(formData).unwrap();
-          toast.success(res.message);
-          setImage(res.image);
-          setImageUrl(res.image);
+            const res = await uploadProductImage(formData).unwrap();
+            toast.success(res.message);
+            setImage(res.image);
+            setImageUrl(res.image);
         } catch (error) {
-          toast.error(error?.data?.message || error.error);
+            toast.error(error?.data?.message || error.error);
         }
-      };
+    };
 
   return (
     <div className="p-8 grid grid-cols-2 gap-10">
