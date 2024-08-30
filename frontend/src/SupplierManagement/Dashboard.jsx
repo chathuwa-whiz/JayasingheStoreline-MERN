@@ -5,10 +5,8 @@ import { useAllProductsQuery } from "../redux/api/productApiSlice";
 
 export default function SupplierManagementDashboard() {
   // Fetch suppliers and products data
-  const { data: suppliersData, isLoading: isLoadingSuppliers } = useGetSuppliersQuery();
+  const { data: suppliersData, isLoading: isLoadingSuppliers } = useGetSuppliersQuery({keyword : ''});
   const { data: productsData, isLoading: isLoadingProducts } = useAllProductsQuery();
-
-  console.log(productsData);
   
 
   // Sample data for charts
@@ -100,7 +98,7 @@ export default function SupplierManagementDashboard() {
       </div>
 
       {/* Low Stock Products Section */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
         <h3 className="text-xl font-bold mb-4 text-red-800">Low Stock Products</h3>
         {isLoadingProducts ? (
           <p>Loading products...</p>
@@ -140,7 +138,7 @@ export default function SupplierManagementDashboard() {
           <Line data={lineChartData} />
         </div>
       </div>
-      
+
     </div>
   );
 }
