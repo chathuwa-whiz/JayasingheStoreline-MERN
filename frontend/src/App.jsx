@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ReactReviews from "./ReactReviews/reactReviews";
 import SupplierManagement from "./SupplierManagement/supplier";
 import Layout from "./Shared/Layout";
+import Dashboard from "./Dashboard/Dashboard";
 import MainDashboard from "./Dashboard/Dashboard";
 
 
@@ -57,6 +57,9 @@ import Payment from "./PaymentManagement/Payment";
 import HrNotify from "./PaymentManagement/HrNotify";
 import SupNotify from "./PaymentManagement/SupNotify";
 
+//reviews
+import ReviewsPage from "./Reviews/ReviewForm";
+
 
 function App() {
   return (
@@ -64,8 +67,8 @@ function App() {
       <Routes>
 
         <Route path="/" element={<Layout />}>
+          <Route index element={<Dashboard />} />
           <Route index element={<MainDashboard />} />
-          <Route path="reactreviews" element={<ReactReviews />} />
           <Route path="suppliermanagement" element={<SupplierManagement />} />
           {/* <Route path="paymentmanagement" element={<PaymentManagement />} /> */}
           <Route path="home" element={<Home />} />
@@ -131,6 +134,10 @@ function App() {
         {/* Customer Manager Routes */}
         <Route path="register" element={<Register />} />
         <Route path="customerlogin" element={<CustomerLogin />} />
+
+        {/* Customer Reviews Routes */}
+        <Route path="reviewreact" element={<ReviewsPage />} />
+
 
         <Route path="customer" element={<Customer />}>
           <Route index element={<CustomerDashboard />} />

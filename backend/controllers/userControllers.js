@@ -15,7 +15,6 @@ const createUser = asyncHandler(async (req, res) => {
 
   const newUser = new User({ firstname, lastname, username, email, NIC, password, address, phone, isAdmin });
   
-
   try {
     await newUser.save();
     createToken(res, newUser._id);
