@@ -4,7 +4,6 @@ import Layout from "./Shared/Layout";
 import Dashboard from "./Dashboard/Dashboard";
 import MainDashboard from "./Dashboard/Dashboard";
 
-
 // inventory
 import InventoryDashboard from "./InventoryManagement/Dashboard";
 import Inventory from "./InventoryManagement/Inventory";
@@ -24,7 +23,6 @@ import DeliveryNotification from "./DeliveryManagement/Notification";
 import DeliveryReports from "./DeliveryManagement/Reports";
 import DeliverySettings from "./DeliveryManagement/Settings";
 import Logout from "./DeliveryManagement/Logout";
-
 
 // Order
 import Order from "./OrderManagement/order";
@@ -114,14 +112,12 @@ function App() {
           <Route index element={<OrderDashboard />} />
           <Route path="orderhistory/update/:_id" element={<UpdateOrders />} />
           <Route path="orderhistory" element={<OrderHistory />} />
-          <Route path="orderinqiry" element={<OrderInquiries/>} />
-          <Route path="orderByProduct" element={<OrderByProducts/>} />
-          <Route path="orderhistory/update/:_id" element={<UpdateOrders />} />
+          <Route path="orderinqiry" element={<OrderInquiries />} />
+          <Route path="orderByProduct" element={<OrderByProducts />} />
         </Route>
 
         {/* Payment Manager Routes */}
         <Route path="checkout" element={<Checkout />} />
-
         <Route path="payment" element={<Payment />}>
           <Route index element={<PaymentDashboard />} />
           <Route path="paymentreport" element={<PaymentReport />} />
@@ -130,22 +126,17 @@ function App() {
           <Route path="supnotify" element={<SupNotify />} />
         </Route>
 
-        
         {/* Customer Manager Routes */}
         <Route path="register" element={<Register />} />
         <Route path="customerlogin" element={<CustomerLogin />} />
+        <Route path="customer" element={<Customer />}>
+          <Route index element={<CustomerDashboard />} />
+        </Route>
 
         {/* Customer Reviews Routes */}
         <Route path="reviewreact" element={<ReviewsPage />} />
 
-
-        <Route path="customer" element={<Customer />}>
-          <Route index element={<CustomerDashboard />} />
-          
-        </Route>
-
       </Routes>
-
     </BrowserRouter>
   );
 }
