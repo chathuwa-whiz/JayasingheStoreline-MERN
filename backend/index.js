@@ -15,6 +15,8 @@ import deliveryRoutes from './routes/DeliveryRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import orderRoutes from './routes/OrderRoutes.js';
 import driverRoutes from './routes/DriverRoutes.js'; // Import driver routes
+import employeeRouter from './routes/EmployeeRoutes.js';
+import authEmployeeRouter from './routes/AuthEmployeeRoutes.js';
 import supplierRoutes from './routes/SupplierRoutes.js';
 import supplierUploadRoutes from './routes/SupplierUploadRoutes.js';
 import payhereRoutes from './routes/payhere.js'; // Import PayHere route
@@ -27,6 +29,12 @@ const port = process.env.PORT || 5000;
 connectDB();
 
 const app = express();
+
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
+app.use(cors()) // Make sure cors is enabled
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -44,10 +52,31 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/supplier", supplierRoutes);
 app.use("/api/drivers", driverRoutes); // Use driver routes
 
+//Employee
+app.use("/api/employee",employeeRouter);
+app.use("/api/authEmployee",authEmployeeRouter);
+
+app.use((err, req, res, next) => {
+    const statusCode = err.statusCode || 500;
+    const message = err.message || 'Internal Server Error';
+    return res.status(statusCode).json({
+        success:false,
+        statusCode,
+        message,
+    });
+});
+
+
 app.use("/api/payhere", payhereRoutes); // Use PayHere route
 
 const __dirname = path.resolve();
 app.use("/uploads/products", express.static(path.join(__dirname + '/uploads/products')));
 app.use("/uploads/supplierupload", express.static(path.join(__dirname + '/uploads/supplierupload')));
+
+app.listen(port, () => console.log(`server running on port: ${port}`));
+
+
+
+
 
 app.listen(port, () => console.log(`Server running on port: ${port}`));

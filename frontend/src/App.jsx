@@ -66,6 +66,13 @@ import SupplierUpdate from "./SupplierManagement/supplierUpdate";
 //reviews
 import ReviewsPage from "./Reviews/ReviewForm";
 
+//Employee Management
+import Employee from './EmployeeManagement/Employee';
+import EmployeeSignIn from './EmployeeManagement/EmployeeSignIn';
+import EmployeeSignUp from './EmployeeManagement/EmployeeSignUp';
+import EmployeeAbout from './EmployeeManagement/EmployeeAbout';
+import EmployeeProfile from './EmployeeManagement/EmployeeProfile';
+import Header from './EmployeeManagement/Header';
 
 function App() {
   return (
@@ -123,6 +130,12 @@ function App() {
           <Route path="orderinqiry" element={<OrderInquiries />} />
           <Route path="orderByProduct" element={<OrderByProducts />} />
         </Route>
+        <Route path="productlist" element={<ProductsList />} /> 
+        <Route path="product/:_id" element={<SingleProductView />} />
+        <Route path="cart" element={<Cart />} />
+        <Route path="shipping" element={<Shipping />} />
+        <Route path="placeorder" element={<PlaceOrder />} />
+      
 
         {/* Payment Manager Routes */}
         <Route path="checkout" element={<Checkout />} />
@@ -137,6 +150,11 @@ function App() {
         {/* Customer Manager Routes */}
         <Route path="register" element={<Register />} />
         <Route path="customerlogin" element={<CustomerLogin />} />
+        
+
+
+       
+      
         <Route path="customer" element={<Customer />}>
           <Route index element={<CustomerDashboard />} />
         </Route>
@@ -154,6 +172,22 @@ function App() {
         </Route>
 
       </Routes>
+
+
+    <Header />
+    <Routes>
+       {/* Employee Management Routes */}
+       <Route path="/employee" element={<Employee />} />
+        <Route path="/employeeSignIn" element={<EmployeeSignIn />} />
+        <Route path="/employeeSignUp" element={<EmployeeSignUp />} />
+        <Route path="/employeeAbout" element={<EmployeeAbout />} />
+        <Route path="/employeeProfile" element={<EmployeeProfile />} />
+    </Routes>
+      
+
+      
+
+      
     </BrowserRouter>
   );
 }

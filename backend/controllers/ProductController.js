@@ -1,6 +1,6 @@
 import Product from "../models/ProductModel.js";
 
-// add new product
+// Add new product
 export const addProduct = async (req, res) => {
     try {
         const { name, brand, category, description, sku, barcode } = req.fields;
