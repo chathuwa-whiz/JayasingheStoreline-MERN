@@ -14,6 +14,8 @@ import paymentRoutes from './routes/paymentRoutes.js';
 import deliveryRoutes from './routes/DeliveryRoutes.js';
 import orderRoutes from './routes/OrderRoutes.js';
 import driverRoutes from './routes/DriverRoutes.js'; // Import driver routes
+import supplierRoutes from './routes/SupplierRoutes.js';
+import supplierUploadRoutes from './routes/SupplierUploadRoutes.js';
 
 // load the .env file
 dotenv.config();
@@ -31,12 +33,16 @@ app.use(cors()) // Make sure cors is enabled
 app.use("/api/category", categoryRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/supplierupload", supplierUploadRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/deliveries", deliveryRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/supplier", supplierRoutes);
 app.use("/api/drivers", driverRoutes); // Use driver routes
+
 
 const __dirname = path.resolve();
 app.use("/uploads/products", express.static(path.join(__dirname + '/uploads/products')));
+app.use("/uploads/supplierupload", express.static(path.join(__dirname + '/uploads/supplierupload')));
 
 app.listen(port, () => console.log(`server running on port: ${port}`));
