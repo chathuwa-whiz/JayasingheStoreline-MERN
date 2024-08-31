@@ -33,6 +33,8 @@ export default function Orders() {
             <th className="py-2 px-4 text-left">Order Id</th>
             {/* <th className="py-2 px-4 text-left">Product Names</th>
             <th className="py-2 px-4 text-left">Product Quantity</th> */}
+            <th className="py-2 px-4 text-left">#</th>
+            {/* <th className="py-2 px-4 text-left">Order ID</th> */}
             <th className="py-2 px-4 text-left">Items Price</th>
             <th className="py-2 px-4 text-left">Discount</th>
             <th className="py-2 px-4 text-left">Total Price</th>
@@ -65,6 +67,7 @@ export default function Orders() {
               <td className="py-2 px-4">{indexOfFirstOrder + index + 1}</td>
               {/* <td className="py-2 px-4"></td>
               <td className="py-2 px-4"></td> */}
+              <td className="py-2 px-4">{order._id}</td>
               <td className="py-2 px-4">{`Rs.${order.itemsPrice.toFixed(2)}`}</td>
               <td className="py-2 px-4">{`Rs.${order.discount.toFixed(2)}`}</td>
               <td className="py-2 px-4">{`Rs.${order.totalPrice.toFixed(2)}`}</td>

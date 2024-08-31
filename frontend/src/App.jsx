@@ -12,11 +12,19 @@ import Products from "./InventoryManagement/Products";
 import AddProducts from "./InventoryManagement/AddProducts";
 import UpdateProduct from "./InventoryManagement/UpdateProduct";
 import Stock from "./InventoryManagement/Stock";
+import Reports from "./InventoryManagement/Reports";
 
-// Delivery
-import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
-import DeliveryDashboard from "./DeliveryManagement/Dashboard";
+//Delivery
 import Delivery from "./DeliveryManagement/delivery";
+import DeliveryDashboard from "./DeliveryManagement/Dashboard";
+import DeliveryDetail from "./DeliveryManagement/DeliveryDetail";
+import AddDelivery from "./DeliveryManagement/AddDelivery";
+import DriverVehicleDetails from "./DeliveryManagement/DriverVehicleDetails";
+import DeliveryNotification from "./DeliveryManagement/Notification";
+import DeliveryReports from "./DeliveryManagement/Reports";
+import DeliverySettings from "./DeliveryManagement/Settings";
+import Logout from "./DeliveryManagement/Logout";
+
 
 // Order
 import Order from "./OrderManagement/order";
@@ -32,16 +40,21 @@ import OrderInquiries from "./OrderManagement/OrderInquiries";
 import OrderByProducts from "./OrderManagement/OrderByProducts";
 import UpdateOrders from "./OrderManagement/UpdateOrder";
 
-// Payement
-import Checkout from "./PaymentManagement/Checkout";
-import Reports from "./InventoryManagement/Reports";
-
-
 //Customer
 import CustomerLogin from "./CustomerManagemet/CusLogin"; 
 import Register from "./CustomerManagemet/register";
 import Home from "./CustomerManagemet/Home";
 import Profile from "./CustomerManagemet/profile";
+
+//payment
+import PaymentReport from "./PaymentManagement/paymentReport";
+import CODdetails from "./PaymentManagement/CODdetails";
+import Checkout from "./PaymentManagement/Checkout";
+import PaymentDashboard from "./PaymentManagement/PaymentDashboard";
+import Payment from "./PaymentManagement/Payment";
+import HrNotify from "./PaymentManagement/HrNotify";
+import SupNotify from "./PaymentManagement/SupNotify";
+
 
 function App() {
   return (
@@ -50,8 +63,12 @@ function App() {
 
         <Route path="/" element={<Layout />}>
           <Route index element={<MainDashboard />} />
+          <Route path="reactreviews" element={<ReactReviews />} />
+          <Route path="suppliermanagement" element={<SupplierManagement />} />
+          {/* <Route path="paymentmanagement" element={<PaymentManagement />} /> */}
           <Route path="home" element={<Home />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="checkout" element={<Checkout />} />
 
           {/* order manager part */}
           <Route path="productlist" element={<ProductsList />} />
@@ -75,6 +92,13 @@ function App() {
         {/*Delivery manager Routes */}
         <Route path="delivery" element={<Delivery />}>
           <Route index element={<DeliveryDashboard />} />
+          <Route path="deliverydetail" element={<DeliveryDetail />} />
+          <Route path="adddelivery" element={<AddDelivery />} />
+          <Route path="drivervehicle" element={<DriverVehicleDetails />} />
+          <Route path="notification" element={<DeliveryNotification />} />
+          <Route path="reports" element={<DeliveryReports />} />
+          <Route path="settings" element={<DeliverySettings />} />
+          <Route path="logout" element={<Logout />} />
           <Route path="drivervehicledetails" element={<DriverVehicleDetails />} />
         </Route>
 
@@ -85,22 +109,25 @@ function App() {
           <Route path="orderhistory" element={<OrderHistory />} />
           <Route path="orderinqiry" element={<OrderInquiries/>} />
           <Route path="orderByProduct" element={<OrderByProducts/>} />
-        </Route>        
+          <Route path="orderhistory/update/:_id" element={<UpdateOrders />} />
+        </Route>
 
         {/* Payment Manager Routes */}
-        <Route path="checkout" element={<Checkout />} />
+        <Route path="payment" element={<Payment />}>
+          <Route index element={<PaymentDashboard />} />
+          <Route path="paymentreport" element={<PaymentReport />} />
+          <Route path="cod" element={<CODdetails />} />
+          <Route path="hrnotify" element={<HrNotify />} />
+          <Route path="supnotify" element={<SupNotify />} />
+        </Route>
 
         
         {/* Customer Manager Routes */}
         <Route path="register" element={<Register />} />
         <Route path="customerlogin" element={<CustomerLogin />} />
-    
-
-    
-
-
 
       </Routes>
+
     </BrowserRouter>
   );
 }
