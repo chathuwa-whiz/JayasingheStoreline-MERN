@@ -16,6 +16,7 @@
     "apexcharts": "^3.50.0",
     "axios": "^1.7.2",
     "chart.js": "^4.4.4",
+    "cookie-parser": "^1.4.6",
     "flowbite": "^2.4.1",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
@@ -31,8 +32,8 @@
     "react-router-dom": "^6.25.1",
     "react-slick": "^0.30.2",
     "slick-carousel": "^1.8.1",
-    "xlsx": "^0.18.5",
-    "swiper": "^11.1.9"
+    "swiper": "^11.1.9",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
