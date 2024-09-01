@@ -3,18 +3,18 @@ import mongoose from 'mongoose';
 const addEmployeeSchema = new mongoose.Schema(
     {
         id:{
-            type:Number,
+            type:String,
             required:true,
         },
         name:{
             type:String,
             required:true,
         },
-        dob:{
-            type:Date,
+        gender:{
+            type:String,
             required:true,
         },
-        gender:{
+        nic:{
             type:String,
             required:true,
         },
@@ -32,10 +32,6 @@ const addEmployeeSchema = new mongoose.Schema(
         },
         jobTitle:{
             type:String,
-            required:true,
-        },
-        dateOfJoin:{
-            type:Date,
             required:true,
         },
         status:{
@@ -66,16 +62,10 @@ const addEmployeeSchema = new mongoose.Schema(
             type:String,
             required:true,
         },
-        nic:{
-            type:String,
-            required:true,
-        },
         imageUrls:{
             type:Array,
             required:true,
-        },
-
-        
+        },    
     },{timestamps:true}
 )
 

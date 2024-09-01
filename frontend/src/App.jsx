@@ -91,6 +91,7 @@ import EmployeeSignIn from './EmployeeManagement/EmployeeSignIn';
 import EmployeeSignUp from './EmployeeManagement/EmployeeSignUp';
 import EmployeeAbout from './EmployeeManagement/EmployeeAbout';
 import EmployeeProfile from './EmployeeManagement/EmployeeProfile';
+import AddEmployee from "./EmployeeManagement/AddEmployee";
 
 function App() {
 
@@ -201,6 +202,7 @@ function App() {
           <Route path="employeeSignUp" element={<EmployeeSignUp />} />
           <Route path="employeeAbout" element={<EmployeeAbout />} />
           <Route path="employeeProfile" element={<EmployeeProfile />} />
+          <Route path="addEmployee" element={<AddEmployee />} />
         </Route>
 
         {/* Edit Review Route */}
