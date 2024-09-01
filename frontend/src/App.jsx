@@ -72,7 +72,6 @@ import EmployeeSignIn from './EmployeeManagement/EmployeeSignIn';
 import EmployeeSignUp from './EmployeeManagement/EmployeeSignUp';
 import EmployeeAbout from './EmployeeManagement/EmployeeAbout';
 import EmployeeProfile from './EmployeeManagement/EmployeeProfile';
-import EmployeeDashboard from "./EmployeeManagement/EmployeeDashboard";
 
 function App() {
   return (
@@ -168,7 +167,6 @@ function App() {
 
         {/* Employee Management Routes */}
         <Route path="employee" element={<Employee />}>
-          <Route index element={<EmployeeDashboard />} />
           <Route path="employeeSignIn" element={<EmployeeSignIn />} />
           <Route path="employeeSignUp" element={<EmployeeSignUp />} />
           <Route path="employeeAbout" element={<EmployeeAbout />} />
