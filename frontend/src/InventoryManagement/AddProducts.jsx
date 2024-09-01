@@ -17,6 +17,7 @@ export default function AddProducts() {
   const [sku, setSku] = useState('');
   const [barcode, setBarcode] = useState('');
   const [quantity, setQuantity] = useState('');
+  const [reOrderQty, setReOrderQty] = useState('');
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
@@ -34,6 +35,7 @@ export default function AddProducts() {
     if (discount < 0 || discount > 100) newErrors.discount = "Discount must be between 0 and 100.";
     if (!category) newErrors.category = "Category is required.";
     if (!quantity || quantity <= 0) newErrors.quantity = "Quantity must be greater than 0.";
+    if (!reOrderQty || reOrderQty <= 0) newErrors.reOrderQty = "Reorder Quantity must be greater than 0.";
     if (!brand.trim()) newErrors.brand = "Brand is required.";
     if (!sku.trim()) newErrors.sku = "SKU is required.";
     if (!barcode.trim()) newErrors.barcode = "Barcode is required.";
@@ -58,6 +60,7 @@ export default function AddProducts() {
       productData.append("sellingPrice", sellingPrice);
       productData.append("category", category);
       productData.append("countInStock", quantity);
+      productData.append("reOrderQty", reOrderQty);
       productData.append("brand", brand);
       productData.append("sku", sku);
       productData.append("barcode", barcode);
@@ -92,6 +95,7 @@ export default function AddProducts() {
       {/* General Information */}
       <div className="border rounded-lg p-4 bg-white shadow-sm">
         <h2 className="text-xl font-semibold mb-4 text-orange-600">General Information</h2>
+
         <div className="mb-4">
           <label className="block text-gray-700 font-medium">Product Name</label>
           <input
@@ -103,6 +107,7 @@ export default function AddProducts() {
           />
           {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
         </div>
+
         <div>
           <label className="block text-gray-700 font-medium">Description</label>
           <textarea
@@ -114,6 +119,7 @@ export default function AddProducts() {
           />
           {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
         </div>
+        
       </div>
 
       {/* Product Media */}
@@ -180,6 +186,7 @@ export default function AddProducts() {
       <div className="border rounded-lg p-4 col-span-1 bg-white shadow-sm">
         <h2 className="text-xl font-semibold mb-4 text-orange-600">Category</h2>
         <div className="grid grid-cols-1 gap-4">
+
           <div>
             <label className="block text-gray-700 font-medium">Category</label>
             <select
@@ -194,6 +201,7 @@ export default function AddProducts() {
             </select>
             {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
           </div>
+
           <div>
             <label className="block text-gray-700 font-medium">Quantity</label>
             <input
@@ -205,6 +213,19 @@ export default function AddProducts() {
             />
             {errors.quantity && <p className="text-red-500 text-sm mt-1">{errors.quantity}</p>}
           </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium">Reorder Quantity</label>
+            <input
+              type="number"
+              className={`w-full p-2 mt-1 border ${errors.reOrderQty ? 'border-red-500' : 'border-gray-300'} rounded-lg bg-blue-50 focus:ring-2 focus:ring-orange-500`}
+              placeholder="Enter re-order quantity"
+              value={reOrderQty}
+              onChange={(e) => setReOrderQty(e.target.value)}
+            />
+            {errors.quantity && <p className="text-red-500 text-sm mt-1">{errors.reOrderQty}</p>}
+          </div>
+
         </div>
       </div>
 
