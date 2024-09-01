@@ -43,7 +43,7 @@ const Sidebar = () => {
                 <ul className="ml-5 space-y-1">
                   <li>
                     <NavLink
-                      to="products"
+                      to="addEmployee"
                       className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
                     >
                       Add New Employee
