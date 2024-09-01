@@ -20,6 +20,7 @@ import authEmployeeRouter from './routes/AuthEmployeeRoutes.js';
 import supplierRoutes from './routes/SupplierRoutes.js';
 import supplierUploadRoutes from './routes/SupplierUploadRoutes.js';
 import payhereRoutes from './routes/payhere.js'; // Import PayHere route
+import addEmployeeRouter from './routes/addEmployeeRoute.js';
 
 // Load the .env file
 dotenv.config();
@@ -49,6 +50,7 @@ app.use("/api/drivers", driverRoutes); // Use driver routes
 app.use("/api/payhere", payhereRoutes); // Use PayHere route
 app.use("/api/employee",employeeRouter);
 app.use("/api/authEmployee",authEmployeeRouter);
+app.use("/api/addEmployee",addEmployeeRouter);
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;

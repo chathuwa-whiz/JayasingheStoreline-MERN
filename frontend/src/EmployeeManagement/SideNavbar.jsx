@@ -37,7 +37,7 @@ const Sidebar = () => {
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2 w-full text-left"
               >
                 <CubeIcon className="h-5 w-5 mr-3" />
-                Products
+                Employee Profiles
               </button>
               {isProductsOpen && (
                 <ul className="ml-5 space-y-1">
@@ -46,7 +46,7 @@ const Sidebar = () => {
                       to="products"
                       className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
                     >
-                      Products List
+                      Add New Employee
                     </NavLink>
                   </li>
 
