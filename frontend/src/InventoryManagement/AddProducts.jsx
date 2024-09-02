@@ -9,9 +9,9 @@ export default function AddProducts() {
   const [imageUrl, setImageUrl] = useState(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [buyingPrice, setBuyingPrice] = useState(0);
-  const [sellingPrice, setSellingPrice] = useState(0);
-  const [discount, setDiscount] = useState(0);
+  const [buyingPrice, setBuyingPrice] = useState('');
+  const [sellingPrice, setSellingPrice] = useState('');
+  const [discount, setDiscount] = useState('');
   const [category, setCategory] = useState('');
   const [brand, setBrand] = useState('');
   const [sku, setSku] = useState('');
@@ -119,7 +119,7 @@ export default function AddProducts() {
           />
           {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
         </div>
-        
+
       </div>
 
       {/* Product Media */}
@@ -146,6 +146,7 @@ export default function AddProducts() {
       <div className="border rounded-lg p-4 col-span-1 bg-white shadow-sm">
         <h2 className="text-xl font-semibold mb-4 text-orange-600">Pricing</h2>
         <div className="grid grid-cols-2 gap-4">
+
           <div>
             <label className="block text-gray-700 font-medium">Buying Price</label>
             <input
@@ -153,10 +154,15 @@ export default function AddProducts() {
               className={`w-full p-2 mt-1 border ${errors.buyingPrice ? 'border-red-500' : 'border-gray-300'} rounded-lg bg-blue-50 focus:ring-2 focus:ring-orange-500`}
               placeholder="Enter buying price"
               value={buyingPrice}
-              onChange={(e) => setBuyingPrice(e.target.value)}
+              onChange={(e) => 
+                e.target.value >= 0 ? 
+                setBuyingPrice(e.target.value)
+                : setBuyingPrice(0)  // Ensure the value stays above 0
+              }
             />
             {errors.buyingPrice && <p className="text-red-500 text-sm mt-1">{errors.buyingPrice}</p>}
           </div>
+
           <div>
             <label className="block text-gray-700 font-medium">Selling Price</label>
             <input
@@ -164,10 +170,15 @@ export default function AddProducts() {
               className={`w-full p-2 mt-1 border ${errors.sellingPrice ? 'border-red-500' : 'border-gray-300'} rounded-lg bg-blue-50 focus:ring-2 focus:ring-orange-500`}
               placeholder="Enter selling price"
               value={sellingPrice}
-              onChange={(e) => setSellingPrice(e.target.value)}
+              onChange={(e) => 
+                e.target.value >= 0 ? 
+                setSellingPrice(e.target.value)
+                : setSellingPrice(0)  // Ensure the value stays above 0
+              }
             />
             {errors.sellingPrice && <p className="text-red-500 text-sm mt-1">{errors.sellingPrice}</p>}
           </div>
+
           <div className="col-span-2">
             <label className="block text-gray-700 font-medium">Discount Percentage (%)</label>
             <input
@@ -175,10 +186,13 @@ export default function AddProducts() {
               className={`w-full p-2 mt-1 border ${errors.discount ? 'border-red-500' : 'border-gray-300'} rounded-lg bg-blue-50 focus:ring-2 focus:ring-orange-500`}
               placeholder="Enter discount percentage"
               value={discount}
-              onChange={(e) => setDiscount(e.target.value)}
+              min={0}
+              max={100}
+              onChange={(e) => setDiscount(Math.max(0, Math.min(100, Number(e.target.value))))}  // Ensure the value stays within 0 - 100
             />
             {errors.discount && <p className="text-red-500 text-sm mt-1">{errors.discount}</p>}
           </div>
+
         </div>
       </div>
 
@@ -233,6 +247,7 @@ export default function AddProducts() {
       <div className="border rounded-lg p-4 col-span-2 bg-white shadow-sm">
         <h2 className="text-xl font-semibold mb-4 text-orange-600">Other Details</h2>
         <div className="grid grid-cols-3 gap-4">
+
           <div>
             <label className="block text-gray-700 font-medium">Brand</label>
             <input
@@ -240,10 +255,16 @@ export default function AddProducts() {
               className={`w-full p-2 mt-1 border ${errors.brand ? 'border-red-500' : 'border-gray-300'} rounded-lg bg-blue-50 focus:ring-2 focus:ring-orange-500`}
               placeholder="Enter brand"
               value={brand}
+              onKeyDown={(e) => {
+                if (!/^[a-zA-Z]+$/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
               onChange={(e) => setBrand(e.target.value)}
             />
             {errors.brand && <p className="text-red-500 text-sm mt-1">{errors.brand}</p>}
           </div>
+
           <div>
             <label className="block text-gray-700 font-medium">SKU</label>
             <input
@@ -255,6 +276,7 @@ export default function AddProducts() {
             />
             {errors.sku && <p className="text-red-500 text-sm mt-1">{errors.sku}</p>}
           </div>
+
           <div>
             <label className="block text-gray-700 font-medium">Barcode</label>
             <input
@@ -266,6 +288,7 @@ export default function AddProducts() {
             />
             {errors.barcode && <p className="text-red-500 text-sm mt-1">{errors.barcode}</p>}
           </div>
+
         </div>
         <button
           className="mt-6 w-full bg-orange-600 text-white py-3 rounded-lg shadow-lg hover:bg-orange-500 transition duration-200"

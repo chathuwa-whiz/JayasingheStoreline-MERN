@@ -19,6 +19,12 @@ export default function Dashboard() {
   let stockValue = 0;
   let lowStock = 0;
 
+  // Format Prices
+  const priceFormatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'LKR',
+  });
+
   for (const product of products) {
     categoryList.push(product.category);
     stockValue += product.buyingPrice * product.currentQty;
@@ -67,8 +73,8 @@ export default function Dashboard() {
           <p className="text-lg text-gray-700">Total Categories</p>
           <p className="text-yellow-600">+18% +2.8k this week</p>
         </div>
-        <div className="bg-blue-100 p-6 rounded-lg text-center shadow-lg">
-          <h2 className="text-4xl font-bold text-blue-800">{stockValue}</h2>
+        <div className="bg-blue-100 p-6 rounded-lg text-center shadow-lg overflow-auto">
+          <h2 className="text-3xl font-bold text-blue-800">{priceFormatter.format(stockValue)}</h2>
           <p className="text-lg text-gray-700">Total Stock Value</p>
           <p className="text-blue-600">+18% +7.8k this week</p>
         </div>
@@ -94,6 +100,7 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Recent Orders */}
       <div className="bg-white p-6 rounded-lg shadow-lg">
         <h3 className="text-xl font-bold text-gray-800 mb-4">Recent Orders</h3>
         <table className="w-full table-auto">
@@ -110,7 +117,7 @@ export default function Dashboard() {
               <tr key={order._id} className="text-center hover:bg-gray-100">
                 <td className="border px-4 py-2">{order._id}</td>
                 <td className="border px-4 py-2">{new Date(order.createdAt).toLocaleDateString()}</td>
-                <td className="border px-4 py-2">{order.totalPrice}</td>
+                <td className="border px-4 py-2">{priceFormatter.format(order.totalPrice)}</td>
                 <td className="border px-4 py-2">
                   <span className={`inline-block px-2 py-1 text-sm font-semibold rounded-full ${
                     order.status === 'Completed' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'

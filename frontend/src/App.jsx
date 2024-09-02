@@ -11,6 +11,7 @@ import AddProducts from "./InventoryManagement/AddProducts";
 import UpdateProduct from "./InventoryManagement/UpdateProduct";
 import Stock from "./InventoryManagement/Stock";
 import Reports from "./InventoryManagement/Reports";
+import AddStockPage from "./InventoryManagement/AddStock";
 
 //Delivery
 import Delivery from "./DeliveryManagement/delivery";
@@ -73,6 +74,7 @@ import EmployeeSignUp from './EmployeeManagement/EmployeeSignUp';
 import EmployeeAbout from './EmployeeManagement/EmployeeAbout';
 import EmployeeProfile from './EmployeeManagement/EmployeeProfile';
 import EmployeeDashboard from "./EmployeeManagement/EmployeeDashboard";
+import SettingsPage from "./InventoryManagement/Settings";
 
 function App() {
   return (
@@ -107,6 +109,8 @@ function App() {
           <Route path="categories" element={<CategoryList />} />
           <Route path="stock" element={<Stock />} />
           <Route path="reports" element={<Reports />} />
+          <Route path="addstock/:_id" element={<AddStockPage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
 
         {/*Delivery manager Routes */}
