@@ -55,8 +55,10 @@ import Payment from "./PaymentManagement/Payment";
 import HrNotify from "./PaymentManagement/HrNotify";
 import SupNotify from "./PaymentManagement/SupNotify";
 
-//reviews
-import ReviewsPage from "./Reviews/ReviewForm";
+//review
+import EditReviewPage from "./ReviewsInquiry/EditReviewPage";
+import UserReviews from "./ReviewsInquiry/UserReviews";
+import DashboardList from "./ReviewsInquiry/DashboardList";
 
 
 function App() {
@@ -134,8 +136,12 @@ function App() {
         <Route path="customerlogin" element={<CustomerLogin />} />
 
         {/* Customer Reviews Routes */}
-        <Route path="reviewreact" element={<ReviewsPage />} />
 
+        <Route path="product/:productId/edit-review/:reviewId" element={<EditReviewPage />} />
+        <Route path="user-reviews" element={<UserReviews />} />
+        <Route path="dashboardlist" element={<DashboardList/>} />
+        
+        
 
       </Routes>
 
