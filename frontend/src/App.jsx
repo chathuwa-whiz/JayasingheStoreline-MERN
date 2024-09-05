@@ -156,9 +156,6 @@ function App() {
           <Route index element={<CustomerDashboard />} />
         </Route>
 
-        {/* Customer Reviews Routes */}
-        <Route path="reviewreact" element={<ReviewsPage />} />
-
         {/* Supplier Manager Routes */}
         <Route path="supplier" element={<Supplier/>}>
           <Route index element={<SupplierDashboard />} />
