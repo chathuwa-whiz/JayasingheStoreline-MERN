@@ -43,6 +43,9 @@ import Customer from "./CustomerManagemet/Customer";
 import Profile from "./CustomerManagemet/profile";
 import CustomerDashboard from "./CustomerManagemet/CustomerDashboard";
 
+//AdminLogin
+import AdminLoginPage from "./AdminLogin/AdminLogin";
+
 function App() {
   return (
     <BrowserRouter>
@@ -54,6 +57,7 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="register" element={<Register />} />
           <Route path="customerlogin" element={<CustomerLogin />} />
+          <Route path="adminlogin" element={<AdminLoginPage />} />
 
           {/* order manager part */}
           <Route path="productlist" element={<ProductsList />} />
@@ -100,9 +104,14 @@ function App() {
           
         </Route>
 
+        
+
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
+
+
+
