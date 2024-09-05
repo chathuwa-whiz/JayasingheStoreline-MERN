@@ -33,21 +33,7 @@ export default function SingleProductView() {
             setQuantity(productData.countInStock);
             setImage(productData.image);
         }
-    }, [productData]);
-
-    useEffect(() => {
-        const script = document.createElement('script');
-        script.src = "https://www.chatbase.co/embed.min.js";
-        script.defer = true;
-        script.setAttribute("chatbotId", "MO9hmVCWRKnO2vp-dwpWK");
-        script.setAttribute("domain", "www.chatbase.co");
-
-        document.head.appendChild(script);
-
-        return () => {
-            document.head.removeChild(script);
-        };
-    }, []);
+    }, [productData, dispatch, navigate]);
 
     const newProductPrice = (sellingPrice - (sellingPrice * discount) / 100).toFixed(2);
 
@@ -77,17 +63,20 @@ export default function SingleProductView() {
     };
 
     const handleEditReview = (reviewId) => {
+        // Navigate to review edit page
         navigate(`/product/${productId}/edit-review/${reviewId}`);
     };
 
+    // Average Rating Calculation
     const averageRating = productData?.reviews?.length
         ? (productData.reviews.reduce((acc, review) => acc + review.rating, 0) / productData.reviews.length).toFixed(1)
         : 0;
 
+    // Function to render stars
     const renderStars = (rating) => {
-        const fullStars = Math.floor(rating);
-        const halfStar = rating - fullStars >= 0.5;
-        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+        const fullStars = Math.floor(rating); // Full stars (★)
+        const halfStar = rating - fullStars >= 0.5; // Half star (½)
+        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0); // Empty stars (☆)
 
         return (
             <>
@@ -135,11 +124,12 @@ export default function SingleProductView() {
                     {/* Average Rating Display */}
                     <div className="mt-4">
                         <h2 className="text-xl font-semibold text-gray-700">Average Rating</h2>
-                        <div className="flex items-center mt-2 text-3xl">
+                        <div className="flex items-center mt-2 text-3xl"> {/* Adjusted text-3xl for larger stars */}
                             {renderStars(averageRating)}
                             <span className="ml-2 text-gray-600 text-2xl">({averageRating} out of 5)</span>
                         </div>
                     </div>
+
 
                     <div className="mt-6 flex items-center space-x-4">
                         <input
@@ -203,20 +193,49 @@ export default function SingleProductView() {
             <div className="mt-10">
                 <h2 className="text-2xl font-bold text-gray-800">Product Inquiry</h2>
                 <form onSubmit={submitInquiryHandler} className="mt-4">
-                    <textarea
-                        value={messagee}
-                        onChange={(e) => setMessagee(e.target.value)}
-                        rows="4"
-                        className="w-full p-4 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                        placeholder="Enter your inquiry here..."
-                    ></textarea>
-                    <button 
+                    <div className="mb-4">
+                        <label htmlFor="messagee" className="block text-lg font-medium text-gray-700">
+                            Message
+                        </label>
+                        <textarea
+                            id="messagee"
+                            value={messagee}
+                            onChange={(e) => setMessagee(e.target.value)}
+                            rows="4"
+                            className="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Write your inquiry here..."
+                            required
+                        ></textarea>
+                    </div>
+                    <button
                         type="submit"
-                        className="mt-4 bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                        className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                    >
                         Submit Inquiry
                     </button>
                 </form>
             </div>
+
+            {/* Display Inquiries */}
+            <div className="mt-10">
+                <h2 className="text-2xl font-bold text-gray-800">Customer Inquiries</h2>
+                {productData?.inquiries && productData.inquiries.length > 0 ? (
+                    productData.inquiries.map((inquiry) => (
+                        <div key={inquiry._id} className="mt-4 p-4 border rounded-lg shadow-sm bg-gray-50">
+                            <div className="flex items-center">
+                                <p className="text-lg font-semibold">{inquiry.name}</p>
+                                <p className="ml-4 text-sm text-gray-500">{new Date(inquiry.createdAt).toLocaleDateString()}</p>
+                            </div>
+                            <div className="mt-2 text-gray-700">
+                                <p>{inquiry.messagee}</p>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <p className="mt-4 text-gray-500">No inquiries yet.</p>
+                )}
+            </div>
+          
         </div>
     );
 }
