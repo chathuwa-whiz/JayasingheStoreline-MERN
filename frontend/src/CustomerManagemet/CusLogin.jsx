@@ -20,11 +20,11 @@ export default function LoginPage() {
 
   const { userInfo } = useSelector((state) => state.auth);
 
-  // useEffect(() => {
-  //   if (userInfo) {
-  //     navigate('/home');
-  //   }
-  // }, [userInfo, navigate]);
+  useEffect(() => {
+    if (userInfo) {
+      navigate('/home');
+    }
+  }, [userInfo, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

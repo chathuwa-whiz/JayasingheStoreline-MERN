@@ -268,38 +268,38 @@ export default function RegisterPage() {
 
               {/* NIC */}
               <div>
-      <label htmlFor="NIC-version" className="block text-sm font-medium text-gray-700">
-        NIC Version
-      </label>
-      <select
-        id="NIC-version"
-        name="NIC-version"
-        value={NICVersion}
-        onChange={(e) => {
-          setNICVersion(e.target.value);
-          setNIC(''); // Reset NIC input when version changes
-        }}
-        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-      >
-        <option value="10-digit">10-Digit (Old)</option>
-        <option value="12-digit">12-Digit (New)</option>
-      </select>
+                <label htmlFor="NIC-version" className="block text-sm font-medium text-gray-700">
+                  NIC Version
+                </label>
+                <select
+                  id="NIC-version"
+                  name="NIC-version"
+                  value={NICVersion}
+                  onChange={(e) => {
+                    setNICVersion(e.target.value);
+                    setNIC(''); // Reset NIC input when version changes
+                  }}
+                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                >
+                  <option value="10-digit">10-Digit (Old)</option>
+                  <option value="12-digit">12-Digit (New)</option>
+                </select>
 
-      <label htmlFor="NIC" className="block text-sm font-medium text-gray-700 mt-4">
-        NIC
-      </label>
-      <input
-        id="NIC"
-        name="NIC"
-        type="text"
-        value={NIC}
-        onChange={handleNICChange}
-        required
-        className={`mt-1 block w-full px-3 py-2 border ${error.NIC ? 'border-red-500' : 'border-gray-300'} placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm rounded-md`}
-        placeholder={NICVersion === '10-digit' ? '123456789v' : '123456789012'}
-      />
-      {error.NIC && <p className="text-red-600 text-sm">{error.NIC}</p>}
-    </div>
+                <label htmlFor="NIC" className="block text-sm font-medium text-gray-700 mt-4">
+                  NIC
+                </label>
+                <input
+                  id="NIC"
+                  name="NIC"
+                  type="text"
+                  value={NIC}
+                  onChange={handleNICChange}
+                  required
+                  className={`mt-1 block w-full px-3 py-2 border ${error.NIC ? 'border-red-500' : 'border-gray-300'} placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm rounded-md`}
+                  placeholder={NICVersion === '10-digit' ? '123456789v' : '123456789012'}
+                />
+                {error.NIC && <p className="text-red-600 text-sm">{error.NIC}</p>}
+              </div>
 
               {/* Phone */}
               {/* Phone */}

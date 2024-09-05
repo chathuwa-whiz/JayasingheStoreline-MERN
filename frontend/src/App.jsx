@@ -1,9 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import SupplierManagement from "./SupplierManagement/supplier";
 import Layout from "./Shared/Layout";
-import Dashboard from "./Dashboard/Dashboard";
 import MainDashboard from "./Dashboard/Dashboard";
-
 
 // inventory
 import InventoryDashboard from "./InventoryManagement/Dashboard";
@@ -25,7 +23,6 @@ import DeliveryReports from "./DeliveryManagement/Reports";
 import DeliverySettings from "./DeliveryManagement/Settings";
 import Logout from "./DeliveryManagement/Logout";
 
-
 // Order
 import Order from "./OrderManagement/order";
 import OrderDashboard from "./OrderManagement/Dashboard";
@@ -44,7 +41,9 @@ import UpdateOrders from "./OrderManagement/UpdateOrder";
 import CustomerLogin from "./CustomerManagemet/CusLogin"; 
 import Register from "./CustomerManagemet/register";
 import Home from "./CustomerManagemet/Home";
+import Customer from "./CustomerManagemet/Customer";
 import Profile from "./CustomerManagemet/profile";
+import CustomerDashboard from "./CustomerManagemet/CustomerDashboard";
 
 //payment
 import PaymentReport from "./PaymentManagement/paymentReport";
@@ -55,11 +54,27 @@ import Payment from "./PaymentManagement/Payment";
 import HrNotify from "./PaymentManagement/HrNotify";
 import SupNotify from "./PaymentManagement/SupNotify";
 
+
+// supplier
+import Supplier from "./SupplierManagement/supplier";
+import SupplierDashboard from "./SupplierManagement/Dashboard";
+import SupplierDetailsForm from "./SupplierManagement/SuppliyerDetails";
+import SupplierForm from "./SupplierManagement/suppliyerForm";
+import SupplierList from "./SupplierManagement/supplierList";
+import SupplierUpdate from "./SupplierManagement/supplierUpdate";
+
 //review
 import EditReviewPage from "./ReviewsInquiry/EditReviewPage";
 import UserReviews from "./ReviewsInquiry/UserReviews";
 import DashboardList from "./ReviewsInquiry/DashboardList";
 
+//Employee Management
+import Employee from './EmployeeManagement/Employee';
+import EmployeeSignIn from './EmployeeManagement/EmployeeSignIn';
+import EmployeeSignUp from './EmployeeManagement/EmployeeSignUp';
+import EmployeeAbout from './EmployeeManagement/EmployeeAbout';
+import EmployeeProfile from './EmployeeManagement/EmployeeProfile';
+import EmployeeDashboard from "./EmployeeManagement/EmployeeDashboard";
 
 function App() {
   return (
@@ -67,8 +82,8 @@ function App() {
       <Routes>
 
         <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
           <Route index element={<MainDashboard />} />
+          {/* <Route path="suppliermanagement" element={<SupplierManagement />} /> */}
           <Route path="suppliermanagement" element={<SupplierManagement />} />
           {/* <Route path="paymentmanagement" element={<PaymentManagement />} /> */}
           <Route path="home" element={<Home />} />
@@ -76,7 +91,6 @@ function App() {
           <Route path="checkout" element={<Checkout />} />
           <Route path="register" element={<Register />} />
           <Route path="customerlogin" element={<CustomerLogin />} />
-          
 
           {/* order manager part */}
           <Route path="productlist" element={<ProductsList />} />
@@ -115,12 +129,18 @@ function App() {
           <Route index element={<OrderDashboard />} />
           <Route path="orderhistory/update/:_id" element={<UpdateOrders />} />
           <Route path="orderhistory" element={<OrderHistory />} />
-          <Route path="orderinqiry" element={<OrderInquiries/>} />
-          <Route path="orderByProduct" element={<OrderByProducts/>} />
-          <Route path="orderhistory/update/:_id" element={<UpdateOrders />} />
+          <Route path="orderinqiry" element={<OrderInquiries />} />
+          <Route path="orderByProduct" element={<OrderByProducts />} />
         </Route>
+        <Route path="productlist" element={<ProductsList />} /> 
+        <Route path="product/:_id" element={<SingleProductView />} />
+        <Route path="cart" element={<Cart />} />
+        <Route path="shipping" element={<Shipping />} />
+        <Route path="placeorder" element={<PlaceOrder />} />
+      
 
         {/* Payment Manager Routes */}
+        <Route path="checkout" element={<Checkout />} />
         <Route path="payment" element={<Payment />}>
           <Route index element={<PaymentDashboard />} />
           <Route path="paymentreport" element={<PaymentReport />} />
@@ -129,13 +149,33 @@ function App() {
           <Route path="supnotify" element={<SupNotify />} />
         </Route>
 
-        
         {/* Customer Manager Routes */}
-    
         <Route path="register" element={<Register />} />
-        <Route path="customerlogin" element={<CustomerLogin />} />
+        <Route path="customerlogin" element={<CustomerLogin />} />      
+        <Route path="customer" element={<Customer />}>
+          <Route index element={<CustomerDashboard />} />
+        </Route>
 
         {/* Customer Reviews Routes */}
+        <Route path="reviewreact" element={<ReviewsPage />} />
+
+        {/* Supplier Manager Routes */}
+        <Route path="supplier" element={<Supplier/>}>
+          <Route index element={<SupplierDashboard />} />
+          <Route path="supplierDetailsForm" element={<SupplierDetailsForm />} />
+          <Route path="SupplierForm" element={<SupplierForm />} />
+          <Route path="SupplierList" element={<SupplierList />} />
+          <Route path="update/:_id" element={<SupplierUpdate />} />
+        </Route>
+
+        {/* Employee Management Routes */}
+        <Route path="employee" element={<Employee />}>
+          <Route index element={<EmployeeDashboard />} />
+          <Route path="employeeSignIn" element={<EmployeeSignIn />} />
+          <Route path="employeeSignUp" element={<EmployeeSignUp />} />
+          <Route path="employeeAbout" element={<EmployeeAbout />} />
+          <Route path="employeeProfile" element={<EmployeeProfile />} />
+        </Route>
 
         <Route path="product/:productId/edit-review/:reviewId" element={<EditReviewPage />} />
         <Route path="user-reviews" element={<UserReviews />} />
@@ -144,7 +184,6 @@ function App() {
         
 
       </Routes>
-
     </BrowserRouter>
   );
 }
