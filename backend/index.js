@@ -11,6 +11,7 @@ import categoryRoutes from "./routes/CategoryRoutes.js";
 import uploadRoutes from './routes/UploadRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import orderRoutes from './routes/OrderRoutes.js';
+import adminRoutes from './routes/AdminRoute.js';
 
 
 // load the .env file
@@ -30,6 +31,7 @@ app.use("/api/products" , productRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/admin", adminRoutes);
 
 
 const __dirname = path.resolve();
