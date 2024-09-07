@@ -82,6 +82,27 @@ export const updateProduct = async (req, res) => {
     }
 }
 
+// update product stock
+export const updateProductStock = async (req, res) => {
+    try {
+        const product = await Product.findOneAndUpdate(
+            { _id : req.params.id }, 
+            {
+                countInStock : req.body.countInStock,
+                buyingPrice : req.body.buyingPrice, 
+                reOrderQty: req.body.reOrderQty 
+            }, { new : true }
+        );
+        if(!product) {
+            return res.status(400).json( { msg : "Product not found" } )
+        }
+        await product.save();
+        res.json( { msg : "Stock Updated Successfully", product } );
+    } catch (error) {
+        res.status(400).json( { msg : "Stock Update Failed ", error } );
+    }
+}
+
 // delete product
 export const deleteProduct = async (req, res) => {
     try {
