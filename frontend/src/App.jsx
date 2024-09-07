@@ -45,6 +45,9 @@ import Customer from "./CustomerManagemet/Customer";
 import Profile from "./CustomerManagemet/profile";
 import CustomerDashboard from "./CustomerManagemet/CustomerDashboard";
 
+//AdminLogin
+import AdminLoginPage from "./AdminLogin/AdminLogin";
+
 //payment
 import PaymentReport from "./PaymentManagement/paymentReport";
 import CODdetails from "./PaymentManagement/CODdetails";
@@ -89,6 +92,7 @@ function App() {
           <Route path="checkout" element={<Checkout />} />
           <Route path="register" element={<Register />} />
           <Route path="customerlogin" element={<CustomerLogin />} />
+          <Route path="adminlogin" element={<AdminLoginPage />} />
 
           {/* order manager part */}
           <Route path="productlist" element={<ProductsList />} />
@@ -175,9 +179,14 @@ function App() {
           <Route path="employeeProfile" element={<EmployeeProfile />} />
         </Route>
 
+        
+
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
+
+
+

@@ -215,6 +215,24 @@ export function LoginHeader() {
   );
 }
 
+export function Adminheader() {
+  return (
+    <header className="bg-blue-900 text-white p-4 h-20 ">
+      <div className="container mx-auto flex justify-between items-center mt-1">
+        {/* Logo and Brand Name */}
+        <div className="flex items-center space-x-2">
+          {/* <img src={logo} alt="Logo" className="h-8 w-8" /> */}
+          <div className='w-96'></div>
+          <div className='w-40'></div>
+          <span className="text-2xl font-bold">JAYASINGHE STORLINES ADMIN LOGIN</span>
+        </div>
+
+        
+      </div>
+    </header>
+  );
+}
+
 
 // inventory management
 export function DashboardHeader() {
