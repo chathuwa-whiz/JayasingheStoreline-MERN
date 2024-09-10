@@ -67,8 +67,10 @@ import SupplierForm from "./SupplierManagement/suppliyerForm";
 import SupplierList from "./SupplierManagement/supplierList";
 import SupplierUpdate from "./SupplierManagement/supplierUpdate";
 
-//reviews
-import ReviewsPage from "./Reviews/ReviewForm";
+//review
+import EditReviewPage from "./ReviewsInquiry/EditReviewPage";
+import UserReviews from "./ReviewsInquiry/UserReviews";
+import DashboardList from "./ReviewsInquiry/DashboardList";
 
 //Employee Management
 import Employee from './EmployeeManagement/Employee';
@@ -162,9 +164,6 @@ function App() {
           <Route index element={<CustomerDashboard />} />
         </Route>
 
-        {/* Customer Reviews Routes */}
-        <Route path="reviewreact" element={<ReviewsPage />} />
-
         {/* Supplier Manager Routes */}
         <Route path="supplier" element={<Supplier/>}>
           <Route index element={<SupplierDashboard />} />
@@ -183,7 +182,9 @@ function App() {
           <Route path="employeeProfile" element={<EmployeeProfile />} />
         </Route>
 
-        
+        <Route path="product/:productId/edit-review/:reviewId" element={<EditReviewPage />} />
+        <Route path="user-reviews" element={<UserReviews />} />
+        <Route path="dashboardlist" element={<DashboardList/>} />
 
       </Routes>
     </BrowserRouter>

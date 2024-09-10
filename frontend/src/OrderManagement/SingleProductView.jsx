@@ -1,34 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
-import { useGetProductByIdQuery } from "../redux/api/productApiSlice";
-import { useDispatch } from 'react-redux';
+import { useGetProductByIdQuery, useCreateReviewMutation, useCreateInquiryMutation } from "../redux/api/productApiSlice";
+import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from "../redux/features/cart/cartSlice";
 import toast from "react-hot-toast";
-import Ratings from "./Ratings";
-import {useCreateReviewMutation} from "../redux/api/productApiSlice";
+import ReviewForm from '../ReviewsInquiry/ReviewForm';
 
 export default function SingleProductView() {
-
-    const { _id: productId }= useParams();
+    const { _id: productId } = useParams();
     const { data: productData, isLoading, isError, refetch } = useGetProductByIdQuery(productId);
+    const user = useSelector((state) => state.auth.user);
     const [image, setImage] = useState(productData?.image);
     const [name, setName] = useState(productData?.name || '');
     const [description, setDescription] = useState(productData?.description || '');
     const [sellingPrice, setSellingPrice] = useState(productData?.sellingPrice || 0);
     const [discount, setDiscount] = useState(productData?.discount || 0);
-    const [category, setCategory] = useState('');
+    const [category, setCategory] = useState(productData?.category || '');
     const [quantity, setQuantity] = useState(productData?.quantity || 0);
-    const [qty, setQty] = useState(1);   
-    
-    // Review State
-    const [rating, setRating] = useState(0);
-    const [comment, setComment] = useState('');
+    const [qty, setQty] = useState(1);
+    const [messagee, setMessagee] = useState('');
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (productData && productData._id) {
+        if (productData) {
             setName(productData.name);
             setDescription(productData.description);
             setSellingPrice(productData.sellingPrice);
@@ -36,10 +32,8 @@ export default function SingleProductView() {
             setCategory(productData.category);
             setQuantity(productData.countInStock);
             setImage(productData.image);
-            setRating(productData.rating);
-            setComment(productData.comment);
         }
-    }, [productData]);
+    }, [productData, dispatch, navigate]);
 
     const newProductPrice = (sellingPrice - (sellingPrice * discount) / 100).toFixed(2);
 
@@ -49,25 +43,52 @@ export default function SingleProductView() {
     };
 
     const [createReview] = useCreateReviewMutation();
+    const [createInquiry] = useCreateInquiryMutation();
 
-    const submitReviewHandler = async (e) => {
+    const submitInquiryHandler = async (e) => {
         e.preventDefault();
-        if (rating < 1 || rating > 5) {
-            toast.error("Please select a rating between 1 and 5 stars.");
-            return;
-        }
-        if (!comment.trim()) {
-            toast.error("Please add a comment.");
+        if (!messagee.trim()) {
+            toast.error("Please enter your inquiry message.");
             return;
         }
 
         try {
-            await createReview({ productId, rating, comment }).unwrap();
+            await createInquiry({ productId, messagee }).unwrap();
             refetch();
-            toast.success("Review submitted successfully!");
+            toast.success("Inquiry submitted successfully!");
+            setMessagee('');
         } catch (error) {
-            toast.error(error?.data || error.message);         
+            toast.error(error?.data || error.message);
         }
+    };
+
+    const handleEditReview = (reviewId) => {
+        // Navigate to review edit page
+        navigate(`/product/${productId}/edit-review/${reviewId}`);
+    };
+
+    // Average Rating Calculation
+    const averageRating = productData?.reviews?.length
+        ? (productData.reviews.reduce((acc, review) => acc + review.rating, 0) / productData.reviews.length).toFixed(1)
+        : 0;
+
+    // Function to render stars
+    const renderStars = (rating) => {
+        const fullStars = Math.floor(rating); // Full stars (★)
+        const halfStar = rating - fullStars >= 0.5; // Half star (½)
+        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0); // Empty stars (☆)
+
+        return (
+            <>
+                {Array(fullStars).fill('★').map((star, index) => (
+                    <span key={index} className="text-yellow-400">{star}</span>
+                ))}
+                {halfStar && <span className="text-yellow-400">½</span>}
+                {Array(emptyStars).fill('☆').map((star, index) => (
+                    <span key={index + fullStars} className="text-gray-300">{star}</span>
+                ))}
+            </>
+        );
     };
 
     return (
@@ -100,14 +121,15 @@ export default function SingleProductView() {
                         </p>
                     </div>
 
-                    <div className="mt-6">
-                        <h2 className="text-xl font-semibold text-gray-700">Product Specifications</h2>
-                        <ul className="mt-2 text-gray-600 list-disc list-inside">
-                            <li>Feature 1: Lorem ipsum dolor sit amet</li>
-                            <li>Feature 2: Consectetur adipiscing elit</li>
-                            <li>Feature 3: Sed do eiusmod tempor incididunt</li>
-                        </ul>
+                    {/* Average Rating Display */}
+                    <div className="mt-4">
+                        <h2 className="text-xl font-semibold text-gray-700">Average Rating</h2>
+                        <div className="flex items-center mt-2 text-3xl"> {/* Adjusted text-3xl for larger stars */}
+                            {renderStars(averageRating)}
+                            <span className="ml-2 text-gray-600 text-2xl">({averageRating} out of 5)</span>
+                        </div>
                     </div>
+
 
                     <div className="mt-6 flex items-center space-x-4">
                         <input
@@ -132,10 +154,9 @@ export default function SingleProductView() {
                 </div>
             </div>
 
-
-            {/* Display Reviews */}
+            {/* Reviews Section */}
             <div className="mt-10">
-                <h2 className="text-2xl font-bold text-gray-800">Customer Reviews</h2>
+                <h2 className="text-2xl font-bold text-gray-800">Product Reviews</h2>
                 {productData?.reviews && productData.reviews.length > 0 ? (
                     productData.reviews.map((review) => (
                         <div key={review._id} className="mt-4 p-4 border rounded-lg shadow-sm bg-gray-50">
@@ -149,6 +170,13 @@ export default function SingleProductView() {
                                 </div>
                                 <p className="ml-2 text-gray-700">{review.comment}</p>
                             </div>
+                            <button
+                                onClick={() => handleEditReview(review._id)}
+                                className={`mt-2 ${user && user._id === review._id ? 'bg-blue-900 hover:bg-blue-800' : 'bg-gray-400 cursor-not-allowed'} text-white font-bold py-2 px-4 rounded-lg`}
+                                disabled={user && user._id !== review._id}
+                            >
+                                Edit
+                            </button>
                         </div>
                     ))
                 ) : (
@@ -158,47 +186,56 @@ export default function SingleProductView() {
 
             {/* Review Form */}
             <div className="mt-10">
-                <h2 className="text-2xl font-bold text-gray-800">Leave a Review</h2>
-                <form onSubmit={submitReviewHandler} className="mt-4">
+                <ReviewForm productId={productId} refetch={refetch} />
+            </div>
+
+            {/* Inquiry Form */}
+            <div className="mt-10">
+                <h2 className="text-2xl font-bold text-gray-800">Product Inquiry</h2>
+                <form onSubmit={submitInquiryHandler} className="mt-4">
                     <div className="mb-4">
-                        <label htmlFor="rating" className="block text-lg font-medium text-gray-700">
-                            Rating
-                        </label>
-                        <select
-                            id="rating"
-                            value={rating}
-                            onChange={(e) => setRating(Number(e.target.value))}
-                            className="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                        >
-                            <option value={0}>Select Rating</option>
-                            <option value={1}>1 - Poor</option>
-                            <option value={2}>2 - Fair</option>
-                            <option value={3}>3 - Good</option>
-                            <option value={4}>4 - Very Good</option>
-                            <option value={5}>5 - Excellent</option>
-                        </select>
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="comment" className="block text-lg font-medium text-gray-700">
-                            Comment
+                        <label htmlFor="messagee" className="block text-lg font-medium text-gray-700">
+                            Message
                         </label>
                         <textarea
-                            id="comment"
-                            value={comment}
-                            onChange={(e) => setComment(e.target.value)}
+                            id="messagee"
+                            value={messagee}
+                            onChange={(e) => setMessagee(e.target.value)}
                             rows="4"
                             className="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Write your review here..."
+                            placeholder="Write your inquiry here..."
+                            required
                         ></textarea>
                     </div>
                     <button
                         type="submit"
                         className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                     >
-                        Submit Review
+                        Submit Inquiry
                     </button>
                 </form>
             </div>
+
+            {/* Display Inquiries */}
+            <div className="mt-10">
+                <h2 className="text-2xl font-bold text-gray-800">Customer Inquiries</h2>
+                {productData?.inquiries && productData.inquiries.length > 0 ? (
+                    productData.inquiries.map((inquiry) => (
+                        <div key={inquiry._id} className="mt-4 p-4 border rounded-lg shadow-sm bg-gray-50">
+                            <div className="flex items-center">
+                                <p className="text-lg font-semibold">{inquiry.name}</p>
+                                <p className="ml-4 text-sm text-gray-500">{new Date(inquiry.createdAt).toLocaleDateString()}</p>
+                            </div>
+                            <div className="mt-2 text-gray-700">
+                                <p>{inquiry.messagee}</p>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <p className="mt-4 text-gray-500">No inquiries yet.</p>
+                )}
+            </div>
+          
         </div>
     );
 }
