@@ -1,11 +1,11 @@
-
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
 import asyncHandler from "./asyncHandler.js";
 
 const authenticate = asyncHandler(async (req, res, next) => {
   let token;
-
+  console.log('authenticating : ', req.cookies.jwt);
+  
   // Read JWT from the 'jwt' cookie
   token = req.cookies.jwt;
 
@@ -13,13 +13,15 @@ const authenticate = asyncHandler(async (req, res, next) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = await User.findById(decoded.userId).select("-password");
+      console.log('user : ', req.user);
+      
       next();
     } catch (error) {
-      res.status(401);
+      res.status(401).json({ message: `Not authorized, token failed : ${error}` });
       throw new Error("Not authorized, token failed.");
     }
   } else {
-    res.status(401);
+    res.status(401).json({ message: `Not authorized, no token` });
     throw new Error("Not authorized, no token.");
   }
 });

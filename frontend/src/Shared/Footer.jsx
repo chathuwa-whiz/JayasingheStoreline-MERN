@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import storelinesImage from '../../../uploads/customerManagement/JS Footer Logo.png'; // Ensure this path is correct
 
 export default function Footer() {
   return (
@@ -37,14 +38,21 @@ export default function Footer() {
         </div>
         
         {/* Follow Us Section */}
-        <div>
-          <h3 className="font-bold text-lg mb-2">Follow Us</h3>
-          <ul className="space-y-2 text-sm">
-            <li><a href="#" className="hover:text-yellow-400">Facebook</a></li>
-            <li><a href="#" className="hover:text-yellow-400">Twitter</a></li>
-            <li><a href="#" className="hover:text-yellow-400">Instagram</a></li>
-            <li><a href="#" className="hover:text-yellow-400">LinkedIn</a></li>
-          </ul>
+        <div className="flex flex-col md:flex-row items-center md:justify-between">
+          <div>
+            <h3 className="font-bold text-lg mb-2">Follow Us</h3>
+            <ul className="space-y-2 text-sm">
+              <li><a href="#" className="hover:text-yellow-400">Facebook</a></li>
+              <li><a href="#" className="hover:text-yellow-400">Twitter</a></li>
+              <li><a href="#" className="hover:text-yellow-400">Instagram</a></li>
+              <li><a href="#" className="hover:text-yellow-400">LinkedIn</a></li>
+            </ul>
+          </div>
+
+          {/* Image Section */}
+          <div className="mt-4 md:mt-0">
+          <img src={storelinesImage} alt="Jayasinghe Storelines" className="w-40 h-auto rounded-3xl" />
+          </div>
         </div>
 
       </div>
@@ -54,5 +62,5 @@ export default function Footer() {
         &copy; 2024 JAYASINGHE STORLINES. All rights reserved.
       </div>
     </footer>
-  )
+  );
 }

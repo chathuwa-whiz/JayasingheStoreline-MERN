@@ -1,9 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ReactReviews from "./ReactReviews/reactReviews";
 import SupplierManagement from "./SupplierManagement/supplier";
 import Layout from "./Shared/Layout";
 import MainDashboard from "./Dashboard/Dashboard";
-
 
 // inventory
 import InventoryDashboard from "./InventoryManagement/Dashboard";
@@ -13,6 +11,7 @@ import AddProducts from "./InventoryManagement/AddProducts";
 import UpdateProduct from "./InventoryManagement/UpdateProduct";
 import Stock from "./InventoryManagement/Stock";
 import Reports from "./InventoryManagement/Reports";
+import AddStockPage from "./InventoryManagement/AddStock";
 
 //Delivery
 import Delivery from "./DeliveryManagement/delivery";
@@ -24,7 +23,6 @@ import DeliveryNotification from "./DeliveryManagement/Notification";
 import DeliveryReports from "./DeliveryManagement/Reports";
 import DeliverySettings from "./DeliveryManagement/Settings";
 import Logout from "./DeliveryManagement/Logout";
-
 
 // Order
 import Order from "./OrderManagement/order";
@@ -44,7 +42,12 @@ import UpdateOrders from "./OrderManagement/UpdateOrder";
 import CustomerLogin from "./CustomerManagemet/CusLogin"; 
 import Register from "./CustomerManagemet/register";
 import Home from "./CustomerManagemet/Home";
+import Customer from "./CustomerManagemet/Customer";
 import Profile from "./CustomerManagemet/profile";
+import CustomerDashboard from "./CustomerManagemet/CustomerDashboard";
+
+//AdminLogin
+import AdminLoginPage from "./AdminLogin/AdminLogin";
 
 //payment
 import PaymentReport from "./PaymentManagement/paymentReport";
@@ -56,6 +59,28 @@ import HrNotify from "./PaymentManagement/HrNotify";
 import SupNotify from "./PaymentManagement/SupNotify";
 
 
+// supplier
+import Supplier from "./SupplierManagement/supplier";
+import SupplierDashboard from "./SupplierManagement/Dashboard";
+import SupplierDetailsForm from "./SupplierManagement/SuppliyerDetails";
+import SupplierForm from "./SupplierManagement/suppliyerForm";
+import SupplierList from "./SupplierManagement/supplierList";
+import SupplierUpdate from "./SupplierManagement/supplierUpdate";
+
+//review
+import EditReviewPage from "./ReviewsInquiry/EditReviewPage";
+import UserReviews from "./ReviewsInquiry/UserReviews";
+import DashboardList from "./ReviewsInquiry/DashboardList";
+
+//Employee Management
+import Employee from './EmployeeManagement/Employee';
+import EmployeeSignIn from './EmployeeManagement/EmployeeSignIn';
+import EmployeeSignUp from './EmployeeManagement/EmployeeSignUp';
+import EmployeeAbout from './EmployeeManagement/EmployeeAbout';
+import EmployeeProfile from './EmployeeManagement/EmployeeProfile';
+import EmployeeDashboard from "./EmployeeManagement/EmployeeDashboard";
+import SettingsPage from "./InventoryManagement/Settings";
+
 function App() {
   return (
     <BrowserRouter>
@@ -63,12 +88,15 @@ function App() {
 
         <Route path="/" element={<Layout />}>
           <Route index element={<MainDashboard />} />
-          <Route path="reactreviews" element={<ReactReviews />} />
+          {/* <Route path="suppliermanagement" element={<SupplierManagement />} /> */}
           <Route path="suppliermanagement" element={<SupplierManagement />} />
           {/* <Route path="paymentmanagement" element={<PaymentManagement />} /> */}
           <Route path="home" element={<Home />} />
           <Route path="profile" element={<Profile />} />
           <Route path="checkout" element={<Checkout />} />
+          <Route path="register" element={<Register />} />
+          <Route path="customerlogin" element={<CustomerLogin />} />
+          <Route path="adminlogin" element={<AdminLoginPage />} />
 
           {/* order manager part */}
           <Route path="productlist" element={<ProductsList />} />
@@ -87,6 +115,8 @@ function App() {
           <Route path="categories" element={<CategoryList />} />
           <Route path="stock" element={<Stock />} />
           <Route path="reports" element={<Reports />} />
+          <Route path="addstock/:_id" element={<AddStockPage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
 
         {/*Delivery manager Routes */}
@@ -107,12 +137,18 @@ function App() {
           <Route index element={<OrderDashboard />} />
           <Route path="orderhistory/update/:_id" element={<UpdateOrders />} />
           <Route path="orderhistory" element={<OrderHistory />} />
-          <Route path="orderinqiry" element={<OrderInquiries/>} />
-          <Route path="orderByProduct" element={<OrderByProducts/>} />
-          <Route path="orderhistory/update/:_id" element={<UpdateOrders />} />
+          <Route path="orderinqiry" element={<OrderInquiries />} />
+          <Route path="orderByProduct" element={<OrderByProducts />} />
         </Route>
+        <Route path="productlist" element={<ProductsList />} /> 
+        <Route path="product/:_id" element={<SingleProductView />} />
+        <Route path="cart" element={<Cart />} />
+        <Route path="shipping" element={<Shipping />} />
+        <Route path="placeorder" element={<PlaceOrder />} />
+      
 
         {/* Payment Manager Routes */}
+        <Route path="checkout" element={<Checkout />} />
         <Route path="payment" element={<Payment />}>
           <Route index element={<PaymentDashboard />} />
           <Route path="paymentreport" element={<PaymentReport />} />
@@ -121,15 +157,41 @@ function App() {
           <Route path="supnotify" element={<SupNotify />} />
         </Route>
 
-        
         {/* Customer Manager Routes */}
         <Route path="register" element={<Register />} />
-        <Route path="customerlogin" element={<CustomerLogin />} />
+        <Route path="customerlogin" element={<CustomerLogin />} />      
+        <Route path="customer" element={<Customer />}>
+          <Route index element={<CustomerDashboard />} />
+        </Route>
+
+        {/* Supplier Manager Routes */}
+        <Route path="supplier" element={<Supplier/>}>
+          <Route index element={<SupplierDashboard />} />
+          <Route path="supplierDetailsForm" element={<SupplierDetailsForm />} />
+          <Route path="SupplierForm" element={<SupplierForm />} />
+          <Route path="SupplierList" element={<SupplierList />} />
+          <Route path="update/:_id" element={<SupplierUpdate />} />
+        </Route>
+
+        {/* Employee Management Routes */}
+        <Route path="employee" element={<Employee />}>
+          <Route index element={<EmployeeDashboard />} />
+          <Route path="employeeSignIn" element={<EmployeeSignIn />} />
+          <Route path="employeeSignUp" element={<EmployeeSignUp />} />
+          <Route path="employeeAbout" element={<EmployeeAbout />} />
+          <Route path="employeeProfile" element={<EmployeeProfile />} />
+        </Route>
+
+        <Route path="product/:productId/edit-review/:reviewId" element={<EditReviewPage />} />
+        <Route path="user-reviews" element={<UserReviews />} />
+        <Route path="dashboardlist" element={<DashboardList/>} />
 
       </Routes>
-
     </BrowserRouter>
   );
 }
 
 export default App;
+
+
+

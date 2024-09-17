@@ -2,7 +2,8 @@ import express from "express";
 import formidable from "express-formidable";
 const productRoutes = express.Router();
 
-import { addProduct, fetchProducts, fetchProductById, updateProduct, deleteProduct } from "../controllers/ProductController.js";
+import { addProduct, fetchProducts, fetchProductById, updateProduct, updateProductStock, deleteProduct, addProductReview, addProductInquiry, updateReview ,getReviewsByUserId, replyToInquiry} from "../controllers/ProductController.js";
+import { authenticate, authorizeAdmin } from "../middlewares/authMidleware.js";
 
 // addProduct
 productRoutes.post("/" , formidable(), addProduct);
@@ -16,14 +17,30 @@ productRoutes.get("/:id" , fetchProductById);
 // updateProductDetails
 productRoutes.put("/:id" , formidable(), updateProduct);
 
+// updateProductStock
+productRoutes.put("/updatestock/:id" , updateProductStock);
+
 // removeProduct
 productRoutes.delete("/:id" , deleteProduct);
 
-
-// fetchAllProducts
 // addProductReview
-// fetchTopProducts
-// fetchNewProducts
-// filterProducts
+productRoutes.route("/:id").post(authenticate, addProductReview);
+
+// Add a product inquiry
+productRoutes.post("/:id/inquiries", authenticate, addProductInquiry);
+
+// Update product review
+productRoutes.put("/:id/:reviewId", authenticate, updateReview);
+
+// Fetch Reviews by User ID
+productRoutes.get("/reviews/user/:userId", authenticate, getReviewsByUserId);
+
+// Reply to product inquiry
+productRoutes.post('/:id/inquiries/:inquiryId/reply', authenticate, replyToInquiry);
+
+
+// removeReview
+//productRoutes.delete("/:id/:reviewId" , authenticate, deleteReview);
+
 
 export default productRoutes;
