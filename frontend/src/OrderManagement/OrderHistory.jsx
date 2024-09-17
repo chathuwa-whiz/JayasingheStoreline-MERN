@@ -6,7 +6,10 @@ import { useGetOrdersQuery } from '../redux/api/orderApiSlice';
 export default function Orders() {
   // Fetch all orders
   const { data: orders, isLoading, isError } = useGetOrdersQuery();
-  
+  const priceFormatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'LKR',
+  });
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,9 +59,9 @@ export default function Orders() {
             }
           </td>
 
-          <td className="py-2 px-4">{`Rs.${order.itemsPrice.toFixed(2)}`}</td>
-          <td className="py-2 px-4">{`Rs.${order.discount.toFixed(2)}`}</td>
-          <td className="py-2 px-4">{`Rs.${order.totalPrice.toFixed(2)}`}</td>
+          <td className="py-2 px-4">{priceFormatter.format(order.itemsPrice)}</td>
+          <td className="py-2 px-4">{priceFormatter.format(order.discount)}</td>
+          <td className="py-2 px-4">{priceFormatter.format(order.totalPrice)}</td>
           <td className="py-2 px-4">{order.status}</td>
           <td className="py-2 px-4">
             <Link to={`/order/orderhistory/update/${order._id}`}>
