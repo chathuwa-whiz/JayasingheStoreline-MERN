@@ -7,6 +7,9 @@ export default function Orders() {
   // Fetch all orders
   const { data: orders, isLoading, isError } = useGetOrdersQuery();
 
+  console.log(orders);
+  
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 13; // Number of orders to display per page
@@ -32,7 +35,7 @@ export default function Orders() {
           <tr>
             <th className="py-2 px-4 text-left">#</th>
             <th className="py-2 px-4 text-left">Order Id</th>
-            <th>Items</th>
+            <th className="py-2 px-4 text-left">Items</th>
             <th className="py-2 px-4 text-left">Items Price</th>
             <th className="py-2 px-4 text-left">Discount</th>
             <th className="py-2 px-4 text-left">Total Price</th>
@@ -45,31 +48,11 @@ export default function Orders() {
         <tr key={order._id} className="border-b border-gray-200">
           <td className="py-2 px-4">{indexOfFirstOrder + index + 1}</td>
           <td className="py-2 px-4">{order.orderId}</td>
-          {/* <td className="py-2 px-4">
-            {order.orderItems?.map((item) => (
-              <div key={item._id}>
-                {item.name} - Qty: {item.qty}
-              </div>
-            ))}
-          </td> */}
           <td className="py-2 px-4">
-          {order.orderItems && order.orderItems.length > 0 ? (
-            // Parse the orderItems if it's a string
-            Array.isArray(order.orderItems)
-              ? order.orderItems.map((item) => (
-                  <div key={item._id}> {/* Ensure unique key */}
-                    {item.name} - Qty: {item.qty}
-                  </div>
-                ))
-              : JSON.parse(order.orderItems).map((item) => (
-                  <div key={item._id}> {/* Ensure unique key */}
-                    {item.name} - Qty: {item.qty}
-                  </div>
-                ))
-          ) : (
-            <div>No items</div>
-          )}
-        </td>
+            {order.orderItems?.map((item) => (
+              <div key={item._id}>{item.name} - Qty: {item.qty}</div>
+            ))}
+          </td>
 
           <td className="py-2 px-4">{`Rs.${order.itemsPrice.toFixed(2)}`}</td>
           <td className="py-2 px-4">{`Rs.${order.discount.toFixed(2)}`}</td>
