@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCreateOrderMutation } from '../redux/api/orderApiSlice';
 import { useSelector } from 'react-redux';
+import {toast} from "react-hot-toast";
 
 const DeliveryInformationForm = () => {
   const navigate = useNavigate();
@@ -45,7 +46,12 @@ const DeliveryInformationForm = () => {
     e.preventDefault();
 
     // Validate the form before submitting
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      toast.error('Please fill all the required fields');
+      return;
+    } else {
+      toast.success('Order placed successfully');
+    }
 
     try {
       const orderData = new FormData();
@@ -67,6 +73,11 @@ const DeliveryInformationForm = () => {
 
       const data = await createOrder(orderData);
       console.log('Order created successfully:', data);
+      if(data.error) {
+        toast.error(data.error);
+      } else {
+        toast.success('Order placed successfully');
+      }
       navigate('/placeorder');
     } catch (error) {
       console.error('Error creating order:', error);
