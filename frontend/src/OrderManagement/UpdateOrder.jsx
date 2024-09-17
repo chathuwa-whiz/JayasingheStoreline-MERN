@@ -74,7 +74,7 @@ export default function UpdateOrders() {
                 toast.success(`Order deleted`);
                 setTimeout(() => {
                     toast.dismiss();
-                    navigate("/order/orderhistory");
+                    window.location = "/order/orderhistory";
                 }, 2000);
             }
         } catch (err) {
