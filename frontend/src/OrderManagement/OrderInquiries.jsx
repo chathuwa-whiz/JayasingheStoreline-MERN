@@ -65,7 +65,7 @@ export default function OrderInquiries() {
   };
 
   return (
-    <div className="rounded-lg p-8">
+    <div className="bg-gray-100 p-8 rounded-lg shadow-lg">
       <table className="min-w-full overflow-y-auto min-h-full border rounded-lg bg-white">
         <thead className="bg-orange-500 text-white">
           <tr>

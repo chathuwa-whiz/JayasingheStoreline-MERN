@@ -3,7 +3,8 @@ import React from 'react';
 export default function Dashboard() {
   return (
     <>
-      <div className="overflow-auto bg-gray-100 p-8 rounded-lg shadow-lg">
+      <div className="bg-gray-100 p-8 rounded-lg shadow-lg">
+        
         {/* Header Section */}
         <header className="flex justify-between items-center mb-8">
           <div>

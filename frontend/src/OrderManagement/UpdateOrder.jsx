@@ -12,7 +12,7 @@ export default function UpdateOrders() {
     const params = useParams();
     const { data: orderData } = useGetOrderByIdQuery(params._id);
 
-    const [orderId, setId] = useState(0);
+    const [orderId, setId] = useState('');
     const [itemsPrice, setItemsPrice] = useState(0);
     const [discount, setDiscount] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);

@@ -1,63 +1,101 @@
 import Order from "../models/OrderModel.js";
 import Product from "../models/ProductModel.js";
 
-// add new Order
+// Add new Order
 export const addOrder = async (req, res) => {
-    
     try {
         const { itemsPrice, deliveryPrice, discount, totalPrice, status, orderItems } = req.fields;
-        
-        switch(true) {
+
+        // Validate required fields
+        switch (true) {
             case !itemsPrice:
-                return res.json( { error: "itemsPrice is required" } );
+                return res.json({ error: "itemsPrice is required" });
             case !deliveryPrice:
-                return res.json( { error: "deliveryPrice is required" } );
+                return res.json({ error: "deliveryPrice is required" });
             case !discount:
-                return res.json( { error: "discount is required" } );
+                return res.json({ error: "discount is required" });
             case !totalPrice:
-                return res.json( { error: "totalprice is required" } );
+                return res.json({ error: "totalPrice is required" });
             case !status:
-                return res.json( { error: "status is required" } );
+                return res.json({ error: "status is required" });
         }
-        
-        const order = new Order({...req.fields});
+
+        // Step 1: Count the number of existing orders to generate a sequential orderId
+        const orderCount = await Order.countDocuments();
+        const orderId = `OID${orderCount + 1}`;
+
+        // Step 2: Ensure that orderItems is parsed correctly into an array (if it's a string)
+        let items;
+        try {
+            items = JSON.parse(orderItems); // Ensure you parse this string into an array of objects
+        } catch (error) {
+            return res.status(400).json({ error: "Invalid orderItems format" });
+        }
+
+        // Step 3: Create a new order with the parsed orderItems array
+        const order = new Order({
+            itemsPrice,
+            deliveryPrice,
+            discount,
+            totalPrice,
+            status,
+            orderItems: items, // Store it as an array
+            orderId, // Add the new orderId
+            ...req.fields // Additional fields like customer details
+        });
+
+        // Save the order to the database
         await order.save();
 
-        const items = JSON.parse(orderItems);
-        for ( const item of items ) {
-            try {
-                const product = await Product.findById(item._id);
-                if(!product) {
-                    return res.status(404).json( { error : `Product with ID ${item._id} not found` } );
-                }
-                if(product.currentQty <= 0) {
-                    product.currentQty = product.countInStock;
-                }
-                product.currentQty -= item.qty;
-                await product.save();
-                
-            } catch (error) {
-                res.status(400).json( { error : `current qty not changed : `, error } )
+        // Step 4: Update product quantities for each order item
+        for (const item of items) {
+            const product = await Product.findById(item._id);
+            if (!product) {
+                return res.status(404).json({ error: `Product with ID ${item._id} not found` });
             }
-            
+
+            // Adjust stock quantity logic
+            if (product.currentQty <= 0) {
+                product.currentQty = product.countInStock;
+            }
+            product.currentQty -= item.qty;
+            await product.save();
         }
 
-        res.status(201).json( { msg : "Order Added Successfully", items } );        
+        // Return success response with order details
+        res.status(201).json({ msg: "Order Added Successfully", orderId, items });
 
     } catch (error) {
-        res.status(400).json( { msg : "Order Adding Failed ", error } );
+        res.status(400).json({ msg: "Order Adding Failed", error });
     }
-}
+};
+
+
 
 // fetch all orders
+// export const fetchOrders = async (req, res) => {
+//     try {
+//         const orders = await Order.find();
+//         res.json(orders);
+//     } catch (error) {
+//         res.status(400).json( { msg : "No Order Found", error } );
+//     }
+// }
+
 export const fetchOrders = async (req, res) => {
     try {
         const orders = await Order.find();
+        orders.forEach(order => {
+            if (typeof order.orderItems === 'string') {
+                order.orderItems = JSON.parse(order.orderItems);
+            }
+        });
         res.json(orders);
     } catch (error) {
-        res.status(400).json( { msg : "No Order Found", error } );
+        res.status(400).json({ msg: "No Order Found", error });
     }
-}
+};
+
 
 
 // fetch a product by id

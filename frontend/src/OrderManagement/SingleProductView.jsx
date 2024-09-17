@@ -73,9 +73,9 @@ export default function SingleProductView() {
                     <div className="mt-6">
                         <h2 className="text-xl font-semibold text-gray-700">Product Specifications</h2>
                         <ul className="mt-2 text-gray-600 list-disc list-inside">
-                            <li>Feature 1: Lorem ipsum dolor sit amet</li>
-                            <li>Feature 2: Consectetur adipiscing elit</li>
-                            <li>Feature 3: Sed do eiusmod tempor incididunt</li>
+                            <li>Processor: Intel Core i7 11th Gen</li>
+                            <li>RAM: 16GB DDR4</li>
+                            <li>Storage: 512GB SSD</li>
                         </ul>
                     </div>
 

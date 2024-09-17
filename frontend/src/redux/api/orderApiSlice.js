@@ -44,7 +44,7 @@ export const orderApiSlice = apiSlice.injectEndpoints({
       providesTags: (result, error, orderId) => [
           {type: "Order", id: orderId}
       ],
-  }),
+    }),
 
     getOrders: builder.query({
       query: () => ({
@@ -59,15 +59,17 @@ export const orderApiSlice = apiSlice.injectEndpoints({
       }),
       //cause error maybe
       invalidatesTags: ["Order"],
-  }),
+    }),
 
-  updateOrder: builder.mutation({
-    query: ({ orderId, formData }) => ({
+  
+
+    updateOrder: builder.mutation({
+      query: ({ orderId, formData }) => ({
         url: `${ORDERS_URL}/${orderId}`,
         method: "PUT",
         body: formData,
+      }),
     }),
- }),
 
     deliverOrder: builder.mutation({
       query: (orderId) => ({

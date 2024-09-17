@@ -16,10 +16,36 @@ const DeliveryInformationForm = () => {
   const [city, setCity] = useState('');
   const [province, setProvince] = useState('');
   const [postalCode, setPostalCode] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('');
+ // const [paymentMethod, setPaymentMethod] = useState('');
+
+  // Validation state
+  const [errors, setErrors] = useState({});
+
+  // Validation logic
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!firstName) newErrors.firstName = 'First name is required';
+    if (!lastName) newErrors.lastName = 'Last name is required';
+    if (!telephoneNo) newErrors.telephoneNo = 'Telephone number is required';
+    else if (telephoneNo.length !== 10)
+      newErrors.telephoneNo = 'Telephone number must be 10 digits';
+    if (!address) newErrors.address = 'Address is required';
+    if (!city) newErrors.city = 'City is required';
+    if (!province) newErrors.province = 'Province is required';
+    if (!postalCode) newErrors.postalCode = 'Postal code is required';
+
+    setErrors(newErrors);
+
+    // If the object is empty, the form is valid
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate the form before submitting
+    if (!validateForm()) return;
 
     try {
       const orderData = new FormData();
@@ -37,7 +63,7 @@ const DeliveryInformationForm = () => {
       orderData.append('city', city);
       orderData.append('province', province);
       orderData.append('postalCode', postalCode);
-      orderData.append('paymentMethod', paymentMethod);
+      //orderData.append('paymentMethod', paymentMethod);
 
       const data = await createOrder(orderData);
       console.log('Order created successfully:', data);
@@ -50,8 +76,13 @@ const DeliveryInformationForm = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-blue-100 py-12 px-6 lg:px-8">
       <div className="max-w-lg w-full space-y-8">
-        <h2 className="text-center text-3xl font-extrabold text-blue-900">Delivery Information</h2>
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6 bg-white shadow-lg rounded-lg p-8">
+        <h2 className="text-center text-4xl font-extrabold text-blue-900 tracking-wide">
+          Delivery Information
+        </h2>
+        <form
+          onSubmit={handleSubmit}
+          className="mt-8 space-y-6 bg-white shadow-2xl rounded-xl p-8 border border-blue-100"
+        >
           <div className="grid grid-cols-1 gap-y-4">
             <div>
               <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
@@ -63,9 +94,10 @@ const DeliveryInformationForm = () => {
                 type="text"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
                 placeholder="John"
               />
+              {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
             </div>
 
             <div>
@@ -78,9 +110,10 @@ const DeliveryInformationForm = () => {
                 type="text"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
                 placeholder="Doe"
               />
+              {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
             </div>
 
             <div>
@@ -93,9 +126,12 @@ const DeliveryInformationForm = () => {
                 type="text"
                 value={telephoneNo}
                 onChange={(e) => setTeleNo(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
                 placeholder="+94 123 456 789"
               />
+              {errors.telephoneNo && (
+                <p className="text-red-500 text-xs mt-1">{errors.telephoneNo}</p>
+              )}
             </div>
 
             <div>
@@ -108,9 +144,10 @@ const DeliveryInformationForm = () => {
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
                 placeholder="123 Main St"
               />
+              {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
             </div>
 
             <div>
@@ -123,9 +160,10 @@ const DeliveryInformationForm = () => {
                 type="text"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
                 placeholder="Colombo"
               />
+              {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
             </div>
 
             <div>
@@ -138,9 +176,10 @@ const DeliveryInformationForm = () => {
                 type="text"
                 value={province}
                 onChange={(e) => setProvince(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
                 placeholder="Western"
               />
+              {errors.province && <p className="text-red-500 text-xs mt-1">{errors.province}</p>}
             </div>
 
             <div>
@@ -153,12 +192,15 @@ const DeliveryInformationForm = () => {
                 type="text"
                 value={postalCode}
                 onChange={(e) => setPostalCode(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
                 placeholder="00100"
               />
+              {errors.postalCode && (
+                <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>
+              )}
             </div>
 
-            <div>
+             {/* <div>
               <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-700">
                 Select Payment Method
               </label>
@@ -192,14 +234,16 @@ const DeliveryInformationForm = () => {
                   </label>
                 </div>
               </div>
-            </div>
+            </div> */}
+
+
 
             <div className="flex justify-center mt-6">
               <button
                 type="submit"
-                className="w-full bg-blue-900 text-white font-semibold py-3 px-4 rounded-lg shadow-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="w-full bg-blue-900 text-white font-semibold py-3 rounded-md shadow-md hover:bg-blue-800 transition ease-in-out duration-300"
               >
-                Continue
+                Place Order
               </button>
             </div>
           </div>

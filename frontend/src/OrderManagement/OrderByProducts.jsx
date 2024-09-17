@@ -51,7 +51,7 @@ export default function OrdersByProduct() {
 
   return (
     <div className="bg-gray-100 p-8 rounded-lg shadow-lg">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Orders by Product</h2>
+      {/* <h2 className="text-3xl font-bold text-gray-800 mb-6">Orders by Product</h2> */}
       <table className="min-w-full border-collapse border border-gray-300 rounded-lg shadow-sm">
         <thead className="bg-orange-500 text-white">
           <tr>

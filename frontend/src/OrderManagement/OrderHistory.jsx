@@ -26,15 +26,13 @@ export default function Orders() {
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className="rounded-lg p-8">
+    <div className="bg-gray-100 p-8 rounded-lg shadow-lg">
       <table className="min-w-full overflow-y-auto min-h-full border rounded-lg bg-white">
         <thead className="bg-orange-500 text-white">
           <tr>
-            <th className="py-2 px-4 text-left">Order Id</th>
-            {/* <th className="py-2 px-4 text-left">Product Names</th>
-            <th className="py-2 px-4 text-left">Product Quantity</th> */}
             <th className="py-2 px-4 text-left">#</th>
-            {/* <th className="py-2 px-4 text-left">Order ID</th> */}
+            <th className="py-2 px-4 text-left">Order Id</th>
+            <th>Items</th>
             <th className="py-2 px-4 text-left">Items Price</th>
             <th className="py-2 px-4 text-left">Discount</th>
             <th className="py-2 px-4 text-left">Total Price</th>
@@ -42,46 +40,51 @@ export default function Orders() {
             <th className="py-2 px-4 text-left">Action</th>
           </tr>
         </thead>
-        {/* <tbody>
-          {currentOrders.map((order, index) => (
-            <tr key={order._id} className="border-b border-gray-200">
-              <td className="py-2 px-4">{indexOfFirstOrder + index + 1}</td>
-              <td className="py-2 px-4">{order.itemsPrice}</td>
-              <td className="py-2 px-4">{order.discount}</td>
-              <td className="py-2 px-4">{`Rs.${order.totalPrice.toFixed(2)}`}</td>
-              <td className="py-2 px-4">{order.status}</td>
-              <td className="py-2 px-4">
-                <Link to={`/inventory/products/update/${order._id}`}>
-                  <button className="text-green-500 hover:text-green-700 mx-2">
-                    <FaPen />
-                  </button>
-                </Link>
-              </td>
-            </tr>
-          ))}
-        </tbody> */}
+            <tbody>
+      {currentOrders.map((order, index) => (
+        <tr key={order._id} className="border-b border-gray-200">
+          <td className="py-2 px-4">{indexOfFirstOrder + index + 1}</td>
+          <td className="py-2 px-4">{order.orderId}</td>
+          {/* <td className="py-2 px-4">
+            {order.orderItems?.map((item) => (
+              <div key={item._id}>
+                {item.name} - Qty: {item.qty}
+              </div>
+            ))}
+          </td> */}
+          <td className="py-2 px-4">
+          {order.orderItems && order.orderItems.length > 0 ? (
+            // Parse the orderItems if it's a string
+            Array.isArray(order.orderItems)
+              ? order.orderItems.map((item) => (
+                  <div key={item._id}> {/* Ensure unique key */}
+                    {item.name} - Qty: {item.qty}
+                  </div>
+                ))
+              : JSON.parse(order.orderItems).map((item) => (
+                  <div key={item._id}> {/* Ensure unique key */}
+                    {item.name} - Qty: {item.qty}
+                  </div>
+                ))
+          ) : (
+            <div>No items</div>
+          )}
+        </td>
 
-         <tbody>
-          {currentOrders.map((order, index) => (
-            <tr key={order._id} className="border-b border-gray-200">
-              <td className="py-2 px-4">{indexOfFirstOrder + index + 1}</td>
-              {/* <td className="py-2 px-4"></td>
-              <td className="py-2 px-4"></td> */}
-              <td className="py-2 px-4">{order._id}</td>
-              <td className="py-2 px-4">{`Rs.${order.itemsPrice.toFixed(2)}`}</td>
-              <td className="py-2 px-4">{`Rs.${order.discount.toFixed(2)}`}</td>
-              <td className="py-2 px-4">{`Rs.${order.totalPrice.toFixed(2)}`}</td>
-              <td className="py-2 px-4">{order.status}</td>
-              <td className="py-2 px-4">
-                <Link to={`/order/orderhistory/update/${order._id}`}>
-                  <button className="text-green-500 hover:text-green-700 mx-2">
-                    <FaPen />
-                  </button>
-                </Link>
-              </td>
-            </tr>
-          ))}
-        </tbody>
+          <td className="py-2 px-4">{`Rs.${order.itemsPrice.toFixed(2)}`}</td>
+          <td className="py-2 px-4">{`Rs.${order.discount.toFixed(2)}`}</td>
+          <td className="py-2 px-4">{`Rs.${order.totalPrice.toFixed(2)}`}</td>
+          <td className="py-2 px-4">{order.status}</td>
+          <td className="py-2 px-4">
+            <Link to={`/order/orderhistory/update/${order._id}`}>
+              <button className="text-green-500 hover:text-green-700 mx-2">
+                <FaPen />
+              </button>
+            </Link>
+          </td>
+        </tr>
+      ))}
+    </tbody>
       </table>
 
       {/* Pagination Controls */}
