@@ -7,7 +7,7 @@ export default function Orders() {
   // Fetch all orders
   const { data: orders, isLoading, isError } = useGetOrdersQuery();
 
-  console.log(orders);
+  console.log(JSON.parse(orders[0].orderItems));
   
 
   // Pagination state
@@ -49,9 +49,13 @@ export default function Orders() {
           <td className="py-2 px-4">{indexOfFirstOrder + index + 1}</td>
           <td className="py-2 px-4">{order.orderId}</td>
           <td className="py-2 px-4">
-            {order.orderItems?.map((item) => (
-              <div key={item._id}>{item.name} - Qty: {item.qty}</div>
-            ))}
+            {
+              JSON.parse(order.orderItems).map((item) => (
+                <div key={item._id}>
+                  <p>{item.name} x {item.qty}</p>
+                </div>
+              ))
+            }
           </td>
 
           <td className="py-2 px-4">{`Rs.${order.itemsPrice.toFixed(2)}`}</td>
