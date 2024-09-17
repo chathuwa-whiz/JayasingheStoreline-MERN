@@ -6,8 +6,6 @@ import { useGetOrdersQuery } from '../redux/api/orderApiSlice';
 export default function Orders() {
   // Fetch all orders
   const { data: orders, isLoading, isError } = useGetOrdersQuery();
-
-  console.log(JSON.parse(orders[0].orderItems));
   
 
   // Pagination state
