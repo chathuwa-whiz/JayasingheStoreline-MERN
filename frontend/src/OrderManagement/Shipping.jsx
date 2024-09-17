@@ -72,13 +72,20 @@ const DeliveryInformationForm = () => {
       //orderData.append('paymentMethod', paymentMethod);
 
       const data = await createOrder(orderData);
-      console.log('Order created successfully:', data);
+      console.log('Order Data', data);
+
       if(data.error) {
         toast.error(data.error);
+        return;
+
       } else {
         toast.success('Order placed successfully');
+        setTimeout(() => {
+          toast.dismiss();
+          navigate('/placeorder');
+        });
       }
-      navigate('/placeorder');
+
     } catch (error) {
       console.error('Error creating order:', error);
     }
