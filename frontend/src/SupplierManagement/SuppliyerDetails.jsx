@@ -9,21 +9,51 @@ export default function SupplierDetailsForm() {
   const [uploadSupplierImage] = useUploadSupplierImageMutation();
 
   const [supplierName, setSupplierName] = useState('');
-  const [SupplierID, setSupplierID] = useState('');
+  const [NIC, setNIC] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [Type, setType] = useState('');
-  const [Date, setDate] = useState('');
   const [email, setEmail] = useState('');
   const [Gender, setGender] = useState('');
   const [supplierMedia, setSupplierMedia] = useState('');
   const [imageUrl, setImageUrl] = useState(null);
+  const [errors, setErrors] = useState({});
+
+  // Validation functions
+  const validateNIC = (NIC) => /(^\d{9}[vV]$)|(^\d{12}$)/.test(NIC);
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validatePhoneNumber = (phone) => /^\d{10}$/.test(phone); // Assumes a 10-digit phone number
+  const validateName = (name) => name.length >= 3;
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!validateName(supplierName)) {
+      newErrors.supplierName = "Name should be at least 3 characters long.";
+    }
+    if (!validateNIC(NIC)) {
+      newErrors.NIC = "NIC must be either 9 digits followed by 'v/V' or 12 digits.";
+    }
+    if (!validatePhoneNumber(phoneNumber)) {
+      newErrors.phoneNumber = "Phone number must be 10 digits long.";
+    }
+    if (!validateEmail(email)) {
+      newErrors.email = "Please enter a valid email address.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
+    if (!validateForm()) {
+      return; // Exit if the form is invalid
+    }
+
     try {
       const supplierData = new FormData();
       supplierData.append("name", supplierName);
+      supplierData.append("SNIC", NIC);
       supplierData.append("email", email);
       supplierData.append("gender", Gender);
       supplierData.append("phone", phoneNumber);
@@ -31,7 +61,7 @@ export default function SupplierDetailsForm() {
       supplierData.append("image", supplierMedia);
 
       const data = await createSupplier(supplierData);
-      if(data.error) {
+      if (data.error) {
         console.log("error data : ", data);
         toast.error("Supplier create failed. Try Again.");
       } else {
@@ -44,7 +74,6 @@ export default function SupplierDetailsForm() {
       
     } catch (error) {
       console.log("error : ", error);
-      
     }
   };
 
@@ -64,7 +93,6 @@ export default function SupplierDetailsForm() {
 
   return (
     <div className="flex bg-gray-100 min-h-screen">
-      
       <div className="w-3/4 p-8">
         <h2 className="text-2xl font-bold mb-6">Supplier Details</h2>
         <div className="flex">
@@ -80,16 +108,18 @@ export default function SupplierDetailsForm() {
                   value={supplierName}
                   onChange={(e) => setSupplierName(e.target.value)}
                 />
+                {errors.supplierName && <p className="text-red-500 text-sm">{errors.supplierName}</p>}
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2" htmlFor="SupplierID">Supplier NIC</label>
+                <label className="block text-gray-700 mb-2" htmlFor="SupplierID"> NIC</label>
                 <input
                   className="w-full p-2 border border-gray-300 rounded"
                   id="SupplierID"
                   type="text"
-                  value={SupplierID}
-                  onChange={(e) => setSupplierID(e.target.value)}
+                  value={NIC}
+                  onChange={(e) => setNIC(e.target.value)}
                 />
+                {errors.NIC && <p className="text-red-500 text-sm">{errors.NIC}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 mb-2" htmlFor="phoneNumber">Phone Number</label>
@@ -100,6 +130,7 @@ export default function SupplierDetailsForm() {
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                 />
+                {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 mb-2" htmlFor="Type">Type</label>
@@ -112,16 +143,6 @@ export default function SupplierDetailsForm() {
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2" htmlFor="Date">Date</label>
-                <input
-                  className="w-full p-2 border border-gray-300 rounded"
-                  id="Date"
-                  type="date"
-                  value={Date}
-                  onChange={(e) => setDate(e.target.value)}
-                />
-              </div>
-              <div className="mb-4">
                 <label className="block text-gray-700 mb-2" htmlFor="email">Email</label>
                 <input
                   className="w-full p-2 border border-gray-300 rounded"
@@ -130,6 +151,7 @@ export default function SupplierDetailsForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
+                {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 mb-2" htmlFor="Gender">Gender</label>
@@ -142,7 +164,6 @@ export default function SupplierDetailsForm() {
                 />
               </div>
               <div className="flex justify-between">
-               
                 <button
                   className="bg-orange-500 text-white px-6 py-2 rounded font-medium"
                   type="submit"
@@ -164,7 +185,7 @@ export default function SupplierDetailsForm() {
               <input
                 className="hidden"
                 id="supplierMedia"
-                type="file" 
+                type="file"
                 name='image'
                 accept='image/*'
                 onChange={handleMediaChange}

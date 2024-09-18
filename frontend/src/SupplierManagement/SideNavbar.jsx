@@ -75,7 +75,7 @@ const Sidebar = () => {
 
             <li className="mb-4">
               <NavLink
-                to="/reports"
+                to="report"
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
               >
                 <ArchiveBoxIcon className="h-5 w-5 mr-3" />

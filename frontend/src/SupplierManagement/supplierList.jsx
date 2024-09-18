@@ -19,7 +19,7 @@ export default function SupplierList() {
           <tr>
             <th className="py-2 px-4 text-left">#</th>
             <th className="py-2 px-4 text-left">Image</th>
-            <th className="py-2 px-4 text-left">SID</th>
+            <th className="py-2 px-4 text-left">NIC</th>
             <th className="py-2 px-4 text-left">Name</th>
             <th className="py-2 px-4 text-left">Phone Number</th>
             <th className="py-2 px-4 text-left">Type</th>
@@ -30,19 +30,19 @@ export default function SupplierList() {
         </thead>
         <tbody>
           {suppliers.map((supplier, index) => (
-            <tr key={supplier._id} className="border-b border-gray-200">
+            <tr key={supplier._NIC} className="border-b border-gray-200">
               <td className="py-2 px-4">{index + 1}</td>
               <td className="py-2 px-4">
                 <img src={supplier.image} alt={supplier.name} className="w-10 h-10" />
               </td>
-              <td className="py-2 px-4">{supplier._id}</td>
+              <td className="py-2 px-4">{supplier._NIC}</td>
               <td className="py-2 px-4">{supplier.name}</td>
               <td className="py-2 px-4">{supplier.phone}</td>
               <td className="py-2 px-4">{supplier.type}</td>
               <td className="py-2 px-4">{supplier.createdAt}</td>
               <td className="py-2 px-4">{supplier.gender}</td>
               <td className="py-2 px-4 flex space-x-2">
-                <Link to={`../update/${supplier._id}`} className="btn btn-success">
+                <Link to={`../update/${supplier._NIC}`} className="btn btn-success">
                   <FaPen />
                 </Link>
               </td>

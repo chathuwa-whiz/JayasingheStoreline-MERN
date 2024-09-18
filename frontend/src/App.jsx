@@ -66,6 +66,7 @@ import SupplierDetailsForm from "./SupplierManagement/SuppliyerDetails";
 import SupplierForm from "./SupplierManagement/suppliyerForm";
 import SupplierList from "./SupplierManagement/supplierList";
 import SupplierUpdate from "./SupplierManagement/supplierUpdate";
+import SupplierReport from "./SupplierManagement/Report";
 
 //review
 import EditReviewPage from "./ReviewsInquiry/EditReviewPage";
@@ -80,6 +81,7 @@ import EmployeeAbout from './EmployeeManagement/EmployeeAbout';
 import EmployeeProfile from './EmployeeManagement/EmployeeProfile';
 import EmployeeDashboard from "./EmployeeManagement/EmployeeDashboard";
 import SettingsPage from "./InventoryManagement/Settings";
+
 
 function App() {
   return (
@@ -171,6 +173,7 @@ function App() {
           <Route path="SupplierForm" element={<SupplierForm />} />
           <Route path="SupplierList" element={<SupplierList />} />
           <Route path="update/:_id" element={<SupplierUpdate />} />
+          <Route path="report" element={<SupplierReport />} />
         </Route>
 
         {/* Employee Management Routes */}
