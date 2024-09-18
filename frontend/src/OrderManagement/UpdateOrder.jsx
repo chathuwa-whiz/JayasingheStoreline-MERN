@@ -54,7 +54,10 @@ export default function UpdateOrders() {
             };
             
             const result = await updateOrder({ orderId: params._id, ...updateData });
-    
+            
+            console.log("Update Data: ", updateData);
+            console.log("RESULT: ", result);
+            
             if (result.error) {
                 toast.error("Order update failed");  
             } else {
