@@ -22,7 +22,6 @@ import employeeRouter from './routes/EmployeeRoutes.js';
 import authEmployeeRouter from './routes/AuthEmployeeRoutes.js';
 import supplierRoutes from './routes/SupplierRoutes.js';
 import supplierUploadRoutes from './routes/SupplierUploadRoutes.js';
-import payhereRoutes from './routes/payhere.js'; // Import PayHere route
 
 // Load the .env file
 dotenv.config();
