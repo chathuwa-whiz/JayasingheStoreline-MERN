@@ -99,19 +99,22 @@ const Reports = () => {
           </div>
         </div>
 
-        <div className="mb-12 bg-white p-6 rounded-lg shadow-lg">
-          <h2 className="text-3xl font-semibold text-gray-800 text-center mb-4">Monthly Deliveries</h2>
-          <div className="bar-chart">
-            <Bar data={barData} />
-          </div>
-        </div>
+        <div className="flex justify-center mt-8">
+  <div className="mb-12 bg-white p-6 rounded-lg shadow-lg h-100 w-full max-w-4xl">
+    <h2 className="text-3xl font-semibold text-gray-800 text-center mb-4">Monthly Deliveries</h2>
+    <div className="bar-chart h-full w-full">
+      <Bar data={barData} />
+    </div>
+  </div>
+</div>
+
 
         <div className="flex gap-4">
-          <div className="w-1/2 bg-white p-6 rounded-lg shadow-lg">
+          <div className="w-1/2 bg-white p-6 rounded-lg shadow-lg ">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">Most Used Units</h2>
             <div className="space-y-2">
               {pieData.labels.map((label, index) => (
-                <div key={index} className="flex items-center justify-between text-gray-700">
+                <div key={index} className="flex items-center justify-between text-gray-700 ">
                   <span className="font-medium">{label}</span>
                   <span>{pieData.datasets[0].data[index]}%</span>
                 </div>

@@ -7,10 +7,10 @@ import { Autoplay } from 'swiper/modules'; // Import Autoplay directly
 import { useAllProductsQuery } from "../redux/api/productApiSlice";
 
 const Carousel = () => {
-  const { data: products, isError, isLoading } = useAllProductsQuery();
+  const { data: products, isError, isLoading, error } = useAllProductsQuery();
 
   if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error</div>;
+  if (isError) return <div>{error}</div>;
 
   return (
     <div className="my-8">
@@ -37,10 +37,10 @@ const Carousel = () => {
 
 export default function Dashboard() {
 
-  const { data: products, isError, isLoading } = useAllProductsQuery();
+  const { data: products, isError, isLoading, error } = useAllProductsQuery();
 
   if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error</div>;  
+  if (isError) return <div>{error}</div>;  
 
   return (
     <div className="bg-gray-50 min-h-screen">
