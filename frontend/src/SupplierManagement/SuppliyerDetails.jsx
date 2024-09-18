@@ -53,7 +53,7 @@ export default function SupplierDetailsForm() {
     try {
       const supplierData = new FormData();
       supplierData.append("name", supplierName);
-      supplierData.append("SNIC", NIC);
+      supplierData.append("nic", NIC);
       supplierData.append("email", email);
       supplierData.append("gender", Gender);
       supplierData.append("phone", phoneNumber);
