@@ -117,20 +117,6 @@ export const updateOrder = async (req, res) => {
     try {
         const { itemsPrice, deliveryPrice, discount, totalPrice, status, orderItems } = req.fields;
 
-        // Validate required fields
-        switch (true) {
-            case !itemsPrice:
-                return res.json({ error: "itemsPrice is required" });
-            case !deliveryPrice:
-                return res.json({ error: "deliveryPrice is required" });
-            case !discount:
-                return res.json({ error: "discount is required" });
-            case !totalPrice:
-                return res.json({ error: "totalPrice is required" });
-            case !status:
-                return res.json({ error: "status is required" });
-        }
-
         // Ensure orderItems is an array of objects
         let items;
         try {
