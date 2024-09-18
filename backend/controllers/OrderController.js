@@ -112,34 +112,72 @@ export const fetchOrderById = async (req, res) => {
 }
 
 // update product
+// update order including order items and quantities
 export const updateOrder = async (req, res) => {
     try {
-        const { itemsPrice, deliveryPrice, discount, totalPrice, status } = req.fields;
-        
-        switch(true) {
+        const { itemsPrice, deliveryPrice, discount, totalPrice, status, orderItems } = req.fields;
+
+        // Validate required fields
+        switch (true) {
             case !itemsPrice:
-                return res.json( { error: "itemsPrice is required" } );
+                return res.json({ error: "itemsPrice is required" });
             case !deliveryPrice:
-                return res.json( { error: "deliveryPrice is required" } );
+                return res.json({ error: "deliveryPrice is required" });
             case !discount:
-                return res.json( { error: "discount is required" } );
+                return res.json({ error: "discount is required" });
             case !totalPrice:
-                return res.json( { error: "totalPrice is required" } );
+                return res.json({ error: "totalPrice is required" });
             case !status:
-                return res.json( { error: "status is required" } );
-           
+                return res.json({ error: "status is required" });
         }
-        
-        const order = await Order.findByIdAndUpdate(req.params.id, {...req.fields}, { new : true });
-        if(!order) {
-            return res.status(400).json( { msg : "Product not found" } )
+
+        // Ensure orderItems is an array of objects
+        let items;
+        try {
+            items = JSON.parse(orderItems); // Parse orderItems into an array if necessary
+        } catch (error) {
+            return res.status(400).json({ error: "Invalid orderItems format" });
         }
+
+        const order = await Order.findById(req.params.id);
+        if (!order) {
+            return res.status(404).json({ msg: "Order not found" });
+        }
+
+        // Update stock quantities for each product in the order
+        for (const item of items) {
+            const product = await Product.findById(item._id);
+            if (!product) {
+                return res.status(404).json({ error: `Product with ID ${item._id} not found` });
+            }
+
+            // Adjust stock quantity based on the new quantities
+            const originalItem = order.orderItems.find(orderItem => orderItem._id.toString() === item._id.toString());
+            const qtyDifference = item.qty - (originalItem ? originalItem.qty : 0); // Calculate the difference in quantity
+
+            if (product.currentQty + qtyDifference < 0) {
+                return res.status(400).json({ error: `Not enough stock for product ${product.name}` });
+            }
+
+            product.currentQty += qtyDifference;
+            await product.save();
+        }
+
+        // Update the order details
+        order.itemsPrice = itemsPrice;
+        order.deliveryPrice = deliveryPrice;
+        order.discount = discount;
+        order.totalPrice = totalPrice;
+        order.status = status;
+        order.orderItems = items;
+
         await order.save();
-        res.json( { msg : "Update Successful ", order } );
+        res.json({ msg: "Update Successful", order });
     } catch (error) {
-        res.status(400).json( { msg : "Update Failed ", error } );
+        res.status(400).json({ msg: "Update Failed", error });
     }
-}
+};
+
 
 // delete product
 export const deleteOrder = async (req, res) => {

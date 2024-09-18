@@ -62,7 +62,13 @@ export default function Orders() {
           <td className="py-2 px-4">{priceFormatter.format(order.itemsPrice)}</td>
           <td className="py-2 px-4">{priceFormatter.format(order.discount)}</td>
           <td className="py-2 px-4">{priceFormatter.format(order.totalPrice)}</td>
-          <td className="py-2 px-4">{order.status}</td>
+          <td className=" px-4 py-2">
+                  <span className={`inline-block px-2 py-1 text-sm font-semibold rounded-full ${
+                    order.status === 'Completed' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'
+                  }`}>
+                    {order.status}
+                  </span>
+                </td>
           <td className="py-2 px-4">
             <Link to={`/order/orderhistory/update/${order._id}`}>
               <button className="text-green-500 hover:text-green-700 mx-2">
