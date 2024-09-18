@@ -16,7 +16,7 @@ export default function SupplierDetailsForm() {
   
 
   const [supplierName, setSupplierName] = useState(supplierData?.name);
-  const [SupplierID, setSupplierID] = useState(supplierData?._id);
+  const [SupplierID, setSupplierID] = useState(supplierData?.nic);
   const [phoneNumber, setPhoneNumber] = useState(supplierData?.phone);
   const [Type ,setType] = useState(supplierData?.type);
   const [Date ,setDate] = useState(supplierData?.updatedAt);
@@ -28,7 +28,7 @@ export default function SupplierDetailsForm() {
   useEffect(() => {
     if(supplierData && supplierData._id) {
       setSupplierName(supplierData.name);
-      setSupplierID(supplierData._id);
+      setSupplierID(supplierData.nic);
       setPhoneNumber(supplierData.phone);
       setType(supplierData.type);
       setDate(supplierData.updatedAt);
