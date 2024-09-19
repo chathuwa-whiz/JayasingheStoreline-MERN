@@ -1,115 +1,241 @@
-import React, {useEffect, useState} from 'react';
-import {useNavigate, useParams} from "react-router-dom";
-import { useGetProductByIdQuery } from "../redux/api/productApiSlice";
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from "react-router-dom";
+import { useGetProductByIdQuery, useCreateReviewMutation, useCreateInquiryMutation } from "../redux/api/productApiSlice";
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart } from "../redux/features/cart/cartSlice";
 import toast from "react-hot-toast";
-import { useDispatch } from 'react-redux';
-import {addToCart} from "../redux/features/cart/cartSlice";
+import ReviewForm from '../ReviewsInquiry/ReviewForm';
 
 export default function SingleProductView() {
-
-    const params = useParams();
-
-    const {data: productData} = useGetProductByIdQuery(params._id);
-
-    console.log(productData);
-    
+    const { _id: productId } = useParams();
+    const { data: productData, isLoading, isError, refetch } = useGetProductByIdQuery(productId);
+    const user = useSelector((state) => state.auth.user);
     const [image, setImage] = useState(productData?.image);
-    const [imageUrl, setImageUrl] = useState('');
     const [name, setName] = useState(productData?.name || '');
     const [description, setDescription] = useState(productData?.description || '');
-    const [buyingPrice, setBuyingPrice] = useState(productData?.buyingPrice || 0);
     const [sellingPrice, setSellingPrice] = useState(productData?.sellingPrice || 0);
     const [discount, setDiscount] = useState(productData?.discount || 0);
-    const [category, setCategory] = useState('');
-    const [brand, setBrand] = useState(productData?.brand || '');
-    const [sku, setSku] = useState(productData?.sku || '');
-    const [barcode, setBarcode] = useState(productData?.barcode || '');
+    const [category, setCategory] = useState(productData?.category || '');
     const [quantity, setQuantity] = useState(productData?.quantity || 0);
     const [qty, setQty] = useState(1);
+    const [messagee, setMessagee] = useState('');
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if(productData && productData._id) {
+        if (productData) {
             setName(productData.name);
             setDescription(productData.description);
-            setBuyingPrice(productData.buyingPrice);
             setSellingPrice(productData.sellingPrice);
             setDiscount(productData.discount);
             setCategory(productData.category);
-            setBrand(productData.brand);
-            setSku(productData.sku);
-            setBarcode(productData.barcode);
             setQuantity(productData.countInStock);
             setImage(productData.image);
         }
-        
-    }, [productData]);
+    }, [productData, dispatch, navigate]);
 
-    const newPrductPrice = (sellingPrice - (sellingPrice * discount) / 100).toFixed(2);
+    const newProductPrice = (sellingPrice - (sellingPrice * discount) / 100).toFixed(2);
 
     const addToCartHandler = () => {
-        dispatch(addToCart({...productData, qty}));
+        dispatch(addToCart({ ...productData, qty }));
         navigate('/cart');
-    }
+    };
+
+    const [createReview] = useCreateReviewMutation();
+    const [createInquiry] = useCreateInquiryMutation();
+
+    const submitInquiryHandler = async (e) => {
+        e.preventDefault();
+        if (!messagee.trim()) {
+            toast.error("Please enter your inquiry message.");
+            return;
+        }
+
+        try {
+            await createInquiry({ productId, messagee }).unwrap();
+            refetch();
+            toast.success("Inquiry submitted successfully!");
+            setMessagee('');
+        } catch (error) {
+            toast.error(error?.data || error.message);
+        }
+    };
+
+    const handleEditReview = (reviewId) => {
+        // Navigate to review edit page
+        navigate(`/product/${productId}/edit-review/${reviewId}`);
+    };
+
+    // Average Rating Calculation
+    const averageRating = productData?.reviews?.length
+        ? (productData.reviews.reduce((acc, review) => acc + review.rating, 0) / productData.reviews.length).toFixed(1)
+        : 0;
+
+    // Function to render stars
+    const renderStars = (rating) => {
+        const fullStars = Math.floor(rating); // Full stars (★)
+        const halfStar = rating - fullStars >= 0.5; // Half star (½)
+        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0); // Empty stars (☆)
+
+        return (
+            <>
+                {Array(fullStars).fill('★').map((star, index) => (
+                    <span key={index} className="text-yellow-400">{star}</span>
+                ))}
+                {halfStar && <span className="text-yellow-400">½</span>}
+                {Array(emptyStars).fill('☆').map((star, index) => (
+                    <span key={index + fullStars} className="text-gray-300">{star}</span>
+                ))}
+            </>
+        );
+    };
 
     return (
-        <div className="container mx-auto p-6">
-            {/* Product Details Wrapper */}
+        <div className="container mx-auto p-6 bg-white rounded-lg shadow-lg">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Product Image */}
                 <div className="flex justify-center">
                     <img
                         src={image}
                         alt="Product"
-                        className="w-full h-full object-cover rounded-lg shadow-md"
+                        className="w-full h-full object-cover rounded-lg shadow-lg transition-transform transform hover:scale-105"
                     />
                 </div>
 
                 {/* Product Details */}
                 <div>
-                    <h1 className="text-3xl font-semibold text-gray-800">{name}</h1>
-                    <p className="mt-2 text-gray-600">Category: {category}</p>
+                    <h1 className="text-4xl font-bold text-gray-800 mb-4">{name}</h1>
+                    <p className="text-lg text-gray-600 mb-2">Category: <span className="font-semibold text-gray-700">{category}</span></p>
                     
                     <div className="mt-4">
-                        <p className="text-xl font-semibold text-gray-900">Rs. {newPrductPrice}.00</p>
-                        <p className="mt-2 text-sm text-gray-500 line-through">Rs. {sellingPrice}.00</p>
-                        <p className="mt-1 text-sm text-green-600">Discount: {discount}% Off</p>
+                        <p className="text-3xl font-semibold text-gray-900">Rs. {newProductPrice}.00</p>
+                        <p className="mt-2 text-lg text-gray-500 line-through">Rs. {sellingPrice}.00</p>
+                        <p className="mt-1 text-md text-green-600">Discount: {discount}% Off</p>
                     </div>
 
                     <div className="mt-6">
-                        <h2 className="text-lg font-semibold text-gray-700">{description}</h2>
-                        <p className="mt-2 text-gray-600">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
-                            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+                        <h2 className="text-xl font-semibold text-gray-700">Description</h2>
+                        <p className="mt-2 text-gray-600 leading-relaxed">
+                            {description || "No description available for this product."}
                         </p>
                     </div>
 
-                    <div className="mt-6">
-                        <h2 className="text-lg font-semibold text-gray-700">Product Specifications</h2>
-                        <ul className="mt-2 text-gray-600 list-disc list-inside">
-                            <li>Feature 1: Lorem ipsum dolor sit amet</li>
-                            <li>Feature 2: Consectetur adipiscing elit</li>
-                            <li>Feature 3: Sed do eiusmod tempor incididunt</li>
-                        </ul>
+                    {/* Average Rating Display */}
+                    <div className="mt-4">
+                        <h2 className="text-xl font-semibold text-gray-700">Average Rating</h2>
+                        <div className="flex items-center mt-2 text-3xl"> {/* Adjusted text-3xl for larger stars */}
+                            {renderStars(averageRating)}
+                            <span className="ml-2 text-gray-600 text-2xl">({averageRating} out of 5)</span>
+                        </div>
                     </div>
+
 
                     <div className="mt-6 flex items-center space-x-4">
                         <input
                             type="number"
-                            className="w-16 p-2 border rounded-lg text-center"
+                            min="1"
+                            max={quantity}
+                            className="w-16 p-2 border rounded-lg text-center focus:ring-2 focus:ring-blue-500"
                             value={qty}
                             onChange={(e) => setQty(e.target.value)}
                         />
                         <button 
                             onClick={addToCartHandler}
                             disabled={quantity === 0}
-                            className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                            className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition">
                             Add to Cart
                         </button>
                     </div>
+
+                    {quantity === 0 && (
+                        <p className="mt-4 text-red-500">This product is currently out of stock.</p>
+                    )}
                 </div>
             </div>
+
+            {/* Reviews Section */}
+            <div className="mt-10">
+                <h2 className="text-2xl font-bold text-gray-800">Product Reviews</h2>
+                {productData?.reviews && productData.reviews.length > 0 ? (
+                    productData.reviews.map((review) => (
+                        <div key={review._id} className="mt-4 p-4 border rounded-lg shadow-sm bg-gray-50">
+                            <div className="flex items-center">
+                                <p className="text-lg font-semibold">{review.name}</p>
+                                <p className="ml-4 text-sm text-gray-500">{new Date(review.createdAt).toLocaleDateString()}</p>
+                            </div>
+                            <div className="mt-2 flex items-center">
+                                <div className="text-yellow-400">
+                                    {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                                </div>
+                                <p className="ml-2 text-gray-700">{review.comment}</p>
+                            </div>
+                            <button
+                                onClick={() => handleEditReview(review._id)}
+                                className={`mt-2 ${user && user._id === review._id ? 'bg-blue-900 hover:bg-blue-800' : 'bg-gray-400 cursor-not-allowed'} text-white font-bold py-2 px-4 rounded-lg`}
+                                disabled={user && user._id !== review._id}
+                            >
+                                Edit
+                            </button>
+                        </div>
+                    ))
+                ) : (
+                    <p className="mt-4 text-gray-500">No reviews yet.</p>
+                )}
+            </div>
+
+            {/* Review Form */}
+            <div className="mt-10">
+                <ReviewForm productId={productId} refetch={refetch} />
+            </div>
+
+            {/* Inquiry Form */}
+            <div className="mt-10">
+                <h2 className="text-2xl font-bold text-gray-800">Product Inquiry</h2>
+                <form onSubmit={submitInquiryHandler} className="mt-4">
+                    <div className="mb-4">
+                        <label htmlFor="messagee" className="block text-lg font-medium text-gray-700">
+                            Message
+                        </label>
+                        <textarea
+                            id="messagee"
+                            value={messagee}
+                            onChange={(e) => setMessagee(e.target.value)}
+                            rows="4"
+                            className="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Write your inquiry here..."
+                            required
+                        ></textarea>
+                    </div>
+                    <button
+                        type="submit"
+                        className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                    >
+                        Submit Inquiry
+                    </button>
+                </form>
+            </div>
+
+            {/* Display Inquiries */}
+            <div className="mt-10">
+                <h2 className="text-2xl font-bold text-gray-800">Customer Inquiries</h2>
+                {productData?.inquiries && productData.inquiries.length > 0 ? (
+                    productData.inquiries.map((inquiry) => (
+                        <div key={inquiry._id} className="mt-4 p-4 border rounded-lg shadow-sm bg-gray-50">
+                            <div className="flex items-center">
+                                <p className="text-lg font-semibold">{inquiry.name}</p>
+                                <p className="ml-4 text-sm text-gray-500">{new Date(inquiry.createdAt).toLocaleDateString()}</p>
+                            </div>
+                            <div className="mt-2 text-gray-700">
+                                <p>{inquiry.messagee}</p>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <p className="mt-4 text-gray-500">No inquiries yet.</p>
+                )}
+            </div>
+          
         </div>
-    )
+    );
 }

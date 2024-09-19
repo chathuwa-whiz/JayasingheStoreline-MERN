@@ -28,6 +28,12 @@ export default function SalesReportPage() {
     // Object to store monthly aggregated inventory values
     const monthlyInventoryValues = {};
 
+    // Format Prices
+    const priceFormatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'LKR',
+    });
+
     for (const product of products) {
         itemNo.push(product.sku);
         name.push(product.name);
@@ -133,7 +139,7 @@ export default function SalesReportPage() {
                             {topProducts.map(([product, sales], index) => (
                                 <li key={index} className="flex justify-between">
                                     <span>{product}</span>
-                                    <span>{sales}</span>
+                                    <span>{priceFormatter.format(sales)}</span>
                                 </li>
                             ))}
                         </ul>

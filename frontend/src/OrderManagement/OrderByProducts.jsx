@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 // Dummy data for products
 const products = [
@@ -50,41 +50,44 @@ export default function OrdersByProduct() {
   };
 
   return (
-    <div className="rounded-lg p-8">
-      <table className="min-w-full overflow-y-auto min-h-full border rounded-lg bg-white">
+    <div className="bg-gray-100 p-8 rounded-lg shadow-lg">
+      <h2 className="text-3xl font-bold text-gray-800 mb-6">Orders by Product</h2>
+      <table className="min-w-full border-collapse border border-gray-300 rounded-lg shadow-sm">
         <thead className="bg-orange-500 text-white">
           <tr>
-            <th className="py-2 px-4 text-left">Product ID</th>
-            <th className="py-2 px-4 text-left">Product Name</th>
-            <th className="py-2 px-4 text-left">Product Price</th>
-            <th className="py-2 px-4 text-left">Order Quantity</th>
-            <th className="py-2 px-4 text-left">Buying Price</th>
-            <th className="py-2 px-4 text-left">Selling Price</th>
-            <th className="py-2 px-4 text-left">Total Revenue</th>
+            <th className="py-3 px-4 text-left font-semibold">Product ID</th>
+            <th className="py-3 px-4 text-left font-semibold">Product Name</th>
+            <th className="py-3 px-4 text-left font-semibold">Product Price</th>
+            <th className="py-3 px-4 text-left font-semibold">Order Quantity</th>
+            <th className="py-3 px-4 text-left font-semibold">Buying Price</th>
+            <th className="py-3 px-4 text-left font-semibold">Selling Price</th>
+            <th className="py-3 px-4 text-left font-semibold">Total Revenue</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-white">
           {currentProducts.map((product) => (
-            <tr key={product.id} className="border-b border-gray-200">
-              <td className="py-2 px-4">{product.id}</td>
-              <td className="py-2 px-4">{product.name}</td>
-              <td className="py-2 px-4">{`Rs.${product.price.toFixed(2)}`}</td>
-              <td className="py-2 px-4">{product.orderQuantity}</td>
-              <td className="py-2 px-4">{`Rs.${product.buyingPrice.toFixed(2)}`}</td>
-              <td className="py-2 px-4">{`Rs.${product.sellingPrice.toFixed(2)}`}</td>
-              <td className="py-2 px-4">{`Rs.${calculateTotalRevenue(product.orderQuantity, product.sellingPrice).toFixed(2)}`}</td>
+            <tr key={product.id} className="border-b border-gray-200 hover:bg-gray-50">
+              <td className="py-3 px-4">{product.id}</td>
+              <td className="py-3 px-4">{product.name}</td>
+              <td className="py-3 px-4">{`Rs.${product.price.toFixed(2)}`}</td>
+              <td className="py-3 px-4">{product.orderQuantity}</td>
+              <td className="py-3 px-4">{`Rs.${product.buyingPrice.toFixed(2)}`}</td>
+              <td className="py-3 px-4">{`Rs.${product.sellingPrice.toFixed(2)}`}</td>
+              <td className="py-3 px-4">{`Rs.${calculateTotalRevenue(product.orderQuantity, product.sellingPrice).toFixed(2)}`}</td>
             </tr>
           ))}
         </tbody>
       </table>
 
       {/* Pagination Controls */}
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-center mt-6">
         {Array.from({ length: totalPages }, (_, i) => (
           <button
             key={i + 1}
             onClick={() => handlePageChange(i + 1)}
-            className={`mx-1 px-3 py-1 rounded-md ${currentPage === i + 1 ? 'bg-orange-500 text-white' : 'bg-gray-200'}`}
+            className={`mx-1 px-3 py-1 rounded-md ${
+              currentPage === i + 1 ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-700'
+            } hover:bg-orange-400 hover:text-white transition-colors duration-200`}
           >
             {i + 1}
           </button>
@@ -93,4 +96,3 @@ export default function OrdersByProduct() {
     </div>
   );
 }
-

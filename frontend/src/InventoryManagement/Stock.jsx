@@ -1,34 +1,37 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { FaPlus } from "react-icons/fa";
 import { useAllProductsQuery } from '../redux/api/productApiSlice';
-import { useGetOrdersQuery } from '../redux/api/orderApiSlice';
 
 export default function Stock() {
 
-  // Fetch all orders
-  const { data: orders } = useGetOrdersQuery();
+    // Fetch all products
+    const { data: products, isLoading, isError } = useAllProductsQuery();
+    console.log(products);
+    
+    // Format Prices
+    const priceFormatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'LKR',
+    });
 
-  // Fetch all products
-  const { data: products, isLoading, isError } = useAllProductsQuery();
-  // console.log("Products -> ",products);
-  
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 10;
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 10;
+    if (isLoading) return <div>Loading...</div>;
+    if (isError) return <div>Something went wrong</div>;
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Something went wrong</div>;
+    // Calculate the indices of the products to display
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
-  // Calculate the indices of the products to display
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+    // Calculate total pages
+    const totalPages = Math.ceil(products.length / productsPerPage);
 
-  // Calculate total pages
-  const totalPages = Math.ceil(products.length / productsPerPage);
-
-  const handlePageChange = (pageNumber) => {
-      setCurrentPage(pageNumber);
-  };
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
   return (
     <div className="rounded-lg p-8">
@@ -43,6 +46,7 @@ export default function Stock() {
             <th className="py-2 px-4 text-left">Current QTY</th>
             <th className="py-2 px-4 text-left">Unit Price (Bought Price)</th>
             <th className="py-2 px-4 text-left">Inbound Time</th>
+            <th className="py-2 px-4 text-left">Add</th>
           </tr>
         </thead>
         <tbody>
@@ -62,9 +66,21 @@ export default function Stock() {
                     {product.countInStock}
                 </span>
               </td>
-              <td className="py-2 px-4">{product.currentQty}</td>
-              <td className="py-2 px-4">{`Rs.${product.buyingPrice.toFixed(2)}`}</td>
-              <td className="py-2 px-4">{product.updatedAt}</td>
+              <td className="py-2 px-4">
+                <span className={`py-1 px-2 rounded-md text-white ${
+                    product.currentQty > 20 ? 'bg-green-500' :
+                    product.currentQty > 10 ? 'bg-yellow-500' : 'bg-red-500'
+                }`}>
+                    {product.currentQty}
+                </span>
+              </td>              
+              <td className="py-2 px-4">{priceFormatter.format(product.buyingPrice)}</td>
+              <td className="py-2 px-4">{new Date(product.updatedAt).toLocaleDateString()}</td>
+              <td className="py-2 px-4">
+                <Link to={`/inventory/addstock/${product._id}`} className="flex items-center justify-center bg-green-500 text-white rounded-md p-2">
+                  <FaPlus />
+                </Link>
+              </td>
             </tr>
           ))}
         </tbody>
