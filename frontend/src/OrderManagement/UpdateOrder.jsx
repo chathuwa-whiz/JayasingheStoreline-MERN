@@ -12,7 +12,7 @@ export default function UpdateOrders() {
     const params = useParams();
     const { data: orderData } = useGetOrderByIdQuery(params._id);
 
-    console.log("Order Data: ", orderData);
+    // console.log("Order Data: ", orderData);
 
     const [orderId, setId] = useState('');
     const [itemsPrice, setItemsPrice] = useState(0);
@@ -46,18 +46,17 @@ export default function UpdateOrders() {
         }
     
         try {
-            const updateData = {
-                orderId,
-                itemsPrice,
-                discount,
-                totalPrice,
-                status,
-                orderItems
-            };
+            const formData = new FormData();
+            formData.append("orderId", orderId);
+            formData.append("itemsPrice", itemsPrice);
+            formData.append("discount", discount);
+            formData.append("totalPrice", totalPrice);
+            formData.append("status", status);
+            formData.append("orderItems", orderItems);
             
-            const result = await updateOrder({ orderId: params._id, ...updateData });
+            const result = await updateOrder({ orderId: params._id, formData });
             
-            console.log("Update Data: ", updateData);
+            // console.log("Update Data: ", updateData);
             console.log("RESULT: ", result);
             
             if (result.error) {
@@ -66,7 +65,7 @@ export default function UpdateOrders() {
                 toast.success(`Order successfully updated`);
                 setTimeout(() => {
                     toast.dismiss();
-                    navigate("/order/orderhistory");
+                    window.location = "/order/orderhistory";
                 }, 2000);
             }
         } catch (error) {

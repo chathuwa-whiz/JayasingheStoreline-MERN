@@ -8,7 +8,6 @@ const OrderSchema = new mongoose.Schema({
     discount:{ type:Number, required:true, default:0 },
     totalPrice:{ type:Number, required:true, default:0 },
     status:{ type:String, required:true, default:"Pending" },
-    
     orderItems : { type:Array, required:true, default:[] },
     // orderItems: [
     //     {

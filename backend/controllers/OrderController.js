@@ -20,9 +20,8 @@ export const addOrder = async (req, res) => {
                 return res.json({ error: "status is required" });
         }
 
-        // Step 1: Count the number of existing orders to generate a sequential orderId
-        const orderCount = await Order.countDocuments();
-        const orderId = `OID${orderCount + 1}`;
+        // Generate a unique order ID
+        const orderId = `ORDER-${Date.now()}`;
 
         // Step 2: Ensure that orderItems is parsed correctly into an array (if it's a string)
         let items;
@@ -33,16 +32,7 @@ export const addOrder = async (req, res) => {
         }
 
         // Step 3: Create a new order with the parsed orderItems array
-        const order = new Order({
-            itemsPrice,
-            deliveryPrice,
-            discount,
-            totalPrice,
-            status,
-            orderItems: items, // Store it as an array
-            orderId, // Add the new orderId
-            ...req.fields // Additional fields like customer details
-        });
+        const order = new Order({...req.fields, orderId });
 
         // Save the order to the database
         await order.save();
@@ -63,7 +53,7 @@ export const addOrder = async (req, res) => {
         }
 
         // Return success response with order details
-        res.status(201).json({ msg: "Order Added Successfully", orderId, items });
+        res.status(201).json({ msg: "Order Added Successfully" });
 
     } catch (error) {
         res.status(400).json({ msg: "Order Adding Failed", error });
@@ -115,7 +105,13 @@ export const fetchOrderById = async (req, res) => {
 // update order including order items and quantities
 export const updateOrder = async (req, res) => {
     try {
-        const { itemsPrice, deliveryPrice, discount, totalPrice, status, orderItems } = req.fields;
+        const { orderItems } = req.fields;
+
+        // Update the order details
+        const order = await Order.findByIdAndUpdate(req.params.id, {...req.fields}, { new : true });
+        if(!order) {
+            return res.status(400).json( { msg : "Order not found" } );
+        }
 
         // Ensure orderItems is an array of objects
         let items;
@@ -123,11 +119,6 @@ export const updateOrder = async (req, res) => {
             items = JSON.parse(orderItems); // Parse orderItems into an array if necessary
         } catch (error) {
             return res.status(400).json({ error: "Invalid orderItems format" });
-        }
-
-        const order = await Order.findById(req.params.id);
-        if (!order) {
-            return res.status(404).json({ msg: "Order not found" });
         }
 
         // Update stock quantities for each product in the order
@@ -138,7 +129,7 @@ export const updateOrder = async (req, res) => {
             }
 
             // Adjust stock quantity based on the new quantities
-            const originalItem = order.orderItems.find(orderItem => orderItem._id.toString() === item._id.toString());
+            const originalItem = order.orderItems.find(orderItem => orderItem._id == item._id);
             const qtyDifference = item.qty - (originalItem ? originalItem.qty : 0); // Calculate the difference in quantity
 
             if (product.currentQty + qtyDifference < 0) {
@@ -148,19 +139,11 @@ export const updateOrder = async (req, res) => {
             product.currentQty += qtyDifference;
             await product.save();
         }
-
-        // Update the order details
-        order.itemsPrice = itemsPrice;
-        order.deliveryPrice = deliveryPrice;
-        order.discount = discount;
-        order.totalPrice = totalPrice;
-        order.status = status;
-        order.orderItems = items;
-
+        
         await order.save();
         res.json({ msg: "Update Successful", order });
     } catch (error) {
-        res.status(400).json({ msg: "Update Failed", error });
+        res.status(400).json({ msg: "Update Failed", error: error.message });
     }
 };
 
