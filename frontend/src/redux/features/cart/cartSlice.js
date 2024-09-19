@@ -1,19 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { updateCart } from "../../../Utils/cartUtils";
 
+// Initialize the cart state from localStorage
 const initialState = localStorage.getItem("cart")
   ? JSON.parse(localStorage.getItem("cart"))
-  : { cartItems: [], shippingAddress: {}, paymentMethod: "PayPal" };
+  : { 
+      cartItems: [], 
+      shippingAddress: {}, 
+      paymentMethod: "PayPal",
+      itemsPriceSum: 0,
+      totalDiscount: 0,
+      deliveryPrice: 0,
+      totalPriceSum: 0,
+    };
 
 const cartSlice = createSlice({
   name: "cart",
-  initialState: {
-    cartItems: [],
-    itemsPriceSum: 0,
-    totalDiscount: 0,
-    deliveryPrice: 0,
-    totalPriceSum: 0,
-  },
+  initialState,
   reducers: {
     addToCart: (state, action) => {
       const { user, rating, numReviews, reviews, ...item } = action.payload;
@@ -61,31 +64,46 @@ const cartSlice = createSlice({
       state.totalPriceSum = totalPriceSum;
       state.deliveryPrice = deliveryPrice;
 
-      // Update the state with the new cart items and return the updated state
+      // Persist the updated state to localStorage
+      localStorage.setItem("cart", JSON.stringify(state));
       return updateCart(state, state.cartItems);
     },    
 
     removeFromCart: (state, action) => {
       state.cartItems = state.cartItems.filter((x) => x._id !== action.payload);
+
+      // Persist the updated state to localStorage
+      localStorage.setItem("cart", JSON.stringify(state));
       return updateCart(state);
     },
 
     saveShippingAddress: (state, action) => {
       state.shippingAddress = action.payload;
+
+      // Persist the updated state to localStorage
       localStorage.setItem("cart", JSON.stringify(state));
     },
 
     savePaymentMethod: (state, action) => {
       state.paymentMethod = action.payload;
+
+      // Persist the updated state to localStorage
       localStorage.setItem("cart", JSON.stringify(state));
     },
 
     clearCartItems: (state, action) => {
       state.cartItems = [];
+
+      // Persist the updated state to localStorage
       localStorage.setItem("cart", JSON.stringify(state));
     },
 
-    resetCart: (state) => (state = initialState),
+    resetCart: (state) => {
+      state = initialState;
+
+      // Persist the reset state to localStorage
+      localStorage.setItem("cart", JSON.stringify(state));
+    },
   },
 });
 
