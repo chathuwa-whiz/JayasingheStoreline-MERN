@@ -3,19 +3,16 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useGetProductByIdQuery, useUpdateReviewMutation } from '../redux/api/productApiSlice';
 import toast from 'react-hot-toast';
 
-export default function EditReviewPage() {
-    const { reviewId } = useParams();
+export default function EditReviewPage({ currentUser }) {
+    const { reviewId, productId } = useParams();
     const navigate = useNavigate();
 
-    // Assuming the product ID is also available via route params or context
-    const { productId } = useParams(); // Add productId if it's part of URL
-
-    // Fetch product data
-    const { data: productData, refetch } = useGetProductByIdQuery(productId);
-
+    const { data: productData } = useGetProductByIdQuery(productId);
     const [updateReview] = useUpdateReviewMutation();
 
     const [review, setReview] = useState({ rating: '', comment: '' });
+    const [isOwner, setIsOwner] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (productData) {
@@ -23,58 +20,85 @@ export default function EditReviewPage() {
             if (reviewToEdit) {
                 setReview({
                     rating: reviewToEdit.rating,
-                    comment: reviewToEdit.comment
+                    comment: reviewToEdit.comment,
                 });
+                setIsOwner(reviewToEdit.user.toString() === currentUser._id); // Check ownership
             }
         }
-    }, [productData, reviewId]);
+    }, [productData, reviewId, currentUser]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!isOwner) {
+            toast.error("You are not authorized to edit this review.");
+            return;
+        }
+
+        if (review.rating < 1 || review.rating > 5) {
+            toast.error("Rating must be between 1 and 5.");
+            return;
+        }
+
+        setLoading(true);
         try {
-            await updateReview({ productId, reviewId, ...review }).unwrap();
-            toast.success('Review updated successfully!');
-            navigate(`/product/${productId}`); // Navigate to the product page
+            const result = await updateReview({ productId, reviewId, ...review });
+
+            if (result.error) {
+                toast.error("Failed to update review");
+            } else {
+                toast.success("Review updated successfully!");
+                setTimeout(() => {
+                    navigate(`/product/${productId}`);
+                }, 2000);
+            }
         } catch (error) {
-            toast.error('Failed to update review');
+            toast.error("Failed to update review");
+        } finally {
+            setLoading(false);
         }
     };
 
+    if (!isOwner) {
+        return <p className="text-red-500">You are not authorized to edit this review.</p>;
+    }
+
     return (
-        <div className="container mx-auto p-6 bg-white rounded-lg shadow-lg">
-            <h1 className="text-2xl font-bold text-gray-800 mb-4">Edit Review</h1>
-            <form onSubmit={handleSubmit}>
+        <div className="p-8 grid grid-cols-2 gap-10">
+            <div className="border rounded-lg p-4">
+                <h2 className="text-xl font-semibold mb-4">Edit Your Review</h2>
                 <div className="mb-4">
-                    <label htmlFor="rating" className="block text-lg font-medium text-gray-700">Rating</label>
+                    <label className="block text-gray-700">Rating</label>
                     <input
                         type="number"
-                        id="rating"
+                        className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                        placeholder="Enter rating (1-5)"
                         value={review.rating}
-                        onChange={(e) => setReview({ ...review, rating: e.target.value })}
-                        className="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm"
                         min="1"
                         max="5"
-                        required
+                        onChange={(e) => setReview({ ...review, rating: Number(e.target.value) })}
                     />
                 </div>
-                <div className="mb-4">
-                    <label htmlFor="comment" className="block text-lg font-medium text-gray-700">Comment</label>
+                <div>
+                    <label className="block text-gray-700">Comment</label>
                     <textarea
-                        id="comment"
+                        className="w-full p-2 mt-1 border rounded-lg bg-blue-50"
+                        placeholder="Enter your comment"
                         value={review.comment}
                         onChange={(e) => setReview({ ...review, comment: e.target.value })}
-                        rows="4"
-                        className="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm"
-                        required
-                    ></textarea>
+                    />
                 </div>
+            </div>
+
+            <div className="col-span-2 flex justify-end space-x-4">
                 <button
-                    type="submit"
-                    className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg"
+                    onClick={handleSubmit}
+                    className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
+                    disabled={loading}
                 >
-                    Update Review
+                    {loading ? 'Updating...' : 'Update Review'}
                 </button>
-            </form>
+            </div>
         </div>
     );
 }
