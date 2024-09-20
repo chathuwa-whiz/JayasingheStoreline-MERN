@@ -1,19 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaEye, FaPen, FaTrash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useGetSuppliersQuery } from "../redux/api/supplierApiSlice";
 
 export default function SupplierList() {
+  const [keyword, setKeyword] = useState('');
+  
+  // Fetch suppliers based on the search keyword
+  const { data: suppliers, isError, isLoading } = useGetSuppliersQuery({ keyword });
 
-  const {data: suppliers, isError, isLoading} = useGetSuppliersQuery({keyword : ''});
-
-  if(isLoading) return <div>Loading...</div>
-  if(isError) return <div>Error happened...</div>
-
-  console.log(suppliers)
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error happened...</div>;
 
   return (
-    <div className="p-8 overflow-auto bg-gray-100">
+    <div className="p-8 overflow-auto bg-gray-200">
+      {/* Search Bar */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search suppliers..."
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          className="py-3 py-2 border border-orange-300 rounded w-2/3 "
+           
+        />
+      </div>
+
       <table className="min-w-full bg-white border border-orange-500">
         <thead className="bg-orange-500">
           <tr>

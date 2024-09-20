@@ -36,7 +36,7 @@ const SupplierForm = () => {
   };
 
   return (
-    <div className="w-full p-8">
+    <div className="p-8 overflow-auto bg-gray-200">
       <h2 className="text-2xl font-bold mb-8">Supplier Form</h2>
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-4">
@@ -117,7 +117,7 @@ const SupplierForm = () => {
         </div>
 
         {/* Product Media Section */}
-        <div className="border rounded p-4 mb-4">
+        <div className="border rounded -p-4 mb-4">
           <h3 className="text-lg font-semibold mb-4">Product Media</h3>
           <div className="mb-4">
             <label className="block text-gray-700">Photo Product</label>

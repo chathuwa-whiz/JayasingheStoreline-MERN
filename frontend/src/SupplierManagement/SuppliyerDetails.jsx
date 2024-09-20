@@ -92,7 +92,7 @@ export default function SupplierDetailsForm() {
   };
 
   return (
-    <div className="flex bg-gray-100 min-h-screen">
+    <div className="flex bg-gray-200 min-h-screen">
       <div className="w-3/4 p-8">
         <h2 className="text-2xl font-bold mb-6">Supplier Details</h2>
         <div className="flex">
@@ -175,7 +175,7 @@ export default function SupplierDetailsForm() {
           </div>
           <div className="w-1/3">
             <h3 className="text-lg font-semibold mb-4">Supplier Media</h3>
-            <div className="border border-dashed border-gray-300 rounded-md h-64 flex items-center justify-center">
+            <div className="border border-dashed border-orange-300 rounded-md h-64 flex items-center justify-center">
               <label
                 htmlFor="supplierMedia"
                 className="text-orange-500 cursor-pointer"

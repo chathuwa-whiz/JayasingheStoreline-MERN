@@ -4,29 +4,25 @@ import { useParams } from 'react-router';
 import toast from "react-hot-toast";
 
 export default function SupplierDetailsForm() {
-
   const params = useParams();
-
-  const {data: supplierData} = useGetSupplierByIdQuery(params._id);
+  const { data: supplierData } = useGetSupplierByIdQuery(params._id);
   const [updateSupplier] = useUpdateSupplierMutation();
   const [deleteSupplier] = useDeleteSupplierMutation();
   const [uploadSupplierImage] = useUploadSupplierImageMutation();
 
-  console.log(supplierData);
-  
-
-  const [supplierName, setSupplierName] = useState(supplierData?.name);
-  const [SupplierID, setSupplierID] = useState(supplierData?.nic);
-  const [phoneNumber, setPhoneNumber] = useState(supplierData?.phone);
-  const [Type ,setType] = useState(supplierData?.type);
-  const [Date ,setDate] = useState(supplierData?.updatedAt);
-  const [email, setEmail] = useState(supplierData?.email);
-  const [Gender, setGender] = useState(supplierData?.gender);
-  const [supplierMedia, setSupplierMedia] = useState(supplierData?.image);
+  const [supplierName, setSupplierName] = useState('');
+  const [SupplierID, setSupplierID] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [Type, setType] = useState('');
+  const [Date, setDate] = useState('');
+  const [email, setEmail] = useState('');
+  const [Gender, setGender] = useState('');
+  const [supplierMedia, setSupplierMedia] = useState('');
   const [imageUrl, setImageUrl] = useState(null);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if(supplierData && supplierData._id) {
+    if (supplierData) {
       setSupplierName(supplierData.name);
       setSupplierID(supplierData.nic);
       setPhoneNumber(supplierData.phone);
@@ -35,76 +31,104 @@ export default function SupplierDetailsForm() {
       setEmail(supplierData.email);
       setGender(supplierData.gender);
       setSupplierMedia(supplierData.image);
+      setImageUrl(supplierData.image);
     }
   }, [supplierData]);
 
-  const handleDelete = async () => {
+  // Validation functions
+  const validateNIC = (nic) => /(^\d{9}[vV]$)|(^\d{12}$)/.test(nic);
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validatePhoneNumber = (phone) => /^\d{10}$/.test(phone); // Assumes a 10-digit phone number
+  const validateName = (name) => name.length >= 3;
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!validateName(supplierName)) {
+      newErrors.supplierName = "Name should be at least 3 characters long.";
+    }
+    if (!validateNIC(SupplierID)) {
+      newErrors.SupplierID = "NIC must be either 9 digits followed by 'v/V' or 12 digits.";
+    }
+    if (!validatePhoneNumber(phoneNumber)) {
+      newErrors.phoneNumber = "Phone number must be 10 digits long.";
+    }
+    if (!validateEmail(email)) {
+      newErrors.email = "Please enter a valid email address.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return; // Exit if the form is invalid
+    }
+
     try {
-      let answer = window.confirm(
-        "Are you sure you want to delete this supplier?"
-      );
-      if (!answer) return;
+      const formData = new FormData();
+      formData.append("name", supplierName);
+      formData.append("nic", SupplierID);
+      formData.append("phone", phoneNumber);
+      formData.append("email", email);
+      formData.append("gender", Gender);
+      formData.append("type", Type);
+      formData.append("image", supplierMedia);
 
-      const data = await deleteSupplier(params._id);
+      const data = await updateSupplier({ supplierId: params._id, formData });
 
-      if(data.error) {
-        toast.error("Delete failed. Try again.", data.error);
-        return;
+      if (data?.error) {
+        toast.error("Supplier update failed. Try again.");
       } else {
-        toast.success(`supplier is deleted`);
+        toast.success("Supplier updated successfully.");
         setTimeout(() => {
           toast.dismiss();
           window.location.href = "/supplier/supplierlist";
         }, 2000);
-      }      
+      }
+    } catch (error) {
+      console.log("ERROR : ", error);
+      toast.error("An error occurred. Please try again.");
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      let answer = window.confirm("Are you sure you want to delete this supplier?");
+      if (!answer) return;
+
+      const data = await deleteSupplier(params._id);
+
+      if (data.error) {
+        toast.error("Delete failed. Try again.");
+        return;
+      } else {
+        toast.success("Supplier deleted successfully.");
+        setTimeout(() => {
+          toast.dismiss();
+          window.location.href = "/supplier/supplierlist";
+        }, 2000);
+      }
 
     } catch (err) {
-
       console.log(err);
       toast.error("Delete failed. Try again.");
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    try {
-      const formData = new FormData();
-      formData.append("name", supplierName);
-      formData.append("image", supplierMedia);
-      formData.append("phone", phoneNumber);
-      formData.append("email", email);
-      formData.append("gender", Gender);
-      formData.append("type", Type);
-
-      const data = await updateSupplier({supplierId: params._id, formData});
-
-      if(data?.error) {
-        toast.error("Supplier update Failed");
-      } else {
-        toast.success("Supplier Updated");
-        setTimeout(() => {
-          toast.dismiss();
-          window.location.href = "/supplier/supplierlist";
-        })
-      }
-    } catch (error) {
-      console.log("ERROR : ", error);      
-    }
-
-  };
-  
   const handleMediaChange = async (e) => {
     const formData = new FormData();
     formData.append("image", e.target.files[0]);
 
     try {
-        const res = await uploadSupplierImage(formData).unwrap();
-        toast.success(res.message);
-        setSupplierMedia(res.image);
-        setImageUrl(res.image);
+      const res = await uploadSupplierImage(formData).unwrap();
+      toast.success(res.message);
+      setSupplierMedia(res.image);
+      setImageUrl(res.image);
     } catch (error) {
-        toast.error(error?.data?.message || error.error);
+      toast.error(error?.data?.message || error.error);
     }
   };
 
@@ -117,57 +141,59 @@ export default function SupplierDetailsForm() {
             Supplier Name
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.supplierName ? 'border-red-500' : ''}`}
             id="supplierName"
             type="text"
             value={supplierName}
             onChange={(e) => setSupplierName(e.target.value)}
           />
+          {errors.supplierName && <p className="text-red-500 text-sm">{errors.supplierName}</p>}
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor=" SupplierID">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="SupplierID">
             NIC
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id=" SupplierID"
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.SupplierID ? 'border-red-500' : ''}`}
+            id="SupplierID"
             type="text"
-            value={ SupplierID}
+            value={SupplierID}
             onChange={(e) => setSupplierID(e.target.value)}
           />
+          {errors.SupplierID && <p className="text-red-500 text-sm">{errors.SupplierID}</p>}
         </div>
-        
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phoneNumber">
             Phone Number
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.phoneNumber ? 'border-red-500' : ''}`}
             id="phoneNumber"
             type="tel"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
           />
+          {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor=" Type">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="Type">
             Type
           </label>
           <input
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="Type "
+            id="Type"
             type="text"
-            value={ Type}
+            value={Type}
             onChange={(e) => setType(e.target.value)}
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor=" Date">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="Date">
             Date
           </label>
           <input
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="Date "
+            id="Date"
             type="text"
             value={Date}
             onChange={(e) => setDate(e.target.value)}
@@ -178,57 +204,57 @@ export default function SupplierDetailsForm() {
             Email
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.email ? 'border-red-500' : ''}`}
             id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor=" Gender">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="Gender">
             Gender
+          </label>
+          <select
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="Gender"
+            value={Gender}
+            onChange={(e) => setGender(e.target.value)}
+          >
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="supplierImage">
+            Supplier Image
           </label>
           <input
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="Gender "
-            type="text"
-            value={ Gender}
-            onChange={(e) => setGender(e.target.value)}
-          />
-        </div>
-        {/* Supplier Media field */}
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="supplierMedia">
-            Supplier Media
-          </label>
-          <input
-            className="supplier-media shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="supplierMedia"
-            type="file" 
-            name='image'
-            accept='image/*'
+            id="supplierImage"
+            type="file"
             onChange={handleMediaChange}
           />
-          {imageUrl && (
-            <img src={imageUrl} alt="Supplier Media" className="mt-2 h-20" />
-          )}
+          {imageUrl && <img src={imageUrl} alt="Supplier" className="mt-2 w-32 h-32 object-cover rounded" />}
         </div>
-        
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          onClick={handleSubmit}
-        >
-          Update
-        </button>
-        <button
-          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          onClick={handleDelete}
-        >
-          Delete
-        </button>
+        <div className="flex justify-between mt-4">
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Update Supplier
+          </button>
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Delete Supplier
+          </button>
+        </div>
       </form>
     </div>
-    
   );
 }
