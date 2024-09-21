@@ -16,6 +16,7 @@ export default function AddDelivery() {
     const [city, setCity] = useState('');
     const [province, setProvince] = useState('');
     const [postalCode, setPostalCode] = useState('');
+    const [Items, setItems] = useState([]);
 
     const [createDelivery] = useCreateDeliveryMutation();
     const { data: orders, isLoading, isError } = useGetOrdersQuery();
@@ -37,6 +38,7 @@ export default function AddDelivery() {
         setPostalCode(order.postalCode);
         setItemsPrice(order.itemsPrice);
         setDeliveryPrice(order.deliveryPrice);
+        setItems(order.orderItems);
     };
 
     const handleSubmit = async (e) => {
@@ -57,6 +59,7 @@ export default function AddDelivery() {
             deliveryData.append("city", city);
             deliveryData.append("province", province);
             deliveryData.append("postalCode", postalCode);
+            deliveryData.append("Items", JSON.stringify(Items));
 
             const response = await createDelivery(deliveryData);
             if (response.error) {
@@ -173,6 +176,16 @@ export default function AddDelivery() {
                             placeholder="Enter postal code"
                             value={postalCode}
                             onChange={(e) => setPostalCode(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 font-medium">Item</label>
+                        <input
+                            type="text"
+                            className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
+                            placeholder="Enter Item Name"
+                            value={Items}
+                            onChange={(e) => setItems(e.target.value)}
                         />
                     </div>
                 </div>
