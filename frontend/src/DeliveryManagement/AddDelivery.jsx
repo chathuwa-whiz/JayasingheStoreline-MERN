@@ -45,6 +45,7 @@ export default function AddDelivery() {
             const response = await createDelivery(deliveryData);
             if (response.error) {
                 toast.error("Delivery creation failed. Try Again.");
+                console.log("Delivery creation error:", response.error);
             } else {
                 toast.success("Delivery created successfully");
                 setTimeout(() => {
