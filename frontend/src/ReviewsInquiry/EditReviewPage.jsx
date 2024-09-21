@@ -1,20 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useUpdateReviewMutation } from "../redux/api/productApiSlice"; 
+import { useUpdateReviewMutation, useGetReviewByIdQuery } from "../redux/api/productApiSlice";
+import { useDispatch, useSelector } from 'react-redux';
 
-const EditReviewPage = ({ currentUser }) => {
+const EditReviewPage = () => {
   const { productId, reviewId } = useParams();
   const navigate = useNavigate();
   const [review, setReview] = useState('');
   const [loading, setLoading] = useState(true);
   const [updateReview] = useUpdateReviewMutation();
+  const {data: reviewData} = useGetReviewByIdQuery(productId, reviewId);
+  const currentUser = useSelector((state) => state.auth.userInfo);
+
+  console.log("Current User : ",currentUser);
+  console.log("Review Data : ",reviewData);
 
   useEffect(() => {
     const fetchReview = async () => {
       const response = await fetch(`/api/reviews/${reviewId}`);
       const data = await response.json();
 
-      if (data.userId !== currentUser.id) {
+      if (data.userId !== currentUser._id) {
         navigate("/"); // Redirect if not authorized
       } else {
         setReview(data.content);
@@ -23,7 +29,9 @@ const EditReviewPage = ({ currentUser }) => {
     };
 
     fetchReview();
-  }, [reviewId, currentUser.id, navigate]);
+  }, [reviewId, currentUser._id, navigate]);
+
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();

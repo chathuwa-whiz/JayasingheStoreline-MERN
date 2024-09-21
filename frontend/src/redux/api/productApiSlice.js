@@ -123,7 +123,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
         }),
 
         getReviewById: builder.query({
-            query: (reviewId) => `${PRODUCT_URL}/reviews/${reviewId}`,
+            query: (productId,reviewId) => `${PRODUCT_URL}/${productId}/reviews/${reviewId}`,
         }),
         
     }),

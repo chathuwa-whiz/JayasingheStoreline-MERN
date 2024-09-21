@@ -68,6 +68,7 @@ export default function SingleProductView() {
 
     const handleEditReview = (reviewId) => {
         // Navigate to review edit page
+        console.log("Review ID : ", reviewId, "Product ID : ", productId);
         navigate(`/product/${productId}/edit-review/${reviewId}`);
     };
 
@@ -175,9 +176,9 @@ export default function SingleProductView() {
                                 <p className="ml-2 text-gray-700">{review.comment}</p>
                             </div>
                             <button
-                                onClick={() => handleEditReview(review.name)}
+                                onClick={() => handleEditReview(review._id)}
                                 className={`mt-2 ${user && user.username === review.name ? 'bg-blue-900 hover:bg-blue-800' : 'bg-gray-400 cursor-not-allowed'} text-white font-bold py-2 px-4 rounded-lg`}
-                                disabled={user && user._id !== review._id}
+                                // disabled={user && user._id !== review._id}
                             >
                                 Edit
                             </button>

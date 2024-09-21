@@ -178,7 +178,7 @@ function App() {
         </Route>
 
 {/* Edit Review Route */}
-        <Route path="/product/:productId/review/edit/:reviewId" element={<EditReviewPage currentUser={currentUser} />} />
+        <Route path="/product/:productId/edit-review/:reviewId" element={<EditReviewPage />} />
         <Route path="/user-reviews" element={<UserReviews />} />
         <Route path="dashboardlist" element={<DashboardList/>} />
         
