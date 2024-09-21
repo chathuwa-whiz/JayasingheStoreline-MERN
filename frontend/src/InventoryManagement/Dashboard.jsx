@@ -106,7 +106,7 @@ export default function Dashboard() {
         <table className="w-full table-auto">
           <thead>
             <tr>
-              <th className="px-4 py-2 border-b-2">Order ID</th>
+              <th className="px-4 py-2 border-b-2">Customer</th>
               <th className="px-4 py-2 border-b-2">Date</th>
               <th className="px-4 py-2 border-b-2">Total</th>
               <th className="px-4 py-2 border-b-2">Status</th>
@@ -115,7 +115,7 @@ export default function Dashboard() {
           <tbody>
             {orders.slice(0, 5).map(order => (
               <tr key={order._id} className="text-center hover:bg-gray-100">
-                <td className="border px-4 py-2">{order._id}</td>
+                <td className="border px-4 py-2">{order.firstName}</td>
                 <td className="border px-4 py-2">{new Date(order.createdAt).toLocaleDateString()}</td>
                 <td className="border px-4 py-2">{priceFormatter.format(order.totalPrice)}</td>
                 <td className="border px-4 py-2">
