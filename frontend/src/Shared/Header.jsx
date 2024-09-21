@@ -925,3 +925,74 @@ export function OrderReportsHeader( { onExportToExcel } ) {
 
   )
 }
+
+export function OrdersSettingsHeader() {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [dropdownRef]);
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  return (
+    <>
+    <div className="h-16 bg-white flex items-center justify-between px-4">
+      <h1 className="text-xl font-bold">Settings</h1>
+
+      <div className="flex items-center space-x-6">
+
+        {/* Notification Icon and Dropdown */}
+        <div className="relative" ref={dropdownRef}>
+          <button
+            onClick={toggleDropdown}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <FaBell size={20} />
+          </button>
+          {dropdownOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+              <div className="py-2">
+                <div className="px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                  Notification 1
+                </div>
+                <div className="px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                  Notification 2
+                </div>
+                <div className="px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                  Notification 3
+                </div>
+                <div className="px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                  View All Notifications
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* User Profile */}
+        <div className="flex items-center space-x-2">
+          <img
+            className="w-8 h-8 rounded-full"
+            src="https://via.placeholder.com/150"
+            alt="User profile"
+          />
+          <span className="text-gray-700">Vidumini Chalanika</span>
+        </div>
+      </div>
+    </div>
+    </>
+  )
+}
