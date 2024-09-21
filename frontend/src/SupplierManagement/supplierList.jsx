@@ -18,7 +18,7 @@ export default function SupplierList() {
       <div className="mb-4">
         <input
           type="text"
-          placeholder="Search suppliers..."
+          placeholder="    Search suppliers..."
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           className="py-3 py-2 border border-orange-300 rounded w-2/3 "
@@ -35,7 +35,7 @@ export default function SupplierList() {
             <th className="py-2 px-4 text-left">Name</th>
             <th className="py-2 px-4 text-left">Phone Number</th>
             <th className="py-2 px-4 text-left">Type</th>
-            <th className="py-2 px-4 text-left">Date</th>
+           {/*<th className="py-2 px-4 text-left">Date</th>*/}
             <th className="py-2 px-4 text-left">Gender</th>
             <th className="py-2 px-4 text-left">Action</th>
           </tr>
@@ -51,7 +51,7 @@ export default function SupplierList() {
               <td className="py-2 px-4">{supplier.name}</td>
               <td className="py-2 px-4">{supplier.phone}</td>
               <td className="py-2 px-4">{supplier.type}</td>
-              <td className="py-2 px-4">{new Date(supplier.createdAt).toLocaleDateString()}</td>
+              {/*<td className="py-2 px-4">{new Date(supplier.createdAt).toLocaleDateString()}</td>*/}
               <td className="py-2 px-4">{supplier.gender}</td>
               <td className="py-2 px-4 flex space-x-2">
                 <Link to={`../update/${supplier._id}`} className="btn btn-success">

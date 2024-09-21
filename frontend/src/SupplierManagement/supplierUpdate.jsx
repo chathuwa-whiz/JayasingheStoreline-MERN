@@ -14,7 +14,6 @@ export default function SupplierDetailsForm() {
   const [SupplierID, setSupplierID] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [Type, setType] = useState('');
-  const [Date, setDate] = useState('');
   const [email, setEmail] = useState('');
   const [Gender, setGender] = useState('');
   const [supplierMedia, setSupplierMedia] = useState('');
@@ -27,7 +26,6 @@ export default function SupplierDetailsForm() {
       setSupplierID(supplierData.nic);
       setPhoneNumber(supplierData.phone);
       setType(supplierData.type);
-      setDate(supplierData.updatedAt);
       setEmail(supplierData.email);
       setGender(supplierData.gender);
       setSupplierMedia(supplierData.image);
@@ -133,128 +131,123 @@ export default function SupplierDetailsForm() {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-4 bg-white rounded-md shadow-md">
-      <h2 className="text-lg font-bold mb-4">Supplier Update Details Form</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="supplierName">
-            Supplier Name
-          </label>
-          <input
-            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.supplierName ? 'border-red-500' : ''}`}
-            id="supplierName"
-            type="text"
-            value={supplierName}
-            onChange={(e) => setSupplierName(e.target.value)}
-          />
-          {errors.supplierName && <p className="text-red-500 text-sm">{errors.supplierName}</p>}
+    <div className="flex bg-gray-200 min-h-screen">
+      <div className="w-3/4 p-8">
+        <h2 className="text-2xl font-bold mb-6">Supplier Update Details</h2>
+        <div className="flex">
+          <div className="w-2/3 pr-8">
+            <h3 className="text-lg font-semibold mb-4">General Information</h3>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2" htmlFor="supplierName">Supplier Name</label>
+                <input
+                  className="w-full p-2 border border-gray-300 rounded"
+                  id="supplierName"
+                  type="text"
+                  value={supplierName}
+                  onChange={(e) => setSupplierName(e.target.value)}
+                />
+                {errors.supplierName && <p className="text-red-500 text-sm">{errors.supplierName}</p>}
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2" htmlFor="SupplierID"> NIC</label>
+                <input
+                  className="w-full p-2 border border-gray-300 rounded"
+                  id="SupplierID"
+                  type="text"
+                  value={SupplierID}
+                  onChange={(e) => setSupplierID(e.target.value)}
+                />
+                {errors.SupplierID && <p className="text-red-500 text-sm">{errors.SupplierID}</p>}
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2" htmlFor="phoneNumber">Phone Number</label>
+                <input
+                  className="w-full p-2 border border-gray-300 rounded"
+                  id="phoneNumber"
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                />
+                {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2" htmlFor="Type">Type</label>
+                <input
+                  className="w-full p-2 border border-gray-300 rounded"
+                  id="Type"
+                  type="text"
+                  value={Type}
+                  onChange={(e) => setType(e.target.value)}
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2" htmlFor="email">Email</label>
+                <input
+                  className="w-full p-2 border border-gray-300 rounded"
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2" htmlFor="Gender">Gender</label>
+                <select
+                  className="w-full p-2 border border-gray-300 rounded"
+                  id="Gender"
+                  value={Gender}
+                  onChange={(e) => setGender(e.target.value)}
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              <div className="flex justify-between">
+                <button
+                  className="bg-orange-500 text-white px-6 py-2 rounded font-medium"
+                  type="submit"
+                >
+                  Update Supplier
+                </button>
+                <button
+                  className="bg-red-500 text-white px-6 py-2 rounded font-medium"
+                  type="button"
+                  onClick={handleDelete}
+                >
+                  Delete Supplier
+                </button>
+              </div>
+            </form>
+          </div>
+          <div className="w-1/3">
+            <h3 className="text-lg font-semibold mb-4">Supplier Media</h3>
+            <div className="mb-4">
+              {imageUrl && (
+                <img
+                  src={imageUrl}
+                  alt="Supplier"
+                  className="w-full h-auto object-cover mb-4"
+                />
+              )}
+              <label
+                className="block text-gray-700 mb-2"
+                htmlFor="supplierMedia"
+              >
+                Upload Supplier Image
+              </label>
+              <input
+                className="w-full p-2 border border-gray-300 rounded"
+                id="supplierMedia"
+                type="file"
+                onChange={handleMediaChange}
+              />
+            </div>
+          </div>
         </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="SupplierID">
-            NIC
-          </label>
-          <input
-            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.SupplierID ? 'border-red-500' : ''}`}
-            id="SupplierID"
-            type="text"
-            value={SupplierID}
-            onChange={(e) => setSupplierID(e.target.value)}
-          />
-          {errors.SupplierID && <p className="text-red-500 text-sm">{errors.SupplierID}</p>}
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phoneNumber">
-            Phone Number
-          </label>
-          <input
-            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.phoneNumber ? 'border-red-500' : ''}`}
-            id="phoneNumber"
-            type="tel"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-          />
-          {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="Type">
-            Type
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="Type"
-            type="text"
-            value={Type}
-            onChange={(e) => setType(e.target.value)}
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="Date">
-            Date
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="Date"
-            type="text"
-            value={Date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-            Email
-          </label>
-          <input
-            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.email ? 'border-red-500' : ''}`}
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="Gender">
-            Gender
-          </label>
-          <select
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="Gender"
-            value={Gender}
-            onChange={(e) => setGender(e.target.value)}
-          >
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </select>
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="supplierImage">
-            Supplier Image
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="supplierImage"
-            type="file"
-            onChange={handleMediaChange}
-          />
-          {imageUrl && <img src={imageUrl} alt="Supplier" className="mt-2 w-32 h-32 object-cover rounded" />}
-        </div>
-        <div className="flex justify-between mt-4">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Update Supplier
-          </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Delete Supplier
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   );
 }
