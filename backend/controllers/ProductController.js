@@ -171,39 +171,28 @@ export const addProductInquiry = async (req, res) => {
     }
 }
 
-// Update product review
+// update review
 export const updateReview = async (req, res) => {
     try {
-        const { rating, comment } = req.body;
-
-        // Validate required fields
-        // Added validation to ensure rating is between 1 and 5
-        if (rating === undefined || comment === undefined || rating < 1 || rating > 5) {
-            return res.status(400).json({ error: "Rating must be between 1 and 5, and comment are required" });
+        const { rating, comment } = req.fields;
+        
+        switch(true) {
+            case !rating:
+                return res.json( { error: "rating is required" } );
+            case !comment:
+                return res.json( { error: "comemnt is required" } );
         }
-
-        const product = await Product.findById(req.params.id);
-        if (!product) {
-            return res.status(404).json({ error: "Product Not Found" });
+        
+        const review = await review.findByIdAndUpdateReview(req.params.id, {...req.fields}, { new : true });
+        if(!review) {
+            return res.status(400).json( { msg : "review not found" } )
         }
-
-        const review = product.reviews.id(req.params.reviewId);
-        if (!review) {
-            return res.status(404).json({ error: "Review Not Found" });
-        }
-
-        review.rating = Number(rating);
-        review.comment = comment;
-
-        // Recalculate the product rating
-        product.rating = product.reviews.reduce((acc, item) => item.rating + acc, 0) / product.reviews.length;
-
         await product.save();
-        res.json({ msg: "Review Updated Successfully", review });
+        res.json( { msg : "review updated Successful ", product } );
     } catch (error) {
-        res.status(400).json({ msg: "Update Failed", error: error.message });
+        res.status(400).json( { msg : "review Update Failed ", error } );
     }
-};
+}
 
 // Fetch Reviews by User ID
 export const getReviewsByUserId = async (req, res) => {
