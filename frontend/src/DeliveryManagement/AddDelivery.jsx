@@ -21,6 +21,8 @@ export default function AddDelivery() {
     const { data: orders, isLoading, isError } = useGetOrdersQuery();
     const navigate = useNavigate();
 
+    console.log(orders);
+
     useEffect(() => {
         setTotalPrice(parseFloat(itemsPrice) + parseFloat(deliveryPrice));
     }, [itemsPrice, deliveryPrice]);
@@ -83,7 +85,7 @@ export default function AddDelivery() {
                 ) : isError ? (
                     <p>Error loading orders</p>
                 ) : orders?.length > 0 ? (
-                    orders.filter(order => order.status === 'pending').map(order => (
+                    orders.filter(order => order.status === 'Pending').map(order => (
                         <div
                             key={order._id}
                             className="mb-4 p-3 border rounded cursor-pointer hover:bg-gray-100"
