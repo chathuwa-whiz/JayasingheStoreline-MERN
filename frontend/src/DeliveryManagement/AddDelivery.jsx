@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useCreateDeliveryMutation } from "../redux/api/deliveryApiSlice";
+import { useGetOrdersQuery } from '../redux/api/orderApiSlice';
 import { toast } from "react-hot-toast";
 
 export default function AddDelivery() {
@@ -17,6 +18,8 @@ export default function AddDelivery() {
     const [postalCode, setPostalCode] = useState('');
 
     const [createDelivery] = useCreateDeliveryMutation();
+    const { data: orders, isLoading, isError } = useGetOrdersQuery();
+    console.log(orders);
     const navigate = useNavigate();
 
     useEffect(() => {
