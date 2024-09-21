@@ -12,12 +12,14 @@ export default function UpdateOrders() {
     const params = useParams();
     const { data: orderData } = useGetOrderByIdQuery(params._id);
 
+    // console.log("Order Data: ", orderData);
+
     const [orderId, setId] = useState('');
     const [itemsPrice, setItemsPrice] = useState(0);
     const [discount, setDiscount] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
     const [status, setStatus] = useState('Pending');
-    const [orderItems, setItems] = useState('');
+    const [orderItems, setItems] = useState([]);
 
     const navigate = useNavigate();
 
@@ -31,7 +33,7 @@ export default function UpdateOrders() {
             setDiscount(orderData.discount || 0);
             setTotalPrice(orderData.totalPrice || 0);
             setStatus(orderData.status || 'Pending');
-            setItems(orderData.orderItems || '');
+            setItems(orderData.orderItems || []);
         }
     }, [orderData]);
 
@@ -44,18 +46,17 @@ export default function UpdateOrders() {
         }
     
         try {
-            const updateData = {
-                orderId,
-                itemsPrice,
-                discount,
-                totalPrice,
-                status,
-                orderItems
-            };
+            const formData = new FormData();
+            formData.append("orderId", orderId);
+            formData.append("itemsPrice", itemsPrice);
+            formData.append("discount", discount);
+            formData.append("totalPrice", totalPrice);
+            formData.append("status", status);
+            formData.append("orderItems", orderItems);
             
-            const result = await updateOrder({ orderId: params._id, ...updateData });
+            const result = await updateOrder({ orderId: params._id, formData });
             
-            console.log("Update Data: ", updateData);
+            // console.log("Update Data: ", updateData);
             console.log("RESULT: ", result);
             
             if (result.error) {
@@ -64,7 +65,7 @@ export default function UpdateOrders() {
                 toast.success(`Order successfully updated`);
                 setTimeout(() => {
                     toast.dismiss();
-                    navigate("/order/orderhistory");
+                    window.location = "/order/orderhistory";
                 }, 2000);
             }
         } catch (error) {
@@ -112,41 +113,41 @@ export default function UpdateOrders() {
                     </div>
 
                     <div className="mb-6">
-                    <label className="block text-gray-700 font-medium">Order Items</label>
-                    <div className="w-full mt-2 p-3 border rounded-lg bg-white max-h-40 overflow-y-auto">
-                        {orderItems && orderItems.length > 0 ? (
-                            JSON.parse(orderItems).map((item, index) => (
-                                <div key={item._id} className="flex justify-between py-2 border-b last:border-b-0">
-                                    {/* Input fields for item name */}
-                                    <input 
-                                        type="text" 
-                                        className="w-full p-2 mr-2 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
-                                        value={item.name} 
-                                        onChange={(e) => {
-                                            const newOrderItems = JSON.parse(orderItems);
-                                            newOrderItems[index].name = e.target.value;
-                                            setItems(JSON.stringify(newOrderItems));
-                                        }} 
-                                    />
-                                    
-                                    {/* Input fields for item quantity */}
-                                    <input 
-                                        type="number" 
-                                        className="w-16 p-2 ml-2 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
-                                        value={item.qty} 
-                                        onChange={(e) => {
-                                            const newOrderItems = JSON.parse(orderItems);
-                                            newOrderItems[index].qty = e.target.value;
-                                            setItems(JSON.stringify(newOrderItems));
-                                        }} 
-                                    />
-                                </div>
-                            ))
-                        ) : (
-                            <p className="text-gray-500">No items found</p>
-                        )}
+                        <label className="block text-gray-700 font-medium">Order Items</label>
+                        <div className="w-full mt-2 p-3 border rounded-lg bg-white max-h-40 overflow-y-auto">
+                            {orderItems && orderItems.length > 0 ? (
+                                JSON.parse(orderItems).map((item, index) => (
+                                    <div key={item._id} className="flex justify-between py-2 border-b last:border-b-0">
+                                        {/* Input fields for item name */}
+                                        <input 
+                                            type="text" 
+                                            className="w-full p-2 mr-2 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
+                                            value={item.name} 
+                                            onChange={(e) => {
+                                                const newOrderItems = JSON.parse(orderItems);
+                                                newOrderItems[index].name = e.target.value;
+                                                setItems(JSON.stringify(newOrderItems));
+                                            }} 
+                                        />
+                                        
+                                        {/* Input fields for item quantity */}
+                                        <input 
+                                            type="number" 
+                                            className="w-16 p-2 ml-2 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
+                                            value={item.qty} 
+                                            onChange={(e) => {
+                                                const newOrderItems = JSON.parse(orderItems);
+                                                newOrderItems[index].qty = e.target.value;
+                                                setItems(JSON.stringify(newOrderItems));
+                                            }} 
+                                        />
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-gray-500">No items found</p>
+                            )}
+                        </div>
                     </div>
-                </div>
 
 
                     <div className="mb-6">

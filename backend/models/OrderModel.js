@@ -2,18 +2,12 @@ import mongoose from "mongoose";
 
 const OrderSchema = new mongoose.Schema({
 
-    orderId: {
-        type: String,
-        required: true,
-        unique: true,
-      },
+    orderId: { type: String, required: true, unique: true},
     itemsPrice : { type:Number, required:true, default:0 },
     deliveryPrice :{ type:Number, required :true, default:0 },
     discount:{ type:Number, required:true, default:0 },
     totalPrice:{ type:Number, required:true, default:0 },
     status:{ type:String, required:true, default:"Pending" },
-   
-    
     orderItems : { type:Array, required:true, default:[] },
     // orderItems: [
     //     {
