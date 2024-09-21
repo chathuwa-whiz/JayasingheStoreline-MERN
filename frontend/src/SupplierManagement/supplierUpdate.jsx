@@ -136,7 +136,7 @@ export default function SupplierDetailsForm() {
         <h2 className="text-2xl font-bold mb-6">Supplier Update Details</h2>
         <div className="flex">
           <div className="w-2/3 pr-8">
-            <h3 className="text-lg font-semibold mb-4">General Information</h3>
+            <h3 className="text-lg font-semibold mb-4 text-orange-500">General Information</h3>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label className="block text-gray-700 mb-2" htmlFor="supplierName">Supplier Name</label>
@@ -223,7 +223,7 @@ export default function SupplierDetailsForm() {
             </form>
           </div>
           <div className="w-1/3">
-            <h3 className="text-lg font-semibold mb-4">Supplier Media</h3>
+            <h3 className="text-lg font-semibold mb-4 text-orange-500">Supplier Media</h3>
             <div className="mb-4">
               {imageUrl && (
                 <img

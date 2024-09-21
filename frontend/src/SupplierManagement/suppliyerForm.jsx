@@ -89,8 +89,9 @@ const SupplierForm = () => {
               className="w-full p-2 border rounded"
             >
               <option value="">Select a category</option>
-              <option value="category1">Category 1</option>
-              <option value="category2">Category 2</option>
+              <option value="category1">Electronics</option>
+              <option value="category2">Clothing</option>
+              <option value="category2">Furniture</option>
               {/* Add more categories as needed */}
             </select>
           </div>
@@ -118,7 +119,7 @@ const SupplierForm = () => {
 
         {/* Product Media Section */}
         <div className="border rounded -p-4 mb-4">
-          <h3 className="text-lg font-semibold mb-4">Product Media</h3>
+          <h3 className="text-lg font-semibold mb-4 text-orange-500">Product Media</h3>
           <div className="mb-4">
             <label className="block text-gray-700">Photo Product</label>
             <input

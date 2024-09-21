@@ -97,7 +97,7 @@ export default function SupplierDetailsForm() {
         <h2 className="text-2xl font-bold mb-6">Supplier Details</h2>
         <div className="flex">
           <div className="w-2/3 pr-8">
-            <h3 className="text-lg font-semibold mb-4">General Information</h3>
+            <h3 className="text-lg font-semibold mb-4 text-orange-500">General Information</h3>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label className="block text-gray-700 mb-2" htmlFor="supplierName">Supplier Name</label>
@@ -155,13 +155,18 @@ export default function SupplierDetailsForm() {
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 mb-2" htmlFor="Gender">Gender</label>
-                <input
+                <select
                   className="w-full p-2 border border-gray-300 rounded"
                   id="Gender"
                   type="text"
                   value={Gender}
                   onChange={(e) => setGender(e.target.value)}
-                />
+                  >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+                
               </div>
               <div className="flex justify-between">
                 <button
@@ -174,7 +179,7 @@ export default function SupplierDetailsForm() {
             </form>
           </div>
           <div className="w-1/3">
-            <h3 className="text-lg font-semibold mb-4">Supplier Media</h3>
+            <h3 className="text-lg font-semibold mb-4 text-orange-500">Supplier Media</h3>
             <div className="border border-dashed border-orange-300 rounded-md h-64 flex items-center justify-center">
               <label
                 htmlFor="supplierMedia"
