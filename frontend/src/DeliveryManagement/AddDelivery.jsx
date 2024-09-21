@@ -22,8 +22,6 @@ export default function AddDelivery() {
     const { data: orders, isLoading, isError } = useGetOrdersQuery();
     const navigate = useNavigate();
 
-    console.log(orders);
-
     useEffect(() => {
         setTotalPrice(parseFloat(itemsPrice) + parseFloat(deliveryPrice));
     }, [itemsPrice, deliveryPrice]);
@@ -38,7 +36,7 @@ export default function AddDelivery() {
         setPostalCode(order.postalCode);
         setItemsPrice(order.itemsPrice);
         setDeliveryPrice(order.deliveryPrice);
-        setItems(order.orderItems);
+        setItems(JSON.parse(order.orderItems));
     };
 
     const handleSubmit = async (e) => {
@@ -180,13 +178,27 @@ export default function AddDelivery() {
                     </div>
                     <div>
                         <label className="block text-gray-700 font-medium">Item</label>
-                        <input
-                            type="text"
-                            className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
-                            placeholder="Enter Item Name"
-                            value={Items}
-                            onChange={(e) => setItems(e.target.value)}
-                        />
+                        {Items.map((item) => (
+                            <div key={item._id}>
+                                <input
+                                    type="text"
+                                    className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
+                                    placeholder="Enter Item Name"
+                                    value={item.name}
+                                    disabled
+                                    // onChange={(e) => setItems(e.target.value)}
+                                />
+                                <input
+                                    type="number"
+                                    className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
+                                    placeholder="Enter Item Quantity"
+                                    value={item.qty}
+                                    disabled
+                                    // onChange={(e) => setItems(e.target.value)}
+                                />
+                            </div>
+                        ))}
+
                     </div>
                 </div>
             </div>
