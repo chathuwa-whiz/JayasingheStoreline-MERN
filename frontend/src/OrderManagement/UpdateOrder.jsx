@@ -97,9 +97,9 @@ export default function UpdateOrders() {
 
     return (
         <div className="p-8 max-w-3xl mx-auto bg-white shadow-lg rounded-lg">
-            <div className="grid grid-cols-1 md:grid-cols-1 gap-10">
-                <div className="border rounded-lg  p-6 bg-gray-50">
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-6">Order Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-10 ">
+                <div className="border rounded-lg p-6 bg-gray-50">
+                    <h2 className="text-2xl font-semibold text-orange-600 mb-6">Order Information</h2>
 
                     <div className="mb-6">
                         <label className="block text-gray-700 font-medium">Order Name</label>
@@ -114,14 +114,14 @@ export default function UpdateOrders() {
 
                     <div className="mb-6">
                         <label className="block text-gray-700 font-medium">Order Items</label>
-                        <div className="w-full mt-2 p-3 border rounded-lg bg-white max-h-40 overflow-y-auto">
+                        <div className="w-full mt-2 p-3 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-orange-400">
                             {orderItems && orderItems.length > 0 ? (
                                 JSON.parse(orderItems).map((item, index) => (
                                     <div key={item._id} className="flex justify-between py-2 border-b last:border-b-0">
                                         {/* Input fields for item name */}
                                         <input 
                                             type="text" 
-                                            className="w-full p-2 mr-2 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
+                                            className="w-full p-2 mr-2 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-orange-400 focus:outline-none" 
                                             value={item.name} 
                                             onChange={(e) => {
                                                 const newOrderItems = JSON.parse(orderItems);
@@ -133,7 +133,7 @@ export default function UpdateOrders() {
                                         {/* Input fields for item quantity */}
                                         <input 
                                             type="number" 
-                                            className="w-16 p-2 ml-2 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
+                                            className="w-16 p-2 ml-2 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-orange-400 focus:outline-none" 
                                             value={item.qty} 
                                             onChange={(e) => {
                                                 const newOrderItems = JSON.parse(orderItems);
