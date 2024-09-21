@@ -37,6 +37,7 @@ import OrderHistory from "./OrderManagement/OrderHistory";
 import OrderInquiries from "./OrderManagement/OrderInquiries";
 import OrderByProducts from "./OrderManagement/OrderByProducts";
 import UpdateOrders from "./OrderManagement/UpdateOrder";
+import OrderReports from "./OrderManagement/Reports";
 
 //Customer
 import CustomerLogin from "./CustomerManagemet/CusLogin"; 
@@ -139,6 +140,7 @@ function App() {
           <Route path="orderhistory" element={<OrderHistory />} />
           <Route path="orderinqiry" element={<OrderInquiries />} />
           <Route path="orderByProduct" element={<OrderByProducts />} />
+          <Route path="orderreport" element={<OrderReports />} />
         </Route>
         <Route path="productlist" element={<ProductsList />} /> 
         <Route path="product/:_id" element={<SingleProductView />} />
