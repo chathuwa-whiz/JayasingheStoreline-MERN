@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const deliverySchema = new mongoose.Schema({
-  // deliveryItem: { type: String, required: true, default : "" },
+  deliveryItem: { type: String, required: true, default : "" },
   itemsPrice: { type: Number, required: true, default: 0 },
   deliveryPrice: { type: Number, required: true, default: 0 },
   totalPrice: { type: Number, required: true, default: 0 },

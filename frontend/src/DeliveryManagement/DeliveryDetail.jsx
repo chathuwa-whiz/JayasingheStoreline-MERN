@@ -90,7 +90,17 @@ export default function DeliveryDetail({ onEditDelivery }) {
           {deliveries.map((delivery) => (
             <tr key={delivery._id} className={`border-b ${getRowClass(delivery.status)} hover:bg-orange-100 transition-colors duration-300`}>
               <td className="border p-3">{delivery._id}</td>
-              <td className="border p-3">{delivery.deliveryItem}</td>
+              <td className="border p-3">
+                {
+                  <td className="py-2 px-4">
+                    {JSON.parse(delivery.deliveryItem).map((item) => (
+                      <div key={item._id}>
+                        <p>{item.name} x {item.qty}</p>
+                      </div>
+                    ))}
+                  </td>
+                }
+              </td>
               <td className="border p-3">{delivery.itemsPrice} LKR</td>
               <td className="border p-3">{delivery.deliveryPrice} LKR</td>
               <td className="border p-3">{delivery.totalPrice} LKR</td>

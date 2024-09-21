@@ -57,7 +57,7 @@ export default function AddDelivery() {
             deliveryData.append("city", city);
             deliveryData.append("province", province);
             deliveryData.append("postalCode", postalCode);
-            deliveryData.append("Items", JSON.stringify(Items));
+            deliveryData.append("deliveryItem", JSON.stringify(Items));
 
             const response = await createDelivery(deliveryData);
             if (response.error) {
