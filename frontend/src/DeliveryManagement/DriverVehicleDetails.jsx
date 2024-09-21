@@ -3,10 +3,117 @@ import { useGetDriversQuery, useCreateDriverMutation, useUpdateDriverMutation, u
 import { FaEdit, FaTrash, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 
 const DriverVehicleDetails = () => {
-  const { data: drivers, refetch } = useGetDriversQuery();
+  const { data: apiDrivers, refetch } = useGetDriversQuery();
   const [createDriver] = useCreateDriverMutation();
   const [updateDriver] = useUpdateDriverMutation();
   const [deleteDriver] = useDeleteDriverMutation();
+
+  const dummyDrivers = [
+    {
+      _id: '1',
+      nic: '199012345678',
+      name: 'John Doe',
+      dob: '1990-05-15',
+      telephoneNo: '0771234567',
+      vehicle: 'Toyota',
+      vehicleNo: 'ABD-4569',
+      drivingLicense: 'B5654789'
+    },
+    {
+      _id: '2',
+      nic: '198765432109',
+      name: 'Jane Smith',
+      dob: '1985-11-30',
+      telephoneNo: '0789876543',
+      vehicle: 'Honda',
+      vehicleNo: 'CAC-7895',
+      drivingLicense: 'A1234567'
+    },
+    {
+      _id: '3',
+      nic: '199234567890',
+      name: 'Michael Johnson',
+      dob: '1995-02-20',
+      telephoneNo: '0712345678',
+      vehicle: 'Suzuki',
+      vehicleNo: 'XYZ-1234',
+      drivingLicense: 'C9876543'
+    },
+    {
+      _id: '4',
+      nic: '198012345678',
+      name: 'Emily Davis',
+      dob: '1980-07-22',
+      telephoneNo: '0759876543',
+      vehicle: 'Nissan',
+      vehicleNo: 'DEF-5678',
+      drivingLicense: 'D6543210'
+    },
+    {
+      _id: '5',
+      nic: '199112345678',
+      name: 'Chris Brown',
+      dob: '1991-03-15',
+      telephoneNo: '0791234567',
+      vehicle: 'Ford',
+      vehicleNo: 'GHI-4321',
+      drivingLicense: 'E1234567'
+    },
+    {
+      _id: '6',
+      nic: '198512345678',
+      name: 'Olivia Wilson',
+      dob: '1985-09-05',
+      telephoneNo: '0734567890',
+      vehicle: 'Chevrolet',
+      vehicleNo: 'JKL-8765',
+      drivingLicense: 'F5678901'
+    },
+    {
+      _id: '7',
+      nic: '199312345678',
+      name: 'James Taylor',
+      dob: '1993-12-10',
+      telephoneNo: '0745678901',
+      vehicle: 'Kia',
+      vehicleNo: 'MNO-2345',
+      drivingLicense: 'G2345678'
+    },
+    {
+      _id: '8',
+      nic: '198712345678',
+      name: 'Sophia Miller',
+      dob: '1987-04-01',
+      telephoneNo: '0786789012',
+      vehicle: 'Mazda',
+      vehicleNo: 'PQR-6789',
+      drivingLicense: 'H1234567'
+    },
+    {
+      _id: '9',
+      nic: '199212345678',
+      name: 'David Garcia',
+      dob: '1992-06-30',
+      telephoneNo: '0723456789',
+      vehicle: 'Subaru',
+      vehicleNo: 'STU-3456',
+      drivingLicense: 'I9876543'
+    },
+    {
+      _id: '10',
+      nic: '198212345678',
+      name: 'Isabella Martinez',
+      dob: '1982-08-15',
+      telephoneNo: '0778901234',
+      vehicle: 'Volkswagen',
+      vehicleNo: 'VWX-5432',
+      drivingLicense: 'J7654321'
+    }
+  ];
+  
+  
+
+  const drivers = apiDrivers || dummyDrivers;
 
   const [newDriver, setNewDriver] = useState({
     nic: '',
@@ -214,67 +321,87 @@ const DriverVehicleDetails = () => {
                 type="text"
                 id="drivingLicense"
                 value={newDriver.drivingLicense}
-                onChange={(e) => /^[A-Za-z0-9\s]*$/.test(e.target.value) && setNewDriver({ ...newDriver, drivingLicense: e.target.value })}
+                onChange={(e) => handleInputChange(e, 'drivingLicense', 8)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 maxLength={8}
                 required
               />
             </div>
           </div>
-          <button type="submit" className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-            {editingDriver ? 'Update Driver' : 'Add Driver'}
-          </button>
-          {editingDriver && (
-            <button onClick={handleCancelEdit} className="ml-4 mt-4 px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">
-              Cancel
-            </button>
-          )}
-        </form>
-        {message.text && (
-          <div className={`mt-4 p-4 rounded-lg ${message.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-            {message.type === 'success' ? <FaCheckCircle className="inline-block mr-2" /> : <FaTimesCircle className="inline-block mr-2" />}
-            {message.text}
+          <div className="mt-6">
+            {message.text && (
+              <div className={`mb-4 ${message.type === 'success' ? 'text-green-500' : 'text-red-500'}`}>
+                {message.type === 'success' ? <FaCheckCircle /> : <FaTimesCircle />}
+                <span className="ml-2">{message.text}</span>
+              </div>
+            )}
+            <div className="flex justify-end space-x-2">
+              {editingDriver && (
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+                >
+                  Cancel
+                </button>
+              )}
+              <button
+                type="submit"
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                {editingDriver ? 'Update Driver' : 'Add Driver'}
+              </button>
+            </div>
           </div>
-        )}
+        </form>
       </div>
 
-      <div className="mt-8 border rounded-lg p-6 bg-gray-50 shadow-lg">
-        <h2 className="text-2xl font-semibold mb-4">Drivers List</h2>
-        <table className="min-w-full bg-white border">
-          <thead>
-            <tr>
-              <th className="py-2 px-4 border-b">NIC</th>
-              <th className="py-2 px-4 border-b">Name</th>
-              <th className="py-2 px-4 border-b">Date of Birth</th>
-              <th className="py-2 px-4 border-b">Telephone Number</th>
-              <th className="py-2 px-4 border-b">Vehicle</th>
-              <th className="py-2 px-4 border-b">Vehicle Number</th>
-              <th className="py-2 px-4 border-b">Driving License</th>
-              <th className="py-2 px-4 border-b">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {drivers && drivers.map((driver) => (
-              <tr key={driver._id}>
-                <td className="py-2 px-4 border-b">{driver.nic}</td>
-                <td className="py-2 px-4 border-b">{driver.name}</td>
-                <td className="py-2 px-4 border-b">{driver.dob}</td>
-                <td className="py-2 px-4 border-b">{driver.telephoneNo}</td>
-                <td className="py-2 px-4 border-b">{driver.vehicle}</td>
-                <td className="py-2 px-4 border-b">{driver.vehicleNo}</td>
-                <td className="py-2 px-4 border-b">{driver.drivingLicense}</td>
-                <td className="py-2 px-4 border-b">
-                  <button onClick={() => handleEdit(driver)} className="text-blue-500 hover:text-blue-700">
-                    <FaEdit />
-                  </button>
-                  <button onClick={() => handleDelete(driver._id)} className="text-red-500 hover:text-red-700 ml-4">
-                    <FaTrash />
-                  </button>
-                </td>
+      {/* Driver List */}
+      <div className="mt-8">
+        <h3 className="text-xl font-semibold mb-4">Driver Details</h3>
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white border border-gray-300">
+            <thead>
+              <tr>
+                <th className="py-2 px-4 border-b">NIC</th>
+                <th className="py-2 px-4 border-b">Name</th>
+                <th className="py-2 px-4 border-b">DOB</th>
+                <th className="py-2 px-4 border-b">Telephone No</th>
+                <th className="py-2 px-4 border-b">Vehicle</th>
+                <th className="py-2 px-4 border-b">Vehicle No</th>
+                <th className="py-2 px-4 border-b">Driving License</th>
+                <th className="py-2 px-4 border-b">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {drivers.map((driver) => (
+                <tr key={driver._id}>
+                  <td className="py-2 px-4 border-b">{driver.nic}</td>
+                  <td className="py-2 px-4 border-b">{driver.name}</td>
+                  <td className="py-2 px-4 border-b">{new Date(driver.dob).toLocaleDateString()}</td>
+                  <td className="py-2 px-4 border-b">{driver.telephoneNo}</td>
+                  <td className="py-2 px-4 border-b">{driver.vehicle}</td>
+                  <td className="py-2 px-4 border-b">{driver.vehicleNo}</td>
+                  <td className="py-2 px-4 border-b">{driver.drivingLicense}</td>
+                  <td className="py-2 px-4 border-b">
+                    <button
+                      onClick={() => handleEdit(driver)}
+                      className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-2 rounded"
+                    >
+                      <FaEdit />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(driver._id)}
+                      className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded ml-2"
+                    >
+                      <FaTrash />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import Product from "../models/ProductModel.js";
+import Order from "../models/OrderModel.js";
 
 // Add new product
 export const addProduct = async (req, res) => {
@@ -279,3 +280,26 @@ export const replyToInquiry = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+
+
+const getOrderSummaryByProductName = async (req, res) => {
+    try {
+        const { productName } = req.params;
+        const orderSummary = await Order.findOne({ 'orderItems.name': productName });
+
+        if (!orderSummary) {
+            return res.status(404).json({ message: 'Cannot find this product' });
+        }
+
+        res.json(orderSummary);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+};
+
+
+
+
+
+

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useCreateDeliveryMutation } from "../redux/api/deliveryApiSlice";
+import { useGetOrdersQuery } from '../redux/api/orderApiSlice';
 import { toast } from "react-hot-toast";
 
 export default function AddDelivery() {
@@ -15,13 +16,28 @@ export default function AddDelivery() {
     const [city, setCity] = useState('');
     const [province, setProvince] = useState('');
     const [postalCode, setPostalCode] = useState('');
+    const [Items, setItems] = useState([]);
 
     const [createDelivery] = useCreateDeliveryMutation();
+    const { data: orders, isLoading, isError } = useGetOrdersQuery();
     const navigate = useNavigate();
 
     useEffect(() => {
         setTotalPrice(parseFloat(itemsPrice) + parseFloat(deliveryPrice));
     }, [itemsPrice, deliveryPrice]);
+
+    const handleOrderClick = (order) => {
+        setFirstName(order.firstName);
+        setLastName(order.lastName);
+        setTelephoneNo(order.telephoneNo);
+        setAddress(order.address);
+        setCity(order.city);
+        setProvince(order.province);
+        setPostalCode(order.postalCode);
+        setItemsPrice(order.itemsPrice);
+        setDeliveryPrice(order.deliveryPrice);
+        setItems(JSON.parse(order.orderItems));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -41,10 +57,12 @@ export default function AddDelivery() {
             deliveryData.append("city", city);
             deliveryData.append("province", province);
             deliveryData.append("postalCode", postalCode);
+            deliveryData.append("Items", JSON.stringify(Items));
 
             const response = await createDelivery(deliveryData);
             if (response.error) {
                 toast.error("Delivery creation failed. Try Again.");
+                console.log("Delivery creation error:", response.error);
             } else {
                 toast.success("Delivery created successfully");
                 setTimeout(() => {
@@ -60,6 +78,30 @@ export default function AddDelivery() {
 
     return (
         <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50">
+            {/* Pending Orders List */}
+            <div className="border rounded-lg p-6 bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <h2 className="text-2xl font-semibold mb-6 text-gray-800">Pending Orders</h2>
+                {isLoading ? (
+                    <p>Loading orders...</p>
+                ) : isError ? (
+                    <p>Error loading orders</p>
+                ) : orders?.length > 0 ? (
+                    orders.filter(order => order.status === 'Pending').map(order => (
+                        <div
+                            key={order._id}
+                            className="mb-4 p-3 border rounded cursor-pointer hover:bg-gray-100"
+                            onClick={() => handleOrderClick(order)}
+                        >
+                            <h3 className="text-lg font-semibold text-gray-800">{order.firstName} {order.lastName}</h3>
+                            <p className="text-gray-600">Order #{order._id}</p>
+                            <p className="text-gray-600">Items Price: Rs.{order.itemsPrice}</p>
+                        </div>
+                    ))
+                ) : (
+                    <p>No pending orders available</p>
+                )}
+            </div>
+
             {/* General Information */}
             <div className="border rounded-lg p-6 bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <h2 className="text-2xl font-semibold mb-6 text-gray-800">Delivery Information</h2>
@@ -134,24 +176,31 @@ export default function AddDelivery() {
                             onChange={(e) => setPostalCode(e.target.value)}
                         />
                     </div>
-                </div>
-            </div>
+                    <div>
+                        <label className="block text-gray-700 font-medium">Item</label>
+                        {Items.map((item) => (
+                            <div key={item._id}>
+                                <input
+                                    type="text"
+                                    className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
+                                    placeholder="Enter Item Name"
+                                    value={item.name}
+                                    disabled
+                                    // onChange={(e) => setItems(e.target.value)}
+                                />
+                                <input
+                                    type="number"
+                                    className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
+                                    placeholder="Enter Item Quantity"
+                                    value={item.qty}
+                                    disabled
+                                    // onChange={(e) => setItems(e.target.value)}
+                                />
+                            </div>
+                        ))}
 
-            {/* Delivery Products */}
-            <div className="border rounded-lg p-6 bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <h2 className="text-2xl font-semibold mb-6 text-gray-800">Delivery Products</h2>
-                {/* Placeholder for product information */}
-                {/* {products.length > 0 ? (
-                    products.map((product) => (
-                        <div key={product._id} className="mb-4">
-                            <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
-                            <p className="text-gray-600">Price: Rs.{product.newProductPrice}.00</p>
-                            <p className="text-gray-600">Quantity: {product.qty}</p>
-                        </div>
-                    ))
-                ) : (
-                    <div className="text-gray-600">No products available for delivery</div>
-                )} */}
+                    </div>
+                </div>
             </div>
 
             {/* Pricing */}

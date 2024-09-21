@@ -23,7 +23,7 @@ export default function OrderSummary() {
                 <th className="p-4 rounded-tr-lg">Total</th>
               </tr>
             </thead>
-            <tbody>
+            {/* <tbody>
               {cartItems.map((item) => (
                 <tr key={item.id} className="bg-white border-b border-gray-200 hover:bg-gray-100 transition-all">
                   <td className="p-4">
@@ -35,7 +35,24 @@ export default function OrderSummary() {
                   <td className="p-4 font-semibold text-gray-800">Rs.{(item.newProductPrice * item.qty).toFixed(2)}</td>
                 </tr>
               ))}
-            </tbody>
+            </tbody> */}
+
+              <tbody>
+                {cartItems.map((item, index) => (
+                  <tr
+                    key={item.id || index}  // If 'item.id' is missing, 'index' will be used as a fallback key.
+                    className="bg-white border-b border-gray-200 hover:bg-gray-100 transition-all"
+                  >
+                    <td className="p-4">
+                      <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded-lg shadow-md" />
+                    </td>
+                    <td className="p-4 font-semibold text-gray-800">{item.name}</td>
+                    <td className="p-4 text-center font-semibold">{item.qty}</td>
+                    <td className="p-4 font-semibold text-gray-800">Rs.{item.newProductPrice.toFixed(2)}</td>
+                    <td className="p-4 font-semibold text-gray-800">Rs.{(item.newProductPrice * item.qty).toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
           </table>
         </div>
 

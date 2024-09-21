@@ -11,9 +11,9 @@ const Reports = () => {
       {
         label: 'Deliveries',
         backgroundColor: '#FFA500',
-        data: [50000, 250000, 300000, 450000, 200000, 100000, 150000, 400000]
-      }
-    ]
+        data: [50000, 250000, 300000, 450000, 200000, 100000, 150000, 400000],
+      },
+    ],
   };
 
   const pieData = {
@@ -22,9 +22,9 @@ const Reports = () => {
       {
         label: 'Most Used Units',
         data: [20, 35, 12, 10, 21],
-        backgroundColor: ['#FF6347', '#FFD700', '#90EE90', '#00BFFF', '#FF69B4']
-      }
-    ]
+        backgroundColor: ['#FF6347', '#FFD700', '#90EE90', '#00BFFF', '#FF69B4'],
+      },
+    ],
   };
 
   const exportToPDF = () => {
@@ -67,32 +67,31 @@ const Reports = () => {
       head: details.slice(0, 1),
       body: details.slice(1),
       startY: 290,
-      theme: 'striped'
+      theme: 'striped',
     });
 
     doc.save('report.pdf');
   };
 
   const exportToExcel = () => {
-    // This is a placeholder function. You will need to implement the logic for exporting data to Excel.
     alert('Export to Excel functionality is not implemented yet.');
   };
 
   return (
-    <div className="p-8 bg-gray-100 min-h-screen">
+    <div className="p-8 bg-gradient-to-r from-blue-50 to-blue-100 min-h-screen">
       <div className="flex flex-col">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-extrabold text-gray-800">Reports</h1>
+          <h1 className="text-5xl font-extrabold text-gray-800 shadow-md">Reports</h1>
           <div className="flex space-x-4">
-            <button className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg shadow-lg hover:bg-gray-400 transition-colors duration-300">
+            <button className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg shadow-lg hover:bg-gray-400 transition duration-300">
               Filters
             </button>
-            <button className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg shadow-lg hover:bg-gray-400 transition-colors duration-300">
+            <button className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg shadow-lg hover:bg-gray-400 transition duration-300">
               Select Date
             </button>
             <button
               onClick={exportToPDF}
-              className="px-6 py-2 bg-red-600 text-white rounded-lg shadow-lg hover:bg-red-700 transition-colors duration-300"
+              className="px-6 py-2 bg-red-600 text-white rounded-lg shadow-lg hover:bg-red-700 transition duration-300"
             >
               Export to PDF
             </button>
@@ -100,43 +99,44 @@ const Reports = () => {
         </div>
 
         <div className="flex justify-center mt-8">
-  <div className="mb-12 bg-white p-6 rounded-lg shadow-lg h-100 w-full max-w-4xl">
-    <h2 className="text-3xl font-semibold text-gray-800 text-center mb-4">Monthly Deliveries</h2>
-    <div className="bar-chart h-full w-full">
-      <Bar data={barData} />
-    </div>
-  </div>
-</div>
+          <div className="mb-12 bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
+            <h2 className="text-4xl font-semibold text-gray-800 text-center mb-4">Monthly Deliveries</h2>
+            <div className="bar-chart h-80">
+              <Bar data={barData} options={{ maintainAspectRatio: false }} />
+            </div>
+          </div>
+        </div>
 
-
-        <div className="flex gap-4">
-          <div className="w-1/2 bg-white p-6 rounded-lg shadow-lg ">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Most Used Units</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-3xl font-semibold text-gray-800 mb-4">Most Used Units</h2>
             <div className="space-y-2">
               {pieData.labels.map((label, index) => (
-                <div key={index} className="flex items-center justify-between text-gray-700 ">
+                <div key={index} className="flex items-center justify-between text-gray-700">
                   <span className="font-medium">{label}</span>
                   <span>{pieData.datasets[0].data[index]}%</span>
                 </div>
               ))}
             </div>
           </div>
-          <div className="w-1/2 bg-white p-6 rounded-lg shadow-lg pie-chart">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Unit Distribution</h2>
-            <Pie data={pieData} />
+          <div className="bg-white p-6 rounded-lg shadow-lg pie-chart">
+            <h2 className="text-3xl font-semibold text-gray-800 mb-4 text-center">Unit Distribution</h2>
+            <div className="h-80">
+              <Pie data={pieData} options={{ maintainAspectRatio: false }} />
+            </div>
           </div>
         </div>
 
         <div className="mt-8 flex justify-end space-x-4">
           <button
             onClick={exportToPDF}
-            className="px-6 py-2 bg-red-600 text-white rounded-lg shadow-lg hover:bg-red-700 transition-colors duration-300"
+            className="px-6 py-2 bg-red-600 text-white rounded-lg shadow-lg hover:bg-red-700 transition duration-300"
           >
             Export to PDF
           </button>
           <button
             onClick={exportToExcel}
-            className="px-6 py-2 bg-green-600 text-white rounded-lg shadow-lg hover:bg-green-700 transition-colors duration-300"
+            className="px-6 py-2 bg-green-600 text-white rounded-lg shadow-lg hover:bg-green-700 transition duration-300"
           >
             Export to Excel
           </button>

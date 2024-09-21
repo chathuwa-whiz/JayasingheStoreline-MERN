@@ -7,6 +7,12 @@ import { addToCart, removeFromCart } from "../redux/features/cart/cartSlice";
 export default function Cart() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
+    // Price formatter
+    const priceFormatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'LKR',
+    });
     
     const cart = useSelector((state) => state.cart);    
 
@@ -53,7 +59,7 @@ export default function Cart() {
                                         <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg shadow-sm" />
                                         <div className="ml-4 flex-grow">
                                             <h2 className="text-lg font-semibold text-gray-700 truncate">{item.name}</h2>
-                                            <p className="text-gray-500">Price: Rs.{item.newProductPrice}</p>
+                                            <p className="text-gray-500">{priceFormatter.format(item.newProductPrice)}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-end w-1/4">
@@ -71,9 +77,9 @@ export default function Cart() {
                     <div className="w-full lg:w-1/3 mt-8 lg:mt-0 lg:ml-6 bg-white rounded-lg shadow-lg p-6">
                         <h2 className="text-2xl font-bold text-gray-800">Cart Summary</h2>
                         <div className="mt-6">
-                            <p className="text-gray-700 mb-2">Subtotal: <span className="font-semibold">Rs.{subTotal}.00</span></p>
-                            <p className="text-gray-700 mb-2">Discount: <span className="font-semibold">Rs.{discount}.00</span></p>
-                            <p className="text-gray-700 mb-4">Total: <span className="font-semibold">Rs.{total}.00</span></p>
+                            <p className="text-gray-700 mb-2">Subtotal: <span className="font-semibold">{priceFormatter.format(subTotal)}</span></p>
+                            <p className="text-gray-700 mb-2">Discount: <span className="font-semibold">{priceFormatter.format(discount)}</span></p>
+                            <p className="text-gray-700 mb-4">Total: <span className="font-semibold">{priceFormatter.format(total)}</span></p>
                         </div>
                         <button 
                             onClick={proceedToCheckout} 
