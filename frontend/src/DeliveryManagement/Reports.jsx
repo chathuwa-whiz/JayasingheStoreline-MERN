@@ -3,6 +3,7 @@ import { Bar, Pie } from 'react-chartjs-2';
 import 'chart.js/auto';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import * as XLSX from 'xlsx'; // Import XLSX library
 
 const Reports = () => {
   const barData = {
@@ -74,7 +75,40 @@ const Reports = () => {
   };
 
   const exportToExcel = () => {
-    alert('Export to Excel functionality is not implemented yet.');
+    const deliveriesData = [
+      ['Month', 'Deliveries'],
+      ['2024-01', 50000],
+      ['2024-02', 250000],
+      ['2024-03', 300000],
+      ['2024-04', 450000],
+      ['2024-05', 200000],
+      ['2024-06', 100000],
+      ['2024-07', 150000],
+      ['2024-08', 400000],
+    ];
+
+    const mostUsedUnitsData = [
+      ['Unit', 'Percentage'],
+      ['Lorry A', '20%'],
+      ['Lorry B', '35%'],
+      ['Lorry C', '12%'],
+      ['D Bike', '10%'],
+      ['D Tuk', '21%'],
+    ];
+
+    // Create a new workbook
+    const wb = XLSX.utils.book_new();
+
+    // Create sheet for deliveries (Bar chart data)
+    const wsDeliveries = XLSX.utils.aoa_to_sheet(deliveriesData);
+    XLSX.utils.book_append_sheet(wb, wsDeliveries, 'Monthly Deliveries');
+
+    // Create sheet for most used units (Pie chart data)
+    const wsMostUsedUnits = XLSX.utils.aoa_to_sheet(mostUsedUnitsData);
+    XLSX.utils.book_append_sheet(wb, wsMostUsedUnits, 'Most Used Units');
+
+    // Write the workbook to an Excel file
+    XLSX.writeFile(wb, 'report_with_charts.xlsx');
   };
 
   return (
