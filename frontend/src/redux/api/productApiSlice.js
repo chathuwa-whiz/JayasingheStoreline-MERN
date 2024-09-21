@@ -145,5 +145,5 @@ export const {
     useUploadProductImageMutation,
     useGetFilteredProductsQuery,
     useUpdateReviewMutation,
-    getReviewById,
+    useGetReviewByIdQuery,
 } = productApiSlice;

@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { useGetReviewsByUserIdQuery } from "../redux/api/productApiSlice";
+import { useGetReviewByIdQuery } from "../redux/api/productApiSlice";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -8,7 +8,7 @@ const UserReviews = () => {
   const userId = useSelector((state) => state.auth.user._id);
   console.log("User ID:", userId);
 
-  const { data, error, isLoading } = useGetReviewsByUserIdQuery(userId);
+  const { data, error, isLoading } = useGetReviewByIdQuery(userId);
   console.log("API Response:", { data, error, isLoading });
 
   if (isLoading) return <p>Loading...</p>;
