@@ -9,7 +9,11 @@ import ReviewForm from '../ReviewsInquiry/ReviewForm';
 export default function SingleProductView() {
     const { _id: productId } = useParams();
     const { data: productData, isLoading, isError, refetch } = useGetProductByIdQuery(productId);
-    const user = useSelector((state) => state.auth.user);
+    const user = useSelector((state) => state.auth.userInfo);
+
+    console.log("User : ", user);
+    console.log("Product Data : ", productData);
+
     const [image, setImage] = useState(productData?.image);
     const [name, setName] = useState(productData?.name || '');
     const [description, setDescription] = useState(productData?.description || '');
@@ -171,8 +175,8 @@ export default function SingleProductView() {
                                 <p className="ml-2 text-gray-700">{review.comment}</p>
                             </div>
                             <button
-                                onClick={() => handleEditReview(review._id)}
-                                className={`mt-2 ${user && user._id === review._id ? 'bg-blue-900 hover:bg-blue-800' : 'bg-gray-400 cursor-not-allowed'} text-white font-bold py-2 px-4 rounded-lg`}
+                                onClick={() => handleEditReview(review.name)}
+                                className={`mt-2 ${user && user.username === review.name ? 'bg-blue-900 hover:bg-blue-800' : 'bg-gray-400 cursor-not-allowed'} text-white font-bold py-2 px-4 rounded-lg`}
                                 disabled={user && user._id !== review._id}
                             >
                                 Edit
