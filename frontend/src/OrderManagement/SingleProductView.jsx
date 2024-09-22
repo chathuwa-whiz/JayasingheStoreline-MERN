@@ -69,7 +69,7 @@ export default function SingleProductView() {
     const handleEditReview = (reviewId) => {
         // Navigate to review edit page
         console.log("Review ID : ", reviewId, "Product ID : ", productId);
-        navigate(`/product/${productId}/edit-review/${reviewId}`);
+        navigate(`/product/${productId}/${reviewId}`);
     };
 
     // Average Rating Calculation
@@ -164,30 +164,33 @@ export default function SingleProductView() {
                 <h2 className="text-2xl font-bold text-gray-800">Product Reviews</h2>
                 {productData?.reviews && productData.reviews.length > 0 ? (
                     productData.reviews.map((review) => (
-                        <div key={review._id} className="mt-4 p-4 border rounded-lg shadow-sm bg-gray-50">
-                            <div className="flex items-center">
-                                <p className="text-lg font-semibold">{review.name}</p>
-                                <p className="ml-4 text-sm text-gray-500">{new Date(review.createdAt).toLocaleDateString()}</p>
-                            </div>
-                            <div className="mt-2 flex items-center">
-                                <div className="text-yellow-400">
-                                    {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
-                                </div>
-                                <p className="ml-2 text-gray-700">{review.comment}</p>
-                            </div>
-                            <button
-                                onClick={() => handleEditReview(review._id)}
-                                className={`mt-2 ${user && user.username === review.name ? 'bg-blue-900 hover:bg-blue-800' : 'bg-gray-400 cursor-not-allowed'} text-white font-bold py-2 px-4 rounded-lg`}
-                                // disabled={user && user._id !== review._id}
-                            >
-                                Edit
-                            </button>
+                    <div key={review._id} className="mt-4 p-4 border rounded-lg shadow-sm bg-gray-50">
+                        <div className="flex items-center">
+                        <p className="text-lg font-semibold">{review.name}</p>
+                        <p className="ml-4 text-sm text-gray-500">{new Date(review.createdAt).toLocaleDateString()}</p>
                         </div>
+                        <div className="mt-2 flex items-center">
+                        <div className="text-yellow-400">
+                            {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                        </div>
+                        <p className="ml-2 text-gray-700">{review.comment}</p>
+                        </div>
+                        {/* Only show the edit button if the current user matches the review author */}
+                        {user && user.username === review.name && (
+                        <button
+                            onClick={() => handleEditReview(review._id)}
+                            className="mt-2 bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg"
+                        >
+                            Edit
+                        </button>
+                        )}
+                    </div>
                     ))
                 ) : (
                     <p className="mt-4 text-gray-500">No reviews yet.</p>
                 )}
             </div>
+
 
             {/* Review Form */}
             <div className="mt-10">

@@ -89,7 +89,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
             method: 'PUT',
             body: { rating, comment },
         }),
-        invalidatesTags: (result, error, { productId }) => [
+        invalidatesTags: (result, error, { productId, reviewId }) => [
             { type: 'Product', id: productId }, // Ensure the product's cached data is invalidated
             { type: 'Reviews', id: reviewId },  // Optionally, you could invalidate the review as well
         ],
@@ -123,8 +123,10 @@ export const productApiSlice = apiSlice.injectEndpoints({
         }),
 
         getReviewById: builder.query({
-            query: (productId,reviewId) => `${PRODUCT_URL}/${productId}/reviews/${reviewId}`,
+            query: ({ productId, reviewId }) => `${PRODUCT_URL}/${productId}/${reviewId}`,
+            transformResponse: (response) => response, // Optionally transform the response if needed
         }),
+        
         
     }),
 });
