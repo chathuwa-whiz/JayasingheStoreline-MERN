@@ -1,4 +1,5 @@
-import { PRODUCT_URL, UPLOAD_URL,REVIEWS_URL } from "../constants";
+import { deleteInquiry, getInquiriesByInquiryId } from "../../../../backend/controllers/ProductController";
+import { PRODUCT_URL, UPLOAD_URL,REVIEWS_URL, DASHBOARDLIST_URL } from "../constants";
 import { apiSlice } from "./apiSlice";
 
 export const productApiSlice = apiSlice.injectEndpoints({
@@ -95,6 +96,32 @@ export const productApiSlice = apiSlice.injectEndpoints({
         ],
         }),
 
+        // Delete a review
+        deleteReview: builder.mutation({
+        query: ({ productId, reviewId }) => ({
+            url: `${PRODUCT_URL}/${productId}/${reviewId}`, // Assuming the reviews are part of the product endpoint
+            method: 'DELETE',
+        }),
+        invalidatesTags: (result, error, { productId, reviewId }) => [
+            { type: 'Product', id: productId }, // Invalidate the product cache
+            { type: 'Reviews', id: reviewId },  // Optionally invalidate the review cache
+        ],
+        }),
+
+ // Delete an inquiry
+deleteInquiry: builder.mutation({
+    query: ({ productId, inquiryId }) => ({
+        url: `${PRODUCT_URL}/${productId}/${inquiryId}`, // Use inquiryId here
+        method: 'DELETE',
+    }),
+    invalidatesTags: (result, error, { productId, inquiryId }) => [
+        { type: 'Product', id: productId }, // Invalidate the product cache
+        { type: 'Inquiries', id: inquiryId },  // You might want to create an Inquiries tag
+    ],
+}),
+
+            
+
         // Reply to an inquiry
         replyToInquiry: builder.mutation({
             query: ({ productId, inquiryId, replyMessage }) => ({
@@ -126,6 +153,13 @@ export const productApiSlice = apiSlice.injectEndpoints({
             query: ({ productId, reviewId }) => `${PRODUCT_URL}/${productId}/${reviewId}`,
             transformResponse: (response) => response, // Optionally transform the response if needed
         }),
+
+
+        getInquiriesByInquiryId: builder.query({
+            query: ({ productId, inquiryId }) => `${PRODUCT_URL}/${productId}/${inquiryId}`,
+            transformResponse: (response) => response, // Optionally transform the response if needed
+        }),
+        
         
         
     }),
@@ -147,5 +181,8 @@ export const {
     useUploadProductImageMutation,
     useGetFilteredProductsQuery,
     useUpdateReviewMutation,
+    useDeleteReviewMutation,
+    useDeleteInquiryMutation,
     useGetReviewByIdQuery,
+    useGetInquiriesByInquiryIdQuery,
 } = productApiSlice;

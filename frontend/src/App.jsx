@@ -67,6 +67,7 @@ import SupplierUpdate from "./SupplierManagement/supplierUpdate";
 import EditReviewPage from "./ReviewsInquiry/EditReviewPage";
 import UserReviews from "./ReviewsInquiry/UserReviews";
 import DashboardList from "./ReviewsInquiry/DashboardList";
+import DashboardSinglePro from "./ReviewsInquiry/DashboardSinglePro";
 
 //Employee Management
 import Employee from './EmployeeManagement/Employee';
@@ -181,9 +182,8 @@ function App() {
         <Route path="/product/:productId/:reviewId" element={<EditReviewPage />} />
         <Route path="/user-reviews" element={<UserReviews />} />
         <Route path="dashboardlist" element={<DashboardList/>} />
+        <Route path="dashboard/product/:_id" element={<DashboardSinglePro/>} />
         
-        
-
       </Routes>
     </BrowserRouter>
   );

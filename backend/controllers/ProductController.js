@@ -171,6 +171,73 @@ export const addProductInquiry = async (req, res) => {
     }
 }
 
+// Delete a product inquiry
+export const deleteInquiry = async (req, res) => {
+    try {
+        // Find the product that contains the review
+        const product = await Product.findById(req.params.productId);
+        if (!product) {
+            return res.status(404).json({ error: "inquiry not found" });
+        }
+
+        // Find the review inside the product's reviews array
+        const inquiryIndex = product.inquiries.findIndex((r) => r._id.toString() === req.params.inquiryId);
+        if (inquiryIndex === -1) {
+            return res.status(404).json({ error: "inquiry not found" });
+        }
+
+        // Remove the review from the reviews array
+        product.inquiries.splice(inquiryIndex, 1);
+
+        // Optionally, recalculate the overall product rating and number of reviews
+        product.inquiry = product.inquiries.length 
+            ? product.inquiries.reduce((acc, item) => item.inquiry + acc, 0) / product.inquiries.length 
+            : 0;
+
+        // Save the product with the review removed
+        await product.save();
+
+        res.json({ msg: "inquiry deleted successfully", product });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "inquiry deletion failed", error: error.message });
+    }
+};
+
+// Fetch inquiries by inquiry ID
+export const getInquiriesByInquiryId = async (req, res) => {
+    try {
+        const {productId, inquiryId } = req.params;
+        
+        const products = await Product.findById(productId);
+
+        if (!products) {
+            return res.status(404).json({ message: "inquiry not found" });
+        }
+
+        // find the review maching the reviewId
+        const inquiry = products.inquiries.find(
+            (inquiry) => inquiry._id == inquiryId
+        );
+
+        if(!inquiry) {
+            return res.status(404).json( { msg : "inquiry not found for this user" } )
+        }
+
+        const inquiryResponse = {
+            ...review.toObject(),
+            productName: products.name,
+            productId: products._id
+        };
+
+        res.json(inquiryResponse);
+        
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
 // update review
 export const updateReview = async (req, res) => {
     try {
@@ -212,6 +279,40 @@ export const updateReview = async (req, res) => {
         res.status(500).json({ error: "Review update failed", error: error.message });
     }
 };
+
+// Delete review
+export const deleteReview = async (req, res) => {
+    try {
+        // Find the product that contains the review
+        const product = await Product.findById(req.params.productId);
+        if (!product) {
+            return res.status(404).json({ error: "Product not found" });
+        }
+
+        // Find the review inside the product's reviews array
+        const reviewIndex = product.reviews.findIndex((r) => r._id.toString() === req.params.reviewId);
+        if (reviewIndex === -1) {
+            return res.status(404).json({ error: "Review not found" });
+        }
+
+        // Remove the review from the reviews array
+        product.reviews.splice(reviewIndex, 1);
+
+        // Optionally, recalculate the overall product rating and number of reviews
+        product.rating = product.reviews.length 
+            ? product.reviews.reduce((acc, item) => item.rating + acc, 0) / product.reviews.length 
+            : 0;
+
+        // Save the product with the review removed
+        await product.save();
+
+        res.json({ msg: "Review deleted successfully", product });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Review deletion failed", error: error.message });
+    }
+};
+
 
 
 // Fetch Reviews by Review ID
