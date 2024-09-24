@@ -12,6 +12,7 @@ import UpdateProduct from "./InventoryManagement/UpdateProduct";
 import Stock from "./InventoryManagement/Stock";
 import Reports from "./InventoryManagement/Reports";
 import AddStockPage from "./InventoryManagement/AddStock";
+import LogoutPage from "./InventoryManagement/LogoutPage";
 
 //Delivery
 import Delivery from "./DeliveryManagement/delivery";
@@ -117,6 +118,7 @@ function App() {
           <Route path="reports" element={<Reports />} />
           <Route path="addstock/:_id" element={<AddStockPage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="logout" element={<LogoutPage />} />
         </Route>
 
         {/*Delivery manager Routes */}
