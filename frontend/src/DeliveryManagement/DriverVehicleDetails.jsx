@@ -5,7 +5,7 @@ import { FaEdit, FaTrash, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 const DriverVehicleDetails = () => {
   const { data: drivers, refetch } = useGetDriversQuery();
 
-  console.log(drivers);
+  // console.log(drivers);
 
   const [createDriver] = useCreateDriverMutation();
   const [updateDriver] = useUpdateDriverMutation();
@@ -18,7 +18,7 @@ const DriverVehicleDetails = () => {
     telephoneNo: '',
     vehicleType: '',
     vehicleRegNo: '',
-    driverLicenseNo: ''
+    driverLicenceNo: ''
   });
 
   const [editingDriver, setEditingDriver] = useState(null);
@@ -29,7 +29,7 @@ const DriverVehicleDetails = () => {
   }, [refetch]);
 
   const validateForm = () => {
-    const { nic, name, birthday, telephoneNo, vehicleType, vehicleRegNo, driverLicenseNo } = newDriver;
+    const { nic, name, birthday, telephoneNo, vehicleType, vehicleRegNo, driverLicenceNo } = newDriver;
     const nicRegex = /^[0-9]{12}$/;
     const nameRegex = /^[A-Za-z\s]+$/;
     const telephoneRegex = /^[0-9]{10}$/;
@@ -64,7 +64,7 @@ const DriverVehicleDetails = () => {
       setMessage({ type: 'error', text: 'Vehicle registration number must contain letters and numbers' });
       return false;
     }
-    if (!driverLicenseRegex.test(driverLicenseNo)) {
+    if (!driverLicenseRegex.test(driverLicenceNo)) {
       setMessage({ type: 'error', text: 'Driver License must be exactly 8 digits' });
       return false;
     }
@@ -75,8 +75,6 @@ const DriverVehicleDetails = () => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    // console.log(newDriver);
-
     try {
       if (editingDriver) {
         await updateDriver({ id: editingDriver._id, ...newDriver }).unwrap();
@@ -85,7 +83,7 @@ const DriverVehicleDetails = () => {
         await createDriver(newDriver).unwrap();
         setMessage({ type: 'success', text: 'Driver added successfully' });
       }
-      setNewDriver({ nic: '', name: '', birthday: '', telephoneNo: '', vehicleType: '', vehicleRegNo: '', driverLicenseNo: '' });
+      setNewDriver({ nic: '', name: '', birthday: '', telephoneNo: '', vehicleType: '', vehicleRegNo: '', driverLicenceNo: '' });
       setEditingDriver(null);
       refetch();
     } catch (error) {
@@ -102,7 +100,7 @@ const DriverVehicleDetails = () => {
       telephoneNo: driver.telephoneNo,
       vehicleType: driver.vehicleType,
       vehicleRegNo: driver.vehicleRegNo,
-      driverLicenseNo: driver.driverLicenceNo,
+      driverLicenceNo: driver.driverLicenceNo,
     });
   };
 
@@ -120,7 +118,7 @@ const DriverVehicleDetails = () => {
 
   const handleCancelEdit = () => {
     setEditingDriver(null);
-    setNewDriver({ nic: '', name: '', birthday: '', telephoneNo: '', vehicleType: '', vehicleRegNo: '', driverLicenseNo: '' });
+    setNewDriver({ nic: '', name: '', birthday: '', telephoneNo: '', vehicleType: '', vehicleRegNo: '', driverLicenceNo: '' });
   };
 
   const handleInputChange = (e, field, maxLength) => {
@@ -214,12 +212,12 @@ const DriverVehicleDetails = () => {
             </div>
             {/* Driver License Number */}
             <div>
-              <label htmlFor="driverLicenseNo" className="block text-sm font-medium text-gray-700">Driver License Number</label>
+              <label htmlFor="driverLicenceNo" className="block text-sm font-medium text-gray-700">Driver License Number</label>
               <input
                 type="text"
-                id="driverLicenseNo"
-                value={newDriver.driverLicenseNo}
-                onChange={(e) => handleInputChange(e, 'driverLicenseNo', 8)}
+                id="driverLicenceNo"
+                value={newDriver.driverLicenceNo}
+                onChange={(e) => handleInputChange(e, 'driverLicenceNo', 8)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 maxLength={8}
                 required

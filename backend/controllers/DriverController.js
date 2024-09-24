@@ -40,6 +40,7 @@ export const createDriver = async (req, res) => {
     const savedDriver = await newDriver.save();
     res.status(201).json(savedDriver);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ message: error.message });
   }
 };
