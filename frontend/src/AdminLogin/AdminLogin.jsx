@@ -1,42 +1,10 @@
 import React, { useState } from 'react';
 import 'tailwindcss/tailwind.css';
 import adminBanner from '../../../uploads/AdminLogin/adminBaner.jpg';
-// import { useLoginMutation } from '../redux/api/usersApiSlice';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { useNavigate } from 'react-router-dom';
-// import { setCredentials } from '../redux/features/auth/authSlice';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
-  // const dispatch = useDispatch();
-  // const navigate = useNavigate();
-
-  // const [login, { isLoading }] = useLoginMutation();
-
-  // const { userInfo } = useSelector((state) => state.auth);
-
-  // useEffect(() => {
-  //   if (userInfo) {
-  //     navigate('/home');
-  //   }
-  // }, [userInfo, navigate]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // const userData = await login({ email, password }).unwrap();
-
-      // Save user data to Redux store
-      // dispatch(setCredentials({ ...userData }));
-
-      // Redirect to the home page or dashboard after successful login
-      // navigate('/home');
-    } catch (err) {
-      console.log(err?.data?.message || 'Login failed. Please try again.');
-    }
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-slide">
@@ -50,7 +18,7 @@ export default function AdminLogin() {
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">Admin Login Portal</h1>
           </div>
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6">
             <div className="rounded-md shadow-sm space-y-4 mt-16">
               <div>
                 <label htmlFor="email" className="sr-only">Email</label>
