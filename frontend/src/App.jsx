@@ -74,6 +74,7 @@ import SupplierUpdate from "./SupplierManagement/supplierUpdate";
 import EditReviewPage from "./ReviewsInquiry/EditReviewPage";
 import UserReviews from "./ReviewsInquiry/UserReviews";
 import DashboardList from "./ReviewsInquiry/DashboardList";
+import DashboardSinglePro from "./ReviewsInquiry/DashboardSinglePro";
 
 //Employee Management
 import Employee from './EmployeeManagement/Employee';
@@ -85,6 +86,9 @@ import EmployeeDashboard from "./EmployeeManagement/EmployeeDashboard";
 import SettingsPage from "./InventoryManagement/Settings";
 
 function App() {
+
+  const currentUser = {}; // Your logic to get the current user
+
   return (
     <BrowserRouter>
       <Routes>
@@ -188,10 +192,11 @@ function App() {
           <Route path="employeeProfile" element={<EmployeeProfile />} />
         </Route>
 
-        <Route path="product/:productId/edit-review/:reviewId" element={<EditReviewPage />} />
-        <Route path="user-reviews" element={<UserReviews />} />
+{/* Edit Review Route */}
+        <Route path="/product/:productId/:reviewId" element={<EditReviewPage />} />
+        <Route path="/user-reviews" element={<UserReviews />} />
         <Route path="dashboardlist" element={<DashboardList/>} />
-
+        <Route path="dashboard/product/:_id" element={<DashboardSinglePro/>} />
       </Routes>
     </BrowserRouter>
   );

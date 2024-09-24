@@ -2,7 +2,7 @@ import express from "express";
 import formidable from "express-formidable";
 const productRoutes = express.Router();
 
-import { addProduct, fetchProducts, fetchProductById, updateProduct, updateProductStock, deleteProduct, addProductReview, addProductInquiry, updateReview ,getReviewsByUserId, replyToInquiry} from "../controllers/ProductController.js";
+import { addProduct, fetchProducts, fetchProductById, updateProduct, deleteProduct, addProductReview, addProductInquiry, updateReview ,deleteReview, getReviewsByReviewId, replyToInquiry, deleteInquiry, getInquiriesByInquiryId} from "../controllers/ProductController.js";
 import { authenticate, authorizeAdmin } from "../middlewares/authMidleware.js";
 
 // addProduct
@@ -26,14 +26,23 @@ productRoutes.delete("/:id" , deleteProduct);
 // addProductReview
 productRoutes.route("/:id").post(authenticate, addProductReview);
 
-// Add a product inquiry
+// AddProductInquiry
 productRoutes.post("/:id/inquiries", authenticate, addProductInquiry);
 
-// Update product review
-productRoutes.put("/:id/:reviewId", authenticate, updateReview);
+// UpdateProductReview
+productRoutes.put("/:productId/:reviewId", authenticate, updateReview);
+
+// DeleteProductReview
+productRoutes.delete("/:productId/:reviewId", authenticate, deleteReview);
+
+// Delete product inquiry
+productRoutes.delete("/:productId/:inquiryId", authenticate, deleteInquiry);
 
 // Fetch Reviews by User ID
-productRoutes.get("/reviews/user/:userId", authenticate, getReviewsByUserId);
+productRoutes.get("/:productId/:reviewId", authenticate, getReviewsByReviewId);
+
+// Fetch inquiries by  ID
+productRoutes.get("/:productId/:inquiryId", authenticate, getInquiriesByInquiryId);
 
 // Reply to product inquiry
 productRoutes.post('/:id/inquiries/:inquiryId/reply', authenticate, replyToInquiry);

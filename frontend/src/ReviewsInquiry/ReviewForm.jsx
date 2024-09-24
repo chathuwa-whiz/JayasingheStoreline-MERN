@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import toast from "react-hot-toast";
-import { useCreateReviewMutation } from "../redux/api/productApiSlice";
+import { useCreateReviewMutation, useUpdateReviewMutation } from "../redux/api/productApiSlice";
 
-export default function ReviewForm({ productId, refetch }) {
-    const [rating, setRating] = useState(0);
-    const [comment, setComment] = useState('');
+export default function ReviewForm({ productId, refetch, existingReview }) {
+    const [rating, setRating] = useState(existingReview ? existingReview.rating : 0);
+    const [comment, setComment] = useState(existingReview ? existingReview.comment : '');
     const [createReview] = useCreateReviewMutation();
+    const [updateReview] = useUpdateReviewMutation();
+
+    useEffect(() => {
+        if (existingReview) {
+            setRating(existingReview.rating);
+            setComment(existingReview.comment);
+        }
+    }, [existingReview]);
 
     const submitReviewHandler = async (e) => {
         e.preventDefault();
@@ -19,9 +27,14 @@ export default function ReviewForm({ productId, refetch }) {
         }
 
         try {
-            await createReview({ productId, rating, comment }).unwrap();
+            if (existingReview) {
+                await updateReview({ productId, reviewId: existingReview.id, rating, comment }).unwrap();
+                toast.success("Review updated successfully!");
+            } else {
+                await createReview({ productId, rating, comment }).unwrap();
+                toast.success("Review submitted successfully!");
+            }
             refetch();
-            toast.success("Review submitted successfully!");
         } catch (error) {
             toast.error(error?.data || error.message);
         }
@@ -29,12 +42,10 @@ export default function ReviewForm({ productId, refetch }) {
 
     return (
         <div className="mt-10">
-            <h2 className="text-2xl font-bold text-gray-800">Leave a Review</h2>
+            <h2 className="text-2xl font-bold text-gray-800">{existingReview ? 'Edit Review' : 'Leave a Review'}</h2>
             <form onSubmit={submitReviewHandler} className="mt-4">
                 <div className="mb-4">
-                    <label htmlFor="rating" className="block text-lg font-medium text-gray-700">
-                        Rating
-                    </label>
+                    <label htmlFor="rating" className="block text-lg font-medium text-gray-700">Rating</label>
                     <select
                         id="rating"
                         value={rating}
@@ -50,9 +61,7 @@ export default function ReviewForm({ productId, refetch }) {
                     </select>
                 </div>
                 <div className="mb-4">
-                    <label htmlFor="comment" className="block text-lg font-medium text-gray-700">
-                        Comment
-                    </label>
+                    <label htmlFor="comment" className="block text-lg font-medium text-gray-700">Comment</label>
                     <textarea
                         id="comment"
                         value={comment}
@@ -66,7 +75,7 @@ export default function ReviewForm({ productId, refetch }) {
                     type="submit"
                     className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                 >
-                    Submit Review
+                    {existingReview ? 'Update Review' : 'Submit Review'}
                 </button>
             </form>
         </div>

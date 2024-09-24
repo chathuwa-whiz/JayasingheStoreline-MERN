@@ -5,11 +5,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from "../redux/features/cart/cartSlice";
 import toast from "react-hot-toast";
 import ReviewForm from '../ReviewsInquiry/ReviewForm';
+import { useDeleteReviewMutation } from "../redux/api/productApiSlice";
 
 export default function SingleProductView() {
     const { _id: productId } = useParams();
     const { data: productData, isLoading, isError, refetch } = useGetProductByIdQuery(productId);
-    const user = useSelector((state) => state.auth.user);
+    const user = useSelector((state) => state.auth.userInfo);
+
+    console.log("User : ", user);
+    console.log("Product Data : ", productData);
+
     const [image, setImage] = useState(productData?.image);
     const [name, setName] = useState(productData?.name || '');
     const [description, setDescription] = useState(productData?.description || '');
@@ -19,6 +24,8 @@ export default function SingleProductView() {
     const [quantity, setQuantity] = useState(productData?.quantity || 0);
     const [qty, setQty] = useState(1);
     const [messagee, setMessagee] = useState('');
+    // Initialize the mutation hook
+    const [deleteReview] = useDeleteReviewMutation();
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -64,7 +71,21 @@ export default function SingleProductView() {
 
     const handleEditReview = (reviewId) => {
         // Navigate to review edit page
-        navigate(`/product/${productId}/edit-review/${reviewId}`);
+        console.log("Review ID : ", reviewId, "Product ID : ", productId);
+        navigate(`/product/${productId}/${reviewId}`);
+    };
+
+    // Handle delete review
+    const handleDeleteReview = async (reviewId) => {
+        if (window.confirm("Are you sure you want to delete this review?")) {
+            try {
+                await deleteReview({ productId, reviewId }).unwrap();
+                refetch(); // Refresh the product data after deletion
+                toast.success("Review deleted successfully!");
+            } catch (error) {
+                toast.error(error?.data || error.message);
+            }
+        }
     };
 
     // Average Rating Calculation
@@ -154,35 +175,47 @@ export default function SingleProductView() {
                 </div>
             </div>
 
-            {/* Reviews Section */}
-            <div className="mt-10">
-                <h2 className="text-2xl font-bold text-gray-800">Product Reviews</h2>
-                {productData?.reviews && productData.reviews.length > 0 ? (
-                    productData.reviews.map((review) => (
-                        <div key={review._id} className="mt-4 p-4 border rounded-lg shadow-sm bg-gray-50">
-                            <div className="flex items-center">
-                                <p className="text-lg font-semibold">{review.name}</p>
-                                <p className="ml-4 text-sm text-gray-500">{new Date(review.createdAt).toLocaleDateString()}</p>
-                            </div>
-                            <div className="mt-2 flex items-center">
-                                <div className="text-yellow-400">
-                                    {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
-                                </div>
-                                <p className="ml-2 text-gray-700">{review.comment}</p>
-                            </div>
-                            <button
-                                onClick={() => handleEditReview(review._id)}
-                                className={`mt-2 ${user && user._id === review._id ? 'bg-blue-900 hover:bg-blue-800' : 'bg-gray-400 cursor-not-allowed'} text-white font-bold py-2 px-4 rounded-lg`}
-                                disabled={user && user._id !== review._id}
-                            >
-                                Edit
-                            </button>
-                        </div>
-                    ))
-                ) : (
-                    <p className="mt-4 text-gray-500">No reviews yet.</p>
+                    {/* Reviews Section */}
+                <div className="mt-10">
+                    <h2 className="text-2xl font-bold text-gray-800">Product Reviews</h2>
+                        {productData?.reviews && productData.reviews.length > 0 ? (
+                        productData.reviews.map((review) => (
+                <div key={review._id} className="mt-4 p-4 border rounded-lg shadow-sm bg-gray-50">
+                <div className="flex items-center">
+                    <p className="text-lg font-semibold">{review.name}</p>
+                    <p className="ml-4 text-sm text-gray-500">{new Date(review.createdAt).toLocaleDateString()}</p>
+                </div>
+                <div className="mt-2 flex items-center">
+                    <div className="text-yellow-400">
+                        {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                    </div>
+                        <p className="ml-2 text-gray-700">{review.comment}</p>
+                </div>
+                    {/* Only show edit and delete buttons if the current user matches the review author */}
+                    {user && user.username === review.name && (
+                <div className="mt-2 flex space-x-2">
+                    <button
+                        onClick={() => handleEditReview(review._id)}
+                        className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg"
+                    >
+                        Edit
+                    </button>
+                    <button
+                        onClick={() => handleDeleteReview(review._id)}
+                        className="bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg"
+                    >
+                        Delete
+                    </button>
+                </div>
                 )}
             </div>
+            ))
+        ) : (
+                <p className="mt-4 text-gray-500">No reviews yet.</p>
+        )}
+        </div>
+
+
 
             {/* Review Form */}
             <div className="mt-10">
