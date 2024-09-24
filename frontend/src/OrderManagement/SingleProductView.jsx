@@ -121,13 +121,13 @@ export default function SingleProductView() {
                         </p>
                     </div>
 
-                    {/* Average Rating Display */}
-                    <div className="mt-4">
-                        <h2 className="text-xl font-semibold text-gray-700">Average Rating</h2>
-                        <div className="flex items-center mt-2 text-3xl"> {/* Adjusted text-3xl for larger stars */}
-                            {renderStars(averageRating)}
-                            <span className="ml-2 text-gray-600 text-2xl">({averageRating} out of 5)</span>
-                        </div>
+                    <div className="mt-6">
+                        <h2 className="text-xl font-semibold text-gray-700">Product Specifications</h2>
+                        <ul className="mt-2 text-gray-600 list-disc list-inside">
+                            <li>Processor: Intel Core i7 11th Gen</li>
+                            <li>RAM: 16GB DDR4</li>
+                            <li>Storage: 512GB SSD</li>
+                        </ul>
                     </div>
 
 
