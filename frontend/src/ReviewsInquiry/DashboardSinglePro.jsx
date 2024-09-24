@@ -187,7 +187,7 @@ export default function DashboardSinglePro() {
                     </div>
                 </div>
 
-                {/* Reviews Section */}
+                {/* Reviews display */}
                 <div className="mt-10">
                     <h2 className="text-2xl font-bold text-gray-800">Product Reviews</h2>
                     {productData?.reviews && productData.reviews.length > 0 ? (
@@ -236,24 +236,32 @@ export default function DashboardSinglePro() {
                         </button>
                     </form>
 
-                    {productData?.inquiries && productData.inquiries.length > 0 ? (
-                        productData.inquiries.map((inquiry) => (
-                            <div key={inquiry._id} className="mt-4 p-4 border rounded-lg shadow-sm bg-gray-50">
-                                <div className="flex items-center">
-                                    <p className="text-lg font-semibold">{inquiry.name}</p>
-                                    <p className="ml-4 text-sm text-gray-500">{new Date(inquiry.createdAt).toLocaleDateString()}</p>
-                                </div>
-                                <p className="mt-2 text-gray-700">{inquiry.message}</p>
-                                <button
+
+                      {/* Display Inquiries */}
+                      <div className="mt-10">
+                <h2 className="text-2xl font-bold text-gray-800">Customer Inquiries</h2>
+                {productData?.inquiries && productData.inquiries.length > 0 ? (
+                    productData.inquiries.map((inquiry) => (
+                        <div key={inquiry._id} className="mt-4 p-4 border rounded-lg shadow-sm bg-gray-50">
+                            <div className="flex items-center">
+                                <p className="text-lg font-semibold">{inquiry.name}</p>
+                                <p className="ml-4 text-sm text-gray-500">{new Date(inquiry.createdAt).toLocaleDateString()}</p>
+                            </div>
+                            <div className="mt-2 text-gray-700">
+                                <p>{inquiry.messagee}</p>
+                            </div>
+
+                            <button
                                     onClick={() => handleDeleteInquiry(inquiry._id)}
                                     className="bg-red-600 hover:bg-red-500 text-white font-bold py-1 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition mt-2">
                                     Delete Inquiry
                                 </button>
-                            </div>
-                        ))
-                    ) : (
-                        <p className="mt-4 text-gray-600">No inquiries yet.</p>
-                    )}
+                        </div>
+                    ))
+                ) : (
+                    <p className="mt-4 text-gray-500">No inquiries yet.</p>
+                )}
+            </div>
                 </div>
             </div>
         </div>

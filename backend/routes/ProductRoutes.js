@@ -32,14 +32,14 @@ productRoutes.put("/:productId/:reviewId", authenticate, updateReview);
 // DeleteProductReview
 productRoutes.delete("/:productId/:reviewId", authenticate, deleteReview);
 
-// Delete product inquiry
-productRoutes.delete("/:productId/:inquiryId", authenticate, deleteInquiry);
+// DeleteProductInquiry
+productRoutes.delete("/:productId/inquiries/:inquiryId", authenticate, deleteInquiry);
 
 // Fetch Reviews by User ID
 productRoutes.get("/:productId/:reviewId", authenticate, getReviewsByReviewId);
 
 // Fetch inquiries by  ID
-productRoutes.get("/:productId/:inquiryId", authenticate, getInquiriesByInquiryId);
+productRoutes.get("/:productId/inquiries/:inquiryId", authenticate, getInquiriesByInquiryId);
 
 // Reply to product inquiry
 productRoutes.post('/:id/inquiries/:inquiryId/reply', authenticate, replyToInquiry);

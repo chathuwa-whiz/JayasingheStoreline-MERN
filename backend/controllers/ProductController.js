@@ -173,36 +173,30 @@ export const addProductInquiry = async (req, res) => {
 
 // Delete a product inquiry
 export const deleteInquiry = async (req, res) => {
+    const { productId, inquiryId } = req.params; // Make sure these are correctly named in your route
+
     try {
-        // Find the product that contains the review
-        const product = await Product.findById(req.params.productId);
+        // Find the product and remove the inquiry by its ID
+        const product = await Product.findByIdAndUpdate(
+            productId,
+            { $pull: { inquiries: { _id: inquiryId } } }, // Use $pull to remove the inquiry
+            { new: true } // This option returns the updated document
+        );
+
         if (!product) {
-            return res.status(404).json({ error: "inquiry not found" });
+            return res.status(404).json({ message: "Product not found." });
         }
 
-        // Find the review inside the product's reviews array
-        const inquiryIndex = product.inquiries.findIndex((r) => r._id.toString() === req.params.inquiryId);
-        if (inquiryIndex === -1) {
-            return res.status(404).json({ error: "inquiry not found" });
-        }
+        // If inquiries were removed, update the numInquiries count
+        product.numInquiries = product.inquiries.length; // Update count based on the remaining inquiries
+        await product.save(); // Save the updated product
 
-        // Remove the review from the reviews array
-        product.inquiries.splice(inquiryIndex, 1);
-
-        // Optionally, recalculate the overall product rating and number of reviews
-        product.inquiry = product.inquiries.length 
-            ? product.inquiries.reduce((acc, item) => item.inquiry + acc, 0) / product.inquiries.length 
-            : 0;
-
-        // Save the product with the review removed
-        await product.save();
-
-        res.json({ msg: "inquiry deleted successfully", product });
+        res.status(200).json({ message: "Inquiry deleted successfully.", product });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "inquiry deletion failed", error: error.message });
+        res.status(500).json({ message: "Error deleting inquiry.", error: error.message });
     }
 };
+
 
 // Fetch inquiries by inquiry ID
 export const getInquiriesByInquiryId = async (req, res) => {

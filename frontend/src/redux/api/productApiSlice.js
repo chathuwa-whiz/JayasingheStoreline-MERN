@@ -111,7 +111,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
  // Delete an inquiry
 deleteInquiry: builder.mutation({
     query: ({ productId, inquiryId }) => ({
-        url: `${PRODUCT_URL}/${productId}/${inquiryId}`, // Use inquiryId here
+        url: `${PRODUCT_URL}/${productId}/inquiries/${inquiryId}`, // Use inquiryId here
         method: 'DELETE',
     }),
     invalidatesTags: (result, error, { productId, inquiryId }) => [
@@ -156,7 +156,7 @@ deleteInquiry: builder.mutation({
 
 
         getInquiriesByInquiryId: builder.query({
-            query: ({ productId, inquiryId }) => `${PRODUCT_URL}/${productId}/${inquiryId}`,
+            query: ({ productId, inquiryId }) => `${PRODUCT_URL}/${productId}/inquiries/${inquiryId}`,
             transformResponse: (response) => response, // Optionally transform the response if needed
         }),
         
