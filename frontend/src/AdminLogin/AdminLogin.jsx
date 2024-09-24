@@ -1,37 +1,18 @@
 import React, { useState } from 'react';
 import adminBanner from '../../../uploads/AdminLogin/adminBaner.jpg';
-// import { useLoginMutation } from '../redux/api/usersApiSlice';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { useNavigate } from 'react-router-dom';
-// import { setCredentials } from '../redux/features/auth/authSlice';
+import {useNavigate} from 'react-router-dom';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  // const dispatch = useDispatch();
-  // const navigate = useNavigate();
-
-  // const [login, { isLoading }] = useLoginMutation();
-
-  // const { userInfo } = useSelector((state) => state.auth);
-
-  // useEffect(() => {
-  //   if (userInfo) {
-  //     navigate('/home');
-  //   }
-  // }, [userInfo, navigate]);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // const userData = await login({ email, password }).unwrap();
-
-      // Save user data to Redux store
-      // dispatch(setCredentials({ ...userData }));
-
-      // Redirect to the home page or dashboard after successful login
-      // navigate('/home');
+      if(email === 'chathushka@gmail.com' && password === '2024'){
+        navigate('/inventory');
+      }
     } catch (err) {
       console.log(err?.data?.message || 'Login failed. Please try again.');
     }
