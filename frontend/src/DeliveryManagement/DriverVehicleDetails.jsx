@@ -73,10 +73,11 @@ const DriverVehicleDetails = () => {
 
   const handleCreateOrUpdate = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    // if (!validateForm()) return;
 
     try {
       if (editingDriver) {
+        console.log(editingDriver?._id);
         await updateDriver({ id: editingDriver._id, ...newDriver }).unwrap();
         setMessage({ type: 'success', text: 'Driver updated successfully' });
       } else {

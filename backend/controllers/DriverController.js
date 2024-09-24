@@ -49,6 +49,7 @@ export const createDriver = async (req, res) => {
 // Update a driver by ID
 export const updateDriver = async (req, res) => {
   try {
+    // res.json(req.body);
     const updatedDriver = await Driver.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
     //Check if the driver was found
