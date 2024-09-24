@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import 'tailwindcss/tailwind.css';
 import adminBanner from '../../../uploads/AdminLogin/adminBaner.jpg';
 import { useNavigate } from 'react-router-dom';
 
