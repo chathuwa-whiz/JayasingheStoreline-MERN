@@ -76,12 +76,10 @@ export default function DeliveryDetail({ onEditDelivery }) {
       <table className="w-full bg-white shadow-lg rounded-lg border border-gray-300">
         <thead className="bg-gray-200 text-gray-700">
           <tr>
-            <th className="border p-3 text-left">ID</th>
             <th className="border p-3 text-left">Delivery Item</th>
             <th className="border p-3 text-left">Items Price</th>
             <th className="border p-3 text-left">Delivery Price</th>
             <th className="border p-3 text-left">Total Price</th>
-            <th className="border p-3 text-left">Driver</th>
             <th className="border p-3 text-left">Status</th>
             <th className="border p-3 text-left">Actions</th>
           </tr>
@@ -89,22 +87,16 @@ export default function DeliveryDetail({ onEditDelivery }) {
         <tbody>
           {deliveries.map((delivery) => (
             <tr key={delivery._id} className={`border-b ${getRowClass(delivery.status)} hover:bg-orange-100 transition-colors duration-300`}>
-              <td className="border p-3">{delivery._id}</td>
               <td className="border p-3">
-                {
-                  <td className="py-2 px-4">
-                    {JSON.parse(delivery.deliveryItem).map((item) => (
-                      <div key={item._id}>
-                        <p>{item.name} x {item.qty}</p>
-                      </div>
-                    ))}
-                  </td>
-                }
+                {JSON.parse(delivery.deliveryItem).map((item) => (
+                  <div key={item._id}>
+                    <p>{item.name} x {item.qty}</p>
+                  </div>
+                ))}
               </td>
               <td className="border p-3">{delivery.itemsPrice} LKR</td>
               <td className="border p-3">{delivery.deliveryPrice} LKR</td>
               <td className="border p-3">{delivery.totalPrice} LKR</td>
-              <td className="border p-3">{delivery.driver}</td>
               <td className="border p-3">{delivery.status || 'Pending'}</td>
               <td className="border p-3 flex space-x-2">
                 <button
