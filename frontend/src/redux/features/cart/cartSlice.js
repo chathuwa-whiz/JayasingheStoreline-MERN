@@ -20,62 +20,99 @@ const cartSlice = createSlice({
   reducers: {
     addToCart: (state, action) => {
       const { user, rating, numReviews, reviews, ...item } = action.payload;
-    
+  
       // Calculate the new product price with discount
       const newProductPrice = parseFloat((item.sellingPrice - (item.sellingPrice * item.discount) / 100).toFixed(2));
-    
+  
       const existItem = state.cartItems.find((x) => x._id === item._id);
-    
+  
       if (existItem) {
-        state.cartItems = state.cartItems.map((x) =>
-          x._id === existItem._id ? { ...item, newProductPrice } : x
-        );
+          state.cartItems = state.cartItems.map((x) =>
+              x._id === existItem._id 
+                  ? { ...x, qty: x.qty + 1, newProductPrice }  // Increment qty if item exists
+                  : x
+          );
       } else {
-        state.cartItems = [...state.cartItems, { ...item, newProductPrice }];
+          state.cartItems = [...state.cartItems, { ...item, newProductPrice, qty: 1 }];  // Initialize qty to 1 if item doesn't exist
       }
-
+  
       // Calculate itemsPriceSum, totalDiscount, and totalPriceSum
       const { itemsPriceSum, totalDiscount } = state.cartItems.reduce((acc, item) => {
-        const itemTotal = item.newProductPrice * item.qty;
-        const itemDiscount = (item.sellingPrice * item.discount) / 100 * item.qty;
-        
-        return {
-          itemsPriceSum: acc.itemsPriceSum + itemTotal,
-          totalDiscount: acc.totalDiscount + itemDiscount,
-        };
+          const itemTotal = item.newProductPrice * item.qty;
+          const itemDiscount = (item.sellingPrice * item.discount) / 100 * item.qty;
+          
+          return {
+              itemsPriceSum: acc.itemsPriceSum + itemTotal,
+              totalDiscount: acc.totalDiscount + itemDiscount,
+          };
       }, {
-        itemsPriceSum: 0,
-        totalDiscount: 0,
+          itemsPriceSum: 0,
+          totalDiscount: 0,
       });
-    
+  
       // Set shipping price (if applicable, otherwise set to a default value or 0)
-      const shippingPrice = 0; // Change this as needed, e.g., state.shippingPrice or a default value
-
+      const shippingPrice = 0;  // Change this as needed, e.g., state.shippingPrice or a default value
+  
       // Set deliveryPrice (e.g., a fixed amount or based on conditions)
-      const deliveryPrice = 500; // Update this value as needed (e.g., state.deliveryPrice or a default value)
-    
+      const deliveryPrice = 500;  // Update this value as needed (e.g., state.deliveryPrice or a default value)
+  
       // Calculate totalPriceSum
       const totalPriceSum = parseFloat((itemsPriceSum - totalDiscount + deliveryPrice).toFixed(2));
-    
+  
       // Update state with new values
       state.itemsPriceSum = parseFloat(itemsPriceSum.toFixed(2));
       state.totalDiscount = parseFloat(totalDiscount.toFixed(2));
       state.shippingPrice = parseFloat(shippingPrice.toFixed(2));
       state.totalPriceSum = totalPriceSum;
       state.deliveryPrice = deliveryPrice;
-
+  
       // Persist the updated state to localStorage
       localStorage.setItem("cart", JSON.stringify(state));
       return updateCart(state, state.cartItems);
-    },    
+  },
+    
 
-    removeFromCart: (state, action) => {
-      state.cartItems = state.cartItems.filter((x) => x._id !== action.payload);
+  removeFromCart: (state, action) => {
+    const itemId = action.payload;
 
-      // Persist the updated state to localStorage
-      localStorage.setItem("cart", JSON.stringify(state));
-      return updateCart(state);
-    },
+    const existItem = state.cartItems.find((x) => x._id === itemId);
+
+    if (existItem.qty > 1) {
+        state.cartItems = state.cartItems.map((x) =>
+            x._id === existItem._id ? { ...x, qty: x.qty - 1 } : x
+        );
+    } else {
+        state.cartItems = state.cartItems.filter((x) => x._id !== itemId);
+    }
+
+    // Recalculate totals
+    const { itemsPriceSum, totalDiscount } = state.cartItems.reduce((acc, item) => {
+        const itemTotal = item.newProductPrice * item.qty;
+        const itemDiscount = (item.sellingPrice * item.discount) / 100 * item.qty;
+
+        return {
+            itemsPriceSum: acc.itemsPriceSum + itemTotal,
+            totalDiscount: acc.totalDiscount + itemDiscount,
+        };
+    }, {
+        itemsPriceSum: 0,
+        totalDiscount: 0,
+    });
+
+    const shippingPrice = 0;
+    const deliveryPrice = 500;
+
+    const totalPriceSum = parseFloat((itemsPriceSum - totalDiscount + deliveryPrice).toFixed(2));
+
+    state.itemsPriceSum = parseFloat(itemsPriceSum.toFixed(2));
+    state.totalDiscount = parseFloat(totalDiscount.toFixed(2));
+    state.shippingPrice = parseFloat(shippingPrice.toFixed(2));
+    state.totalPriceSum = totalPriceSum;
+    state.deliveryPrice = deliveryPrice;
+
+    localStorage.setItem("cart", JSON.stringify(state));
+    return updateCart(state, state.cartItems);
+  },
 
     saveShippingAddress: (state, action) => {
       state.shippingAddress = action.payload;

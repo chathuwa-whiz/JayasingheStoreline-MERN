@@ -12,7 +12,7 @@ export default function Layout() {
 
   if(location.pathname === "/" || location.pathname === "/productlist" || location.pathname === "/cart" || location.pathname === "/shipping" || location.pathname === "/placeorder") {
     header = <DefaultHeader />
-  } else if(location.pathname === "/home") {
+  } else if(location.pathname === "/home" || location.pathname === "/checkout") {
     header = <HomeHeader />
   }else if(location.pathname === "/adminlogin") {
     header = <Adminheader />

@@ -46,7 +46,7 @@ const Sidebar = () => {
                       to="products"
                       className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
                     >
-                      Product List
+                      Products List
                     </NavLink>
                   </li>
 
@@ -105,7 +105,7 @@ const Sidebar = () => {
 
             <li className="mb-4">
               <NavLink
-                to="/settings"
+                to="settings"
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
               >
                 <CogIcon className="h-5 w-5 mr-3" />
@@ -115,7 +115,7 @@ const Sidebar = () => {
 
             <li className="mb-4">
               <NavLink
-                to="/logout"
+                to="logout"
                 className="flex items-center hover:text-white hover:bg-red-500 rounded-lg px-4 py-2"
               >
                 <ArrowRightStartOnRectangleIcon className="h-5 w-5 mr-3" />

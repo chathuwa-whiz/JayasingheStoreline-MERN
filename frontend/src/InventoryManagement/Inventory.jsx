@@ -12,10 +12,6 @@ export default function Inventory() {
 
   if(location.pathname === "/inventory") {
     header = <DashboardHeader />
-  } else if(location.pathname === "/inventory/products" || location.pathname === "/inventory/addproducts") {
-    header = <ProductsHeader />
-  } else if(location.pathname === "/inventory/stock") {
-    header = <StockHeader />
   } else if(location.pathname === "/inventory/categories") {
     header = <CategoriesHeader />
   } else{

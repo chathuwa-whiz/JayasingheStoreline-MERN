@@ -117,7 +117,7 @@ export default function RegisterPage() {
                     name="firstname"
                     type="text"
                     required
-                    onKeyPress={(e) => {
+                    onKeyDown={(e) => {
                       if (!/^[a-zA-Z]+$/.test(e.key)) {
                         e.preventDefault();
                       }
@@ -140,7 +140,7 @@ export default function RegisterPage() {
                     name="lastname"
                     type="text"
                     required
-                    onKeyPress={(e) => {
+                    onKeyDown={(e) => {
                       if (!/^[a-zA-Z]+$/.test(e.key)) {
                         e.preventDefault();
                       }
@@ -163,7 +163,7 @@ export default function RegisterPage() {
                   id="username"
                   name="username"
                   type="text"
-                  onKeyPress={(e) => {
+                  onKeyDown={(e) => {
                     if (!/^[a-zA-Z]+$/.test(e.key)) {
                       e.preventDefault();
                     }

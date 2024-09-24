@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaPen } from "react-icons/fa";
 import { useAllProductsQuery } from '../redux/api/productApiSlice';
+import { ProductsHeader } from '../Shared/Header';
 
 export default function Products() {
   // Fetch all products
@@ -9,6 +10,12 @@ export default function Products() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 10;
+
+  // Format Prices
+  const priceFormatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'LKR',
+  });
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Something went wrong</div>;
@@ -27,6 +34,7 @@ export default function Products() {
 
   return (
     <div className="rounded-lg p-8">
+      <ProductsHeader products = {products} />
       <table className="min-w-full overflow-y-auto min-h-full border rounded-lg bg-white">
         <thead className="bg-orange-500 text-white">
           <tr>
@@ -49,7 +57,7 @@ export default function Products() {
               <td className="py-2 px-4">{product.sku}</td>
               <td className="py-2 px-4">{product.name}</td>
               <td className="py-2 px-4">{product.category}</td>
-              <td className="py-2 px-4">{`Rs.${product.sellingPrice.toFixed(2)}`}</td>
+              <td className="py-2 px-4">{priceFormatter.format(product.sellingPrice)}</td>
               <td className="py-2 px-4">
                 <Link to={`/inventory/products/update/${product._id}`}>
                   <button className="text-green-500 hover:text-green-700 mx-2">
