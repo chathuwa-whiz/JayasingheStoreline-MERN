@@ -1,21 +1,22 @@
-// driverApiSlice.js
-
 import { apiSlice } from './apiSlice';
 import { DRIVER_URL } from '../constants';
 
 export const driverApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+
     getDrivers: builder.query({
-      query: () => `${DRIVER_URL}/drivers`,
+      query: () => `${DRIVER_URL}`,
       providesTags: ['Driver'],
     }),
+
     getDriverById: builder.query({
-      query: (driverId) => `${DRIVER_URL}/drivers/${driverId}`,
+      query: (driverId) => `${DRIVER_URL}/${driverId}`,
       providesTags: (result, error, driverId) => [{ type: 'Driver', id: driverId }],
     }),
+
     createDriver: builder.mutation({
       query: (driverData) => ({
-        url: `${DRIVER_URL}/drivers`,
+        url: `${DRIVER_URL}`,
         method: 'POST',
         body: driverData,
       }),
@@ -29,21 +30,24 @@ export const driverApiSlice = apiSlice.injectEndpoints({
         }
       },
     }),
+
     updateDriver: builder.mutation({
       query: ({ driverId, driverData }) => ({
-        url: `${DRIVER_URL}/drivers/${driverId}`,
+        url: `${DRIVER_URL}/${driverId}`,
         method: 'PUT',
         body: driverData,
       }),
       invalidatesTags: (result, error, { driverId }) => [{ type: 'Driver', id: driverId }],
     }),
+
     deleteDriver: builder.mutation({
       query: (driverId) => ({
-        url: `${DRIVER_URL}/drivers/${driverId}`,
+        url: `${DRIVER_URL}/${driverId}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Driver'],
     }),
+
   }),
 });
 

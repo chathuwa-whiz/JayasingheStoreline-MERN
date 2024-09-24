@@ -24,19 +24,17 @@ export const getDriverById = async (req, res) => {
 
 // Create a new driver
 export const createDriver = async (req, res) => {
-  const { firstName, lastName, telephoneNo, vehicleRegNo, vehicleType } = req.body;
-
-  if (!firstName || !lastName || !telephoneNo || !vehicleRegNo || !vehicleType) {
-    return res.status(400).json({ message: 'All fields are required' });
-  }
+  const { name, nic, birthday, telephoneNo, vehicleRegNo, vehicleType, driverLicenceNo } = req.body;
 
   try {
     const newDriver = new Driver({
-      firstName,
-      lastName,
+      name,
+      nic,
+      birthday,
       telephoneNo,
       vehicleRegNo,
       vehicleType,
+      driverLicenceNo
     });
 
     const savedDriver = await newDriver.save();
