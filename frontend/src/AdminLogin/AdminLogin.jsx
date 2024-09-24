@@ -1,9 +1,22 @@
 import React, { useState } from 'react';
 import adminBanner from '../../../uploads/AdminLogin/adminBaner.jpg';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 export default function AdminLogin() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if(email === 'chathushka@gmail.com' && password === '2024'){
+        navigate('/inventory');
+      }
+    } catch (err) {
+      console.log(err?.data?.message || 'Login failed. Please try again.');
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-slide">

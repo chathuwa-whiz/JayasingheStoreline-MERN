@@ -155,7 +155,6 @@ function App() {
         <Route path="cart" element={<Cart />} />
         <Route path="shipping" element={<Shipping />} />
         <Route path="placeorder" element={<PlaceOrder />} />
-      
 
         {/* Payment Manager Routes */}
         <Route path="checkout" element={<Checkout />} />
@@ -192,7 +191,7 @@ function App() {
           <Route path="employeeProfile" element={<EmployeeProfile />} />
         </Route>
 
-{/* Edit Review Route */}
+        {/* Edit Review Route */}
         <Route path="/product/:productId/:reviewId" element={<EditReviewPage />} />
         <Route path="/user-reviews" element={<UserReviews />} />
         <Route path="dashboardlist" element={<DashboardList/>} />
