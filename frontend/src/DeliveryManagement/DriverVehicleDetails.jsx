@@ -73,7 +73,7 @@ const DriverVehicleDetails = () => {
 
   const handleCreateOrUpdate = async (e) => {
     e.preventDefault();
-    // if (!validateForm()) return;
+    if (!validateForm()) return;
 
     try {
       if (editingDriver) {
