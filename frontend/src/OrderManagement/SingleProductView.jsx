@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
-import { useGetProductByIdQuery, useCreateReviewMutation, useCreateInquiryMutation } from "../redux/api/productApiSlice";
+import { useGetProductByIdQuery, useCreateReviewMutation, useCreateInquiryMutation, useDeleteReviewMutation } from "../redux/api/productApiSlice";
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from "../redux/features/cart/cartSlice";
 import toast from "react-hot-toast";
 import ReviewForm from '../ReviewsInquiry/ReviewForm';
-import { useDeleteReviewMutation } from "../redux/api/productApiSlice";
 
 export default function SingleProductView() {
     const { _id: productId } = useParams();
@@ -249,25 +248,41 @@ export default function SingleProductView() {
                 </form>
             </div>
 
-            {/* Display Inquiries */}
-            <div className="mt-10">
-                <h2 className="text-2xl font-bold text-gray-800">Customer Inquiries</h2>
-                {productData?.inquiries && productData.inquiries.length > 0 ? (
-                    productData.inquiries.map((inquiry) => (
-                        <div key={inquiry._id} className="mt-4 p-4 border rounded-lg shadow-sm bg-gray-50">
-                            <div className="flex items-center">
-                                <p className="text-lg font-semibold">{inquiry.name}</p>
-                                <p className="ml-4 text-sm text-gray-500">{new Date(inquiry.createdAt).toLocaleDateString()}</p>
+{/* Display Inquiries */}
+<div className="mt-10">
+    <h2 className="text-2xl font-bold text-gray-800">Customer Inquiries</h2>
+    {productData?.inquiries && productData.inquiries.length > 0 ? (
+        productData.inquiries.map((inquiry) => (
+            <div key={inquiry._id} className="mt-4 p-4 border rounded-lg shadow-sm bg-gray-50">
+                <div className="flex items-center">
+                    <p className="text-lg font-semibold">{inquiry.name}</p>
+                    <p className="ml-4 text-sm text-gray-500">{new Date(inquiry.createdAt).toLocaleDateString()}</p>
+                </div>
+                <div className="mt-2 text-gray-700">
+                    <p>{inquiry.messagee}</p>
+                </div>
+
+                {/* Display replies for the inquiry */}
+                <div className="mt-4">
+                    <h3 className="text-md font-semibold text-gray-700">Replies:</h3>
+                    {inquiry.replies && inquiry.replies.length > 0 ? (
+                        inquiry.replies.map((reply, index) => (
+                            <div key={index} className="mt-2 p-2 border rounded-md bg-gray-100">
+                                <p className="text-gray-700">{reply.message}</p>
+                                <p className="text-sm text-gray-500">{new Date(reply.createdAt).toLocaleDateString()}</p>
                             </div>
-                            <div className="mt-2 text-gray-700">
-                                <p>{inquiry.messagee}</p>
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <p className="mt-4 text-gray-500">No inquiries yet.</p>
-                )}
+                        ))
+                    ) : (
+                        <p className="mt-2 text-gray-500">No replies yet.</p>
+                    )}
+                </div>
+
             </div>
+        ))
+    ) : (
+        <p className="mt-4 text-gray-500">No inquiries yet.</p>
+    )}
+</div>
           
         </div>
     );

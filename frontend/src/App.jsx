@@ -157,7 +157,7 @@ function App() {
         <Route path="register" element={<Register />} />
         <Route path="customerlogin" element={<CustomerLogin />} />      
         <Route path="customer" element={<Customer />}>
-          <Route index element={<CustomerDashboard />} />
+        <Route index element={<CustomerDashboard />} />
         </Route>
 
         {/* Supplier Manager Routes */}

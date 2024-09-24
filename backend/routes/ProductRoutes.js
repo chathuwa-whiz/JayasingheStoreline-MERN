@@ -42,11 +42,8 @@ productRoutes.get("/:productId/:reviewId", authenticate, getReviewsByReviewId);
 productRoutes.get("/:productId/inquiries/:inquiryId", authenticate, getInquiriesByInquiryId);
 
 // Reply to product inquiry
-productRoutes.post('/:id/inquiries/:inquiryId/reply', authenticate, replyToInquiry);
+productRoutes.post('/:productId/inquiries/:inquiryId/reply', authenticate, replyToInquiry);
 
-
-// removeReview
-//productRoutes.delete("/:id/:reviewId" , authenticate, deleteReview);
 
 
 export default productRoutes;

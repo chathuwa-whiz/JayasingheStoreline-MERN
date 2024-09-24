@@ -342,10 +342,10 @@ export const getReviewsByReviewId = async (req, res) => {
     }
 };
 
-// Reply to product inquiry
+//reply
 export const replyToInquiry = async (req, res) => {
     try {
-        const { productId, inquiryId } = req.params;
+        const { productId, inquiryId } = req.params; // Use inquiryId from route parameters
         const { replyMessage } = req.body;
 
         // Validate replyMessage
@@ -353,16 +353,24 @@ export const replyToInquiry = async (req, res) => {
             return res.status(400).json({ message: "Reply message cannot be empty" });
         }
 
+        // Find the product
         const product = await Product.findById(productId);
-        if (!product) return res.status(404).json({ message: "Product not found" });
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
 
-        const inquiry = product.inquiries.id(inquiryId);
-        if (!inquiry) return res.status(404).json({ message: "Inquiry not found" });
+        // Find the inquiry
+        const inquiry = product.inquiries.id(inquiryId); // Use inquiries to find the specific inquiry
+        if (!inquiry) {
+            return res.status(404).json({ message: "Inquiry not found" });
+        }
 
-        // Add the reply
+        // Add the reply to the inquiry
         inquiry.replies.push({ message: replyMessage, createdAt: new Date() });
 
+        // Save the updated product
         await product.save();
+
         res.status(200).json({ message: "Reply added successfully" });
     } catch (error) {
         res.status(500).json({ message: error.message });
