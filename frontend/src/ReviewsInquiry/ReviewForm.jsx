@@ -41,6 +41,16 @@ export default function ReviewForm({ productId, refetch, existingReview }) {
         }
     };
 
+    const handleCancelImage = () => {
+        setImage(null);
+        setImagePreview(null);
+        // Reset the file input to clear selected file
+        const fileInput = document.getElementById('image');
+        if (fileInput) {
+            fileInput.value = ''; // Clear the file input
+        }
+    };
+
     const submitReviewHandler = async (e) => {
         e.preventDefault();
         
@@ -186,6 +196,13 @@ export default function ReviewForm({ productId, refetch, existingReview }) {
                             alt="Review"
                             className="max-w-full h-auto rounded-lg shadow-md mt-2"
                         />
+                        <button
+                            type="button"
+                            onClick={handleCancelImage}
+                            className="mt-2 bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition"
+                        >
+                            Cancel Image
+                        </button>
                     </div>
                 )}
 
