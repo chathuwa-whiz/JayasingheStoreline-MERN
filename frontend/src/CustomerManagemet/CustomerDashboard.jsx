@@ -7,10 +7,13 @@ export default function CustomerManagementDashboard() {
   // Fetch all users
   const { data: users, isLoading: usersLoading, isError: usersError } = useGetUsersQuery();
 
+  if (usersLoading) return <div>Loading...</div>;
+  if (usersError) return <div>Error</div>;
+
   // Example statistics data (you can replace these with real data if available)
   const loggedInUsers = users?.filter(user => user.isLoggedIn).length || 0;
   const totalVisitors = 10234; // Placeholder value for total website visitors
-  const newRegistrations = 120; // New user registrations this month
+  const newRegistrations = 11; // New user registrations this month
   const avgSessionDuration = '5m 12s'; // Average session duration
 
   return (

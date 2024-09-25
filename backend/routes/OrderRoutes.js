@@ -27,10 +27,10 @@ export default orderRoutes;
 
 
 
-// // fetchAllProducts
-// // addProductReview
-// // fetchTopProducts
-// // fetchNewProducts
-// // filterProducts
+// fetchAllProducts
+// addProductReview
+// fetchTopProducts
+// fetchNewProducts
+// filterProducts
 
 // export default productRoutes;

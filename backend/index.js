@@ -15,6 +15,8 @@ import paymentRoutes from './routes/paymentRoutes.js';
 import deliveryRoutes from './routes/DeliveryRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import orderRoutes from './routes/OrderRoutes.js';
+import adminRoutes from './routes/AdminRoute.js';
+
 import driverRoutes from './routes/DriverRoutes.js'; // Import driver routes
 import employeeRouter from './routes/EmployeeRoutes.js';
 import authEmployeeRouter from './routes/AuthEmployeeRoutes.js';
@@ -58,6 +60,8 @@ app.use("/api/payment", paymentRoutes);
 app.use("/api/deliveries", deliveryRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/admin", adminRoutes);
+
 app.use("/api/supplier", supplierRoutes);
 app.use("/api/drivers", driverRoutes); // Use driver routes
 app.use("/api/payhere", payhereRoutes); // Use PayHere route

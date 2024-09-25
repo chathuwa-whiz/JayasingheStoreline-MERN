@@ -36,6 +36,7 @@ const ProductSchema = new mongoose.Schema({
     discount : { type : Number, required : true, default : 0 },
     countInStock : { type : Number,  required : true, default : 0 },
     currentQty : { type : Number,  required : true, default : 0 },
+    reOrderQty : { type : Number,  required : true, default : 0 },
     sku : { type : String,  required : true },
     barcode : { type : String,  required : true },
     reviews : [ReviewSchema],

@@ -3,6 +3,7 @@ import formidable from "express-formidable";
 import multer from 'multer'; // Import multer
 const productRoutes = express.Router();
 
+import { addProduct, fetchProducts, fetchProductById, updateProduct, deleteProduct, addProductReview, addProductInquiry, updateReview ,deleteReview, getReviewsByReviewId, replyToInquiry, deleteInquiry, getInquiriesByInquiryId, updateProductStock} from "../controllers/ProductController.js";
 // Set up multer storage
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -29,6 +30,10 @@ productRoutes.get("/", fetchProducts);
 productRoutes.get("/:id", fetchProductById);
 
 // updateProductDetails
+productRoutes.put("/:id" , formidable(), updateProduct);
+
+// updateProductStock
+productRoutes.put("/updatestock/:id" , updateProductStock);
 productRoutes.put("/:id", formidable(), updateProduct);
 
 // removeProduct

@@ -1,4 +1,5 @@
 import Product from "../models/ProductModel.js";
+import Order from "../models/OrderModel.js";
 
 // Add new product
 export const addProduct = async (req, res) => {
@@ -79,6 +80,27 @@ export const updateProduct = async (req, res) => {
         res.json( { msg : "Update Successful ", product } );
     } catch (error) {
         res.status(400).json( { msg : "Update Failed ", error } );
+    }
+}
+
+// update product stock
+export const updateProductStock = async (req, res) => {
+    try {
+        const product = await Product.findOneAndUpdate(
+            { _id : req.params.id }, 
+            {
+                countInStock : req.body.countInStock,
+                buyingPrice : req.body.buyingPrice, 
+                reOrderQty: req.body.reOrderQty 
+            }, { new : true }
+        );
+        if(!product) {
+            return res.status(400).json( { msg : "Product not found" } )
+        }
+        await product.save();
+        res.json( { msg : "Stock Updated Successfully", product } );
+    } catch (error) {
+        res.status(400).json( { msg : "Stock Update Failed ", error } );
     }
 }
 
@@ -393,3 +415,26 @@ export const replyToInquiry = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+
+
+const getOrderSummaryByProductName = async (req, res) => {
+    try {
+        const { productName } = req.params;
+        const orderSummary = await Order.findOne({ 'orderItems.name': productName });
+
+        if (!orderSummary) {
+            return res.status(404).json({ message: 'Cannot find this product' });
+        }
+
+        res.json(orderSummary);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+};
+
+
+
+
+
+

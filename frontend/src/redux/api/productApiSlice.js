@@ -48,6 +48,18 @@ export const productApiSlice = apiSlice.injectEndpoints({
                 body: formData,
             }),
         }),
+
+        updateOneProduct: builder.mutation({
+            query: ({ productId, quantity, purchasePrice, reOrderQty }) => ({
+                url: `${PRODUCT_URL}/updatestock/${productId}`,
+                method: "PUT",
+                body: {
+                    countInStock: quantity,
+                    reOrderQty: reOrderQty,
+                    buyingPrice: purchasePrice,
+                },
+            }),
+        }),
     
         uploadProductImage: builder.mutation({
             query: (data) => ({
@@ -172,6 +184,7 @@ export const {
     useAllProductsQuery,
     useCreateProductMutation,
     useUpdateProductMutation,
+    useUpdateOneProductMutation,
     useDeleteProductMutation,
     useCreateReviewMutation,
     useCreateInquiryMutation,

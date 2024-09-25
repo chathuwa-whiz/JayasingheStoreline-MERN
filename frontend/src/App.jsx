@@ -11,6 +11,8 @@ import AddProducts from "./InventoryManagement/AddProducts";
 import UpdateProduct from "./InventoryManagement/UpdateProduct";
 import Stock from "./InventoryManagement/Stock";
 import Reports from "./InventoryManagement/Reports";
+import AddStockPage from "./InventoryManagement/AddStock";
+import LogoutPage from "./InventoryManagement/LogoutPage";
 
 //Delivery
 import Delivery from "./DeliveryManagement/delivery";
@@ -36,6 +38,8 @@ import OrderHistory from "./OrderManagement/OrderHistory";
 import OrderInquiries from "./OrderManagement/OrderInquiries";
 import OrderByProducts from "./OrderManagement/OrderByProducts";
 import UpdateOrders from "./OrderManagement/UpdateOrder";
+import OrderReports from "./OrderManagement/Reports";
+import OrderSettings from "./OrderManagement/Settings";
 
 //Customer
 import CustomerLogin from "./CustomerManagemet/CusLogin"; 
@@ -44,6 +48,9 @@ import Home from "./CustomerManagemet/Home";
 import Customer from "./CustomerManagemet/Customer";
 import Profile from "./CustomerManagemet/profile";
 import CustomerDashboard from "./CustomerManagemet/CustomerDashboard";
+
+//AdminLogin
+import AdminLoginPage from "./AdminLogin/AdminLogin";
 
 //payment
 import PaymentReport from "./PaymentManagement/paymentReport";
@@ -76,6 +83,7 @@ import EmployeeSignUp from './EmployeeManagement/EmployeeSignUp';
 import EmployeeAbout from './EmployeeManagement/EmployeeAbout';
 import EmployeeProfile from './EmployeeManagement/EmployeeProfile';
 import EmployeeDashboard from "./EmployeeManagement/EmployeeDashboard";
+import SettingsPage from "./InventoryManagement/Settings";
 
 function App() {
 
@@ -95,6 +103,7 @@ function App() {
           <Route path="checkout" element={<Checkout />} />
           <Route path="register" element={<Register />} />
           <Route path="customerlogin" element={<CustomerLogin />} />
+          <Route path="adminlogin" element={<AdminLoginPage />} />
 
           {/* order manager part */}
           <Route path="productlist" element={<ProductsList />} />
@@ -113,6 +122,9 @@ function App() {
           <Route path="categories" element={<CategoryList />} />
           <Route path="stock" element={<Stock />} />
           <Route path="reports" element={<Reports />} />
+          <Route path="addstock/:_id" element={<AddStockPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+          <Route path="logout" element={<LogoutPage />} />
         </Route>
 
         {/*Delivery manager Routes */}
@@ -135,13 +147,14 @@ function App() {
           <Route path="orderhistory" element={<OrderHistory />} />
           <Route path="orderinqiry" element={<OrderInquiries />} />
           <Route path="orderByProduct" element={<OrderByProducts />} />
+          <Route path="orderreport" element={<OrderReports />} />
+          <Route path="orderSettings" element={<OrderSettings />} />
         </Route>
         <Route path="productlist" element={<ProductsList />} /> 
         <Route path="product/:_id" element={<SingleProductView />} />
         <Route path="cart" element={<Cart />} />
         <Route path="shipping" element={<Shipping />} />
         <Route path="placeorder" element={<PlaceOrder />} />
-      
 
         {/* Payment Manager Routes */}
         <Route path="checkout" element={<Checkout />} />
@@ -178,15 +191,17 @@ function App() {
           <Route path="employeeProfile" element={<EmployeeProfile />} />
         </Route>
 
-{/* Edit Review Route */}
+        {/* Edit Review Route */}
         <Route path="/product/:productId/:reviewId" element={<EditReviewPage />} />
         <Route path="/user-reviews" element={<UserReviews />} />
         <Route path="dashboardlist" element={<DashboardList/>} />
         <Route path="dashboard/product/:_id" element={<DashboardSinglePro/>} />
-        
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
+
+
+
