@@ -1,15 +1,11 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { useGetReviewByIdQuery } from "../redux/api/productApiSlice";
-import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const UserReviews = () => {
   const userId = useSelector((state) => state.auth.user._id);
-  console.log("User ID:", userId);
-
   const { data, error, isLoading } = useGetReviewByIdQuery(userId);
-  console.log("API Response:", { data, error, isLoading });
 
   if (isLoading) return <p>Loading...</p>;
   if (error) {
@@ -18,15 +14,15 @@ const UserReviews = () => {
   }
   if (!data || data.length === 0) return <p>No reviews found for this user.</p>;
 
+  // Count total reviews
+  const totalReviews = data.length;
+
   return (
     <div>
       <h2>User Reviews</h2>
-      {data.map((review) => (
-        <div key={review._id}>
-          <p>{review.content}</p>
-          <p>Rating: {review.rating}</p>
-        </div>
-      ))}
+      <div className="mb-4">
+        <p>Total Reviews: {totalReviews}</p>
+      </div>
     </div>
   );
 };

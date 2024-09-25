@@ -32,6 +32,7 @@ productRoutes.put("/:id" , formidable(), updateProduct);
 
 // updateProductStock
 productRoutes.put("/updatestock/:id" , updateProductStock);
+
 productRoutes.put("/:id", formidable(), updateProduct);
 
 // removeProduct
