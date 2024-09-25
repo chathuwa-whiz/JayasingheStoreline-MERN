@@ -16,8 +16,6 @@ const storage = multer.diskStorage({
 
 // Initialize upload
 const upload = multer({ storage: storage });
-
-import { addProduct, fetchProducts, fetchProductById, updateProduct, deleteProduct, addProductReview, addProductInquiry, updateReview, deleteReview, getReviewsByReviewId, replyToInquiry, deleteInquiry, getInquiriesByInquiryId } from "../controllers/ProductController.js";
 import { authenticate, authorizeAdmin } from "../middlewares/authMidleware.js";
 
 // addProduct
