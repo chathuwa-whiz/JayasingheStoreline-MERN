@@ -68,7 +68,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
         // Create a review
         createReview: builder.mutation({
             query: (data) => ({
-                url: `${PRODUCT_URL}/${data.productId}`,
+                url: `${PRODUCT_URL}/${data.productId}/reviews`,
                 method: "POST",
                 body: data,
             }),
@@ -82,6 +82,16 @@ export const productApiSlice = apiSlice.injectEndpoints({
                 body: data,
             }),
         }),
+        
+        //create reply
+        createReply: builder.mutation({
+            query: (data) => ({
+                url: `${PRODUCT_URL}/${data.productId}/inquiries/${data.inquiryId}/reply`,
+                method: "POST",
+                body: { replyMessage: data.message }, // Sending the reply message
+            }),
+        }),
+        
 
         // Update a review
         updateReview: builder.mutation({
@@ -121,16 +131,6 @@ deleteInquiry: builder.mutation({
 }),
 
             
-
-        // Reply to an inquiry
-        replyToInquiry: builder.mutation({
-            query: ({ productId, inquiryId, replyMessage }) => ({
-                url: `${PRODUCT_URL}/${productId}/inquiries/${inquiryId}/reply`,
-                method: 'POST',
-                body: { replyMessage },
-            }),
-        }),
-
         getTopProducts: builder.query({
             query: () => `${PRODUCT_URL}/top`,
             keepUnusedDataFor: 5,
@@ -175,7 +175,7 @@ export const {
     useDeleteProductMutation,
     useCreateReviewMutation,
     useCreateInquiryMutation,
-    useReplyToInquiryMutation,
+    useCreateReplyMutation,
     useGetTopProductsQuery,
     useGetNewProductsQuery,
     useUploadProductImageMutation,
