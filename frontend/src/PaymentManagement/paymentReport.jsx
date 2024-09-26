@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import * as XLSX from 'xlsx';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 import { useAllProductsQuery } from '../redux/api/productApiSlice';
 
 const PaymentReport = () => {
@@ -18,7 +19,7 @@ const PaymentReport = () => {
       { date: '2024-08-01', description: 'HR Expense A', amount: 1000 },
       { date: '2024-08-02', description: 'HR Expense B', amount: 1500 }
     ]);
-    
+
     setSupplierSendData([
       { date: '2024-08-01', description: 'Supplier Payment A', amount: 2000 },
       { date: '2024-08-02', description: 'Supplier Payment B', amount: 2500 }
@@ -44,25 +45,33 @@ const PaymentReport = () => {
       amount: product.sellingPrice
     }));
     setTotalIncomeData(totalIncome);
-
   }, [products]);
 
-  const generateExcel = () => {
-    const workbook = XLSX.utils.book_new();
+  const generatePDF = () => {
+    const doc = new jsPDF();
 
-    const hrSendSheet = XLSX.utils.json_to_sheet(hrSendData);
-    const profitSheet = XLSX.utils.json_to_sheet(profitData);
-    const totalCostSheet = XLSX.utils.json_to_sheet(totalCostData);
-    const totalIncomeSheet = XLSX.utils.json_to_sheet(totalIncomeData);
-    const supplierSendSheet = XLSX.utils.json_to_sheet(supplierSendData);
+    doc.text('Payment Report', 14, 10);
 
-    XLSX.utils.book_append_sheet(workbook, hrSendSheet, 'HR Send Data');
-    XLSX.utils.book_append_sheet(workbook, profitSheet, 'Profit Data');
-    XLSX.utils.book_append_sheet(workbook, totalCostSheet, 'Total Cost Data');
-    XLSX.utils.book_append_sheet(workbook, totalIncomeSheet, 'Total Income Data');
-    XLSX.utils.book_append_sheet(workbook, supplierSendSheet, 'Supplier Send Data');
+    const generateTable = (title, data) => {
+      if (data.length === 0) return;
+      
+      doc.text(title, 14, doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 20);
+      
+      doc.autoTable({
+        startY: doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 30,
+        head: [['Date', 'Description', 'Amount']],
+        body: data.map(item => [item.date, item.description, `Rs.${item.amount}`]),
+        theme: 'grid'
+      });
+    };
 
-    XLSX.writeFile(workbook, 'Payment_Report.xlsx');
+    generateTable('HR Send Data', hrSendData);
+    generateTable('Profit Data', profitData);
+    generateTable('Total Cost Data', totalCostData);
+    generateTable('Total Income Data', totalIncomeData);
+    generateTable('Supplier Send Data', supplierSendData);
+
+    doc.save('Payment_Report.pdf');
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -74,10 +83,10 @@ const PaymentReport = () => {
         <h1 className="text-4xl font-extrabold text-blue-600 mb-6 text-center">Payment Report</h1>
         <div className="flex justify-center space-x-4 mb-6">
           <button
-            onClick={generateExcel}
+            onClick={generatePDF}
             className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-700 transition duration-300"
           >
-            Download Excel Report
+            Download PDF Report
           </button>
         </div>
 
