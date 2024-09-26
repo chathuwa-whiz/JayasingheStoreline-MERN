@@ -1,6 +1,5 @@
 import React from 'react';
 import { useAllProductsQuery } from '../redux/api/productApiSlice';
-import { useGetOrdersQuery } from '../redux/api/orderApiSlice';
 import { Pie, Line } from 'react-chartjs-2';
 
 export default function Dashboard() {
@@ -8,11 +7,8 @@ export default function Dashboard() {
   // Fetch all products
   const { data: products, isLoading: productsLoading, isError: productsError } = useAllProductsQuery();
 
-  // Fetch all orders
-  const { data: orders, isLoading: ordersLoading, isError: ordersError } = useGetOrdersQuery();
-
-  if (productsLoading || ordersLoading) return <div>Loading...</div>;
-  if (productsError || ordersError) return <div>Something went wrong</div>;
+  if (productsLoading) return <div>Loading...</div>;
+  if (productsError) return <div>Something went wrong</div>;
 
   // Data calculations
   const categoryList = [];
@@ -33,8 +29,9 @@ export default function Dashboard() {
     }
   }
   const categories = [...new Set(categoryList)];
-  
-  const totalRevenue = orders.reduce((acc, order) => acc + order.totalPrice, 0);
+
+  // Best-Selling Products (Mocked for illustration)
+  const bestSellingProducts = products.slice(0, 5); // Assuming top 5 for now
 
   // Data for charts
   const salesByCategoryData = {
@@ -47,14 +44,15 @@ export default function Dashboard() {
     }]
   };
 
-  const revenueData = {
-    labels: orders.map(order => new Date(order.createdAt).toLocaleDateString()),
+  // Mocked Stock Trend Data
+  const stockTrendData = {
+    labels: products.map(product => product.name),
     datasets: [{
-      label: 'Revenue',
-      data: orders.map(order => order.totalPrice),
+      label: 'Stock Quantity',
+      data: products.map(product => product.currentQty),
       fill: true,
-      backgroundColor: 'rgba(75,192,192,0.2)',
-      borderColor: 'rgba(75,192,192,1)',
+      backgroundColor: 'rgba(153, 102, 255, 0.2)',
+      borderColor: 'rgba(153, 102, 255, 1)',
       tension: 0.4,
     }]
   };
@@ -87,9 +85,9 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-2 gap-6 mb-8">
         <div className="bg-white p-6 rounded-lg shadow-lg">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">Revenue Stats</h3>
+          <h3 className="text-xl font-bold text-gray-800 mb-4">Stock Trends</h3>
           <div className="relative h-64">
-            <Line data={revenueData} />
+            <Line data={stockTrendData} />
           </div>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-lg">
@@ -100,31 +98,23 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Recent Orders */}
+      {/* Best-Selling Products */}
       <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">Recent Orders</h3>
+        <h3 className="text-xl font-bold text-gray-800 mb-4">Best-Selling Products</h3>
         <table className="w-full table-auto">
           <thead>
             <tr>
-              <th className="px-4 py-2 border-b-2">Customer</th>
-              <th className="px-4 py-2 border-b-2">Date</th>
-              <th className="px-4 py-2 border-b-2">Total</th>
-              <th className="px-4 py-2 border-b-2">Status</th>
+              <th className="px-4 py-2 border-b-2">Product Name</th>
+              <th className="px-4 py-2 border-b-2">Category</th>
+              <th className="px-4 py-2 border-b-2">Stock Remaining</th>
             </tr>
           </thead>
           <tbody>
-            {orders.slice(0, 5).map(order => (
-              <tr key={order._id} className="text-center hover:bg-gray-100">
-                <td className="border px-4 py-2">{order.firstName}</td>
-                <td className="border px-4 py-2">{new Date(order.createdAt).toLocaleDateString()}</td>
-                <td className="border px-4 py-2">{priceFormatter.format(order.totalPrice)}</td>
-                <td className="border px-4 py-2">
-                  <span className={`inline-block px-2 py-1 text-sm font-semibold rounded-full ${
-                    order.status === 'Completed' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'
-                  }`}>
-                    {order.status}
-                  </span>
-                </td>
+            {bestSellingProducts.map(product => (
+              <tr key={product._id} className="text-center hover:bg-gray-100">
+                <td className="border px-4 py-2">{product.name}</td>
+                <td className="border px-4 py-2">{product.category}</td>
+                <td className="border px-4 py-2">{product.currentQty}</td>
               </tr>
             ))}
           </tbody>
