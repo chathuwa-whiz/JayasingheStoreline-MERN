@@ -11,7 +11,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="bg-white text-black h-screen w-64 p-5 shadow-lg">
+    <div className="bg-white text-black h-screen w-64 p-5 ">
       <img src={logo} alt="logo" className="w-20 h-20 rounded-full mb-8 mx-auto border-2 border-orange-500" />
 
       <div className='mb-8'>
