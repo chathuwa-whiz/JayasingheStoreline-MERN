@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const paymentSchema = new mongoose.Schema({
+  amount: {
+    type: Number,
+    required: true
+  },
   cardNumber: {
     type: String,
     required: function() { return this.paymentMethod === 'card'; },
@@ -18,19 +22,28 @@ const paymentSchema = new mongoose.Schema({
     required: function() { return this.paymentMethod === 'card'; },
     match: [/^[a-zA-Z\s]+$/, 'Card name must only contain letters and spaces']
   },
-  expirationDate: {
+  cardExpiry: {
     type: String,
     required: function() { return this.paymentMethod === 'card'; },
     match: [/^\d{2}\/\d{2}$/, 'Invalid expiration date format']
   },
-  cvv: {
+  cardCVV: {
     type: String,
     required: function() { return this.paymentMethod === 'card'; },
     match: [/^\d{3,4}$/, 'CVV must be 3 or 4 digits']
   },
+  bankAccount: {
+    type: String,
+    required: function() { return this.paymentMethod === 'bank'; }
+  },
+  paymentDetails: {
+    type: String,
+    required: function() { return this.paymentMethod === 'bank'; },
+    match: [/^[a-zA-Z0-9\s]+$/, 'Payment details must contain letters, numbers, and spaces']
+  },
   paymentMethod: {
     type: String,
-    enum: ['card', 'cod'],
+    enum: ['card', 'cod', 'bank'],
     required: true
   },
   orderId: {

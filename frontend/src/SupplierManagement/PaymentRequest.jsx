@@ -6,11 +6,13 @@ function PaymentRequest() {
     paymentMethod: 'card', // default payment method
     cardNumber: '',
     cardName: '',
-    cardExpiry: '',
+    cardExpiry: '', // Align with backend
     cardCVV: '',
     bankAccount: '',
     paymentDetails: '',
   });
+
+  const [submitMessage, setSubmitMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,10 +22,44 @@ function PaymentRequest() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you can handle form submission, e.g., send data to the server
-    console.log('Payment Request Submitted:', formData);
+
+    // Build the payment request object
+    const paymentRequest = {
+      amount: formData.amount,
+      paymentMethod: formData.paymentMethod,
+      ...(formData.paymentMethod === 'card' && {
+        cardNumber: formData.cardNumber,
+        cardName: formData.cardName,
+        expirationDate: formData.cardExpiry, // Align with backend
+        cvv: formData.cardCVV,
+      }),
+      ...(formData.paymentMethod === 'bank' && {
+        bankAccount: formData.bankAccount,
+        paymentDetails: formData.paymentDetails,
+      }),
+    };
+
+    try {
+      // Send the payment request to the backend
+      const response = await fetch('/api/payment', { // Corrected URL
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(paymentRequest),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setSubmitMessage('Payment request submitted successfully!');
+      } else {
+        setSubmitMessage(`Error: ${data.message}`);
+      }
+    } catch (error) {
+      setSubmitMessage(`Failed to submit payment request: ${error.message}`);
+    }
   };
 
   return (
@@ -169,6 +205,8 @@ function PaymentRequest() {
             </button>
           </div>
         </form>
+
+        {submitMessage && <p className="mt-4 text-green-500">{submitMessage}</p>}
       </div>
     </div>
   );
