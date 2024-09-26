@@ -133,6 +133,14 @@ export const productApiSlice = apiSlice.injectEndpoints({
             }),
         }),
 
+        getProductNamesWithOrders: builder.query({
+            query: () => ({
+                url: `${PRODUCT_URL}/product-orders`, // Adjust the URL based on your API endpoint
+            }),
+            providesTags: ["ProductOrders"],
+        }),
+        
+
         // Fetch reviews by user ID
         getReviewsByUserId: builder.query({
             query: (userId) => `${PRODUCT_URL}/reviews/user/${userId}`,
@@ -159,4 +167,5 @@ export const {
     useGetFilteredProductsQuery,
     useUpdateReviewMutation,
     useGetReviewsByUserIdQuery,
+    useGetProductNamesWithOrdersQuery,  // New query hook
 } = productApiSlice;
