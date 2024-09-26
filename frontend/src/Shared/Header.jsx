@@ -498,15 +498,15 @@ export function StockHeader() {
   )
 }
 
-export function ReportsHeader( { onExportToExcel } ) {
+export function ReportsHeader( { onExportToPDF } ) {
   return (
     <div className="h-16 bg-white flex justify-between items-center px-4">
       <h2 className="text-xl font-bold">Sales Report</h2>
       <div className="flex items-center space-x-4">
         {/* <button className="bg-white border border-gray-300 px-4 py-2 rounded-lg">Date Range</button> */}
         <button 
-          onClick={onExportToExcel}
-          className="bg-green-500 text-white px-4 py-2 rounded-lg">Export to Excel</button>
+          onClick={onExportToPDF}
+          className="bg-green-500 text-white px-4 py-2 rounded-lg">Export to PDF</button>
         <div className="flex items-center space-x-2">
           <img src="https://via.placeholder.com/40" alt="User" className="rounded-full" />
           <span>Chathushka Navod</span>
