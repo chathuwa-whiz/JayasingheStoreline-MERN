@@ -1,22 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { FaTrash, FaEdit } from 'react-icons/fa';
+import { useDeleteDeliveryMutation, useGetDeliveriesQuery, useGetDeliveryByIdQuery } from '../redux/api/deliveryApiSlice';
 
 export default function DeliveryDetail({ onEditDelivery }) {
-  const [deliveries, setDeliveries] = useState([]);
 
-  useEffect(() => {
-    fetchDeliveries();
-  }, []);
-
-  const fetchDeliveries = async () => {
-    try {
-      const response = await fetch('/api/deliveries');
-      const data = await response.json();
-      setDeliveries(data);
-    } catch (error) {
-      console.error('Error fetching deliveries:', error);
-    }
-  };
+  const { data: deliveries, error: deliveriesError, isLoading } = useGetDeliveriesQuery();
 
   const handleDelete = async (id) => {
     try {
@@ -68,6 +56,10 @@ export default function DeliveryDetail({ onEditDelivery }) {
       ? `p-2 text-white rounded-lg`
       : `p-2 text-${buttonStatus === 'Pending' ? 'yellow' : buttonStatus === 'Delayed' ? 'blue' : 'green'}-500 hover:bg-${buttonStatus === 'Pending' ? 'yellow' : buttonStatus === 'Delayed' ? 'blue' : 'green'}-100 rounded-lg transition-colors duration-300`;
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="shadow-lg rounded-lg p-6 bg-gray-100 h-screen overflow-auto">
