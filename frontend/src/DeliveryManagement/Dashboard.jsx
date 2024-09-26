@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { FaBox, FaClock, FaCheck, FaExclamationCircle, FaDollarSign, FaListUl, FaTrash, FaUser } from 'react-icons/fa'; // Added FaUser for drivers
+import { FaBox, FaClock, FaCheck, FaExclamationCircle, FaMoneyBill, FaListUl, FaTrash, FaUser } from 'react-icons/fa';
 
 export default function DeliveryDashboard() {
   const [deliveries, setDeliveries] = useState([]);
   const [pendingDeliveries, setPendingDeliveries] = useState(0);
   const [completedDeliveries, setCompletedDeliveries] = useState(0);
   const [delayedDeliveries, setDelayedDeliveries] = useState(0);
-  const [totalEarnings, setTotalEarnings] = useState(0); // For total earnings
-  const [totalDeliveredItems, setTotalDeliveredItems] = useState(0); // For total delivered items
-  const [totalDrivers, setTotalDrivers] = useState(0); // New state for total drivers
+  const [totalEarnings, setTotalEarnings] = useState(0);
+  const [totalDeliveredItems, setTotalDeliveredItems] = useState(0);
+  const [totalDrivers, setTotalDrivers] = useState(0);
   const [error, setError] = useState(null);
 
-  // Fetch deliveries
+  // Price formatter for LKR
+  const priceFormatter = new Intl.NumberFormat('en-LK', {
+    style: 'decimal',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
   const fetchDeliveries = async () => {
     try {
       const response = await fetch("/api/deliveries");
@@ -27,11 +33,10 @@ export default function DeliveryDashboard() {
       setCompletedDeliveries(completed);
       setDelayedDeliveries(delayed);
 
-      // Calculate total earnings and total delivered items
       const earnings = data.reduce((sum, delivery) => sum + (delivery.itemsPrice + delivery.deliveryPrice), 0);
       setTotalEarnings(earnings);
 
-      const deliveredItems = data.reduce((sum, delivery) => sum + (delivery.itemsCount || 0), 0); // Assuming each delivery has an 'itemsCount'
+      const deliveredItems = data.reduce((sum, delivery) => sum + (delivery.itemsCount || 0), 0);
       setTotalDeliveredItems(deliveredItems);
 
     } catch (error) {
@@ -40,13 +45,12 @@ export default function DeliveryDashboard() {
     }
   };
 
-  // Fetch drivers
   const fetchDrivers = async () => {
     try {
-      const response = await fetch("/api/drivers"); // Make sure this API endpoint exists
+      const response = await fetch("/api/drivers");
       if (!response.ok) throw new Error("Network response was not ok");
       const data = await response.json();
-      setTotalDrivers(data.length); // Set the total number of drivers
+      setTotalDrivers(data.length);
     } catch (error) {
       console.error("Error fetching drivers:", error);
       setError(error.message);
@@ -55,7 +59,7 @@ export default function DeliveryDashboard() {
 
   useEffect(() => {
     fetchDeliveries();
-    fetchDrivers(); // Fetch drivers when component mounts
+    fetchDrivers();
   }, []);
 
   return (
@@ -100,9 +104,9 @@ export default function DeliveryDashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div className="bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl flex items-center">
-          <FaDollarSign className="text-4xl text-green-500 mr-4" />
+          <FaMoneyBill className="text-4xl text-green-500 mr-4" />
           <div>
-            <h2 className="text-3xl font-semibold text-green-600">{totalEarnings.toFixed(2)}</h2>
+            <h2 className="text-3xl font-semibold text-green-600">{priceFormatter.format(totalEarnings)}</h2>
             <p className="text-gray-600">Total Delivery Earnings</p>
           </div>
         </div>
@@ -122,7 +126,6 @@ export default function DeliveryDashboard() {
         </div>
       </div>
 
-      {/* Recent Deliveries Section */}
       <div className="bg-white p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-2xl font-semibold mb-4">Recent Deliveries</h2>
         <table className="w-full table-auto">
@@ -139,9 +142,9 @@ export default function DeliveryDashboard() {
             {deliveries.slice(0, 5).map(delivery => (
               <tr key={delivery._id} className="hover:bg-gray-100 transition-colors">
                 <td className="border px-4 py-2">{delivery._id}</td>
-                <td className="border px-4 py-2">{delivery.itemsPrice ? delivery.itemsPrice.toFixed(2) : '0.00'}</td>
-                <td className="border px-4 py-2">{delivery.deliveryPrice ? delivery.deliveryPrice.toFixed(2) : '0.00'}</td>
-                <td className="border px-4 py-2">{(delivery.itemsPrice + delivery.deliveryPrice).toFixed(2)}</td>
+                <td className="border px-4 py-2">{priceFormatter.format(delivery.itemsPrice || 0)}</td>
+                <td className="border px-4 py-2">{priceFormatter.format(delivery.deliveryPrice || 0)}</td>
+                <td className="border px-4 py-2">{priceFormatter.format((delivery.itemsPrice || 0) + (delivery.deliveryPrice || 0))}</td>
                 <td className="border px-4 py-2 text-center">
                   <button onClick={() => deleteDelivery(delivery._id)} className="text-red-500 hover:text-red-700 transition-colors">
                     <FaTrash />

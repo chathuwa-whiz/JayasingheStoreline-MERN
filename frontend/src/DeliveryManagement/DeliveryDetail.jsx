@@ -87,8 +87,8 @@ export default function DeliveryDetail({ onEditDelivery }) {
                 ))}
               </td>
               <td className="border p-3">{priceFormatter.format(delivery.itemsPrice)}</td>
-              <td className="border p-3">{delivery.deliveryPrice} LKR</td>
-              <td className="border p-3">{delivery.totalPrice} LKR</td>
+              <td className="border p-3">{priceFormatter.format(delivery.deliveryPrice)}</td>
+              <td className="border p-3">{priceFormatter.format(delivery.totalPrice)}</td>
               <td className="border p-3">{delivery.deliveryStatus || 'Pending'}</td>
               <td className="border p-3 flex space-x-2">
                 <button
