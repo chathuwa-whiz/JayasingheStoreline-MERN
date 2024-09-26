@@ -7,7 +7,11 @@ export default function DeliveryDetail({ onEditDelivery }) {
   const [deleteDelivery] = useDeleteDeliveryMutation();
   const [updateDelivery] = useUpdateDeliveryMutation();
 
-  console.log(deliveries);
+  // Format Prices
+  const priceFormatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'LKR',
+  });
 
   const handleDelete = async (id) => {
     try {
@@ -82,7 +86,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
                   </div>
                 ))}
               </td>
-              <td className="border p-3">{delivery.itemsPrice} LKR</td>
+              <td className="border p-3">{priceFormatter.format(delivery.itemsPrice)} LKR</td>
               <td className="border p-3">{delivery.deliveryPrice} LKR</td>
               <td className="border p-3">{delivery.totalPrice} LKR</td>
               <td className="border p-3">{delivery.deliveryStatus || 'Pending'}</td>
