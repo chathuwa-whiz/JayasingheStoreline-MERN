@@ -62,6 +62,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
       <table className="w-full bg-white shadow-lg rounded-lg border border-gray-300">
         <thead className="bg-gray-200 text-gray-700">
           <tr>
+            <th className="border p-3 text-left">Delivery No</th>
             <th className="border p-3 text-left">Delivery Item</th>
             <th className="border p-3 text-left">Items Price</th>
             <th className="border p-3 text-left">Delivery Price</th>
@@ -73,6 +74,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
         <tbody>
           {deliveries.map((delivery) => (
             <tr key={delivery._id} className={`border-b ${getRowClass(delivery.deliveryStatus)} hover:bg-orange-100 transition-colors duration-300`}>
+              <td className="border p-3">{delivery._id}</td>
               <td className="border p-3">
                 {JSON.parse(delivery.deliveryItem).map((item) => (
                   <div key={item._id}>
@@ -102,12 +104,6 @@ export default function DeliveryDetail({ onEditDelivery }) {
                   onClick={() => handleStatusChange(delivery._id, 'Completed')}
                 >
                   Completed
-                </button>
-                <button 
-                  className="p-2 text-yellow-500 hover:bg-yellow-100 rounded-lg transition-colors duration-300"
-                  onClick={() => onEditDelivery(delivery)}
-                >
-                  <FaEdit />
                 </button>
                 <button 
                   className="p-2 text-red-500 hover:bg-red-100 rounded-lg transition-colors duration-300"
