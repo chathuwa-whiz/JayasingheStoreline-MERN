@@ -1,144 +1,185 @@
-import React, { useState } from 'react';
-import { Bar, Pie } from 'react-chartjs-2';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-import * as XLSX from 'xlsx';
-import 'chart.js/auto';
+import React, { useState, useEffect } from 'react';
+import { CSVLink } from 'react-csv'; // For exporting CSV files
+import jsPDF from 'jspdf'; // For exporting PDF files
+import 'jspdf-autotable'; // AutoTable plugin for jsPDF
+import { Bar, Pie } from 'react-chartjs-2'; // Import Chart components
+import { Chart as ChartJS, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
 
-const Reports = () => {
-  const [timeframe, setTimeframe] = useState('monthly');
+ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-  // Sample data for reports
-  const monthlyData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August'],
-    datasets: [
-      {
-        label: 'Monthly Deliveries',
-        backgroundColor: '#FFA500',
-        data: [50, 200, 150, 300, 250, 400, 350, 500],
-      },
-    ],
+export default function Reports() {
+  const [deliveries, setDeliveries] = useState([]);
+  const [filteredDeliveries, setFilteredDeliveries] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    fetchDeliveries();
+  }, []);
+
+  const fetchDeliveries = async () => {
+    try {
+      const response = await fetch('/api/deliveries');
+      const data = await response.json();
+      setDeliveries(data);
+      setFilteredDeliveries(data);
+    } catch (error) {
+      console.error('Error fetching deliveries:', error);
+    }
   };
 
-  const weeklyData = {
-    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-    datasets: [
-      {
-        label: 'Weekly Deliveries',
-        backgroundColor: '#00BFFF',
-        data: [20, 30, 25, 40],
-      },
-    ],
+  const calculateTotalEarnings = () => {
+    return deliveries.reduce((acc, delivery) => acc + delivery.deliveryPrice, 0);
   };
 
-  const dailyData = {
-    labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
-    datasets: [
-      {
-        label: 'Daily Deliveries',
-        backgroundColor: '#32CD32',
-        data: [5, 10, 8, 15, 12, 20, 18],
-      },
-    ],
+  const calculateTotalDeliveries = () => {
+    return deliveries.length;
   };
 
-  const pieData = {
-    labels: ['Lorry A', 'Lorry B', 'D Bike', 'D Tuk'],
-    datasets: [
-      {
-        label: 'Most Used Units',
-        data: [30, 40, 20, 10],
-        backgroundColor: ['#FF6347', '#FFD700', '#90EE90', '#00BFFF'],
-      },
-    ],
+  const calculateDeliveredItems = () => {
+    return deliveries.reduce((acc, delivery) => acc + delivery.itemsCount, 0);
   };
 
-  const exportToPDF = () => {
+  const handleSearch = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearchTerm(value);
+
+    const filtered = deliveries.filter((delivery) =>
+      delivery.deliveryItems && delivery.deliveryItems.some((item) =>
+        item.name.toLowerCase().includes(value)
+      )
+    );
+    setFilteredDeliveries(filtered);
+  };
+
+  const generatePDF = () => {
     const doc = new jsPDF();
-    doc.setFontSize(22);
-    doc.text('Jayasinghe Storelines PVT LTD Report', 14, 22);
-    // Add content...
-    doc.save('report.pdf');
+    doc.text('Jayasinghe Storelines PVT LTD - Delivery Report', 20, 20);
+    doc.autoTable({
+      head: [['Delivery Items', 'Items Price (LKR)', 'Delivery Price (LKR)', 'Total Price (LKR)', 'Status']],
+      body: deliveries.map((delivery) => [
+        Array.isArray(delivery.deliveryItems) ? delivery.deliveryItems.map(item => item.name).join(', ') : 'No items', // Handling array of items
+        delivery.itemsPrice,
+        delivery.deliveryPrice,
+        delivery.totalPrice,
+        delivery.status || 'Pending',
+      ]),
+    });
+    doc.save('DeliveryReport.pdf');
   };
 
-  const exportToExcel = () => {
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.aoa_to_sheet([
-      ['Unit', 'Percentage'],
-      ['Lorry A', '30%'],
-      ['Lorry B', '40%'],
-      ['D Bike', '20%'],
-      ['D Tuk', '10%'],
-    ]);
-    XLSX.utils.book_append_sheet(wb, ws, 'Most Used Units');
-    XLSX.writeFile(wb, 'report.xlsx');
+  const csvData = deliveries.map((delivery) => ({
+    Delivery_Items: Array.isArray(delivery.deliveryItems) ? delivery.deliveryItems.map(item => item.name).join(', ') : 'No items', // Handling array of items for CSV export
+    Items_Price: `${delivery.itemsPrice} LKR`,
+    Delivery_Price: `${delivery.deliveryPrice} LKR`,
+    Total_Price: `${delivery.totalPrice} LKR`,
+    Status: delivery.status || 'Pending',
+  }));
+
+  // Data for Bar Chart (Total Deliveries per Status)
+  const barData = {
+    labels: ['Pending', 'Completed', 'Delayed'],
+    datasets: [
+      {
+        label: 'Total Deliveries',
+        data: [
+          deliveries.filter((delivery) => delivery.status === 'Pending').length,
+          deliveries.filter((delivery) => delivery.status === 'Completed').length,
+          deliveries.filter((delivery) => delivery.status === 'Delayed').length,
+        ],
+        backgroundColor: ['#fbbf24', '#4ade80', '#f87171'],
+        borderWidth: 1,
+      },
+    ],
   };
 
-  const chartData = timeframe === 'monthly' ? monthlyData : timeframe === 'weekly' ? weeklyData : dailyData;
+  // Data for Pie Chart (Earnings Breakdown)
+  const pieData = {
+    labels: ['Items Price', 'Delivery Price'],
+    datasets: [
+      {
+        label: 'Earnings Breakdown',
+        data: [
+          deliveries.reduce((acc, delivery) => acc + delivery.itemsPrice, 0),
+          deliveries.reduce((acc, delivery) => acc + delivery.deliveryPrice, 0),
+        ],
+        backgroundColor: ['#34d399', '#60a5fa'],
+        hoverOffset: 4,
+      },
+    ],
+  };
 
   return (
-    <div className="p-8 bg-gradient-to-r from-blue-50 to-blue-100 min-h-screen">
-      <div className="flex flex-col">
-        <h1 className="text-5xl font-extrabold text-gray-800 shadow-md mb-8 text-center">Delivery Reports</h1>
+    <div className="p-6 bg-gray-100 h-screen overflow-auto">
+      <h1 className="text-2xl font-semibold mb-6 text-gray-800">Delivery Reports</h1>
 
-        <div className="flex justify-center mb-6">
-          <select
-            value={timeframe}
-            onChange={(e) => setTimeframe(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+      <div className="mb-4 flex justify-between">
+        <input
+          type="text"
+          placeholder="Search Deliveries"
+          value={searchTerm}
+          onChange={handleSearch}
+          className="p-3 border border-gray-300 rounded-lg shadow-md w-1/2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow duration-300"
+        />
+        <div className="space-x-4">
+          <CSVLink
+            data={csvData}
+            filename={"Delivery_Report.csv"}
+            className="bg-green-500 text-white p-2 rounded-lg hover:bg-green-600"
           >
-            <option value="monthly">Monthly Reports</option>
-            <option value="weekly">Weekly Reports</option>
-            <option value="daily">Daily Reports</option>
-          </select>
-        </div>
-
-        <div className="flex flex-col md:flex-row justify-between">
-          <div className="mb-8 bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
-            <h2 className="text-4xl font-semibold text-gray-800 text-center mb-4">{timeframe.charAt(0).toUpperCase() + timeframe.slice(1)} Deliveries</h2>
-            <div className="h-80">
-              <Bar data={chartData} options={{ maintainAspectRatio: false }} />
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-3xl font-semibold text-gray-800 mb-4">Most Used Units</h2>
-            <div className="h-80">
-              <Pie data={pieData} options={{ maintainAspectRatio: false }} />
-            </div>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-3xl font-semibold text-gray-800 mb-4">Unit Distribution</h2>
-            <ul className="space-y-2">
-              {pieData.labels.map((label, index) => (
-                <li key={index} className="flex items-center justify-between text-gray-700">
-                  <span className="font-medium">{label}</span>
-                  <span>{pieData.datasets[0].data[index]}%</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        <div className="flex justify-end space-x-4">
+            Export to CSV
+          </CSVLink>
           <button
-            onClick={exportToPDF}
-            className="px-6 py-2 bg-red-600 text-white rounded-lg shadow-lg hover:bg-red-700 transition duration-300"
+            className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600"
+            onClick={generatePDF}
           >
             Export to PDF
           </button>
-          <button
-            onClick={exportToExcel}
-            className="px-6 py-2 bg-green-600 text-white rounded-lg shadow-lg hover:bg-green-700 transition duration-300"
-          >
-            Export to Excel
-          </button>
         </div>
       </div>
+
+      <div className="mb-6">
+        <h2 className="text-xl font-medium mb-2 text-gray-700">Report Summary</h2>
+        <p>Total Deliveries: <strong>{calculateTotalDeliveries()}</strong></p>
+        <p>Total Earnings: <strong>{calculateTotalEarnings()} LKR</strong></p>
+        <p>Total Delivered Items: <strong>{calculateDeliveredItems()}</strong></p>
+      </div>
+
+      {/* Bar Chart for Delivery Status */}
+      <div className="my-6">
+        <h3 className="text-lg font-semibold text-gray-700 mb-4">Total Deliveries per Status</h3>
+        <Bar data={barData} className="w-full h-96 bg-white p-4 rounded-lg shadow-lg" />
+      </div>
+
+      {/* Pie Chart for Earnings */}
+      <div className="my-6">
+        <h3 className="text-lg font-semibold text-gray-700 mb-4">Earnings Breakdown</h3>
+        <Pie data={pieData} className="w-full h-96 bg-white p-4 rounded-lg shadow-lg" />
+      </div>
+
+      <table className="w-full bg-white shadow-lg rounded-lg border border-gray-300">
+        <thead className="bg-gray-200 text-gray-700">
+          <tr>
+            <th className="border p-3 text-left">Delivery Items</th>
+            <th className="border p-3 text-left">Items Price</th>
+            <th className="border p-3 text-left">Delivery Price</th>
+            <th className="border p-3 text-left">Total Price</th>
+            <th className="border p-3 text-left">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredDeliveries.map((delivery) => (
+            <tr key={delivery._id} className="border-b hover:bg-gray-100 transition-colors duration-300">
+              <td className="border p-3">
+                {Array.isArray(delivery.deliveryItems) ? delivery.deliveryItems.map(item => item.name).join(', ') : 'No items'}
+              </td>
+              <td className="border p-3">{delivery.itemsPrice} LKR</td>
+              <td className="border p-3">{delivery.deliveryPrice} LKR</td>
+              <td className="border p-3">{delivery.totalPrice} LKR</td>
+              <td className="border p-3">{delivery.status || 'Pending'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
-};
-
-export default Reports;
+}
