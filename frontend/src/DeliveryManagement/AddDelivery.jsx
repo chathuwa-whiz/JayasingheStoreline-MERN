@@ -16,6 +16,7 @@ export default function AddDelivery() {
     const [city, setCity] = useState('');
     const [province, setProvince] = useState('');
     const [postalCode, setPostalCode] = useState('');
+    const [deliveryStatus, setDeliveryStatus] = useState('Pending');
     const [Items, setItems] = useState([]);
 
     const [createDelivery] = useCreateDeliveryMutation();
@@ -57,6 +58,7 @@ export default function AddDelivery() {
             deliveryData.append("city", city);
             deliveryData.append("province", province);
             deliveryData.append("postalCode", postalCode);
+            deliveryData.append("deliveryStatus", deliveryStatus);
             deliveryData.append("deliveryItem", JSON.stringify(Items));
 
             const response = await createDelivery(deliveryData);

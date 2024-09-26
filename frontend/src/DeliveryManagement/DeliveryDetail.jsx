@@ -1,42 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { FaTrash, FaEdit } from 'react-icons/fa';
-import { useDeleteDeliveryMutation, useGetDeliveriesQuery, useGetDeliveryByIdQuery } from '../redux/api/deliveryApiSlice';
+import { useDeleteDeliveryMutation, useGetDeliveriesQuery, useUpdateDeliveryMutation } from '../redux/api/deliveryApiSlice';
 
 export default function DeliveryDetail({ onEditDelivery }) {
-
   const { data: deliveries, error: deliveriesError, isLoading } = useGetDeliveriesQuery();
+  const [deleteDelivery] = useDeleteDeliveryMutation();
+  const [updateDelivery] = useUpdateDeliveryMutation();
+
+  console.log(deliveries);
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`/api/deliveries/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error("Failed to delete delivery.");
-      }
-      setDeliveries(deliveries.filter((delivery) => delivery._id !== id));
+      await deleteDelivery(id).unwrap(); // Use unwrap() to handle resolved promise
     } catch (error) {
       console.error('Error deleting delivery:', error);
     }
   };
 
   const handleStatusChange = async (id, status) => {
+    const delivery = deliveries.find((delivery) => delivery._id === id);
+    const updatedDelivery = { ...delivery, deliveryStatus: status }; // Use deliveryStatus instead of status
     try {
-      const response = await fetch(`/api/deliveries/${id}/status`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status }),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to update delivery status.");
-      }
-      setDeliveries(deliveries.map((delivery) => 
-        delivery._id === id ? { ...delivery, status } : delivery
-      ));
+      await updateDelivery({ deliveryId: id, formData: updatedDelivery }).unwrap();
+      window.location.reload(); // Reload the page after updating the delivery
     } catch (error) {
-      console.error('Error updating delivery status:', error);
+      console.error('Error updating delivery:', error);
     }
   };
 
@@ -53,7 +41,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
 
   const getButtonClass = (currentStatus, buttonStatus) => {
     return currentStatus === buttonStatus
-      ? `p-2 text-white rounded-lg`
+      ? `p-2 text-black rounded-lg`
       : `p-2 text-${buttonStatus === 'Pending' ? 'yellow' : buttonStatus === 'Delayed' ? 'blue' : 'green'}-500 hover:bg-${buttonStatus === 'Pending' ? 'yellow' : buttonStatus === 'Delayed' ? 'blue' : 'green'}-100 rounded-lg transition-colors duration-300`;
   };
 
@@ -84,7 +72,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
         </thead>
         <tbody>
           {deliveries.map((delivery) => (
-            <tr key={delivery._id} className={`border-b ${getRowClass(delivery.status)} hover:bg-orange-100 transition-colors duration-300`}>
+            <tr key={delivery._id} className={`border-b ${getRowClass(delivery.deliveryStatus)} hover:bg-orange-100 transition-colors duration-300`}>
               <td className="border p-3">
                 {JSON.parse(delivery.deliveryItem).map((item) => (
                   <div key={item._id}>
@@ -95,25 +83,25 @@ export default function DeliveryDetail({ onEditDelivery }) {
               <td className="border p-3">{delivery.itemsPrice} LKR</td>
               <td className="border p-3">{delivery.deliveryPrice} LKR</td>
               <td className="border p-3">{delivery.totalPrice} LKR</td>
-              <td className="border p-3">{delivery.status || 'Pending'}</td>
+              <td className="border p-3">{delivery.deliveryStatus || 'Pending'}</td>
               <td className="border p-3 flex space-x-2">
                 <button
-                  className={getButtonClass(delivery.status, 'Pending')}
+                  className={getButtonClass(delivery.deliveryStatus, 'Pending')}
                   onClick={() => handleStatusChange(delivery._id, 'Pending')}
                 >
                   Pending
                 </button>
                 <button
-                  className={getButtonClass(delivery.status, 'Delayed')}
+                  className={getButtonClass(delivery.deliveryStatus, 'Delayed')}
                   onClick={() => handleStatusChange(delivery._id, 'Delayed')}
                 >
-                  Delay
+                  Delayed
                 </button>
                 <button
-                  className={getButtonClass(delivery.status, 'Completed')}
+                  className={getButtonClass(delivery.deliveryStatus, 'Completed')}
                   onClick={() => handleStatusChange(delivery._id, 'Completed')}
                 >
-                  Done
+                  Completed
                 </button>
                 <button 
                   className="p-2 text-yellow-500 hover:bg-yellow-100 rounded-lg transition-colors duration-300"

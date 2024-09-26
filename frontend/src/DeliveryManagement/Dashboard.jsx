@@ -19,9 +19,9 @@ export default function DeliveryDashboard() {
       const data = await response.json();
       setDeliveries(data);
 
-      const pending = data.filter(d => d.status === 'Pending').length;
-      const completed = data.filter(d => d.status === 'Completed').length;
-      const delayed = data.filter(d => d.status === 'Delayed').length;
+      const pending = data.filter(d => d.deliveryStatus === 'Pending').length;
+      const completed = data.filter(d => d.deliveryStatus === 'Completed').length;
+      const delayed = data.filter(d => d.deliveryStatus === 'Delayed').length;
 
       setPendingDeliveries(pending);
       setCompletedDeliveries(completed);
