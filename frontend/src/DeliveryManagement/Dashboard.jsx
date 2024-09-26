@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { FaBox, FaClock, FaCheck, FaExclamationCircle, FaDollarSign, FaListUl, FaTrash } from 'react-icons/fa';
+import { FaBox, FaClock, FaCheck, FaExclamationCircle, FaDollarSign, FaListUl, FaTrash, FaUser } from 'react-icons/fa'; // Added FaUser for drivers
 
 export default function DeliveryDashboard() {
   const [deliveries, setDeliveries] = useState([]);
   const [pendingDeliveries, setPendingDeliveries] = useState(0);
   const [completedDeliveries, setCompletedDeliveries] = useState(0);
   const [delayedDeliveries, setDelayedDeliveries] = useState(0);
-  const [totalEarnings, setTotalEarnings] = useState(0); // New state for total earnings
-  const [totalDeliveredItems, setTotalDeliveredItems] = useState(0); // New state for total delivered items
+  const [totalEarnings, setTotalEarnings] = useState(0); // For total earnings
+  const [totalDeliveredItems, setTotalDeliveredItems] = useState(0); // For total delivered items
+  const [totalDrivers, setTotalDrivers] = useState(0); // New state for total drivers
   const [error, setError] = useState(null);
 
+  // Fetch deliveries
   const fetchDeliveries = async () => {
     try {
       const response = await fetch("/api/deliveries");
@@ -38,17 +40,22 @@ export default function DeliveryDashboard() {
     }
   };
 
-  const deleteDelivery = async (id) => {
+  // Fetch drivers
+  const fetchDrivers = async () => {
     try {
-      await fetch(`/api/deliveries/${id}`, { method: 'DELETE' });
-      setDeliveries(deliveries.filter(delivery => delivery._id !== id));
+      const response = await fetch("/api/drivers"); // Make sure this API endpoint exists
+      if (!response.ok) throw new Error("Network response was not ok");
+      const data = await response.json();
+      setTotalDrivers(data.length); // Set the total number of drivers
     } catch (error) {
-      console.error("Error deleting delivery:", error);
+      console.error("Error fetching drivers:", error);
+      setError(error.message);
     }
   };
 
   useEffect(() => {
     fetchDeliveries();
+    fetchDrivers(); // Fetch drivers when component mounts
   }, []);
 
   return (
@@ -106,8 +113,16 @@ export default function DeliveryDashboard() {
             <p className="text-gray-600">Total Delivered Items</p>
           </div>
         </div>
+        <div className="bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl flex items-center">
+          <FaUser className="text-4xl text-purple-500 mr-4" />
+          <div>
+            <h2 className="text-3xl font-semibold text-purple-600">{totalDrivers}</h2>
+            <p className="text-gray-600">Total Drivers</p>
+          </div>
+        </div>
       </div>
 
+      {/* Recent Deliveries Section */}
       <div className="bg-white p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-2xl font-semibold mb-4">Recent Deliveries</h2>
         <table className="w-full table-auto">

@@ -1,29 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
-import 'chart.js/auto';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import * as XLSX from 'xlsx'; // Import XLSX library
+import * as XLSX from 'xlsx';
+import 'chart.js/auto';
 
 const Reports = () => {
-  const barData = {
-    labels: ['2024-01', '2024-02', '2024-03', '2024-04', '2024-05', '2024-06', '2024-07', '2024-08'],
+  const [timeframe, setTimeframe] = useState('monthly');
+
+  // Sample data for reports
+  const monthlyData = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August'],
     datasets: [
       {
-        label: 'Deliveries',
+        label: 'Monthly Deliveries',
         backgroundColor: '#FFA500',
-        data: [50000, 250000, 300000, 450000, 200000, 100000, 150000, 400000],
+        data: [50, 200, 150, 300, 250, 400, 350, 500],
+      },
+    ],
+  };
+
+  const weeklyData = {
+    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+    datasets: [
+      {
+        label: 'Weekly Deliveries',
+        backgroundColor: '#00BFFF',
+        data: [20, 30, 25, 40],
+      },
+    ],
+  };
+
+  const dailyData = {
+    labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
+    datasets: [
+      {
+        label: 'Daily Deliveries',
+        backgroundColor: '#32CD32',
+        data: [5, 10, 8, 15, 12, 20, 18],
       },
     ],
   };
 
   const pieData = {
-    labels: ['Lorry A', 'Lorry B', 'Lorry C', 'D Bike', 'D Tuk'],
+    labels: ['Lorry A', 'Lorry B', 'D Bike', 'D Tuk'],
     datasets: [
       {
         label: 'Most Used Units',
-        data: [20, 35, 12, 10, 21],
-        backgroundColor: ['#FF6347', '#FFD700', '#90EE90', '#00BFFF', '#FF69B4'],
+        data: [30, 40, 20, 10],
+        backgroundColor: ['#FF6347', '#FFD700', '#90EE90', '#00BFFF'],
       },
     ],
   };
@@ -31,137 +56,73 @@ const Reports = () => {
   const exportToPDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(22);
-    doc.text('Reports', 14, 22);
-
-    // Add Bar Chart
-    doc.setFontSize(16);
-    doc.text('Monthly Deliveries', 14, 40);
-
-    const barChart = document.querySelector('.bar-chart canvas');
-    if (barChart) {
-      doc.addImage(barChart.toDataURL(), 'PNG', 14, 50, 180, 100);
-    }
-
-    // Add Pie Chart
-    doc.setFontSize(16);
-    doc.text('Most Used Units', 14, 160);
-
-    const pieChart = document.querySelector('.pie-chart canvas');
-    if (pieChart) {
-      doc.addImage(pieChart.toDataURL(), 'PNG', 14, 170, 180, 100);
-    }
-
-    // Add Table
-    doc.setFontSize(16);
-    doc.text('Details:', 14, 280);
-
-    const details = [
-      ['Unit', 'Percentage'],
-      ['Lorry A', '20%'],
-      ['Lorry B', '35%'],
-      ['Lorry C', '12%'],
-      ['D Bike', '10%'],
-      ['D Tuk', '21%'],
-    ];
-
-    doc.autoTable({
-      head: details.slice(0, 1),
-      body: details.slice(1),
-      startY: 290,
-      theme: 'striped',
-    });
-
+    doc.text('Jayasinghe Storelines PVT LTD Report', 14, 22);
+    // Add content...
     doc.save('report.pdf');
   };
 
   const exportToExcel = () => {
-    const deliveriesData = [
-      ['Month', 'Deliveries'],
-      ['2024-01', 50000],
-      ['2024-02', 250000],
-      ['2024-03', 300000],
-      ['2024-04', 450000],
-      ['2024-05', 200000],
-      ['2024-06', 100000],
-      ['2024-07', 150000],
-      ['2024-08', 400000],
-    ];
-
-    const mostUsedUnitsData = [
-      ['Unit', 'Percentage'],
-      ['Lorry A', '20%'],
-      ['Lorry B', '35%'],
-      ['Lorry C', '12%'],
-      ['D Bike', '10%'],
-      ['D Tuk', '21%'],
-    ];
-
-    // Create a new workbook
     const wb = XLSX.utils.book_new();
-
-    // Create sheet for deliveries (Bar chart data)
-    const wsDeliveries = XLSX.utils.aoa_to_sheet(deliveriesData);
-    XLSX.utils.book_append_sheet(wb, wsDeliveries, 'Monthly Deliveries');
-
-    // Create sheet for most used units (Pie chart data)
-    const wsMostUsedUnits = XLSX.utils.aoa_to_sheet(mostUsedUnitsData);
-    XLSX.utils.book_append_sheet(wb, wsMostUsedUnits, 'Most Used Units');
-
-    // Write the workbook to an Excel file
-    XLSX.writeFile(wb, 'report_with_charts.xlsx');
+    const ws = XLSX.utils.aoa_to_sheet([
+      ['Unit', 'Percentage'],
+      ['Lorry A', '30%'],
+      ['Lorry B', '40%'],
+      ['D Bike', '20%'],
+      ['D Tuk', '10%'],
+    ]);
+    XLSX.utils.book_append_sheet(wb, ws, 'Most Used Units');
+    XLSX.writeFile(wb, 'report.xlsx');
   };
+
+  const chartData = timeframe === 'monthly' ? monthlyData : timeframe === 'weekly' ? weeklyData : dailyData;
 
   return (
     <div className="p-8 bg-gradient-to-r from-blue-50 to-blue-100 min-h-screen">
       <div className="flex flex-col">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-5xl font-extrabold text-gray-800 shadow-md">Reports</h1>
-          <div className="flex space-x-4">
-            <button className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg shadow-lg hover:bg-gray-400 transition duration-300">
-              Filters
-            </button>
-            <button className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg shadow-lg hover:bg-gray-400 transition duration-300">
-              Select Date
-            </button>
-            <button
-              onClick={exportToPDF}
-              className="px-6 py-2 bg-red-600 text-white rounded-lg shadow-lg hover:bg-red-700 transition duration-300"
-            >
-              Export to PDF
-            </button>
-          </div>
+        <h1 className="text-5xl font-extrabold text-gray-800 shadow-md mb-8 text-center">Delivery Reports</h1>
+
+        <div className="flex justify-center mb-6">
+          <select
+            value={timeframe}
+            onChange={(e) => setTimeframe(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="monthly">Monthly Reports</option>
+            <option value="weekly">Weekly Reports</option>
+            <option value="daily">Daily Reports</option>
+          </select>
         </div>
 
-        <div className="flex justify-center mt-8">
-          <div className="mb-12 bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
-            <h2 className="text-4xl font-semibold text-gray-800 text-center mb-4">Monthly Deliveries</h2>
-            <div className="bar-chart h-80">
-              <Bar data={barData} options={{ maintainAspectRatio: false }} />
+        <div className="flex flex-col md:flex-row justify-between">
+          <div className="mb-8 bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
+            <h2 className="text-4xl font-semibold text-gray-800 text-center mb-4">{timeframe.charAt(0).toUpperCase() + timeframe.slice(1)} Deliveries</h2>
+            <div className="h-80">
+              <Bar data={chartData} options={{ maintainAspectRatio: false }} />
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-3xl font-semibold text-gray-800 mb-4">Most Used Units</h2>
-            <div className="space-y-2">
-              {pieData.labels.map((label, index) => (
-                <div key={index} className="flex items-center justify-between text-gray-700">
-                  <span className="font-medium">{label}</span>
-                  <span>{pieData.datasets[0].data[index]}%</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow-lg pie-chart">
-            <h2 className="text-3xl font-semibold text-gray-800 mb-4 text-center">Unit Distribution</h2>
             <div className="h-80">
               <Pie data={pieData} options={{ maintainAspectRatio: false }} />
             </div>
           </div>
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-3xl font-semibold text-gray-800 mb-4">Unit Distribution</h2>
+            <ul className="space-y-2">
+              {pieData.labels.map((label, index) => (
+                <li key={index} className="flex items-center justify-between text-gray-700">
+                  <span className="font-medium">{label}</span>
+                  <span>{pieData.datasets[0].data[index]}%</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        <div className="mt-8 flex justify-end space-x-4">
+        <div className="flex justify-end space-x-4">
           <button
             onClick={exportToPDF}
             className="px-6 py-2 bg-red-600 text-white rounded-lg shadow-lg hover:bg-red-700 transition duration-300"

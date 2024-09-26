@@ -63,6 +63,12 @@ export default function DeliveryDetail({ onEditDelivery }) {
     }
   };
 
+  const getButtonClass = (currentStatus, buttonStatus) => {
+    return currentStatus === buttonStatus
+      ? `p-2 text-white rounded-lg`
+      : `p-2 text-${buttonStatus === 'Pending' ? 'yellow' : buttonStatus === 'Delayed' ? 'blue' : 'green'}-500 hover:bg-${buttonStatus === 'Pending' ? 'yellow' : buttonStatus === 'Delayed' ? 'blue' : 'green'}-100 rounded-lg transition-colors duration-300`;
+  };
+
   return (
     <div className="shadow-lg rounded-lg p-6 bg-gray-100 h-screen overflow-auto">
       <h1 className="text-2xl font-semibold mb-6 text-gray-800">Deliveries</h1>
@@ -100,19 +106,19 @@ export default function DeliveryDetail({ onEditDelivery }) {
               <td className="border p-3">{delivery.status || 'Pending'}</td>
               <td className="border p-3 flex space-x-2">
                 <button
-                  className="p-2 text-yellow-500 hover:bg-yellow-100 rounded-lg transition-colors duration-300"
+                  className={getButtonClass(delivery.status, 'Pending')}
                   onClick={() => handleStatusChange(delivery._id, 'Pending')}
                 >
                   Pending
                 </button>
                 <button
-                  className="p-2 text-blue-500 hover:bg-blue-100 rounded-lg transition-colors duration-300"
+                  className={getButtonClass(delivery.status, 'Delayed')}
                   onClick={() => handleStatusChange(delivery._id, 'Delayed')}
                 >
                   Delay
                 </button>
                 <button
-                  className="p-2 text-green-500 hover:bg-green-100 rounded-lg transition-colors duration-300"
+                  className={getButtonClass(delivery.status, 'Completed')}
                   onClick={() => handleStatusChange(delivery._id, 'Completed')}
                 >
                   Done
