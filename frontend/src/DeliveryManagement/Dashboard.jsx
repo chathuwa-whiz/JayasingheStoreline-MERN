@@ -128,7 +128,7 @@ export default function DeliveryDashboard() {
         <table className="w-full table-auto">
           <thead>
             <tr className="text-left border-b-2 border-gray-300">
-              <th className="px-4 py-2">Delivery Item</th>
+              <th className="px-4 py-2">Delivery No</th>
               <th className="px-4 py-2">Items Price</th>
               <th className="px-4 py-2">Delivery Price</th>
               <th className="px-4 py-2">Total Price</th>
@@ -138,7 +138,7 @@ export default function DeliveryDashboard() {
           <tbody>
             {deliveries.slice(0, 5).map(delivery => (
               <tr key={delivery._id} className="hover:bg-gray-100 transition-colors">
-                <td className="border px-4 py-2">{delivery.itemName || 'N/A'}</td>
+                <td className="border px-4 py-2">{delivery._id}</td>
                 <td className="border px-4 py-2">{delivery.itemsPrice ? delivery.itemsPrice.toFixed(2) : '0.00'}</td>
                 <td className="border px-4 py-2">{delivery.deliveryPrice ? delivery.deliveryPrice.toFixed(2) : '0.00'}</td>
                 <td className="border px-4 py-2">{(delivery.itemsPrice + delivery.deliveryPrice).toFixed(2)}</td>
