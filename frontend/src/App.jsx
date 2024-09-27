@@ -60,7 +60,7 @@ import PaymentDashboard from "./PaymentManagement/PaymentDashboard";
 import Payment from "./PaymentManagement/Payment";
 import HrNotify from "./PaymentManagement/HrNotify";
 import SupNotify from "./PaymentManagement/SupNotify";
-
+import Lgout from "./PaymentManagement/lgout";
 
 // supplier
 import Supplier from "./SupplierManagement/supplier";
@@ -160,6 +160,7 @@ function App() {
           <Route path="cod" element={<CODdetails />} />
           <Route path="hrnotify" element={<HrNotify />} />
           <Route path="supnotify" element={<SupNotify />} />
+          <Route path="lgout" element={<Lgout />} />
         </Route>
 
         {/* Customer Manager Routes */}
