@@ -117,6 +117,7 @@ export default function SupplierDetailsForm() {
                   id="SupplierID"
                   type="text"
                   value={NIC}
+                  unique:true
                   onChange={(e) => setNIC(e.target.value)}
                 />
                 {errors.NIC && <p className="text-red-500 text-sm">{errors.NIC}</p>}
