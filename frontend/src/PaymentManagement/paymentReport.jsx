@@ -10,6 +10,7 @@ const PaymentReport = () => {
   const [totalCostData, setTotalCostData] = useState([]);
   const [totalIncomeData, setTotalIncomeData] = useState([]);
   const [supplierSendData, setSupplierSendData] = useState([]);
+  const [editingItem, setEditingItem] = useState(null); // For tracking the editing item
 
   useEffect(() => {
     if (!products) return;
@@ -46,6 +47,31 @@ const PaymentReport = () => {
     }));
     setTotalIncomeData(totalIncome);
   }, [products]);
+
+  const handleEdit = (section, index) => {
+    setEditingItem({ section, index });
+  };
+
+  const handleDelete = (section, index) => {
+    const newData = [...section];
+    newData.splice(index, 1);
+    section === hrSendData ? setHrSendData(newData) : 
+    section === profitData ? setProfitData(newData) :
+    section === totalCostData ? setTotalCostData(newData) :
+    section === totalIncomeData ? setTotalIncomeData(newData) : 
+    setSupplierSendData(newData);
+  };
+
+  const handleSave = (section, index, updatedItem) => {
+    const newData = [...section];
+    newData[index] = updatedItem;
+    section === hrSendData ? setHrSendData(newData) : 
+    section === profitData ? setProfitData(newData) :
+    section === totalCostData ? setTotalCostData(newData) :
+    section === totalIncomeData ? setTotalIncomeData(newData) : 
+    setSupplierSendData(newData);
+    setEditingItem(null);
+  };
 
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -91,18 +117,18 @@ const PaymentReport = () => {
         </div>
 
         <div className="grid gap-8 text-center">
-          <Section title="HR Send Data" data={hrSendData} />
-          <Section title="Profit Data" data={profitData} />
-          <Section title="Total Cost Data" data={totalCostData} />
-          <Section title="Total Income Data" data={totalIncomeData} />
-          <Section title="Supplier Send Data" data={supplierSendData} />
+          <Section title="HR Send Data" data={hrSendData} handleEdit={handleEdit} handleDelete={handleDelete} editingItem={editingItem} handleSave={handleSave} />
+          <Section title="Profit Data" data={profitData} handleEdit={handleEdit} handleDelete={handleDelete} editingItem={editingItem} handleSave={handleSave} />
+          <Section title="Total Cost Data" data={totalCostData} handleEdit={handleEdit} handleDelete={handleDelete} editingItem={editingItem} handleSave={handleSave} />
+          <Section title="Total Income Data" data={totalIncomeData} handleEdit={handleEdit} handleDelete={handleDelete} editingItem={editingItem} handleSave={handleSave} />
+          <Section title="Supplier Send Data" data={supplierSendData} handleEdit={handleEdit} handleDelete={handleDelete} editingItem={editingItem} handleSave={handleSave} />
         </div>
       </div>
     </div>
   );
 };
 
-const Section = ({ title, data }) => (
+const Section = ({ title, data, handleEdit, handleDelete, editingItem, handleSave }) => (
   <div className="bg-white p-6 rounded-lg shadow-md">
     <h2 className="text-3xl font-semibold text-gray-800 mb-4">{title}</h2>
     <table className="min-w-full bg-gray-200 border border-gray-300 rounded-md">
@@ -111,19 +137,58 @@ const Section = ({ title, data }) => (
           <th className="py-3 px-4 border-b">Date</th>
           <th className="py-3 px-4 border-b">Description</th>
           <th className="py-3 px-4 border-b">Amount</th>
+          <th className="py-3 px-4 border-b">Actions</th>
         </tr>
       </thead>
       <tbody>
         {data.length === 0 ? (
           <tr>
-            <td colSpan="3" className="py-4 px-4 text-center text-gray-500">No data available</td>
+            <td colSpan="4" className="py-4 px-4 text-center text-gray-500">No data available</td>
           </tr>
         ) : (
           data.map((item, index) => (
             <tr key={index} className="hover:bg-gray-100 transition">
-              <td className="py-2 px-4 border-b">{item.date}</td>
-              <td className="py-2 px-4 border-b">{item.description}</td>
-              <td className="py-2 px-4 border-b">Rs.{item.amount}</td>
+              {editingItem && editingItem.index === index ? (
+                <>
+                  <td className="py-2 px-4 border-b">
+                    <input
+                      type="text"
+                      value={item.date}
+                      onChange={(e) => handleSave(data, index, { ...item, date: e.target.value })}
+                      className="border p-1"
+                    />
+                  </td>
+                  <td className="py-2 px-4 border-b">
+                    <input
+                      type="text"
+                      value={item.description}
+                      onChange={(e) => handleSave(data, index, { ...item, description: e.target.value })}
+                      className="border p-1"
+                    />
+                  </td>
+                  <td className="py-2 px-4 border-b">
+                    <input
+                      type="text"
+                      value={item.amount}
+                      onChange={(e) => handleSave(data, index, { ...item, amount: e.target.value })}
+                      className="border p-1"
+                    />
+                  </td>
+                  <td className="py-2 px-4 border-b">
+                    <button onClick={() => handleSave(data, index, item)} className="bg-blue-500 text-white px-3 py-1 rounded">Save</button>
+                  </td>
+                </>
+              ) : (
+                <>
+                  <td className="py-2 px-4 border-b">{item.date}</td>
+                  <td className="py-2 px-4 border-b">{item.description}</td>
+                  <td className="py-2 px-4 border-b">Rs.{item.amount}</td>
+                  <td className="py-2 px-4 border-b">
+                    <button onClick={() => handleEdit(data, index)} className="bg-yellow-500 text-white px-3 py-1 rounded mr-2">Edit</button>
+                    <button onClick={() => handleDelete(data, index)} className="bg-red-500 text-white px-3 py-1 rounded">Delete</button>
+                  </td>
+                </>
+              )}
             </tr>
           ))
         )}
