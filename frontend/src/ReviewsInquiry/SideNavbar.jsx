@@ -23,7 +23,7 @@ const Sidebar = () => {
 
             <li className='mb-4'>
               <NavLink
-                to="/dashboardlist"
+                to="/user-reviews"
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
               >
                 <HomeIcon className="h-5 w-5 mr-3" />
@@ -43,53 +43,19 @@ const Sidebar = () => {
                 <ul className="ml-5 space-y-1">
                   <li>
                     <NavLink
-                      to="products"
+                      to="/dashboardlist"
                       className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
                     >
                       Products List
                     </NavLink>
                   </li>
 
-                  <li>
-                    <NavLink
-                      to="addproducts"
-                      className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
-                    >
-                      Add Product
-                    </NavLink>
-                  </li>
-
-                  <li>
-                    <NavLink
-                      to="categories"
-                      className="flex items-center text-gray-600 hover:text-white hover:bg-orange-400 rounded-lg px-4 py-2"
-                    >
-                      Categories
-                    </NavLink>
-                  </li>
                 </ul>
               )}
             </li>
 
-            <li className="mb-4">
-              <NavLink
-                to="stock"
-                className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
-              >
-                <ClipboardDocumentListIcon className="h-5 w-5 mr-3" />
-                Stock
-              </NavLink>
-            </li>
 
-            <li className="mb-4">
-              <NavLink
-                to="reports"
-                className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
-              >
-                <ArchiveBoxIcon className="h-5 w-5 mr-3" />
-                Reports
-              </NavLink>
-            </li>
+
 
           </ul>
 

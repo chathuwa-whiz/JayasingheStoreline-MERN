@@ -28,6 +28,8 @@ export default function DashboardList() {
         navigate(`/dashboard/product/${productId}`); // Navigate to the SingleProductView
     };
 
+
+    
     return (
         <div className="flex">
             {/* Sidebar on the left */}
