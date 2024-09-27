@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import { useAllProductsQuery } from '../redux/api/productApiSlice';
+import logo from '../asset/logo.png';
 
 const PaymentReport = () => {
   const { data: products, isLoading, isError } = useAllProductsQuery();
@@ -86,37 +87,37 @@ const PaymentReport = () => {
   const generatePDF = () => {
     const doc = new jsPDF();
   
-    doc.text('Payment Report', 14, 10);
+    // Base64 image data for your company logo (replace with your actual Base64 image data)
+    const logoBase64 = logo;
   
-    // Function to generate a table
+    // Add the logo image at the top of the PDF
+    doc.addImage(logoBase64, 'JPEG', 10, 10, 50, 20); // Adjust the position (x, y) and size (width, height) as needed
+  
+    // Set the position for the report title after the logo
+    doc.text('Payment Report', 14, 40); // Set y position to be after the logo
+  
     const generateTable = (title, data) => {
       if (data.length === 0) return;
   
-      doc.text(title, 14, doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 20);
+      doc.text(title, 14, doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 50);
   
       doc.autoTable({
-        startY: doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 30,
+        startY: doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 60,
         head: [['Date', 'Description', 'Amount']],
         body: data.map((item) => [item.date, item.description, `Rs.${item.amount}`]),
         theme: 'grid',
       });
     };
   
-    // Filter data by selected date
-    const filterByDate = (data) => {
-      if (!searchDate) return data; // If no search query, show all data
-      return data.filter((item) => item.date === searchDate); // Filter by date
-    };
-  
-    // Generate tables for filtered data
-    generateTable('HR Send Data', filterByDate(hrSendData));
-    generateTable('Profit Data', filterByDate(profitData));
-    generateTable('Total Cost Data', filterByDate(totalCostData));
-    generateTable('Total Income Data', filterByDate(totalIncomeData));
-    generateTable('Supplier Send Data', filterByDate(supplierSendData));
+    generateTable('HR Send Data', hrSendData);
+    generateTable('Profit Data', profitData);
+    generateTable('Total Cost Data', totalCostData);
+    generateTable('Total Income Data', totalIncomeData);
+    generateTable('Supplier Send Data', supplierSendData);
   
     doc.save('Payment_Report.pdf');
   };
+  
   
 
   if (isLoading) return <div>Loading...</div>;
