@@ -11,39 +11,40 @@ const PaymentReport = () => {
   const [totalIncomeData, setTotalIncomeData] = useState([]);
   const [supplierSendData, setSupplierSendData] = useState([]);
   const [editingItem, setEditingItem] = useState(null); // For tracking the editing item
+  const [searchDate, setSearchDate] = useState(''); // For storing the search query
 
   useEffect(() => {
     if (!products) return;
 
-    // Calculate and set real data for the report
+    // Set real data for the report
     setHrSendData([
       { date: '2024-08-01', description: 'HR Expense A', amount: 1000 },
-      { date: '2024-08-02', description: 'HR Expense B', amount: 1500 }
+      { date: '2024-08-02', description: 'HR Expense B', amount: 1500 },
     ]);
 
     setSupplierSendData([
       { date: '2024-08-01', description: 'Supplier Payment A', amount: 2000 },
-      { date: '2024-08-02', description: 'Supplier Payment B', amount: 2500 }
+      { date: '2024-08-02', description: 'Supplier Payment B', amount: 2500 },
     ]);
 
-    const profit = products.map(product => ({
+    const profit = products.map((product) => ({
       date: '2024-08-01', // Replace with actual date if available
       description: product.name,
-      amount: product.sellingPrice - product.buyingPrice
+      amount: product.sellingPrice - product.buyingPrice,
     }));
     setProfitData(profit);
 
-    const totalCost = products.map(product => ({
+    const totalCost = products.map((product) => ({
       date: '2024-08-01', // Replace with actual date if available
       description: product.name,
-      amount: product.buyingPrice
+      amount: product.buyingPrice,
     }));
     setTotalCostData(totalCost);
 
-    const totalIncome = products.map(product => ({
-      date: '2024-08-01', // Replace with actual date if available
+    const totalIncome = products.map((product) => ({
+      date: '2024-08-04', // Replace with actual date if available
       description: product.name,
-      amount: product.sellingPrice
+      amount: product.sellingPrice,
     }));
     setTotalIncomeData(totalIncome);
   }, [products]);
@@ -55,21 +56,29 @@ const PaymentReport = () => {
   const handleDelete = (section, index) => {
     const newData = [...section];
     newData.splice(index, 1);
-    section === hrSendData ? setHrSendData(newData) : 
-    section === profitData ? setProfitData(newData) :
-    section === totalCostData ? setTotalCostData(newData) :
-    section === totalIncomeData ? setTotalIncomeData(newData) : 
-    setSupplierSendData(newData);
+    section === hrSendData
+      ? setHrSendData(newData)
+      : section === profitData
+      ? setProfitData(newData)
+      : section === totalCostData
+      ? setTotalCostData(newData)
+      : section === totalIncomeData
+      ? setTotalIncomeData(newData)
+      : setSupplierSendData(newData);
   };
 
   const handleSave = (section, index, updatedItem) => {
     const newData = [...section];
     newData[index] = updatedItem;
-    section === hrSendData ? setHrSendData(newData) : 
-    section === profitData ? setProfitData(newData) :
-    section === totalCostData ? setTotalCostData(newData) :
-    section === totalIncomeData ? setTotalIncomeData(newData) : 
-    setSupplierSendData(newData);
+    section === hrSendData
+      ? setHrSendData(newData)
+      : section === profitData
+      ? setProfitData(newData)
+      : section === totalCostData
+      ? setTotalCostData(newData)
+      : section === totalIncomeData
+      ? setTotalIncomeData(newData)
+      : setSupplierSendData(newData);
     setEditingItem(null);
   };
 
@@ -80,14 +89,14 @@ const PaymentReport = () => {
 
     const generateTable = (title, data) => {
       if (data.length === 0) return;
-      
+
       doc.text(title, 14, doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 20);
-      
+
       doc.autoTable({
         startY: doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 30,
         head: [['Date', 'Description', 'Amount']],
-        body: data.map(item => [item.date, item.description, `Rs.${item.amount}`]),
-        theme: 'grid'
+        body: data.map((item) => [item.date, item.description, `Rs.${item.amount}`]),
+        theme: 'grid',
       });
     };
 
@@ -103,11 +112,25 @@ const PaymentReport = () => {
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Something went wrong</div>;
 
+  // Filter data based on search date
+  const filterByDate = (data) => {
+    if (!searchDate) return data; // If no search query, show all data
+    return data.filter((item) => item.date === searchDate); // Filter by date
+  };
+
   return (
     <div className="min-h-screen flex bg-gray-100">
       <div className="flex-grow p-6">
         <h1 className="text-4xl font-extrabold text-blue-600 mb-6 text-center">Payment Report</h1>
+
         <div className="flex justify-center space-x-4 mb-6">
+          <input
+            type="date"
+            value={searchDate}
+            onChange={(e) => setSearchDate(e.target.value)}
+            className="border border-gray-300 p-2 rounded-md"
+            placeholder="Search by Date"
+          />
           <button
             onClick={generatePDF}
             className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-700 transition duration-300"
@@ -117,11 +140,46 @@ const PaymentReport = () => {
         </div>
 
         <div className="grid gap-8 text-center">
-          <Section title="HR Send Data" data={hrSendData} handleEdit={handleEdit} handleDelete={handleDelete} editingItem={editingItem} handleSave={handleSave} />
-          <Section title="Profit Data" data={profitData} handleEdit={handleEdit} handleDelete={handleDelete} editingItem={editingItem} handleSave={handleSave} />
-          <Section title="Total Cost Data" data={totalCostData} handleEdit={handleEdit} handleDelete={handleDelete} editingItem={editingItem} handleSave={handleSave} />
-          <Section title="Total Income Data" data={totalIncomeData} handleEdit={handleEdit} handleDelete={handleDelete} editingItem={editingItem} handleSave={handleSave} />
-          <Section title="Supplier Send Data" data={supplierSendData} handleEdit={handleEdit} handleDelete={handleDelete} editingItem={editingItem} handleSave={handleSave} />
+          <Section
+            title="HR Send Data"
+            data={filterByDate(hrSendData)}
+            handleEdit={handleEdit}
+            handleDelete={handleDelete}
+            editingItem={editingItem}
+            handleSave={handleSave}
+          />
+          <Section
+            title="Profit Data"
+            data={filterByDate(profitData)}
+            handleEdit={handleEdit}
+            handleDelete={handleDelete}
+            editingItem={editingItem}
+            handleSave={handleSave}
+          />
+          <Section
+            title="Total Cost Data"
+            data={filterByDate(totalCostData)}
+            handleEdit={handleEdit}
+            handleDelete={handleDelete}
+            editingItem={editingItem}
+            handleSave={handleSave}
+          />
+          <Section
+            title="Total Income Data"
+            data={filterByDate(totalIncomeData)}
+            handleEdit={handleEdit}
+            handleDelete={handleDelete}
+            editingItem={editingItem}
+            handleSave={handleSave}
+          />
+          <Section
+            title="Supplier Send Data"
+            data={filterByDate(supplierSendData)}
+            handleEdit={handleEdit}
+            handleDelete={handleDelete}
+            editingItem={editingItem}
+            handleSave={handleSave}
+          />
         </div>
       </div>
     </div>
@@ -143,7 +201,9 @@ const Section = ({ title, data, handleEdit, handleDelete, editingItem, handleSav
       <tbody>
         {data.length === 0 ? (
           <tr>
-            <td colSpan="4" className="py-4 px-4 text-center text-gray-500">No data available</td>
+            <td colSpan="4" className="py-4 px-4 text-center text-gray-500">
+              No data available for the selected date
+            </td>
           </tr>
         ) : (
           data.map((item, index) => (
@@ -175,7 +235,9 @@ const Section = ({ title, data, handleEdit, handleDelete, editingItem, handleSav
                     />
                   </td>
                   <td className="py-2 px-4 border-b">
-                    <button onClick={() => handleSave(data, index, item)} className="bg-blue-500 text-white px-3 py-1 rounded">Save</button>
+                    <button onClick={() => handleSave(data, index, item)} className="text-green-600">
+                      Save
+                    </button>
                   </td>
                 </>
               ) : (
@@ -184,8 +246,12 @@ const Section = ({ title, data, handleEdit, handleDelete, editingItem, handleSav
                   <td className="py-2 px-4 border-b">{item.description}</td>
                   <td className="py-2 px-4 border-b">Rs.{item.amount}</td>
                   <td className="py-2 px-4 border-b">
-                    <button onClick={() => handleEdit(data, index)} className="bg-yellow-500 text-white px-3 py-1 rounded mr-2">Edit</button>
-                    <button onClick={() => handleDelete(data, index)} className="bg-red-500 text-white px-3 py-1 rounded">Delete</button>
+                    <button onClick={() => handleEdit(data, index)} className="text-blue-600">
+                      Edit
+                    </button>
+                    <button onClick={() => handleDelete(data, index)} className="text-red-600 ml-4">
+                      Delete
+                    </button>
                   </td>
                 </>
               )}
