@@ -27,22 +27,23 @@ const PaymentReport = () => {
       { date: '2024-08-02', description: 'Supplier Payment B', amount: 2500 },
     ]);
 
+    // Updated section with product `createdAt` dates
     const profit = products.map((product) => ({
-      date: '2024-08-01', // Replace with actual date if available
+      date: product.createdAt || 'N/A', // Use the actual product creation date if available
       description: product.name,
       amount: product.sellingPrice - product.buyingPrice,
     }));
     setProfitData(profit);
 
     const totalCost = products.map((product) => ({
-      date: '2024-08-01', // Replace with actual date if available
+      date: product.createdAt || 'N/A', // Use the actual product creation date if available
       description: product.name,
       amount: product.buyingPrice,
     }));
     setTotalCostData(totalCost);
 
     const totalIncome = products.map((product) => ({
-      date: '2024-08-04', // Replace with actual date if available
+      date: product.createdAt || 'N/A', // Use the actual product creation date if available
       description: product.name,
       amount: product.sellingPrice,
     }));
@@ -235,7 +236,10 @@ const Section = ({ title, data, handleEdit, handleDelete, editingItem, handleSav
                     />
                   </td>
                   <td className="py-2 px-4 border-b">
-                    <button onClick={() => handleSave(data, index, item)} className="text-green-600">
+                    <button
+                      onClick={() => handleSave(data, index, item)}
+                      className="bg-blue-500 text-white px-3 py-1 rounded-lg"
+                    >
                       Save
                     </button>
                   </td>
@@ -244,12 +248,18 @@ const Section = ({ title, data, handleEdit, handleDelete, editingItem, handleSav
                 <>
                   <td className="py-2 px-4 border-b">{item.date}</td>
                   <td className="py-2 px-4 border-b">{item.description}</td>
-                  <td className="py-2 px-4 border-b">Rs.{item.amount}</td>
+                  <td className="py-2 px-4 border-b">Rs. {item.amount}</td>
                   <td className="py-2 px-4 border-b">
-                    <button onClick={() => handleEdit(data, index)} className="text-blue-600">
+                    <button
+                      onClick={() => handleEdit(data, index)}
+                      className="bg-yellow-500 text-white px-3 py-1 rounded-lg mr-2"
+                    >
                       Edit
                     </button>
-                    <button onClick={() => handleDelete(data, index)} className="text-red-600 ml-4">
+                    <button
+                      onClick={() => handleDelete(data, index)}
+                      className="bg-red-500 text-white px-3 py-1 rounded-lg"
+                    >
                       Delete
                     </button>
                   </td>
