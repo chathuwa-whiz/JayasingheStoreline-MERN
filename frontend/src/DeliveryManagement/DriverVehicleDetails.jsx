@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useGetDriversQuery, useCreateDriverMutation, useUpdateDriverMutation, useDeleteDriverMutation } from '../redux/api/driverApiSlice';
 import { FaEdit, FaTrash, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const DriverVehicleDetails = () => {
   const { data: drivers, refetch } = useGetDriversQuery();
-
   const [createDriver] = useCreateDriverMutation();
   const [updateDriver] = useUpdateDriverMutation();
   const [deleteDriver] = useDeleteDriverMutation();
@@ -21,28 +22,33 @@ const DriverVehicleDetails = () => {
 
   const [editingDriver, setEditingDriver] = useState(null);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     refetch();
   }, [refetch]);
 
+  const validateVehicleRegistrationNumber = (registrationNumber) => {
+    // Regular expression to match the allowed formats
+    const regex = /^(?:\d{2}-\d{4}|\w{2}-\w{4}|\w{3}-\w{4})$/;
+    return regex.test(registrationNumber);
+  };
+
   const validateForm = () => {
     const { nic, name, birthday, telephoneNo, vehicleType, vehicleRegNo, driverLicenceNo } = newDriver;
 
     // Validation regex patterns
-    const nicRegex = /^(\d{10}|\d{12})$/; // Exactly 10 or 12 digits
+    const nicRegex = /^(?:\d{12}|\d{9}[vV])$/; // 12 digits or 9 digits with "v" or "V"
     const nameRegex = /^[A-Za-z\s]{1,20}$/; // Only letters, max 20 characters
-    const telephoneRegex = /^\d{10}$/; // Exactly 10 digits
-    const vehicleTypeRegex = /^[A-Za-z0-9\s]{1,20}$/; // Letters and numbers, max 20 characters
-    const vehicleRegNoRegex = /^[A-Za-z0-9\-]+$/; // Letters, numbers, and "-"
-    const driverLicenseRegex = /^[A-Za-z0-9]{8}$/; // Exactly 8 letters/numbers
+    const telephoneRegex = /^[0-9]{10}$/; // Exactly 10 digits
+    const driverLicenseRegex = /^[A-Za-z]\d{7}$/; // One letter and 7 digits
 
     const currentYear = new Date().getFullYear();
     const birthYear = new Date(birthday).getFullYear();
 
     // NIC Validation
     if (!nicRegex.test(nic)) {
-      setMessage({ type: 'error', text: 'NIC must be exactly 10 or 12 digits' });
+      setMessage({ type: 'error', text: 'NIC must be either 12 digits or 9 digits followed by "v" or "V"' });
       return false;
     }
 
@@ -53,8 +59,8 @@ const DriverVehicleDetails = () => {
     }
 
     // Birthday Validation
-    if (birthYear > 2005 || birthYear < 1969) {
-      setMessage({ type: 'error', text: 'Driver must be born between 1969 and 2005' });
+    if (birthYear > 2005 || birthYear < 1998) {
+      setMessage({ type: 'error', text: 'Driver must be born between 1998 and 2005' });
       return false;
     }
 
@@ -64,21 +70,15 @@ const DriverVehicleDetails = () => {
       return false;
     }
 
-    // Vehicle Type Validation
-    if (!vehicleTypeRegex.test(vehicleType)) {
-      setMessage({ type: 'error', text: 'Vehicle type must contain only letters and numbers, up to 20 characters' });
-      return false;
-    }
-
     // Vehicle Registration Number Validation
-    if (!vehicleRegNoRegex.test(vehicleRegNo)) {
-      setMessage({ type: 'error', text: 'Vehicle registration number must contain only letters, numbers, and "-" symbol' });
+    if (!validateVehicleRegistrationNumber(vehicleRegNo)) {
+      setMessage({ type: 'error', text: 'Vehicle registration number must be in the formats: 2 digits-4 digits, 2 letters-4 letters, or 3 letters-4 letters.' });
       return false;
     }
 
     // Driver License Number Validation
     if (!driverLicenseRegex.test(driverLicenceNo)) {
-      setMessage({ type: 'error', text: 'Driver License must be exactly 8 alphanumeric characters' });
+      setMessage({ type: 'error', text: 'Driver License must start with one letter followed by 7 digits' });
       return false;
     }
 
@@ -146,6 +146,36 @@ const DriverVehicleDetails = () => {
     setNewDriver({ ...newDriver, [field]: value });
   };
 
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+    doc.text('Driver List', 14, 16);
+
+    // Prepare data for the PDF
+    const rows = drivers.map(driver => [
+      driver.nic,
+      driver.name,
+      driver.birthday.split('T')[0], // Format date
+      driver.telephoneNo,
+      driver.vehicleType,
+      driver.vehicleRegNo,
+      driver.driverLicenceNo,
+    ]);
+
+    // Add autoTable to the PDF
+    autoTable(doc, {
+      head: [['NIC', 'Name', 'DOB', 'Telephone', 'Vehicle Type', 'Vehicle Reg No', 'Driver License No']],
+      body: rows,
+      startY: 20,
+    });
+
+    doc.save('drivers_list.pdf'); // Save the PDF
+  };
+
+  // Filter drivers based on the search term
+  const filteredDrivers = drivers?.filter(driver =>
+    driver.name.toLowerCase().includes(searchTerm.toLowerCase()) || driver.nic.includes(searchTerm)
+  );
+
   return (
     <div className="container mx-auto p-4">
       {/* Form Section */}
@@ -160,7 +190,7 @@ const DriverVehicleDetails = () => {
                 type="text"
                 id="nic"
                 value={newDriver.nic}
-                onChange={(e) => handleInputChange(e, 'nic', 12, '^[0-9]*$')}
+                onChange={(e) => handleInputChange(e, 'nic', 12, '^[0-9vV]*$')}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 maxLength={12}
                 required
@@ -180,15 +210,13 @@ const DriverVehicleDetails = () => {
             </div>
             {/* Date of Birth */}
             <div>
-              <label htmlFor="birthday" className="block text-sm font-medium text-gray-700">Date of Birth</label>
+              <label htmlFor="dob" className="block text-sm font-medium text-gray-700">Date of Birth</label>
               <input
                 type="date"
-                id="birthday"
+                id="dob"
                 value={newDriver.birthday}
                 onChange={(e) => setNewDriver({ ...newDriver, birthday: e.target.value })}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                min="1969-01-01"
-                max="2005-12-31"
                 required
               />
             </div>
@@ -212,9 +240,8 @@ const DriverVehicleDetails = () => {
                 type="text"
                 id="vehicleType"
                 value={newDriver.vehicleType}
-                onChange={(e) => handleInputChange(e, 'vehicleType', 20, '^[A-Za-z0-9\\s]*$')}
+                onChange={(e) => handleInputChange(e, 'vehicleType', 20)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                required
               />
             </div>
             {/* Vehicle Registration Number */}
@@ -224,9 +251,8 @@ const DriverVehicleDetails = () => {
                 type="text"
                 id="vehicleRegNo"
                 value={newDriver.vehicleRegNo}
-                onChange={(e) => handleInputChange(e, 'vehicleRegNo', 20, '^[A-Za-z0-9\\-]*$')}
+                onChange={(e) => handleInputChange(e, 'vehicleRegNo', 10)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                required
               />
             </div>
             {/* Driver License Number */}
@@ -239,92 +265,83 @@ const DriverVehicleDetails = () => {
                 onChange={(e) => handleInputChange(e, 'driverLicenceNo', 8, '^[A-Za-z0-9]*$')}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 maxLength={8}
-                required
               />
             </div>
           </div>
-
-          {/* Message Display */}
+          {/* Error Message */}
           {message.text && (
-            <div className={`mt-4 p-2 rounded-lg ${message.type === 'success' ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'}`}>
+            <div className={`mt-4 text-sm font-semibold ${message.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>
               {message.text}
             </div>
           )}
-
-          {/* Form Buttons */}
-          <div className="mt-6 flex justify-end space-x-4">
-            {editingDriver && (
-              <button
-                type="button"
-                onClick={handleCancelEdit}
-                className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-md"
-              >
-                Cancel
-              </button>
-            )}
-            <button
-              type="submit"
-              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md"
-            >
+          <div className="mt-6 flex justify-end">
+            <button type="button" className="mr-4 px-4 py-2 bg-gray-300 rounded-md" onClick={handleCancelEdit}>
+              Cancel
+            </button>
+            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-200">
               {editingDriver ? 'Update Driver' : 'Add Driver'}
             </button>
           </div>
         </form>
       </div>
 
-      {/* Drivers List */}
+      {/* Driver List Section */}
       <div className="mt-8">
-        <h2 className="text-2xl font-semibold mb-4">Drivers List</h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-300">
-            <thead>
-              <tr>
-                <th className="py-2 px-4 border-b">NIC</th>
-                <th className="py-2 px-4 border-b">Name</th>
-                <th className="py-2 px-4 border-b">Birthday</th>
-                <th className="py-2 px-4 border-b">Telephone</th>
-                <th className="py-2 px-4 border-b">Vehicle Type</th>
-                <th className="py-2 px-4 border-b">Vehicle Reg No</th>
-                <th className="py-2 px-4 border-b">License No</th>
-                <th className="py-2 px-4 border-b">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {drivers && drivers.length > 0 ? (
-                drivers.map((driver) => (
-                  <tr key={driver._id} className="hover:bg-gray-100">
-                    <td className="py-2 px-4 border-b">{driver.nic}</td>
-                    <td className="py-2 px-4 border-b">{driver.name}</td>
-                    <td className="py-2 px-4 border-b">{new Date(driver.birthday).toLocaleDateString()}</td>
-                    <td className="py-2 px-4 border-b">{driver.telephoneNo}</td>
-                    <td className="py-2 px-4 border-b">{driver.vehicleType}</td>
-                    <td className="py-2 px-4 border-b">{driver.vehicleRegNo}</td>
-                    <td className="py-2 px-4 border-b">{driver.driverLicenceNo}</td>
-                    <td className="py-2 px-4 border-b">
-                      <button
-                        onClick={() => handleEdit(driver)}
-                        className="text-blue-600 hover:text-blue-800 mr-4"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(driver._id)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <FaTrash />
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="8" className="text-center py-4 text-gray-500">
-                    No drivers found
+        <h2 className="text-2xl font-semibold mb-4">Driver List</h2>
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Search by name or NIC..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+        <table className="min-w-full bg-white border border-gray-300">
+          <thead>
+            <tr>
+              <th className="border px-4 py-2">NIC</th>
+              <th className="border px-4 py-2">Name</th>
+              <th className="border px-4 py-2">DOB</th>
+              <th className="border px-4 py-2">Telephone</th>
+              <th className="border px-4 py-2">Vehicle Type</th>
+              <th className="border px-4 py-2">Vehicle Reg No</th>
+              <th className="border px-4 py-2">Driver License No</th>
+              <th className="border px-4 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredDrivers && filteredDrivers.length > 0 ? (
+              filteredDrivers.map(driver => (
+                <tr key={driver._id}>
+                  <td className="border px-4 py-2">{driver.nic}</td>
+                  <td className="border px-4 py-2">{driver.name}</td>
+                  <td className="border px-4 py-2">{driver.birthday.split('T')[0]}</td>
+                  <td className="border px-4 py-2">{driver.telephoneNo}</td>
+                  <td className="border px-4 py-2">{driver.vehicleType}</td>
+                  <td className="border px-4 py-2">{driver.vehicleRegNo}</td>
+                  <td className="border px-4 py-2">{driver.driverLicenceNo}</td>
+                  <td className="border px-4 py-2">
+                    <button onClick={() => handleEdit(driver)} className="text-blue-600 hover:underline">
+                      <FaEdit />
+                    </button>
+                    <button onClick={() => handleDelete(driver._id)} className="text-red-600 hover:underline ml-2">
+                      <FaTrash />
+                    </button>
                   </td>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="8" className="border text-center px-4 py-2">No drivers found.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+        <div className="mt-4">
+          <button onClick={downloadPDF} className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
+            Download PDF
+          </button>
         </div>
       </div>
     </div>

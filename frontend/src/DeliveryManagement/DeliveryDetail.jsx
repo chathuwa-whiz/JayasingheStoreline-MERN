@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FaTrash, FaEdit } from 'react-icons/fa';
 import { useDeleteDeliveryMutation, useGetDeliveriesQuery, useUpdateDeliveryMutation } from '../redux/api/deliveryApiSlice';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export default function DeliveryDetail({ onEditDelivery }) {
   const { data: deliveries, error: deliveriesError, isLoading } = useGetDeliveriesQuery();
@@ -15,7 +17,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
 
   const handleDelete = async (id) => {
     try {
-      await deleteDelivery(id).unwrap(); // Use unwrap() to handle resolved promise
+      await deleteDelivery(id).unwrap();
     } catch (error) {
       console.error('Error deleting delivery:', error);
     }
@@ -23,10 +25,10 @@ export default function DeliveryDetail({ onEditDelivery }) {
 
   const handleStatusChange = async (id, status) => {
     const delivery = deliveries.find((delivery) => delivery._id === id);
-    const updatedDelivery = { ...delivery, deliveryStatus: status }; // Use deliveryStatus instead of status
+    const updatedDelivery = { ...delivery, deliveryStatus: status };
     try {
       await updateDelivery({ deliveryId: id, formData: updatedDelivery }).unwrap();
-      window.location.reload(); // Reload the page after updating the delivery
+      window.location.reload();
     } catch (error) {
       console.error('Error updating delivery:', error);
     }
@@ -35,11 +37,11 @@ export default function DeliveryDetail({ onEditDelivery }) {
   const getRowClass = (status) => {
     switch (status) {
       case 'Delayed':
-        return 'bg-blue-50 border-blue-300 text-blue-700'; // Light blue for delayed
+        return 'bg-blue-50 border-blue-300 text-blue-700';
       case 'Completed':
-        return 'bg-green-50 border-green-300 text-green-700'; // Light green for completed
+        return 'bg-green-50 border-green-300 text-green-700';
       default:
-        return 'bg-white border-gray-300 text-gray-700'; // White for pending
+        return 'bg-white border-gray-300 text-gray-700';
     }
   };
 
@@ -47,6 +49,29 @@ export default function DeliveryDetail({ onEditDelivery }) {
     return currentStatus === buttonStatus
       ? `p-2 text-black rounded-lg`
       : `p-2 text-${buttonStatus === 'Pending' ? 'yellow' : buttonStatus === 'Delayed' ? 'blue' : 'green'}-500 hover:bg-${buttonStatus === 'Pending' ? 'yellow' : buttonStatus === 'Delayed' ? 'blue' : 'green'}-100 rounded-lg transition-colors duration-300`;
+  };
+
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(12);
+    doc.text("Delivery Details", 14, 20);
+
+    const tableData = deliveries.map(delivery => [
+      delivery._id,
+      JSON.parse(delivery.deliveryItem).map(item => `${item.name} x ${item.qty}`).join(', '),
+      priceFormatter.format(delivery.itemsPrice),
+      priceFormatter.format(delivery.deliveryPrice),
+      priceFormatter.format(delivery.totalPrice),
+      delivery.deliveryStatus || 'Pending'
+    ]);
+
+    autoTable(doc, {
+      head: [['Delivery No', 'Delivery Item', 'Items Price', 'Delivery Price', 'Total Price', 'Status']],
+      body: tableData,
+      startY: 30,
+    });
+
+    doc.save('delivery-details.pdf');
   };
 
   if (isLoading) {
@@ -62,6 +87,13 @@ export default function DeliveryDetail({ onEditDelivery }) {
         placeholder="Search Deliveries" 
         className="p-3 border border-gray-300 rounded-lg mb-6 w-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow duration-300"
       />
+
+      <button
+        className="mb-4 p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-300"
+        onClick={downloadPDF}
+      >
+        Download PDF
+      </button>
 
       <table className="w-full bg-white shadow-lg rounded-lg border border-gray-300">
         <thead className="bg-gray-200 text-gray-700">
