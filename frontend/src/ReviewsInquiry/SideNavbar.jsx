@@ -23,7 +23,7 @@ const Sidebar = () => {
 
             <li className='mb-4'>
               <NavLink
-                to="/user-reviews"
+                to="/dashboard"
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2"
               >
                 <HomeIcon className="h-5 w-5 mr-3" />

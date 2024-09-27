@@ -163,13 +163,24 @@ export default function Dashboard() {
 
       let position = 0;
 
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      // Add header information
+      pdf.setFontSize(20);
+      pdf.text('JAYASINGHE STORELINES PVT(LTD)', 15, 20); // Adjust Y position as necessary
+      pdf.setFontSize(10);
+      pdf.text(' ', 15, 30); // Adjust Y position as necessary
+      
+      // Add logo if you have a logo file
+      //const logo = new Image();
+      //logo.src = 'path_to_logo.png';
+      //pdf.addImage(logo, 'PNG', 10, 5, 50, 20); // Adjust position and size
+
+      pdf.addImage(imgData, 'PNG', 0, position + 40, imgWidth, imgHeight); // Move the dashboard content down by header height
       heightLeft -= pageHeight;
 
       while (heightLeft >= 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        pdf.addImage(imgData, 'PNG', 0, position + 40, imgWidth, imgHeight); // Move the dashboard content down by header height
         heightLeft -= pageHeight;
       }
 
@@ -223,35 +234,37 @@ export default function Dashboard() {
         </button>
 
         <div className="grid grid-cols-4 gap-6 mb-8">
-          <div className="bg-green-100 p-6 rounded-lg text-center shadow-lg">
-            <h2 className="text-4xl font-bold text-green-800">{products.length}</h2>
+          <div className="bg-teal-100 p-6 rounded-lg text-center shadow-lg">
+            <h2 className="text-4xl font-bold text-teal-800">{products.length}</h2>
             <p className="text-lg text-gray-700">Total Products</p>
-            <p className="text-green-600">+10% +1.2k this week</p>
+            <p className="text-teal-600">+10% +1.2k this week</p>
           </div>
-          <div className="bg-blue-100 p-6 rounded-lg text-center shadow-lg">
-            <h2 className="text-4xl font-bold text-blue-800">{totalInquiries}</h2>
+
+          <div className="bg-purple-100 p-6 rounded-lg text-center shadow-lg">
+            <h2 className="text-4xl font-bold text-purple-800">{categories.length}</h2>
+            <p className="text-lg text-gray-700">Total Categories</p>
+          </div>
+
+          <div className="bg-indigo-100 p-6 rounded-lg text-center shadow-lg">
+            <h2 className="text-4xl font-bold text-indigo-800">{totalInquiries}</h2>
             <p className="text-lg text-gray-700">Total Inquiries</p>
           </div>
-          <div className="bg-yellow-100 p-6 rounded-lg text-center shadow-lg">
-            <h2 className="text-4xl font-bold text-yellow-800">{totalReviews}</h2>
-            <p className="text-lg text-gray-700">Total Reviews</p>
-          </div>
-          <div className="bg-red-100 p-6 rounded-lg text-center shadow-lg">
-            <h2 className="text-4xl font-bold text-red-800">{calculateAverageRating(products.flatMap(p => p.reviews)).toFixed(1)}</h2>
-            <p className="text-lg text-gray-700">Average Rating</p>
+
+          <div className="bg-pink-100 p-6 rounded-lg text-center shadow-lg">
+            <h2 className="text-4xl font-bold text-pink-800">{totalReviews}</h2>
+            <p className="text-lg text-gray-700">Total Reviews and Ratings</p>
           </div>
         </div>
 
+        {/* Charts Section */}
         <div className="grid grid-cols-2 gap-6">
-          {/* Inquiries by Product Bar Chart */}
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Inquiries by Product</h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-4">Inquiries by Category</h3>
             <div className="relative h-80">
               <Bar data={inquiriesBarChartData} options={{ ...chartOptions, maintainAspectRatio: false }} />
             </div>
           </div>
 
-          {/* Average Star Ratings Pie Chart */}
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h3 className="text-xl font-bold text-gray-800 mb-4">Average Star Ratings Distribution</h3>
             <div className="relative h-80">
@@ -264,21 +277,34 @@ export default function Dashboard() {
         <div className="bg-white p-6 rounded-lg shadow-lg mb-8">
           <h3 className="text-xl font-bold text-gray-800 mb-4">Products</h3>
           <table className="min-w-full bg-white">
-            <thead>
-              <tr className="w-full bg-gray-200">
-                <th className="py-2 px-4 border">Product Name</th>
-                <th className="py-2 px-4 border">Category</th>
-                <th className="py-2 px-4 border">Average Rating</th>
+            <thead className="bg-gray-200">
+              <tr>
+                <th className="py-3 px-4 border border-gray-300 text-left text-sm font-medium text-gray-700 uppercase">Product Name</th>
+                <th className="py-3 px-4 border border-gray-300 text-left text-sm font-medium text-gray-700 uppercase">Category</th>
+                <th className="py-3 px-4 border border-gray-300 text-left text-sm font-medium text-gray-700 uppercase">Average Rating</th>
               </tr>
             </thead>
             <tbody>
-              {filteredProducts.map(product => (
-                <tr key={product.id} className="border-b hover:bg-gray-100">
-                  <td className="py-2 px-4 border">{product.name}</td>
-                  <td className="py-2 px-4 border">{product.category}</td>
-                  <td className="py-2 px-4 border">{calculateAverageRating(product.reviews).toFixed(1)}</td>
-                </tr>
-              ))}
+              {filteredProducts.map(product => {
+                // Define category color mapping
+                const categoryColors = {
+                  electronics: 'bg-blue-100',
+                  furniture: 'bg-green-100',
+                  clothes: 'bg-yellow-100',
+                  // Add more categories and colors as needed
+                };
+
+                // Get the color for the product's category
+                const categoryColor = categoryColors[product.category.toLowerCase()] || 'bg-white'; // Default to white if category not found
+
+                return (
+                  <tr key={product.id} className={`border-b hover:bg-gray-100 transition duration-150 ease-in-out ${categoryColor}`}>
+                    <td className="py-2 px-4 border border-gray-300 text-gray-800">{product.name}</td>
+                    <td className="py-2 px-4 border border-gray-300 text-gray-800">{product.category}</td>
+                    <td className="py-2 px-4 border border-gray-300 text-gray-800">{calculateAverageRating(product.reviews).toFixed(1)}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
