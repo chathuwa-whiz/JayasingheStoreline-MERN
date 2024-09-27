@@ -172,6 +172,20 @@ export default function SingleProductView() {
                     {quantity === 0 && (
                         <p className="mt-4 text-red-500">This product is currently out of stock.</p>
                     )}
+                {/* Average Rating Display */}
+                <div className="mt-6"> {/* Increased margin for more spacing */}
+                    <h2 className="text-xl font-semibold text-gray-700">Average Rating</h2> {/* Kept the heading size */}
+                    <div className="flex items-center mt-2"> {/* Increased margin for better spacing */}
+                        <div className="text-3xl"> {/* Increased the size of the stars */}
+                            {renderStars(averageRating)}
+                        </div>
+                        <span className="ml-3 text-gray-600 text-xl"> {/* Kept the rating value slightly larger for emphasis */}
+                            {averageRating} / 5.0
+                        </span>
+                    </div>
+                </div>
+
+                    
                 </div>
             </div>
 
