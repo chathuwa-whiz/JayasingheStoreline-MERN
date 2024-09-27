@@ -85,14 +85,15 @@ const PaymentReport = () => {
 
   const generatePDF = () => {
     const doc = new jsPDF();
-
+  
     doc.text('Payment Report', 14, 10);
-
+  
+    // Function to generate a table
     const generateTable = (title, data) => {
       if (data.length === 0) return;
-
+  
       doc.text(title, 14, doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 20);
-
+  
       doc.autoTable({
         startY: doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 30,
         head: [['Date', 'Description', 'Amount']],
@@ -100,15 +101,23 @@ const PaymentReport = () => {
         theme: 'grid',
       });
     };
-
-    generateTable('HR Send Data', hrSendData);
-    generateTable('Profit Data', profitData);
-    generateTable('Total Cost Data', totalCostData);
-    generateTable('Total Income Data', totalIncomeData);
-    generateTable('Supplier Send Data', supplierSendData);
-
+  
+    // Filter data by selected date
+    const filterByDate = (data) => {
+      if (!searchDate) return data; // If no search query, show all data
+      return data.filter((item) => item.date === searchDate); // Filter by date
+    };
+  
+    // Generate tables for filtered data
+    generateTable('HR Send Data', filterByDate(hrSendData));
+    generateTable('Profit Data', filterByDate(profitData));
+    generateTable('Total Cost Data', filterByDate(totalCostData));
+    generateTable('Total Income Data', filterByDate(totalIncomeData));
+    generateTable('Supplier Send Data', filterByDate(supplierSendData));
+  
     doc.save('Payment_Report.pdf');
   };
+  
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Something went wrong</div>;
