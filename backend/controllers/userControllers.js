@@ -4,7 +4,7 @@ import createToken from "../utils/createToken.js";
 
 
 const createUser = asyncHandler(async (req, res) => {
-  const { firstname, lastname, username, email, password,NIC, address, phone, isAdmin } = req.body;
+  const { firstname, lastname, username, email, password,NIC, address, age, phone, isAdmin } = req.body;
 
   if (!username || !email || !password) {
     throw new Error("Please fill all the inputs.");
@@ -13,7 +13,7 @@ const createUser = asyncHandler(async (req, res) => {
   const userExists = await User.findOne({ email });
   if (userExists) res.status(400).send("User already exists");
 
-  const newUser = new User({ firstname, lastname, username, email, NIC, password, address, phone, isAdmin });
+  const newUser = new User({ firstname, lastname, username, email, NIC, password, address, age, phone, isAdmin });
   
   try {
     await newUser.save();
@@ -27,6 +27,7 @@ const createUser = asyncHandler(async (req, res) => {
       email: newUser.email,
       NIC: newUser.NIC, // Add this line
       address: newUser.address, // Add this line
+      age: newUser.age,
       phone: newUser.phone, // Add this line
       password: newUser.password,
       isAdmin: newUser.isAdmin,
