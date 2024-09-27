@@ -210,7 +210,7 @@ export default function AddProducts() {
             >
               <option value="" disabled>Select a category</option>
               {categories?.map((cat) => (
-                <option key={cat._id} value={cat._id}>{cat.name}</option>
+                <option key={cat._id} value={cat.name}>{cat.name}</option>
               ))}
             </select>
             {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
