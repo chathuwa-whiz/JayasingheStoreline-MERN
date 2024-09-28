@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setCredentials } from "../redux/features/auth/authSlice";
 import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -34,6 +36,19 @@ export default function LoginPage() {
     }
   };
 
+  const handleGoogleLogin = (credentialResponse) => {
+    const { email, name } = jwtDecode(credentialResponse.credential);
+    console.log("Google Login Success:", credentialResponse);
+    
+    // Store name and email in cookies
+    Cookies.set("userName", name, { expires: 7 }); // expires in 7 days
+    Cookies.set("userEmail", email, { expires: 7 });
+
+    // Optional: Dispatch user info to the store and navigate
+    dispatch(setCredentials({ email, name })); // Adjust as needed
+    navigate("/home");
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-slide">
       <div className="flex max-w-4xl w-full bg-white shadow-lg rounded-lg overflow-hidden">
@@ -53,20 +68,24 @@ export default function LoginPage() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="rounded-md shadow-sm space-y-4 mt-16">
               <div>
-                <label htmlFor="username" className="sr-only">Username</label>
+                <label htmlFor="email" className="sr-only">
+                  Email
+                </label>
                 <input
                   onChange={(e) => setEmail(e.target.value)}
-                  id="username"
-                  name="username"
-                  type="text"
-                  autoComplete="username"
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
                   required
                   className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-red-600 focus:border-red-600 focus:z-10 sm:text-sm"
                   placeholder="Email"
                 />
               </div>
               <div>
-                <label htmlFor="password" className="sr-only">Password</label>
+                <label htmlFor="password" className="sr-only">
+                  Password
+                </label>
                 <input
                   onChange={(e) => setPassword(e.target.value)}
                   id="password"
@@ -89,25 +108,9 @@ export default function LoginPage() {
               </button>
             </div>
             <GoogleLogin
-              onSuccess={(credentialResponse) => {
-                console.log("Google Login Success:", credentialResponse);
-                const token = credentialResponse.credential;
-                if (token) {
-                  fetch("/api/auth/google", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ token })
-                  })
-                    .then((response) => response.json())
-                    .then((data) => {
-                      dispatch(setCredentials(data));
-                      navigate("/home");
-                    })
-                    .catch((error) => console.error("Google login failed:", error));
-                }
-              }}
+              onSuccess={handleGoogleLogin}
               onError={() => {
-                console.log("Google Login Failed");
+                console.log("Login Failed");
               }}
             />
             <div className="text-center text-sm text-gray-600 mt-4">
@@ -123,7 +126,7 @@ export default function LoginPage() {
                 href="/adminlogin"
                 className="font-medium text-blue-600 hover:text-blue-500"
               >
-                If you are a Admin ? Click Here.
+                If you are a Admin? Click Here.
               </a>
             </div>
           </form>

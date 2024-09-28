@@ -55,10 +55,19 @@ export function HomeHeader() {
 
   useEffect(() => {
     if(userInfo){
-      setUsername(userInfo.username);
+      setUsername(userInfo.name || userInfo.username);
     }
 
   }, [userInfo]);
+
+  const handleLogoutGoogle = () => {
+    // Remove cookies on logout
+    Cookies.remove("userName");
+    Cookies.remove("userEmail");
+
+    // Optionally, clear user info from redux
+    // dispatch(logoutUser()); // Implement logoutUser action as needed
+  };
 
   const handleLogout = async (e) => {
     e.preventDefault();
@@ -109,7 +118,7 @@ export function HomeHeader() {
         <div 
         
         className="flex items-center ">
-          <a href="profile"><button onClick={handleLogout} className="bg-red-500 text-black px-4 py-2 rounded hover:bg-yellow-50">Logout</button></a>
+          <a href="profile"><button onClick={handleLogout || handleLogoutGoogle} className="bg-red-500 text-black px-4 py-2 rounded hover:bg-yellow-50">Logout</button></a>
         </div>
       </div>
     </header>

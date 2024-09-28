@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useGetUsersQuery, useDeleteUserMutation } from '../redux/api/usersApiSlice'; // Import delete mutation
+import { useGetUsersQuery, useDeleteUserMutation } from '../redux/api/usersApiSlice';
 import { Pie, Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
 import jsPDF from 'jspdf';
@@ -10,7 +10,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearS
 
 export default function CustomerManagementDashboard() {
   const { data: users, isLoading: usersLoading, isError: usersError, error, refetch } = useGetUsersQuery();
-  const [deleteUser] = useDeleteUserMutation(); // Create the deleteUser function
+  const [deleteUser] = useDeleteUserMutation();
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,10 +32,15 @@ export default function CustomerManagementDashboard() {
     return <div>Error fetching data: {errorMessage}</div>;
   }
 
-  // Filter users by search term (username)
-  const filteredUsers = users.filter(user =>
-    user.username.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter users by search term (username or age group)
+  const filteredUsers = users.filter(user => {
+    const lowerCaseUsername = user.username.toLowerCase();
+    const ages = searchTerm.split(',').map(age => age.trim().toLowerCase());
+    const age = parseInt(user.age); // Assuming age is stored as a string
+    const ageGroup = `${Math.floor(age / 10) * 10}s`; // Get the age group (e.g., 10s, 20s)
+
+    return ages.some(age => ageGroup.includes(age)) || lowerCaseUsername.includes(searchTerm.toLowerCase());
+  });
 
   // Categorize users into age groups
   const ageGroups = { '10s': 0, '20s': 0, '30s': 0, '40s': 0, '50s': 0, '60s': 0, '70s': 0, '80s': 0 };
@@ -183,12 +188,12 @@ export default function CustomerManagementDashboard() {
         {/* Search Bar */}
         <input 
           type="text"
-          placeholder="Search by Username"
+          placeholder="Search by Username or Age (e.g. 10, 20)"
           className="px-4 py-2 border rounded w-64"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)} // Update search term
+          onChange={(e) => setSearchTerm(e.target.value)}
           onKeyDown={(e) => {
-            if (!/^[a-zA-Z]+$/.test(e.key)) {
+            if (!/^[a-zA-Z0-9, ]*$/.test(e.key)) {
               e.preventDefault();
             }
           }}
