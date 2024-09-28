@@ -8,6 +8,8 @@ export default function Products() {
   // Fetch all products
   const { data: products, isLoading, isError } = useAllProductsQuery();
 
+  console.log(products);
+
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 10;
 

@@ -1,5 +1,6 @@
 import Driver from '../models/DriverModel.js';
 
+
 // Get all drivers
 export const getDrivers = async (req, res) => {
   try {
@@ -23,34 +24,43 @@ export const getDriverById = async (req, res) => {
 
 // Create a new driver
 export const createDriver = async (req, res) => {
-  const { firstName, lastName, telephoneNo, vehicleRegNo, vehicleType } = req.body;
+  const { name, nic, birthday, telephoneNo, vehicleRegNo, vehicleType, driverLicenceNo } = req.body;
 
   try {
     const newDriver = new Driver({
-      firstName,
-      lastName,
+      name,
+      nic,
+      birthday,
       telephoneNo,
       vehicleRegNo,
       vehicleType,
+      driverLicenceNo
     });
 
     const savedDriver = await newDriver.save();
     res.status(201).json(savedDriver);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ message: error.message });
   }
 };
 
+
 // Update a driver by ID
 export const updateDriver = async (req, res) => {
   try {
+    // res.json(req.body);
     const updatedDriver = await Driver.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
+    //Check if the driver was found
     if (!updatedDriver) return res.status(404).json({ message: 'Driver not found' });
+
     res.json(updatedDriver);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
+
 
 // Delete a driver by ID
 export const deleteDriver = async (req, res) => {

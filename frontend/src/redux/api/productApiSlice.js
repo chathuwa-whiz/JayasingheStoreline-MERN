@@ -80,7 +80,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
         // Create a review
         createReview: builder.mutation({
             query: (data) => ({
-                url: `${PRODUCT_URL}/${data.productId}`,
+                url: `${PRODUCT_URL}/${data.productId}/reviews`,
                 method: "POST",
                 body: data,
             }),
@@ -94,6 +94,16 @@ export const productApiSlice = apiSlice.injectEndpoints({
                 body: data,
             }),
         }),
+        
+        //create reply
+        createReply: builder.mutation({
+            query: (data) => ({
+                url: `${PRODUCT_URL}/${data.productId}/inquiries/${data.inquiryId}/reply`,
+                method: "POST",
+                body: { replyMessage: data.message }, // Sending the reply message
+            }),
+        }),
+        
 
         // Update a review
         updateReview: builder.mutation({
@@ -123,7 +133,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
  // Delete an inquiry
 deleteInquiry: builder.mutation({
     query: ({ productId, inquiryId }) => ({
-        url: `${PRODUCT_URL}/${productId}/${inquiryId}`, // Use inquiryId here
+        url: `${PRODUCT_URL}/${productId}/inquiries/${inquiryId}`, // Use inquiryId here
         method: 'DELETE',
     }),
     invalidatesTags: (result, error, { productId, inquiryId }) => [
@@ -133,16 +143,6 @@ deleteInquiry: builder.mutation({
 }),
 
             
-
-        // Reply to an inquiry
-        replyToInquiry: builder.mutation({
-            query: ({ productId, inquiryId, replyMessage }) => ({
-                url: `${PRODUCT_URL}/${productId}/inquiries/${inquiryId}/reply`,
-                method: 'POST',
-                body: { replyMessage },
-            }),
-        }),
-
         getTopProducts: builder.query({
             query: () => `${PRODUCT_URL}/top`,
             keepUnusedDataFor: 5,
@@ -161,6 +161,14 @@ deleteInquiry: builder.mutation({
             }),
         }),
 
+        getProductNamesWithOrders: builder.query({
+            query: () => ({
+                url: `${PRODUCT_URL}/product-orders`, // Adjust the URL based on your API endpoint
+            }),
+            providesTags: ["ProductOrders"],
+        }),
+        
+
         getReviewById: builder.query({
             query: ({ productId, reviewId }) => `${PRODUCT_URL}/${productId}/${reviewId}`,
             transformResponse: (response) => response, // Optionally transform the response if needed
@@ -168,7 +176,7 @@ deleteInquiry: builder.mutation({
 
 
         getInquiriesByInquiryId: builder.query({
-            query: ({ productId, inquiryId }) => `${PRODUCT_URL}/${productId}/${inquiryId}`,
+            query: ({ productId, inquiryId }) => `${PRODUCT_URL}/${productId}/inquiries/${inquiryId}`,
             transformResponse: (response) => response, // Optionally transform the response if needed
         }),
         
@@ -188,7 +196,7 @@ export const {
     useDeleteProductMutation,
     useCreateReviewMutation,
     useCreateInquiryMutation,
-    useReplyToInquiryMutation,
+    useCreateReplyMutation,
     useGetTopProductsQuery,
     useGetNewProductsQuery,
     useUploadProductImageMutation,
@@ -198,4 +206,6 @@ export const {
     useDeleteInquiryMutation,
     useGetReviewByIdQuery,
     useGetInquiriesByInquiryIdQuery,
+    useGetReviewsByUserIdQuery,
+    useGetProductNamesWithOrdersQuery,  // New query hook
 } = productApiSlice;
