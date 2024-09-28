@@ -19,6 +19,8 @@ export default function SupplierReport() {
 
   const lowStockProducts = products.filter((product) => product.currentQty <= 5);
 
+  console.log('Low Stock Products:', lowStockProducts);
+
   // Handle checkbox selection for products
   const handleProductSelect = (productId) => {
     setSelectedProducts((prevSelected) =>
@@ -37,20 +39,18 @@ export default function SupplierReport() {
   const generatePDF = () => {
     const doc = new jsPDF();
     
-    doc.text('Supplier Order Inquiry Report', 14, 16);
-    doc.text(`Supplier: ${suppliers.find(supplier => supplier.id === selectedSupplier)?.name || 'N/A'}`, 14, 24);
+    doc.text('Product Order Report', 14, 16);
+    doc.text(`Supplier: ${suppliers.find(supplier => supplier._id === selectedSupplier)?.name || 'N/A'}`, 14, 24);
 
     const tableData = lowStockProducts
-      .filter((product) => selectedProducts.includes(product.id))
+      .filter((product) => selectedProducts.includes(product._id))
       .map((product) => [
         product.name,
-        product.currentQty,
-        product.category,
-        product.buyingPrice,
+        product.reOrderQty,
       ]);
-
+  
     doc.autoTable({
-      head: [['Product Name', 'Current Qty', 'Category', 'Buying Price']],
+      head: [['Product Name', 'Order Qty']],
       body: tableData,
     });
 
