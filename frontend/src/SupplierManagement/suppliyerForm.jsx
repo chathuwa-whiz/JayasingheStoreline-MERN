@@ -13,8 +13,29 @@ const SupplierForm = () => {
     moreDetails: '',
   });
 
+  const [errors, setErrors] = useState({
+    bankAccountNumber: '',
+  });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Validate Bank Account Number
+    if (name === 'bankAccountNumber') {
+      const regex = /^[0-9]*$/; // Only digits allowed
+      if (!regex.test(value)) {
+        setErrors((prevState) => ({
+          ...prevState,
+          bankAccountNumber: 'Account number must contain only numbers.',
+        }));
+      } else {
+        setErrors((prevState) => ({
+          ...prevState,
+          bankAccountNumber: '',
+        }));
+      }
+    }
+
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
@@ -23,6 +44,13 @@ const SupplierForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Final validation check
+    if (errors.bankAccountNumber || formData.bankAccountNumber === '') {
+      alert('Please fix errors before submitting');
+      return;
+    }
+
     // Handle form submission logic
     console.log('Form data:', formData);
   };
@@ -108,7 +136,11 @@ const SupplierForm = () => {
               value={formData.bankAccountNumber}
               onChange={handleChange}
               className="w-full p-2 border rounded"
+              pattern="[0-9]*" // restrict input to numbers only
             />
+            {errors.bankAccountNumber && (
+              <p className="text-red-500 text-sm">{errors.bankAccountNumber}</p>
+            )}
           </div>
           <div className="mb-4">
             <label className="block text-gray-700">Bank Name</label>
