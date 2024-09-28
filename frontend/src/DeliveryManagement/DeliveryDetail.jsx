@@ -10,6 +10,8 @@ export default function DeliveryDetail({ onEditDelivery }) {
   const [updateDelivery] = useUpdateDeliveryMutation();
   const [searchTerm, setSearchTerm] = useState("");
 
+  console.log(deliveries);
+
   // Format Prices
   const priceFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -108,6 +110,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
           <tr>
             <th className="border p-3 text-left">Delivery No</th>
             <th className="border p-3 text-left">Delivery Item</th>
+            <th className="border p-3 text-left">Contact No</th>
             <th className="border p-3 text-left">Items Price</th>
             <th className="border p-3 text-left">Delivery Price</th>
             <th className="border p-3 text-left">Total Price</th>
@@ -126,6 +129,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
                   </div>
                 ))}
               </td>
+              <td className="border p-3">{delivery.telephoneNo}</td>
               <td className="border p-3">{priceFormatter.format(delivery.itemsPrice)}</td>
               <td className="border p-3">{priceFormatter.format(delivery.deliveryPrice)}</td>
               <td className="border p-3">{priceFormatter.format(delivery.totalPrice)}</td>

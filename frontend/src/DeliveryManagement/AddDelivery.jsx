@@ -19,6 +19,8 @@ export default function AddDelivery() {
     const [deliveryStatus, setDeliveryStatus] = useState('Pending');
     const [Items, setItems] = useState([]);
 
+    console.log("Items:", Items);
+
     const [createDelivery] = useCreateDeliveryMutation();
     const { data: orders, isLoading, isError } = useGetOrdersQuery();
     const navigate = useNavigate();
@@ -194,8 +196,7 @@ export default function AddDelivery() {
                                 <input
                                     type="number"
                                     className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
-                                    placeholder="Enter Item Price"
-                                    value={item.price}
+                                    value={item.qty}
                                     disabled
                                 />
                             </div>
