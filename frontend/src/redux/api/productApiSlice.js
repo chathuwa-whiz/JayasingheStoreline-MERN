@@ -161,6 +161,14 @@ deleteInquiry: builder.mutation({
             }),
         }),
 
+        getProductNamesWithOrders: builder.query({
+            query: () => ({
+                url: `${PRODUCT_URL}/product-orders`, // Adjust the URL based on your API endpoint
+            }),
+            providesTags: ["ProductOrders"],
+        }),
+        
+
         getReviewById: builder.query({
             query: ({ productId, reviewId }) => `${PRODUCT_URL}/${productId}/${reviewId}`,
             transformResponse: (response) => response, // Optionally transform the response if needed
@@ -198,4 +206,6 @@ export const {
     useDeleteInquiryMutation,
     useGetReviewByIdQuery,
     useGetInquiriesByInquiryIdQuery,
+    useGetReviewsByUserIdQuery,
+    useGetProductNamesWithOrdersQuery,  // New query hook
 } = productApiSlice;

@@ -41,7 +41,8 @@ const ProductSchema = new mongoose.Schema({
     barcode : { type : String,  required : true },
     reviews : [ReviewSchema],
     inquiries: [InquireSchema], // Add this line
-    numInquiries: { type : Number, required : true, default : 0 } // Add this field to track number of inquiries
+    numInquiries: { type : Number, required : true, default : 0 }, // Add this field to track number of inquiries
+    totalOrders: { type: Number, required: true, default: 0 }, // New field to track order count
 
 } , { timestamps : true });
 
