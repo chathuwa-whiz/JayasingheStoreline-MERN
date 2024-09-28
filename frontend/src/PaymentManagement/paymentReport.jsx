@@ -91,10 +91,10 @@ const PaymentReport = () => {
     const logoBase64 = logo;
   
     // Add the logo image at the top of the PDF
-    doc.addImage(logoBase64, 'JPEG', 10, 10, 50, 20); // Adjust the position (x, y) and size (width, height) as needed
+    doc.addImage(logoBase64, 'JPEG', 10, 10, 40, 40); // Adjust the position (x, y) and size (width, height) as needed
   
     // Set the position for the report title after the logo
-    doc.text('Payment Report', 14, 40); // Set y position to be after the logo
+    doc.text('Payment Report', 14, 60); // Set y position to be after the logo
   
     const generateTable = (title, data) => {
       if (data.length === 0) return;
