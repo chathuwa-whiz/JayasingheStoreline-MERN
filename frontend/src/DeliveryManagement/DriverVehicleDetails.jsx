@@ -20,6 +20,16 @@ const DriverVehicleDetails = () => {
     driverLicenceNo: ''
   });
 
+  const today = new Date();
+
+  const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate())
+    .toISOString()
+    .split('T')[0]; // Convert to yyyy-mm-dd format
+
+  const minDate = new Date(today.getFullYear() - 40, today.getMonth(), today.getDate())
+    .toISOString()
+    .split('T')[0]; // Convert to yyyy-mm-dd format
+
   const [editingDriver, setEditingDriver] = useState(null);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [searchTerm, setSearchTerm] = useState('');
@@ -34,11 +44,27 @@ const DriverVehicleDetails = () => {
     return regex.test(registrationNumber);
   };
 
+  const handleNICChange = (e) => {
+    let value = e.target.value;
+
+    if (NICVersion === '10-digit') {
+      // Allow only numbers and limit to 9 characters
+      value = value.replace(/[^0-9]/g, '').slice(0, 9);
+      setNIC(value + 'v');
+    } else if (NICVersion === '12-digit') {
+      // Allow only numbers and limit to 12 characters
+      value = value.replace(/[^0-9]/g, '').slice(0, 12);
+      setNIC(value);
+    }
+  }
+
+  
+
   const validateForm = () => {
     const { nic, name, birthday, telephoneNo, vehicleType, vehicleRegNo, driverLicenceNo } = newDriver;
 
     // Validation regex patterns
-    const nicRegex = /^(?:\d{12}|\d{9}[vV])$/; // 12 digits or 9 digits with "v" or "V"
+    const nicRegex = /^(?:\d{9}[vV]|\d{12})$/; // 12 digits or 9 digits with "v" or "V"
     const nameRegex = /^[A-Za-z\s]{1,20}$/; // Only letters, max 20 characters
     const telephoneRegex = /^[0-9]{10}$/; // Exactly 10 digits
     const driverLicenseRegex = /^[A-Za-z]\d{7}$/; // One letter and 7 digits
@@ -211,14 +237,25 @@ const DriverVehicleDetails = () => {
             {/* Date of Birth */}
             <div>
               <label htmlFor="dob" className="block text-sm font-medium text-gray-700">Date of Birth</label>
-              <input
+              {
+              /* <input
                 type="date"
                 id="dob"
                 value={newDriver.birthday}
                 onChange={(e) => setNewDriver({ ...newDriver, birthday: e.target.value })}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 required
-              />
+              /> */}
+              <input
+        type="date"
+        id="dob"
+        value={newDriver.birthday}
+        min={minDate} // Restrict to minimum date for 40 years old
+        max={maxDate} // Restrict to maximum date for 18 years old
+        onChange={(e) => setNewDriver({ ...newDriver, birthday: e.target.value })}
+        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        required
+      />
             </div>
             {/* Telephone Number */}
             <div>
