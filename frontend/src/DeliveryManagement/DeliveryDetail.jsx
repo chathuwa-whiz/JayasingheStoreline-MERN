@@ -8,6 +8,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
   const { data: deliveries, error: deliveriesError, isLoading } = useGetDeliveriesQuery();
   const [deleteDelivery] = useDeleteDeliveryMutation();
   const [updateDelivery] = useUpdateDeliveryMutation();
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Format Prices
   const priceFormatter = new Intl.NumberFormat('en-US', {
@@ -78,14 +79,21 @@ export default function DeliveryDetail({ onEditDelivery }) {
     return <div>Loading...</div>;
   }
 
+  // Filter deliveries based on search term
+  const filteredDeliveries = deliveries.filter((delivery) =>
+    delivery._id.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="shadow-lg rounded-lg p-6 bg-gray-100 h-screen overflow-auto">
       <h1 className="text-2xl font-semibold mb-6 text-gray-800">Deliveries</h1>
 
-      <input 
-        type="text" 
-        placeholder="Search Deliveries" 
+      <input
+        type="text"
+        placeholder="Search Deliveries by Delivery No"
         className="p-3 border border-gray-300 rounded-lg mb-6 w-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow duration-300"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
       />
 
       <button
@@ -108,7 +116,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
           </tr>
         </thead>
         <tbody>
-          {deliveries.map((delivery) => (
+          {filteredDeliveries.map((delivery) => (
             <tr key={delivery._id} className={`border-b ${getRowClass(delivery.deliveryStatus)} hover:bg-orange-100 transition-colors duration-300`}>
               <td className="border p-3">{delivery._id}</td>
               <td className="border p-3">
@@ -141,7 +149,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
                 >
                   Completed
                 </button>
-                <button 
+                <button
                   className="p-2 text-red-500 hover:bg-red-100 rounded-lg transition-colors duration-300"
                   onClick={() => handleDelete(delivery._id)}
                 >

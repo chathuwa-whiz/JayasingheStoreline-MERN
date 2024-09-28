@@ -33,8 +33,9 @@ export default function DeliveryDashboard() {
       setCompletedDeliveries(completed);
       setDelayedDeliveries(delayed);
 
-      const earnings = data.reduce((sum, delivery) => sum + (delivery.itemsPrice + delivery.deliveryPrice), 0);
+      const earnings = data.reduce((sum, delivery) => sum + (delivery.deliveryPrice || 0), 0);
       setTotalEarnings(earnings);
+
 
       const deliveredItems = data.reduce((sum, delivery) => sum + (delivery.itemsCount || 0), 0);
       setTotalDeliveredItems(deliveredItems);
