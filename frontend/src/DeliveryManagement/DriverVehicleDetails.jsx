@@ -217,9 +217,10 @@ const DriverVehicleDetails = () => {
                 id="nic"
                 value={newDriver.nic}
                 onChange={(e) => handleInputChange(e, 'nic', 12, '^[0-9vV]*$')}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none"
                 maxLength={12}
                 required
+          
               />
             </div>
             {/* Name */}
@@ -230,7 +231,7 @@ const DriverVehicleDetails = () => {
                 id="name"
                 value={newDriver.name}
                 onChange={(e) => handleInputChange(e, 'name', 20, '^[A-Za-z\\s]*$')}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none"
                 required
               />
             </div>
@@ -253,7 +254,7 @@ const DriverVehicleDetails = () => {
         min={minDate} // Restrict to minimum date for 40 years old
         max={maxDate} // Restrict to maximum date for 18 years old
         onChange={(e) => setNewDriver({ ...newDriver, birthday: e.target.value })}
-        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none"
         required
       />
             </div>
@@ -265,7 +266,7 @@ const DriverVehicleDetails = () => {
                 id="telephoneNo"
                 value={newDriver.telephoneNo}
                 onChange={(e) => handleInputChange(e, 'telephoneNo', 10, '^[0-9]*$')}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none"
                 maxLength={10}
                 required
               />
@@ -278,7 +279,7 @@ const DriverVehicleDetails = () => {
                 id="vehicleType"
                 value={newDriver.vehicleType}
                 onChange={(e) => handleInputChange(e, 'vehicleType', 20)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none"
               />
             </div>
             {/* Vehicle Registration Number */}
@@ -289,7 +290,7 @@ const DriverVehicleDetails = () => {
                 id="vehicleRegNo"
                 value={newDriver.vehicleRegNo}
                 onChange={(e) => handleInputChange(e, 'vehicleRegNo', 10)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none"
               />
             </div>
             {/* Driver License Number */}
@@ -300,7 +301,7 @@ const DriverVehicleDetails = () => {
                 id="driverLicenceNo"
                 value={newDriver.driverLicenceNo}
                 onChange={(e) => handleInputChange(e, 'driverLicenceNo', 8, '^[A-Za-z0-9]*$')}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none"
                 maxLength={8}
               />
             </div>
@@ -331,7 +332,7 @@ const DriverVehicleDetails = () => {
             placeholder="Search by name or NIC..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none"
           />
         </div>
         <table className="min-w-full bg-white border border-gray-300">
