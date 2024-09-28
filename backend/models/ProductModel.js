@@ -5,13 +5,15 @@ const replySchema = new mongoose.Schema({
     message: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
 });
-
+//review
 const ReviewSchema = new mongoose.Schema({
-    name : { type : String, required : true },
-    rating : { type : Number, required : true },
-    comment : { type : String, required : true },
-    user : { type : mongoose.Schema.Types.ObjectId, required : true, ref : "User" }
-} , { timestamps : true });
+    name: { type: String, required: true },
+    email: { type: String, required: false },
+    rating: { type: Number, required: true },
+    comment: { type: String, required: true },
+    image: { type: String, required: false },
+    user: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" }
+}, { timestamps: true });
 
 //inquiry
 const InquireSchema = new mongoose.Schema({
@@ -39,7 +41,8 @@ const ProductSchema = new mongoose.Schema({
     barcode : { type : String,  required : true },
     reviews : [ReviewSchema],
     inquiries: [InquireSchema], // Add this line
-    numInquiries: { type : Number, required : true, default : 0 } // Add this field to track number of inquiries
+    numInquiries: { type : Number, required : true, default : 0 }, // Add this field to track number of inquiries
+    totalOrders: { type: Number, required: true, default: 0 }, // New field to track order count
 
 } , { timestamps : true });
 

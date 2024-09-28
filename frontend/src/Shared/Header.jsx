@@ -55,10 +55,19 @@ export function HomeHeader() {
 
   useEffect(() => {
     if(userInfo){
-      setUsername(userInfo.username);
+      setUsername(userInfo.name || userInfo.username);
     }
 
   }, [userInfo]);
+
+  const handleLogoutGoogle = () => {
+    // Remove cookies on logout
+    Cookies.remove("userName");
+    Cookies.remove("userEmail");
+
+    // Optionally, clear user info from redux
+    // dispatch(logoutUser()); // Implement logoutUser action as needed
+  };
 
   const handleLogout = async (e) => {
     e.preventDefault();
@@ -109,7 +118,7 @@ export function HomeHeader() {
         <div 
         
         className="flex items-center ">
-          <a href="profile"><button onClick={handleLogout} className="bg-red-500 text-black px-4 py-2 rounded hover:bg-yellow-50">Logout</button></a>
+          <a href="profile"><button onClick={handleLogout || handleLogoutGoogle} className="bg-red-500 text-black px-4 py-2 rounded hover:bg-yellow-50">Logout</button></a>
         </div>
       </div>
     </header>
@@ -498,15 +507,15 @@ export function StockHeader() {
   )
 }
 
-export function ReportsHeader( { onExportToExcel } ) {
+export function ReportsHeader( { onExportToPDF } ) {
   return (
     <div className="h-16 bg-white flex justify-between items-center px-4">
       <h2 className="text-xl font-bold">Sales Report</h2>
       <div className="flex items-center space-x-4">
         {/* <button className="bg-white border border-gray-300 px-4 py-2 rounded-lg">Date Range</button> */}
         <button 
-          onClick={onExportToExcel}
-          className="bg-green-500 text-white px-4 py-2 rounded-lg">Export to Excel</button>
+          onClick={onExportToPDF}
+          className="bg-green-500 text-white px-4 py-2 rounded-lg">Export to PDF</button>
         <div className="flex items-center space-x-2">
           <img src="https://via.placeholder.com/40" alt="User" className="rounded-full" />
           <span>Chathushka Navod</span>
@@ -923,5 +932,76 @@ export function OrderReportsHeader( { onExportToExcel } ) {
     </div>
 
 
+  )
+}
+
+export function OrdersSettingsHeader() {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [dropdownRef]);
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  return (
+    <>
+    <div className="h-16 bg-white flex items-center justify-between px-4">
+      <h1 className="text-xl font-bold">Settings</h1>
+
+      <div className="flex items-center space-x-6">
+
+        {/* Notification Icon and Dropdown */}
+        <div className="relative" ref={dropdownRef}>
+          <button
+            onClick={toggleDropdown}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <FaBell size={20} />
+          </button>
+          {dropdownOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+              <div className="py-2">
+                <div className="px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                  Notification 1
+                </div>
+                <div className="px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                  Notification 2
+                </div>
+                <div className="px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                  Notification 3
+                </div>
+                <div className="px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                  View All Notifications
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* User Profile */}
+        <div className="flex items-center space-x-2">
+          <img
+            className="w-8 h-8 rounded-full"
+            src="https://via.placeholder.com/150"
+            alt="User profile"
+          />
+          <span className="text-gray-700">Vidumini Chalanika</span>
+        </div>
+      </div>
+    </div>
+    </>
   )
 }

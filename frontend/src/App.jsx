@@ -12,6 +12,7 @@ import UpdateProduct from "./InventoryManagement/UpdateProduct";
 import Stock from "./InventoryManagement/Stock";
 import Reports from "./InventoryManagement/Reports";
 import AddStockPage from "./InventoryManagement/AddStock";
+import LogoutPage from "./InventoryManagement/LogoutPage";
 
 //Delivery
 import Delivery from "./DeliveryManagement/delivery";
@@ -38,6 +39,7 @@ import OrderInquiries from "./OrderManagement/OrderInquiries";
 import OrderByProducts from "./OrderManagement/OrderByProducts";
 import UpdateOrders from "./OrderManagement/UpdateOrder";
 import OrderReports from "./OrderManagement/Reports";
+import OrderSettings from "./OrderManagement/Settings";
 
 
 
@@ -70,11 +72,14 @@ import SupplierForm from "./SupplierManagement/suppliyerForm";
 import SupplierList from "./SupplierManagement/supplierList";
 import SupplierUpdate from "./SupplierManagement/supplierUpdate";
 import PaymentRequest from "./SupplierManagement/PaymentRequest";
+import SupplierReport from "./SupplierManagement/Report";
+import SupplierSettings from "./SupplierManagement/Settings";
 
 //review
 import EditReviewPage from "./ReviewsInquiry/EditReviewPage";
 import UserReviews from "./ReviewsInquiry/UserReviews";
 import DashboardList from "./ReviewsInquiry/DashboardList";
+import DashboardSinglePro from "./ReviewsInquiry/DashboardSinglePro";
 
 //Employee Management
 import Employee from './EmployeeManagement/Employee';
@@ -85,7 +90,11 @@ import EmployeeProfile from './EmployeeManagement/EmployeeProfile';
 import EmployeeDashboard from "./EmployeeManagement/EmployeeDashboard";
 import SettingsPage from "./InventoryManagement/Settings";
 
+
 function App() {
+
+  const currentUser = {}; // Your logic to get the current user
+
   return (
     <BrowserRouter>
       <Routes>
@@ -121,6 +130,7 @@ function App() {
           <Route path="reports" element={<Reports />} />
           <Route path="addstock/:_id" element={<AddStockPage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="logout" element={<LogoutPage />} />
         </Route>
 
         {/*Delivery manager Routes */}
@@ -144,13 +154,13 @@ function App() {
           <Route path="orderinqiry" element={<OrderInquiries />} />
           <Route path="orderByProduct" element={<OrderByProducts />} />
           <Route path="orderreport" element={<OrderReports />} />
+          <Route path="orderSettings" element={<OrderSettings />} />
         </Route>
         <Route path="productlist" element={<ProductsList />} /> 
         <Route path="product/:_id" element={<SingleProductView />} />
         <Route path="cart" element={<Cart />} />
         <Route path="shipping" element={<Shipping />} />
         <Route path="placeorder" element={<PlaceOrder />} />
-      
 
         {/* Payment Manager Routes */}
         <Route path="checkout" element={<Checkout />} />
@@ -167,7 +177,7 @@ function App() {
         <Route path="register" element={<Register />} />
         <Route path="customerlogin" element={<CustomerLogin />} />      
         <Route path="customer" element={<Customer />}>
-          <Route index element={<CustomerDashboard />} />
+        <Route index element={<CustomerDashboard />} />
         </Route>
 
         {/* Supplier Manager Routes */}
@@ -178,6 +188,8 @@ function App() {
           <Route path="SupplierList" element={<SupplierList />} />
           <Route path="update/:_id" element={<SupplierUpdate />} />
           <Route path="paymentRequest" element={<PaymentRequest />} />
+          <Route path="report" element={<SupplierReport />} />
+          <Route path="SupplierSettings" element={<SupplierSettings />} />
         </Route>
 
         {/* Employee Management Routes */}
@@ -189,10 +201,11 @@ function App() {
           <Route path="employeeProfile" element={<EmployeeProfile />} />
         </Route>
 
-        <Route path="product/:productId/edit-review/:reviewId" element={<EditReviewPage />} />
-        <Route path="user-reviews" element={<UserReviews />} />
+        {/* Edit Review Route */}
+        <Route path="/product/:productId/:reviewId" element={<EditReviewPage />} />
+        <Route path="/user-reviews" element={<UserReviews />} />
         <Route path="dashboardlist" element={<DashboardList/>} />
-
+        <Route path="dashboard/product/:_id" element={<DashboardSinglePro/>} />
       </Routes>
     </BrowserRouter>
   );
