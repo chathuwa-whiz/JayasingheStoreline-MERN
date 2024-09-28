@@ -8,10 +8,9 @@ const SupplierForm = () => {
     price: '',
     category: '',
     quantity: '',
-    size: '',
-    type: '',
+    bankAccountNumber: '',
+    bankName: '',
     moreDetails: '',
-    productImage: null,
   });
 
   const handleChange = (e) => {
@@ -19,13 +18,6 @@ const SupplierForm = () => {
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
-    }));
-  };
-
-  const handleFileChange = (e) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      productImage: e.target.files[0],
     }));
   };
 
@@ -37,7 +29,7 @@ const SupplierForm = () => {
 
   return (
     <div className="w-full p-8">
-      <h2 className="text-2xl font-bold mb-8">Supplier Form</h2>
+      <h2 className="text-2xl font-bold mb-8">Supplier Form - Bank Transfer</h2>
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-4">
           <div className="mb-4">
@@ -91,7 +83,6 @@ const SupplierForm = () => {
               <option value="">Select a category</option>
               <option value="category1">Category 1</option>
               <option value="category2">Category 2</option>
-              {/* Add more categories as needed */}
             </select>
           </div>
           <div className="mb-4">
@@ -104,52 +95,41 @@ const SupplierForm = () => {
               className="w-full p-2 border rounded"
             />
           </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Size</label>
-            <input
-              type="text"
-              name="size"
-              value={formData.size}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            />
-          </div>
         </div>
 
-        {/* Product Media Section */}
+        {/* Bank Transfer Section */}
         <div className="border rounded p-4 mb-4">
-          <h3 className="text-lg font-semibold mb-4">Product Media</h3>
+          <h3 className="text-lg font-semibold mb-4">Bank Transfer Details</h3>
           <div className="mb-4">
-            <label className="block text-gray-700">Photo Product</label>
+            <label className="block text-gray-700">Bank Account Number</label>
             <input
-              type="file"
-              name="productImage"
-              onChange={handleFileChange}
+              type="text"
+              name="bankAccountNumber"
+              value={formData.bankAccountNumber}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Bank Name</label>
+            <input
+              type="text"
+              name="bankName"
+              value={formData.bankName}
+              onChange={handleChange}
               className="w-full p-2 border rounded"
             />
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="mb-4">
-            <label className="block text-gray-700">Type</label>
-            <input
-              type="text"
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">More Details</label>
-            <textarea
-              name="moreDetails"
-              value={formData.moreDetails}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            />
-          </div>
+        <div className="mb-4">
+          <label className="block text-gray-700">More Details</label>
+          <textarea
+            name="moreDetails"
+            value={formData.moreDetails}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+          />
         </div>
 
         <button
