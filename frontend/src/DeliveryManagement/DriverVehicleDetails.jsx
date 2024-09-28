@@ -1,177 +1,113 @@
 import React, { useState, useEffect } from 'react';
 import { useGetDriversQuery, useCreateDriverMutation, useUpdateDriverMutation, useDeleteDriverMutation } from '../redux/api/driverApiSlice';
 import { FaEdit, FaTrash, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const DriverVehicleDetails = () => {
-  const { data: apiDrivers, refetch } = useGetDriversQuery();
+  const { data: drivers, refetch } = useGetDriversQuery();
   const [createDriver] = useCreateDriverMutation();
   const [updateDriver] = useUpdateDriverMutation();
   const [deleteDriver] = useDeleteDriverMutation();
 
-  const dummyDrivers = [
-    {
-      _id: '1',
-      nic: '199012345678',
-      name: 'John Doe',
-      dob: '1990-05-15',
-      telephoneNo: '0771234567',
-      vehicle: 'Toyota',
-      vehicleNo: 'ABD-4569',
-      drivingLicense: 'B5654789'
-    },
-    {
-      _id: '2',
-      nic: '198765432109',
-      name: 'Jane Smith',
-      dob: '1985-11-30',
-      telephoneNo: '0789876543',
-      vehicle: 'Honda',
-      vehicleNo: 'CAC-7895',
-      drivingLicense: 'A1234567'
-    },
-    {
-      _id: '3',
-      nic: '199234567890',
-      name: 'Michael Johnson',
-      dob: '1995-02-20',
-      telephoneNo: '0712345678',
-      vehicle: 'Suzuki',
-      vehicleNo: 'XYZ-1234',
-      drivingLicense: 'C9876543'
-    },
-    {
-      _id: '4',
-      nic: '198012345678',
-      name: 'Emily Davis',
-      dob: '1980-07-22',
-      telephoneNo: '0759876543',
-      vehicle: 'Nissan',
-      vehicleNo: 'DEF-5678',
-      drivingLicense: 'D6543210'
-    },
-    {
-      _id: '5',
-      nic: '199112345678',
-      name: 'Chris Brown',
-      dob: '1991-03-15',
-      telephoneNo: '0791234567',
-      vehicle: 'Ford',
-      vehicleNo: 'GHI-4321',
-      drivingLicense: 'E1234567'
-    },
-    {
-      _id: '6',
-      nic: '198512345678',
-      name: 'Olivia Wilson',
-      dob: '1985-09-05',
-      telephoneNo: '0734567890',
-      vehicle: 'Chevrolet',
-      vehicleNo: 'JKL-8765',
-      drivingLicense: 'F5678901'
-    },
-    {
-      _id: '7',
-      nic: '199312345678',
-      name: 'James Taylor',
-      dob: '1993-12-10',
-      telephoneNo: '0745678901',
-      vehicle: 'Kia',
-      vehicleNo: 'MNO-2345',
-      drivingLicense: 'G2345678'
-    },
-    {
-      _id: '8',
-      nic: '198712345678',
-      name: 'Sophia Miller',
-      dob: '1987-04-01',
-      telephoneNo: '0786789012',
-      vehicle: 'Mazda',
-      vehicleNo: 'PQR-6789',
-      drivingLicense: 'H1234567'
-    },
-    {
-      _id: '9',
-      nic: '199212345678',
-      name: 'David Garcia',
-      dob: '1992-06-30',
-      telephoneNo: '0723456789',
-      vehicle: 'Subaru',
-      vehicleNo: 'STU-3456',
-      drivingLicense: 'I9876543'
-    },
-    {
-      _id: '10',
-      nic: '198212345678',
-      name: 'Isabella Martinez',
-      dob: '1982-08-15',
-      telephoneNo: '0778901234',
-      vehicle: 'Volkswagen',
-      vehicleNo: 'VWX-5432',
-      drivingLicense: 'J7654321'
-    }
-  ];
-  
-  
-
-  const drivers = apiDrivers || dummyDrivers;
-
   const [newDriver, setNewDriver] = useState({
     nic: '',
     name: '',
-    dob: '',
+    birthday: '',
     telephoneNo: '',
-    vehicle: '',
-    vehicleNo: '',
-    drivingLicense: ''
+    vehicleType: '',
+    vehicleRegNo: '',
+    driverLicenceNo: ''
   });
+
+  const today = new Date();
+
+  const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate())
+    .toISOString()
+    .split('T')[0]; // Convert to yyyy-mm-dd format
+
+  const minDate = new Date(today.getFullYear() - 40, today.getMonth(), today.getDate())
+    .toISOString()
+    .split('T')[0]; // Convert to yyyy-mm-dd format
 
   const [editingDriver, setEditingDriver] = useState(null);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     refetch();
   }, [refetch]);
 
+  const validateVehicleRegistrationNumber = (registrationNumber) => {
+    // Regular expression to match the allowed formats
+    const regex = /^(?:\d{2}-\d{4}|\w{2}-\w{4}|\w{3}-\w{4})$/;
+    return regex.test(registrationNumber);
+  };
+
+  const handleNICChange = (e) => {
+    let value = e.target.value;
+
+    if (NICVersion === '10-digit') {
+      // Allow only numbers and limit to 9 characters
+      value = value.replace(/[^0-9]/g, '').slice(0, 9);
+      setNIC(value + 'v');
+    } else if (NICVersion === '12-digit') {
+      // Allow only numbers and limit to 12 characters
+      value = value.replace(/[^0-9]/g, '').slice(0, 12);
+      setNIC(value);
+    }
+  }
+
+  
+
   const validateForm = () => {
-    const { nic, name, dob, telephoneNo, vehicle, vehicleNo, drivingLicense } = newDriver;
-    const nicRegex = /^[0-9]{12}$/;
-    const nameRegex = /^[A-Za-z\s]+$/;
-    const telephoneRegex = /^[0-9]{10}$/;
-    const vehicleRegex = /^[A-Za-z\s]+$/;
-    const vehicleNoRegex = /^[A-Za-z0-9\s]+$/;
-    const drivingLicenseRegex = /^[0-9]{8}$/;
+    const { nic, name, birthday, telephoneNo, vehicleType, vehicleRegNo, driverLicenceNo } = newDriver;
+
+    // Validation regex patterns
+    const nicRegex = /^(?:\d{9}[vV]|\d{12})$/; // 12 digits or 9 digits with "v" or "V"
+    const nameRegex = /^[A-Za-z\s]{1,20}$/; // Only letters, max 20 characters
+    const telephoneRegex = /^[0-9]{10}$/; // Exactly 10 digits
+    const driverLicenseRegex = /^[A-Za-z]\d{7}$/; // One letter and 7 digits
 
     const currentYear = new Date().getFullYear();
-    const birthYear = new Date(dob).getFullYear();
+    const birthYear = new Date(birthday).getFullYear();
 
+    // NIC Validation
     if (!nicRegex.test(nic)) {
-      setMessage({ type: 'error', text: 'NIC must be exactly 12 digits' });
+      setMessage({ type: 'error', text: 'NIC must be either 12 digits or 9 digits followed by "v" or "V"' });
       return false;
     }
+
+    // Name Validation
     if (!nameRegex.test(name)) {
-      setMessage({ type: 'error', text: 'Name must contain only letters' });
+      setMessage({ type: 'error', text: 'Name must contain only letters and be up to 20 characters' });
       return false;
     }
-    if (birthYear > 2005 || birthYear < 1969) {
-      setMessage({ type: 'error', text: 'Driver must be born between 1969 and 2005' });
+
+    // Birthday Validation
+    if (birthYear > 2005 || birthYear < 1998) {
+      setMessage({ type: 'error', text: 'Driver must be born between 1998 and 2005' });
       return false;
     }
+
+    // Telephone Number Validation
     if (!telephoneRegex.test(telephoneNo)) {
       setMessage({ type: 'error', text: 'Telephone number must be exactly 10 digits' });
       return false;
     }
-    if (!vehicleRegex.test(vehicle)) {
-      setMessage({ type: 'error', text: 'Vehicle must contain only letters' });
+
+    // Vehicle Registration Number Validation
+    if (!validateVehicleRegistrationNumber(vehicleRegNo)) {
+      setMessage({ type: 'error', text: 'Vehicle registration number must be in the formats: 2 digits-4 digits, 2 letters-4 letters, or 3 letters-4 letters.' });
       return false;
     }
-    if (!vehicleNoRegex.test(vehicleNo)) {
-      setMessage({ type: 'error', text: 'Vehicle number must contain letters and numbers' });
+
+    // Driver License Number Validation
+    if (!driverLicenseRegex.test(driverLicenceNo)) {
+      setMessage({ type: 'error', text: 'Driver License must start with one letter followed by 7 digits' });
       return false;
     }
-    if (!drivingLicenseRegex.test(drivingLicense)) {
-      setMessage({ type: 'error', text: 'Driving License must be exactly 8 digits' });
-      return false;
-    }
+
     return true;
   };
 
@@ -187,7 +123,7 @@ const DriverVehicleDetails = () => {
         await createDriver(newDriver).unwrap();
         setMessage({ type: 'success', text: 'Driver added successfully' });
       }
-      setNewDriver({ nic: '', name: '', dob: '', telephoneNo: '', vehicle: '', vehicleNo: '', drivingLicense: '' });
+      setNewDriver({ nic: '', name: '', birthday: '', telephoneNo: '', vehicleType: '', vehicleRegNo: '', driverLicenceNo: '' });
       setEditingDriver(null);
       refetch();
     } catch (error) {
@@ -200,11 +136,11 @@ const DriverVehicleDetails = () => {
     setNewDriver({
       nic: driver.nic,
       name: driver.name,
-      dob: driver.dob,
+      birthday: driver.birthday.split('T')[0], // Ensure date input format
       telephoneNo: driver.telephoneNo,
-      vehicle: driver.vehicle,
-      vehicleNo: driver.vehicleNo,
-      drivingLicense: driver.drivingLicense,
+      vehicleType: driver.vehicleType,
+      vehicleRegNo: driver.vehicleRegNo,
+      driverLicenceNo: driver.driverLicenceNo,
     });
   };
 
@@ -222,18 +158,53 @@ const DriverVehicleDetails = () => {
 
   const handleCancelEdit = () => {
     setEditingDriver(null);
-    setNewDriver({ nic: '', name: '', dob: '', telephoneNo: '', vehicle: '', vehicleNo: '', drivingLicense: '' });
+    setNewDriver({ nic: '', name: '', birthday: '', telephoneNo: '', vehicleType: '', vehicleRegNo: '', driverLicenceNo: '' });
+    setMessage({ type: '', text: '' });
   };
 
-  const handleInputChange = (e, field, maxLength) => {
-    const value = e.target.value;
-    if (value.length <= maxLength && /^[0-9]*$/.test(value)) {
-      setNewDriver({ ...newDriver, [field]: value });
+  const handleInputChange = (e, field, maxLength, regex = null) => {
+    let value = e.target.value;
+    if (regex) {
+      const regexTest = new RegExp(regex);
+      if (!regexTest.test(value)) return;
     }
+    if (value.length > maxLength) return;
+    setNewDriver({ ...newDriver, [field]: value });
   };
+
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+    doc.text('Driver List', 14, 16);
+
+    // Prepare data for the PDF
+    const rows = drivers.map(driver => [
+      driver.nic,
+      driver.name,
+      driver.birthday.split('T')[0], // Format date
+      driver.telephoneNo,
+      driver.vehicleType,
+      driver.vehicleRegNo,
+      driver.driverLicenceNo,
+    ]);
+
+    // Add autoTable to the PDF
+    autoTable(doc, {
+      head: [['NIC', 'Name', 'DOB', 'Telephone', 'Vehicle Type', 'Vehicle Reg No', 'Driver License No']],
+      body: rows,
+      startY: 20,
+    });
+
+    doc.save('drivers_list.pdf'); // Save the PDF
+  };
+
+  // Filter drivers based on the search term
+  const filteredDrivers = drivers?.filter(driver =>
+    driver.name.toLowerCase().includes(searchTerm.toLowerCase()) || driver.nic.includes(searchTerm)
+  );
 
   return (
     <div className="container mx-auto p-4">
+      {/* Form Section */}
       <div className="border rounded-lg p-6 bg-gray-50 shadow-lg">
         <h2 className="text-2xl font-semibold mb-4">{editingDriver ? 'Edit Driver' : 'Add New Driver'}</h2>
         <form onSubmit={handleCreateOrUpdate}>
@@ -245,7 +216,7 @@ const DriverVehicleDetails = () => {
                 type="text"
                 id="nic"
                 value={newDriver.nic}
-                onChange={(e) => handleInputChange(e, 'nic', 12)}
+                onChange={(e) => handleInputChange(e, 'nic', 12, '^[0-9vV]*$')}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 maxLength={12}
                 required
@@ -258,7 +229,7 @@ const DriverVehicleDetails = () => {
                 type="text"
                 id="name"
                 value={newDriver.name}
-                onChange={(e) => /^[A-Za-z\s]*$/.test(e.target.value) && setNewDriver({ ...newDriver, name: e.target.value })}
+                onChange={(e) => handleInputChange(e, 'name', 20, '^[A-Za-z\\s]*$')}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 required
               />
@@ -266,16 +237,25 @@ const DriverVehicleDetails = () => {
             {/* Date of Birth */}
             <div>
               <label htmlFor="dob" className="block text-sm font-medium text-gray-700">Date of Birth</label>
-              <input
+              {
+              /* <input
                 type="date"
                 id="dob"
-                value={newDriver.dob}
-                onChange={(e) => setNewDriver({ ...newDriver, dob: e.target.value })}
+                value={newDriver.birthday}
+                onChange={(e) => setNewDriver({ ...newDriver, birthday: e.target.value })}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                min="1969-01-01"
-                max="2005-12-31"
                 required
-              />
+              /> */}
+              <input
+        type="date"
+        id="dob"
+        value={newDriver.birthday}
+        min={minDate} // Restrict to minimum date for 40 years old
+        max={maxDate} // Restrict to maximum date for 18 years old
+        onChange={(e) => setNewDriver({ ...newDriver, birthday: e.target.value })}
+        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        required
+      />
             </div>
             {/* Telephone Number */}
             <div>
@@ -284,123 +264,121 @@ const DriverVehicleDetails = () => {
                 type="text"
                 id="telephoneNo"
                 value={newDriver.telephoneNo}
-                onChange={(e) => handleInputChange(e, 'telephoneNo', 10)}
+                onChange={(e) => handleInputChange(e, 'telephoneNo', 10, '^[0-9]*$')}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 maxLength={10}
                 required
               />
             </div>
-            {/* Vehicle */}
+            {/* Vehicle Type */}
             <div>
-              <label htmlFor="vehicle" className="block text-sm font-medium text-gray-700">Vehicle</label>
+              <label htmlFor="vehicleType" className="block text-sm font-medium text-gray-700">Vehicle Type</label>
               <input
                 type="text"
-                id="vehicle"
-                value={newDriver.vehicle}
-                onChange={(e) => /^[A-Za-z\s]*$/.test(e.target.value) && setNewDriver({ ...newDriver, vehicle: e.target.value })}
+                id="vehicleType"
+                value={newDriver.vehicleType}
+                onChange={(e) => handleInputChange(e, 'vehicleType', 20)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                required
               />
             </div>
-            {/* Vehicle Number */}
+            {/* Vehicle Registration Number */}
             <div>
-              <label htmlFor="vehicleNo" className="block text-sm font-medium text-gray-700">Vehicle Number</label>
+              <label htmlFor="vehicleRegNo" className="block text-sm font-medium text-gray-700">Vehicle Registration Number</label>
               <input
                 type="text"
-                id="vehicleNo"
-                value={newDriver.vehicleNo}
-                onChange={(e) => /^[A-Za-z0-9\s]*$/.test(e.target.value) && setNewDriver({ ...newDriver, vehicleNo: e.target.value })}
+                id="vehicleRegNo"
+                value={newDriver.vehicleRegNo}
+                onChange={(e) => handleInputChange(e, 'vehicleRegNo', 10)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                required
               />
             </div>
-            {/* Driving License */}
+            {/* Driver License Number */}
             <div>
-              <label htmlFor="drivingLicense" className="block text-sm font-medium text-gray-700">Driving License</label>
+              <label htmlFor="driverLicenceNo" className="block text-sm font-medium text-gray-700">Driver License Number</label>
               <input
                 type="text"
-                id="drivingLicense"
-                value={newDriver.drivingLicense}
-                onChange={(e) => handleInputChange(e, 'drivingLicense', 8)}
+                id="driverLicenceNo"
+                value={newDriver.driverLicenceNo}
+                onChange={(e) => handleInputChange(e, 'driverLicenceNo', 8, '^[A-Za-z0-9]*$')}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 maxLength={8}
-                required
               />
             </div>
           </div>
-          <div className="mt-6">
-            {message.text && (
-              <div className={`mb-4 ${message.type === 'success' ? 'text-green-500' : 'text-red-500'}`}>
-                {message.type === 'success' ? <FaCheckCircle /> : <FaTimesCircle />}
-                <span className="ml-2">{message.text}</span>
-              </div>
-            )}
-            <div className="flex justify-end space-x-2">
-              {editingDriver && (
-                <button
-                  type="button"
-                  onClick={handleCancelEdit}
-                  className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
-                >
-                  Cancel
-                </button>
-              )}
-              <button
-                type="submit"
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
-                {editingDriver ? 'Update Driver' : 'Add Driver'}
-              </button>
+          {/* Error Message */}
+          {message.text && (
+            <div className={`mt-4 text-sm font-semibold ${message.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>
+              {message.text}
             </div>
+          )}
+          <div className="mt-6 flex justify-end">
+            <button type="button" className="mr-4 px-4 py-2 bg-gray-300 rounded-md" onClick={handleCancelEdit}>
+              Cancel
+            </button>
+            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-200">
+              {editingDriver ? 'Update Driver' : 'Add Driver'}
+            </button>
           </div>
         </form>
       </div>
 
-      {/* Driver List */}
+      {/* Driver List Section */}
       <div className="mt-8">
-        <h3 className="text-xl font-semibold mb-4">Driver Details</h3>
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-300">
-            <thead>
-              <tr>
-                <th className="py-2 px-4 border-b">NIC</th>
-                <th className="py-2 px-4 border-b">Name</th>
-                <th className="py-2 px-4 border-b">DOB</th>
-                <th className="py-2 px-4 border-b">Telephone No</th>
-                <th className="py-2 px-4 border-b">Vehicle</th>
-                <th className="py-2 px-4 border-b">Vehicle No</th>
-                <th className="py-2 px-4 border-b">Driving License</th>
-                <th className="py-2 px-4 border-b">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {drivers.map((driver) => (
+        <h2 className="text-2xl font-semibold mb-4">Driver List</h2>
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Search by name or NIC..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+        <table className="min-w-full bg-white border border-gray-300">
+          <thead>
+            <tr>
+              <th className="border px-4 py-2">NIC</th>
+              <th className="border px-4 py-2">Name</th>
+              <th className="border px-4 py-2">DOB</th>
+              <th className="border px-4 py-2">Telephone</th>
+              <th className="border px-4 py-2">Vehicle Type</th>
+              <th className="border px-4 py-2">Vehicle Reg No</th>
+              <th className="border px-4 py-2">Driver License No</th>
+              <th className="border px-4 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredDrivers && filteredDrivers.length > 0 ? (
+              filteredDrivers.map(driver => (
                 <tr key={driver._id}>
-                  <td className="py-2 px-4 border-b">{driver.nic}</td>
-                  <td className="py-2 px-4 border-b">{driver.name}</td>
-                  <td className="py-2 px-4 border-b">{new Date(driver.dob).toLocaleDateString()}</td>
-                  <td className="py-2 px-4 border-b">{driver.telephoneNo}</td>
-                  <td className="py-2 px-4 border-b">{driver.vehicle}</td>
-                  <td className="py-2 px-4 border-b">{driver.vehicleNo}</td>
-                  <td className="py-2 px-4 border-b">{driver.drivingLicense}</td>
-                  <td className="py-2 px-4 border-b">
-                    <button
-                      onClick={() => handleEdit(driver)}
-                      className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-2 rounded"
-                    >
+                  <td className="border px-4 py-2">{driver.nic}</td>
+                  <td className="border px-4 py-2">{driver.name}</td>
+                  <td className="border px-4 py-2">{driver.birthday.split('T')[0]}</td>
+                  <td className="border px-4 py-2">{driver.telephoneNo}</td>
+                  <td className="border px-4 py-2">{driver.vehicleType}</td>
+                  <td className="border px-4 py-2">{driver.vehicleRegNo}</td>
+                  <td className="border px-4 py-2">{driver.driverLicenceNo}</td>
+                  <td className="border px-4 py-2">
+                    <button onClick={() => handleEdit(driver)} className="text-blue-600 hover:underline">
                       <FaEdit />
                     </button>
-                    <button
-                      onClick={() => handleDelete(driver._id)}
-                      className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded ml-2"
-                    >
+                    <button onClick={() => handleDelete(driver._id)} className="text-red-600 hover:underline ml-2">
                       <FaTrash />
                     </button>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="8" className="border text-center px-4 py-2">No drivers found.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+        <div className="mt-4">
+          <button onClick={downloadPDF} className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
+            Download PDF
+          </button>
         </div>
       </div>
     </div>

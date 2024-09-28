@@ -10,4 +10,6 @@ export const DELIVERY_URL = "/api/deliveries";
 export const DRIVER_URL = "/api/drivers";
 export const EMPLOYEE_URL = "/api/employees";
 export const REVIEWS_URL = "/api/reviews";
-export const REVIEW_URL = "/api/reviews";
+export const REVIEW_URL = (id) => `/api/reviews/${id}`;
+export const DASHBOARDLIST_URL = "/api/dashboardlist";
+

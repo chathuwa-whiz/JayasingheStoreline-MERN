@@ -1,80 +1,98 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useGetProductByIdQuery, useUpdateReviewMutation } from '../redux/api/productApiSlice';
-import toast from 'react-hot-toast';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useUpdateReviewMutation, useGetReviewByIdQuery } from "../redux/api/productApiSlice";
+import { useSelector } from 'react-redux';
+import toast from "react-hot-toast";
 
-export default function EditReviewPage() {
-    const { reviewId } = useParams();
-    const navigate = useNavigate();
+const EditReviewPage = () => {
+  const { productId, reviewId } = useParams();
+  const navigate = useNavigate();
+  const [review, setReview] = useState("");
+  const [rating, setRating] = useState(0); // Add a rating field
+  const currentUser = useSelector((state) => state.auth.userInfo);
+  
+  const [updateReview, { isLoading: updating }] = useUpdateReviewMutation();
+  const { data: reviewData, isLoading: fetchingReview } = useGetReviewByIdQuery({ productId, reviewId });
 
-    // Assuming the product ID is also available via route params or context
-    const { productId } = useParams(); // Add productId if it's part of URL
+  useEffect(() => {
+    if (reviewData) {
+      setReview(reviewData.comment);
+      setRating(reviewData.rating);
+    }
+  }, [reviewData, currentUser._id, navigate]);
 
-    // Fetch product data
-    const { data: productData, refetch } = useGetProductByIdQuery(productId);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (rating === 0) {
+      toast.error("Please select a rating!"); // Notify user
+      return;
+    }
+    const res = await updateReview({ productId, reviewId, rating, comment: review });
 
-    const [updateReview] = useUpdateReviewMutation();
+    if (res.error) {
+      toast.error("Failed to update review!"); // Notify user
+      console.log(res.error);
+      return;
+    } else {
+      toast.success("Review updated successfully!"); // Notify user
+      navigate(`/product/${productId}`);
+    }
+  };
 
-    const [review, setReview] = useState({ rating: '', comment: '' });
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-6">
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">Edit Your Review</h1>
 
-    useEffect(() => {
-        if (productData) {
-            const reviewToEdit = productData.reviews.find(r => r._id === reviewId);
-            if (reviewToEdit) {
-                setReview({
-                    rating: reviewToEdit.rating,
-                    comment: reviewToEdit.comment
-                });
-            }
-        }
-    }, [productData, reviewId]);
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Review Input */}
+          <div>
+            <label htmlFor="review" className="block text-sm font-medium text-gray-700">Your Review</label>
+            <textarea
+              id="review"
+              value={review}
+              onChange={(e) => setReview(e.target.value)}
+              rows="5"
+              className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              required
+            />
+          </div>
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await updateReview({ productId, reviewId, ...review }).unwrap();
-            toast.success('Review updated successfully!');
-            navigate(`/product/${productId}`); // Navigate to the product page
-        } catch (error) {
-            toast.error('Failed to update review');
-        }
-    };
-
-    return (
-        <div className="container mx-auto p-6 bg-white rounded-lg shadow-lg">
-            <h1 className="text-2xl font-bold text-gray-800 mb-4">Edit Review</h1>
-            <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                    <label htmlFor="rating" className="block text-lg font-medium text-gray-700">Rating</label>
-                    <input
-                        type="number"
-                        id="rating"
-                        value={review.rating}
-                        onChange={(e) => setReview({ ...review, rating: e.target.value })}
-                        className="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm"
-                        min="1"
-                        max="5"
-                        required
-                    />
-                </div>
-                <div className="mb-4">
-                    <label htmlFor="comment" className="block text-lg font-medium text-gray-700">Comment</label>
-                    <textarea
-                        id="comment"
-                        value={review.comment}
-                        onChange={(e) => setReview({ ...review, comment: e.target.value })}
-                        rows="4"
-                        className="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm"
-                        required
-                    ></textarea>
-                </div>
+          {/* Rating Input */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Your Rating</label>
+            <div className="mt-2 flex space-x-2">
+              {[1, 2, 3, 4, 5].map((rate) => (
                 <button
-                    type="submit"
-                    className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg"
+                  type="button"
+                  key={rate}
+                  onClick={() => setRating(rate)}
+                  className={`px-3 py-1 border rounded-full ${
+                    rating === rate ? "bg-yellow-400 text-white" : "bg-gray-200 text-gray-600"
+                  }`}
                 >
-                    Update Review
+                  {rate} Star{rate > 1 && "s"}
                 </button>
-            </form>
-        </div>
-    );
-}
+              ))}
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <div>
+            <button
+              type="submit"
+              className={`w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white ${
+                updating ? "bg-gray-400" : "bg-indigo-600 hover:bg-indigo-700"
+              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+              disabled={updating}
+            >
+              {updating ? "Updating..." : "Update Review"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default EditReviewPage;

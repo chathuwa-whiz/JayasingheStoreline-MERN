@@ -56,6 +56,8 @@ const SupplierForm = () => {
   };
 
   return (
+    <div className="p-8 overflow-auto bg-gray-200">
+      <h2 className="text-2xl font-bold mb-8">Supplier Form</h2>
     <div className="w-full p-8">
       <h2 className="text-2xl font-bold mb-8">Supplier Form - Bank Transfer</h2>
       <form onSubmit={handleSubmit}>
@@ -109,6 +111,10 @@ const SupplierForm = () => {
               className="w-full p-2 border rounded"
             >
               <option value="">Select a category</option>
+              <option value="category1">Electronics</option>
+              <option value="category2">Clothing</option>
+              <option value="category2">Furniture</option>
+              {/* Add more categories as needed */}
               <option value="category1">Category 1</option>
               <option value="category2">Category 2</option>
             </select>
@@ -142,6 +148,11 @@ const SupplierForm = () => {
               <p className="text-red-500 text-sm">{errors.bankAccountNumber}</p>
             )}
           </div>
+        </div>
+
+        {/* Product Media Section */}
+        <div className="border rounded -p-4 mb-4">
+          <h3 className="text-lg font-semibold mb-4 text-orange-500">Product Media</h3>
           <div className="mb-4">
             <label className="block text-gray-700">Bank Name</label>
             <input

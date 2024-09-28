@@ -24,24 +24,23 @@ export const getDriverById = async (req, res) => {
 
 // Create a new driver
 export const createDriver = async (req, res) => {
-  const { firstName, lastName, telephoneNo, vehicleRegNo, vehicleType } = req.body;
-
-  if (!firstName || !lastName || !telephoneNo || !vehicleRegNo || !vehicleType) {
-    return res.status(400).json({ message: 'All fields are required' });
-  }
+  const { name, nic, birthday, telephoneNo, vehicleRegNo, vehicleType, driverLicenceNo } = req.body;
 
   try {
     const newDriver = new Driver({
-      firstName,
-      lastName,
+      name,
+      nic,
+      birthday,
       telephoneNo,
       vehicleRegNo,
       vehicleType,
+      driverLicenceNo
     });
 
     const savedDriver = await newDriver.save();
     res.status(201).json(savedDriver);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ message: error.message });
   }
 };
@@ -50,6 +49,7 @@ export const createDriver = async (req, res) => {
 // Update a driver by ID
 export const updateDriver = async (req, res) => {
   try {
+    // res.json(req.body);
     const updatedDriver = await Driver.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
     //Check if the driver was found

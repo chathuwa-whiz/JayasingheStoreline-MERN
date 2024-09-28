@@ -11,7 +11,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="bg-white text-black h-screen w-64 p-5 shadow-lg">
+    <div className="bg-white text-black h-screen w-64 p-5 ">
       <img src={logo} alt="logo" className="w-20 h-20 rounded-full mb-8 mx-auto border-2 border-orange-500" />
 
       <div className='mb-8'>
@@ -70,7 +70,7 @@ const Sidebar = () => {
               </NavLink>
             </li>
 
-            <li className="mb-4">
+            {/* <li className="mb-4">
               <NavLink
                 to="reports"
                 className="flex items-center text-black hover:bg-orange-600 hover:text-white rounded-lg px-4 py-3 transition-colors duration-300"
@@ -78,7 +78,7 @@ const Sidebar = () => {
                 <FaChartBar className="h-6 w-6 mr-4" />
                 Reports
               </NavLink>
-            </li>
+            </li> */}
 
             <li className="mb-4">
               <NavLink
