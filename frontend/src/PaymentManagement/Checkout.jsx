@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import toast from "react-hot-toast";
 import { useNavigate } from 'react-router-dom';
-import visa from "../../../uploads/products/paymentPh/visa.png";
-import mastercard from "../../../uploads/products/paymentPh/mastercard.png";
+import visa from "../../../uploads/paymentPh/visa.png";
+import mastercard from "../../../uploads/paymentPh/mastercard.png";
 
 const Checkout = () => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
