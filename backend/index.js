@@ -15,6 +15,7 @@ import paymentRoutes from './routes/paymentRoutes.js';
 import deliveryRoutes from './routes/DeliveryRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import orderRoutes from './routes/OrderRoutes.js';
+import payhereRoutes from './routes/payhere.js'; // Import PayHere route
 import adminRoutes from './routes/AdminRoute.js';
 
 import driverRoutes from './routes/DriverRoutes.js'; // Import driver routes
@@ -22,7 +23,6 @@ import employeeRouter from './routes/EmployeeRoutes.js';
 import authEmployeeRouter from './routes/AuthEmployeeRoutes.js';
 import supplierRoutes from './routes/SupplierRoutes.js';
 import supplierUploadRoutes from './routes/SupplierUploadRoutes.js';
-import payhereRoutes from './routes/payhere.js'; // Import PayHere route
 
 // Load the .env file
 dotenv.config();
@@ -62,6 +62,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminRoutes);
 
+app.use("/api/payhere", payhereRoutes); // Use PayHere route
 app.use("/api/supplier", supplierRoutes);
 app.use("/api/drivers", driverRoutes); // Use driver routes
 app.use("/api/payhere", payhereRoutes); // Use PayHere route
@@ -88,8 +89,10 @@ app.use((err, req, res, next) => {
 });
 
 
+
 // Static file serving
 const __dirname = path.resolve();
+app.use("/uploads/products", express.static(path.join(__dirname, '/uploads/products')));
 app.use("/uploads/products", express.static(path.join(__dirname + '/uploads/products')));
 app.use("/uploads/supplierupload", express.static(path.join(__dirname + '/uploads/supplierupload')));
 app.use("/uploads/reviewRatings", express.static(path.join(__dirname + '/uploads/reviewRatings'))); // Serve reviewRatings uploads

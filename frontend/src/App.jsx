@@ -62,7 +62,7 @@ import PaymentDashboard from "./PaymentManagement/PaymentDashboard";
 import Payment from "./PaymentManagement/Payment";
 import HrNotify from "./PaymentManagement/HrNotify";
 import SupNotify from "./PaymentManagement/SupNotify";
-
+import Lgout from "./PaymentManagement/lgout";
 
 // supplier
 import Supplier from "./SupplierManagement/supplier";
@@ -71,6 +71,7 @@ import SupplierDetailsForm from "./SupplierManagement/SuppliyerDetails";
 import SupplierForm from "./SupplierManagement/suppliyerForm";
 import SupplierList from "./SupplierManagement/supplierList";
 import SupplierUpdate from "./SupplierManagement/supplierUpdate";
+import PaymentRequest from "./SupplierManagement/PaymentRequest";
 import SupplierReport from "./SupplierManagement/Report";
 import SupplierSettings from "./SupplierManagement/Settings";
 
@@ -169,6 +170,7 @@ function App() {
           <Route path="cod" element={<CODdetails />} />
           <Route path="hrnotify" element={<HrNotify />} />
           <Route path="supnotify" element={<SupNotify />} />
+          <Route path="lgout" element={<Lgout />} />
         </Route>
 
         {/* Customer Manager Routes */}
@@ -185,6 +187,7 @@ function App() {
           <Route path="SupplierForm" element={<SupplierForm />} />
           <Route path="SupplierList" element={<SupplierList />} />
           <Route path="update/:_id" element={<SupplierUpdate />} />
+          <Route path="paymentRequest" element={<PaymentRequest />} />
           <Route path="report" element={<SupplierReport />} />
           <Route path="SupplierSettings" element={<SupplierSettings />} />
         </Route>
@@ -209,6 +212,3 @@ function App() {
 }
 
 export default App;
-
-
-
