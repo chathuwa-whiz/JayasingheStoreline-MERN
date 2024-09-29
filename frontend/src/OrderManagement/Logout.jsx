@@ -14,7 +14,7 @@ export default function LogoutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-400 to-orange-500 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-r from-blue-600 to-orange-500 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-2xl max-w-md w-full text-center transform transition-all duration-300 hover:scale-105">
         <div className="text-blue-600 mb-4">
           <FaSignOutAlt size={50} className="mx-auto animate-bounce" />
