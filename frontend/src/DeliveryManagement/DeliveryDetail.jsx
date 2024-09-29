@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { FaTrash, FaEdit } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { FaTrash } from 'react-icons/fa';
 import { useDeleteDeliveryMutation, useGetDeliveriesQuery, useUpdateDeliveryMutation } from '../redux/api/deliveryApiSlice';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import logo from '../asset/logo.png';
 
 export default function DeliveryDetail({ onEditDelivery }) {
   const { data: deliveries, error: deliveriesError, isLoading } = useGetDeliveriesQuery();
@@ -10,9 +11,11 @@ export default function DeliveryDetail({ onEditDelivery }) {
   const [updateDelivery] = useUpdateDeliveryMutation();
   const [searchTerm, setSearchTerm] = useState("");
 
-  console.log(deliveries);
+  // Company Details
+  const companyEmail = 'info@jayasinghestoreline.com';
+  const companyTelephone = '+94 11 234 5678';
+  const companyAddress = '123 Main Street, Colombo, Sri Lanka';
 
-  // Format Prices
   const priceFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'LKR',
@@ -54,28 +57,51 @@ export default function DeliveryDetail({ onEditDelivery }) {
       : `p-2 text-${buttonStatus === 'Pending' ? 'yellow' : buttonStatus === 'Delayed' ? 'blue' : 'green'}-500 hover:bg-${buttonStatus === 'Pending' ? 'yellow' : buttonStatus === 'Delayed' ? 'blue' : 'green'}-100 rounded-lg transition-colors duration-300`;
   };
 
-  const downloadPDF = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(12);
-    doc.text("Delivery Details", 14, 20);
+  const downloadPDF = async () => {
+    const doc = new jsPDF('p', 'mm', 'a4');
 
+    // Add logo to the top left
+    const img = new Image();
+    img.src = logo;
+    await new Promise(resolve => {
+      img.onload = resolve;
+    });
+    doc.addImage(img, 'PNG', 14, 10, 30, 30);
+
+    // Add company details to the top right
+    doc.setFontSize(12);
+    doc.setTextColor(40, 40, 40);
+    doc.text(`Email: ${companyEmail}`, 150, 15, { align: 'right' });
+    doc.text(`Telephone: ${companyTelephone}`, 150, 22, { align: 'right' });
+    doc.text(`Address: ${companyAddress}`, 150, 29, { align: 'right' });
+
+    // Add title below logo
+    doc.setFontSize(20);
+    doc.text('Delivery Details', 14, 50);
+
+    // Prepare table data
     const tableData = deliveries.map(delivery => [
       delivery._id,
       JSON.parse(delivery.deliveryItem).map(item => `${item.name} x ${item.qty}`).join(', '),
+      delivery.firstName,
+      delivery.telephoneNo,
       priceFormatter.format(delivery.itemsPrice),
       priceFormatter.format(delivery.deliveryPrice),
       priceFormatter.format(delivery.totalPrice),
       delivery.deliveryStatus || 'Pending'
     ]);
 
+    // Generate the table
     autoTable(doc, {
-      head: [['Delivery No', 'Delivery Item', 'Items Price', 'Delivery Price', 'Total Price', 'Status']],
+      head: [['Delivery No', 'Delivery Item', 'Name', 'Contact No', 'Items Price', 'Delivery Price', 'Total Price']],
       body: tableData,
-      startY: 30,
+      startY: 60,
     });
 
-    doc.save('delivery-details.pdf');
+    // Save the PDF
+    doc.save('Delivery-Details.pdf');
   };
+
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -110,6 +136,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
           <tr>
             <th className="border p-3 text-left">Delivery No</th>
             <th className="border p-3 text-left">Delivery Item</th>
+            <th className="border p-3 text-left">Name</th>
             <th className="border p-3 text-left">Contact No</th>
             <th className="border p-3 text-left">Items Price</th>
             <th className="border p-3 text-left">Delivery Price</th>
@@ -129,6 +156,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
                   </div>
                 ))}
               </td>
+              <td className="border p-3">{delivery.firstName}</td>
               <td className="border p-3">{delivery.telephoneNo}</td>
               <td className="border p-3">{priceFormatter.format(delivery.itemsPrice)}</td>
               <td className="border p-3">{priceFormatter.format(delivery.deliveryPrice)}</td>

@@ -5,13 +5,15 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { useAllProductsQuery } from '../redux/api/productApiSlice'; // Query to fetch products
 import { useGetSuppliersQuery } from '../redux/api/supplierApiSlice'; // Query to fetch suppliers
+import logo from '../asset/logo.png';
 
 export default function SupplierReport() {
   // Fetch product and supplier data
   const { data: products, isLoading: productsLoading, isError: productsError } = useAllProductsQuery();
   const { data: suppliers, isLoading: suppliersLoading, isError: suppliersError } = useGetSuppliersQuery({});
   
-  const [selectedSupplier, setSelectedSupplier] = useState('');
+  const [selectedSupplier, setSelectedSupplier] = useState({});
+  console.log('selectedSupplier', selectedSupplier.name);
   const [selectedProducts, setSelectedProducts] = useState([]);
 
   if (productsLoading || suppliersLoading) return <div>Loading...</div>;
@@ -19,7 +21,7 @@ export default function SupplierReport() {
 
   const lowStockProducts = products.filter((product) => product.currentQty <= 5);
 
-  console.log('Low Stock Products:', lowStockProducts);
+  // console.log('suppliers', suppliers);
 
   // Handle checkbox selection for products
   const handleProductSelect = (productId) => {
@@ -32,15 +34,29 @@ export default function SupplierReport() {
 
   // Handle dropdown supplier selection
   const handleSupplierChange = (e) => {
-    setSelectedSupplier(e.target.value);
+    const selectedSupplier = suppliers.find((supplier) => supplier._id === e.target.value);
+    setSelectedSupplier(selectedSupplier);
   };
 
   // Generate PDF report
-  const generatePDF = () => {
+  const generatePDF = async () => {
     const doc = new jsPDF();
+
+    // Add store logo and name to header
+    const img = new Image();
+    img.src = logo;
+    await new Promise(resolve => {
+        img.onload = resolve;
+    });
+    doc.addImage(img, 'PNG', 14, 10, 30, 30); // Adjust size and position as needed
+    doc.setFontSize(20);
+    doc.setTextColor(40, 40, 40);
+    doc.text('Jayasinghe Storeline', 50, 20);
+    doc.setFontSize(12);
+    doc.text('Products Order Report', 50, 30);
     
-    doc.text('Product Order Report', 14, 16);
-    doc.text(`Supplier: ${suppliers.find(supplier => supplier._id === selectedSupplier)?.name || 'N/A'}`, 14, 24);
+    doc.text(`Supplier Name: ${selectedSupplier.name}`, 14, 60);
+    doc.text(`Contact Number: ${selectedSupplier.phone}`, 14, 70);
 
     const tableData = lowStockProducts
       .filter((product) => selectedProducts.includes(product._id))
@@ -52,6 +68,7 @@ export default function SupplierReport() {
     doc.autoTable({
       head: [['Product Name', 'Order Qty']],
       body: tableData,
+      startY: 80,
     });
 
     doc.save('order-inquiry.pdf');
@@ -92,13 +109,13 @@ export default function SupplierReport() {
       <div className="max-w-md mx-auto">
         <label className="block text-sm font-medium mb-2">Select Supplier:</label>
         <select
-          value={selectedSupplier}
+          value={selectedSupplier.name? selectedSupplier._id : ''}
           onChange={handleSupplierChange}
           className="p-2 border border-gray-300 rounded w-full"
         >
           <option value="" disabled>Select a supplier</option>
           {suppliers.map((supplier) => (
-            <option key={supplier.id} value={supplier.id}>
+            <option key={supplier._id} value={supplier._id}>
               {supplier.name}
             </option>
           ))}
