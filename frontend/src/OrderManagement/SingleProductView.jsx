@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
-import { useGetProductByIdQuery, useCreateReviewMutation, useCreateInquiryMutation } from "../redux/api/productApiSlice";
+import { useGetProductByIdQuery, useCreateReviewMutation, useCreateInquiryMutation, useDeleteReviewMutation } from "../redux/api/productApiSlice";
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from "../redux/features/cart/cartSlice";
 import toast from "react-hot-toast";
@@ -9,7 +9,11 @@ import ReviewForm from '../ReviewsInquiry/ReviewForm';
 export default function SingleProductView() {
     const { _id: productId } = useParams();
     const { data: productData, isLoading, isError, refetch } = useGetProductByIdQuery(productId);
-    const user = useSelector((state) => state.auth.user);
+    const user = useSelector((state) => state.auth.userInfo);
+
+    console.log("User : ", user);
+    console.log("Product Data : ", productData);
+
     const [image, setImage] = useState(productData?.image);
     const [name, setName] = useState(productData?.name || '');
     const [description, setDescription] = useState(productData?.description || '');
@@ -18,7 +22,10 @@ export default function SingleProductView() {
     const [category, setCategory] = useState(productData?.category || '');
     const [quantity, setQuantity] = useState(productData?.quantity || 0);
     const [qty, setQty] = useState(1);
+    //inquiry message
     const [messagee, setMessagee] = useState('');
+    // Initialize the mutation hook
+    const [deleteReview] = useDeleteReviewMutation();
 
     // Price formatter
     const priceFormatter = new Intl.NumberFormat('en-US', {
@@ -70,7 +77,21 @@ export default function SingleProductView() {
 
     const handleEditReview = (reviewId) => {
         // Navigate to review edit page
-        navigate(`/product/${productId}/edit-review/${reviewId}`);
+        console.log("Review ID : ", reviewId, "Product ID : ", productId);
+        navigate(`/product/${productId}/${reviewId}`);
+    };
+
+    // Handle delete review
+    const handleDeleteReview = async (reviewId) => {
+        if (window.confirm("Are you sure you want to delete this review?")) {
+            try {
+                await deleteReview({ productId, reviewId }).unwrap();
+                refetch(); // Refresh the product data after deletion
+                toast.success("Review deleted successfully!");
+            } catch (error) {
+                toast.error(error?.data || error.message);
+            }
+        }
     };
 
     // Average Rating Calculation
@@ -157,38 +178,101 @@ export default function SingleProductView() {
                     {quantity === 0 && (
                         <p className="mt-4 text-red-500">This product is currently out of stock.</p>
                     )}
+                {/* Average Rating Display */}
+                <div className="mt-6"> {/* Increased margin for more spacing */}
+                    <h2 className="text-xl font-semibold text-gray-700">Average Rating</h2> {/* Kept the heading size */}
+                    <div className="flex items-center mt-2"> {/* Increased margin for better spacing */}
+                        <div className="text-3xl"> {/* Increased the size of the stars */}
+                            {renderStars(averageRating)}
+                        </div>
+                        <span className="ml-3 text-gray-600 text-xl"> {/* Kept the rating value slightly larger for emphasis */}
+                            {averageRating} / 5.0
+                        </span>
+                    </div>
+                </div>
+
+                    
                 </div>
             </div>
 
-            {/* Reviews Section */}
-            <div className="mt-10">
-                <h2 className="text-2xl font-bold text-gray-800">Product Reviews</h2>
-                {productData?.reviews && productData.reviews.length > 0 ? (
-                    productData.reviews.map((review) => (
-                        <div key={review._id} className="mt-4 p-4 border rounded-lg shadow-sm bg-gray-50">
-                            <div className="flex items-center">
-                                <p className="text-lg font-semibold">{review.name}</p>
-                                <p className="ml-4 text-sm text-gray-500">{new Date(review.createdAt).toLocaleDateString()}</p>
-                            </div>
-                            <div className="mt-2 flex items-center">
-                                <div className="text-yellow-400">
-                                    {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
-                                </div>
-                                <p className="ml-2 text-gray-700">{review.comment}</p>
-                            </div>
-                            <button
-                                onClick={() => handleEditReview(review._id)}
-                                className={`mt-2 ${user && user._id === review._id ? 'bg-blue-900 hover:bg-blue-800' : 'bg-gray-400 cursor-not-allowed'} text-white font-bold py-2 px-4 rounded-lg`}
-                                disabled={user && user._id !== review._id}
-                            >
-                                Edit
-                            </button>
-                        </div>
-                    ))
-                ) : (
-                    <p className="mt-4 text-gray-500">No reviews yet.</p>
+ {/* Reviews Display */}
+<div className="mt-10">
+    <h2 className="text-2xl font-bold text-gray-800">Product Reviews</h2>
+
+    {/* Check if there are reviews */}
+    {productData?.reviews && productData.reviews.length > 0 ? (
+        productData.reviews.map((review) => (
+            <div 
+                key={review._id} 
+                className="mt-4 p-6 border rounded-lg shadow-md bg-white">
+
+                {/* User Name and Date */}
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                        <p className="text-lg font-semibold">{review.name}</p>
+                        <p className="text-sm text-gray-500">
+                            {new Date(review.createdAt).toLocaleDateString()}
+                        </p>
+                    </div>
+                </div>
+
+                {/* Star Rating and Comment */}
+                <div className="mt-2 flex items-center space-x-4">
+                    <div className="flex items-center text-yellow-400">
+                        {/* Display filled and empty stars dynamically */}
+                        {Array(5).fill().map((_, i) => (
+                            <span key={i} className="text-xl">
+                                {i < review.rating ? '★' : '☆'}
+                            </span>
+                        ))}
+                    </div>
+                    <p className="text-gray-700 text-md">{review.comment}</p>
+                </div>
+
+                {/* Display Email if provided */}
+                {review.email && (
+                    <p className="mt-2 text-gray-600 text-sm">Email: {review.email}</p>
+                )}
+
+                {/* Uploaded Image (if any) */}
+                {review.image && (
+                    <div className="mt-3">
+                        <img
+                            src={review.image} // Ensure this URL is correct
+                            alt={`Review image uploaded by ${review.name}`} // Improved alt text
+                            className="w-40 h-auto rounded-lg shadow-md"
+                            onError={(e) => { // Handle image loading error
+                                e.target.onerror = null; // Prevents looping
+                                e.target.src = '/uploads/reviewRatings/image.png'; // Set a placeholder image
+                            }}
+                        />
+                    </div>
+                )}
+
+                {/* Edit and Delete Buttons for the Author */}
+                {user && user._id === review.user && (
+                    <div className="mt-4 flex space-x-2">
+                        <button
+                            onClick={() => handleEditReview(review._id)}
+                            className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg transition"
+                        >
+                            Edit
+                        </button>
+                        <button
+                            onClick={() => handleDeleteReview(review._id)}
+                            className="bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg transition"
+                        >
+                            Delete
+                        </button>
+                    </div>
                 )}
             </div>
+        ))
+    ) : (
+        <p className="mt-4 text-gray-500">No reviews yet.</p>
+    )}
+</div>
+
 
             {/* Review Form */}
             <div className="mt-10">
@@ -222,25 +306,41 @@ export default function SingleProductView() {
                 </form>
             </div>
 
-            {/* Display Inquiries */}
-            <div className="mt-10">
-                <h2 className="text-2xl font-bold text-gray-800">Customer Inquiries</h2>
-                {productData?.inquiries && productData.inquiries.length > 0 ? (
-                    productData.inquiries.map((inquiry) => (
-                        <div key={inquiry._id} className="mt-4 p-4 border rounded-lg shadow-sm bg-gray-50">
-                            <div className="flex items-center">
-                                <p className="text-lg font-semibold">{inquiry.name}</p>
-                                <p className="ml-4 text-sm text-gray-500">{new Date(inquiry.createdAt).toLocaleDateString()}</p>
+{/* Display Inquiries */}
+<div className="mt-10">
+    <h2 className="text-2xl font-bold text-gray-800">Customer Inquiries</h2>
+    {productData?.inquiries && productData.inquiries.length > 0 ? (
+        productData.inquiries.map((inquiry) => (
+            <div key={inquiry._id} className="mt-4 p-4 border rounded-lg shadow-sm bg-gray-50">
+                <div className="flex items-center">
+                    <p className="text-lg font-semibold">{inquiry.name}</p>
+                    <p className="ml-4 text-sm text-gray-500">{new Date(inquiry.createdAt).toLocaleDateString()}</p>
+                </div>
+                <div className="mt-2 text-gray-700">
+                    <p>{inquiry.messagee}</p>
+                </div>
+
+                {/* Display replies for the inquiry */}
+                <div className="mt-4">
+                    <h3 className="text-md font-semibold text-gray-700">Replies:</h3>
+                    {inquiry.replies && inquiry.replies.length > 0 ? (
+                        inquiry.replies.map((reply, index) => (
+                            <div key={index} className="mt-2 p-2 border rounded-md bg-gray-100">
+                                <p className="text-gray-700">{reply.message}</p>
+                                <p className="text-sm text-gray-500">{new Date(reply.createdAt).toLocaleDateString()}</p>
                             </div>
-                            <div className="mt-2 text-gray-700">
-                                <p>{inquiry.messagee}</p>
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <p className="mt-4 text-gray-500">No inquiries yet.</p>
-                )}
+                        ))
+                    ) : (
+                        <p className="mt-2 text-gray-500">No replies yet.</p>
+                    )}
+                </div>
+
             </div>
+        ))
+    ) : (
+        <p className="mt-4 text-gray-500">No inquiries yet.</p>
+    )}
+</div>
           
         </div>
     );

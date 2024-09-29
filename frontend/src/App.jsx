@@ -41,6 +41,8 @@ import UpdateOrders from "./OrderManagement/UpdateOrder";
 import OrderReports from "./OrderManagement/Reports";
 import OrderSettings from "./OrderManagement/Settings";
 
+
+
 //Customer
 import CustomerLogin from "./CustomerManagemet/CusLogin"; 
 import Register from "./CustomerManagemet/register";
@@ -60,7 +62,7 @@ import PaymentDashboard from "./PaymentManagement/PaymentDashboard";
 import Payment from "./PaymentManagement/Payment";
 import HrNotify from "./PaymentManagement/HrNotify";
 import SupNotify from "./PaymentManagement/SupNotify";
-
+import Lgout from "./PaymentManagement/lgout";
 
 // supplier
 import Supplier from "./SupplierManagement/supplier";
@@ -69,11 +71,15 @@ import SupplierDetailsForm from "./SupplierManagement/SuppliyerDetails";
 import SupplierForm from "./SupplierManagement/suppliyerForm";
 import SupplierList from "./SupplierManagement/supplierList";
 import SupplierUpdate from "./SupplierManagement/supplierUpdate";
+import PaymentRequest from "./SupplierManagement/PaymentRequest";
+import SupplierReport from "./SupplierManagement/Report";
+import SupplierSettings from "./SupplierManagement/Settings";
 
 //review
 import EditReviewPage from "./ReviewsInquiry/EditReviewPage";
-import UserReviews from "./ReviewsInquiry/UserReviews";
+import UserReviews from "./ReviewsInquiry/Dashboard";
 import DashboardList from "./ReviewsInquiry/DashboardList";
+import DashboardSinglePro from "./ReviewsInquiry/DashboardSinglePro";
 
 //Employee Management
 import Employee from './EmployeeManagement/Employee';
@@ -84,7 +90,11 @@ import EmployeeProfile from './EmployeeManagement/EmployeeProfile';
 import EmployeeDashboard from "./EmployeeManagement/EmployeeDashboard";
 import SettingsPage from "./InventoryManagement/Settings";
 
+
 function App() {
+
+  const currentUser = {}; // Your logic to get the current user
+
   return (
     <BrowserRouter>
       <Routes>
@@ -151,7 +161,6 @@ function App() {
         <Route path="cart" element={<Cart />} />
         <Route path="shipping" element={<Shipping />} />
         <Route path="placeorder" element={<PlaceOrder />} />
-      
 
         {/* Payment Manager Routes */}
         <Route path="checkout" element={<Checkout />} />
@@ -161,13 +170,14 @@ function App() {
           <Route path="cod" element={<CODdetails />} />
           <Route path="hrnotify" element={<HrNotify />} />
           <Route path="supnotify" element={<SupNotify />} />
+          <Route path="lgout" element={<Lgout />} />
         </Route>
 
         {/* Customer Manager Routes */}
         <Route path="register" element={<Register />} />
         <Route path="customerlogin" element={<CustomerLogin />} />      
         <Route path="customer" element={<Customer />}>
-          <Route index element={<CustomerDashboard />} />
+        <Route index element={<CustomerDashboard />} />
         </Route>
 
         {/* Supplier Manager Routes */}
@@ -177,6 +187,9 @@ function App() {
           <Route path="SupplierForm" element={<SupplierForm />} />
           <Route path="SupplierList" element={<SupplierList />} />
           <Route path="update/:_id" element={<SupplierUpdate />} />
+          <Route path="paymentRequest" element={<PaymentRequest />} />
+          <Route path="report" element={<SupplierReport />} />
+          <Route path="SupplierSettings" element={<SupplierSettings />} />
         </Route>
 
         {/* Employee Management Routes */}
@@ -188,16 +201,14 @@ function App() {
           <Route path="employeeProfile" element={<EmployeeProfile />} />
         </Route>
 
-        <Route path="product/:productId/edit-review/:reviewId" element={<EditReviewPage />} />
-        <Route path="user-reviews" element={<UserReviews />} />
+        {/* Edit Review Route */}
+        <Route path="/product/:productId/:reviewId" element={<EditReviewPage />} />
+        <Route path="/dashboard" element={<UserReviews />} />
         <Route path="dashboardlist" element={<DashboardList/>} />
-
+        <Route path="dashboard/product/:_id" element={<DashboardSinglePro/>} />
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
-
-
-

@@ -8,10 +8,10 @@ function SupplierNotify() {
   ]);
 
   // Uncomment this when integrating with backend
-  /*
+  
   useEffect(() => {
     // Fetch notifications from backend
-    fetch('/api/supplier-notifications')
+    fetch('/api/payment')
       .then(response => response.json())
       .then(data => {
         // Update state with fetched notifications
@@ -19,7 +19,7 @@ function SupplierNotify() {
       })
       .catch(error => console.error('Error fetching notifications:', error));
   }, []);
-  */
+  
 
   // Function to handle status change
   const updateStatus = (id, newStatus) => {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const Settings = () => {
   const [settings, setSettings] = useState({
-    companyName: 'NoLimit Deliveries',
+    companyName: 'Jayasinghe Storelines',
     timeZone: 'GMT+5:30',
     operatingHours: {
       start: '09:00 AM',
@@ -14,6 +14,11 @@ const Settings = () => {
       sms: true,
       email: true,
     },
+    orderManagement: {
+      orderConfirmation: true,
+      deliveryUpdates: true,
+      estimatedDeliveryTime: 30, // in minutes
+    },
   });
 
   const handleChange = (e) => {
@@ -24,11 +29,19 @@ const Settings = () => {
     }));
   };
 
+  const handleOrderManagementChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setSettings((prev) => ({
+      ...prev,
+      orderManagement: { ...prev.orderManagement, [name]: type === 'checkbox' ? checked : value },
+    }));
+  };
+
   return (
     <div className="p-8 bg-gray-50 min-h-screen flex justify-center">
       <div className="max-w-4xl w-full">
         <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">Settings</h1>
-        
+
         {/* General Settings */}
         <div className="bg-white p-6 rounded-xl shadow-lg mb-8 transition duration-500 ease-in-out transform hover:-translate-y-1">
           <h2 className="text-2xl font-semibold mb-4 text-gray-700">General Settings</h2>
@@ -128,6 +141,41 @@ const Settings = () => {
                 notificationPreferences: { ...prev.notificationPreferences, email: e.target.checked }
               }))} 
               className="h-5 w-5 text-blue-600 focus:ring-blue-400 transition"
+            />
+          </div>
+        </div>
+
+        {/* Order Management Settings */}
+        <div className="bg-white p-6 rounded-xl shadow-lg mb-8 transition duration-500 ease-in-out transform hover:-translate-y-1">
+          <h2 className="text-2xl font-semibold mb-4 text-gray-700">Order Management Settings</h2>
+          <div className="mb-6">
+            <label className="block text-gray-600 font-medium mb-2">Send Order Confirmation</label>
+            <input 
+              type="checkbox" 
+              name="orderConfirmation" 
+              checked={settings.orderManagement.orderConfirmation} 
+              onChange={handleOrderManagementChange} 
+              className="h-5 w-5 text-blue-600 focus:ring-blue-400 transition"
+            />
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-600 font-medium mb-2">Send Delivery Updates</label>
+            <input 
+              type="checkbox" 
+              name="deliveryUpdates" 
+              checked={settings.orderManagement.deliveryUpdates} 
+              onChange={handleOrderManagementChange} 
+              className="h-5 w-5 text-blue-600 focus:ring-blue-400 transition"
+            />
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-600 font-medium mb-2">Estimated Delivery Time (minutes)</label>
+            <input 
+              type="number" 
+              name="estimatedDeliveryTime" 
+              value={settings.orderManagement.estimatedDeliveryTime} 
+              onChange={handleOrderManagementChange} 
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
             />
           </div>
         </div>

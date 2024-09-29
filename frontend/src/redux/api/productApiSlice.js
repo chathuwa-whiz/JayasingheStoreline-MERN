@@ -1,4 +1,5 @@
-import { PRODUCT_URL, UPLOAD_URL } from "../constants";
+import { deleteInquiry, getInquiriesByInquiryId } from "../../../../backend/controllers/ProductController";
+import { PRODUCT_URL, UPLOAD_URL,REVIEWS_URL, DASHBOARDLIST_URL } from "../constants";
 import { apiSlice } from "./apiSlice";
 
 export const productApiSlice = apiSlice.injectEndpoints({
@@ -79,7 +80,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
         // Create a review
         createReview: builder.mutation({
             query: (data) => ({
-                url: `${PRODUCT_URL}/${data.productId}`,
+                url: `${PRODUCT_URL}/${data.productId}/reviews`,
                 method: "POST",
                 body: data,
             }),
@@ -93,28 +94,55 @@ export const productApiSlice = apiSlice.injectEndpoints({
                 body: data,
             }),
         }),
+        
+        //create reply
+        createReply: builder.mutation({
+            query: (data) => ({
+                url: `${PRODUCT_URL}/${data.productId}/inquiries/${data.inquiryId}/reply`,
+                method: "POST",
+                body: { replyMessage: data.message }, // Sending the reply message
+            }),
+        }),
+        
 
         // Update a review
         updateReview: builder.mutation({
-            query: ({ productId, reviewId, rating, comment }) => ({
-                url: `${PRODUCT_URL}/${productId}/${reviewId}`,
-                method: 'PUT',
-                body: { rating, comment },
-            }),
-            invalidatesTags: (result, error, { productId }) => [
-                { type: 'Product', id: productId }
-            ]
+        query: ({ productId, reviewId, rating, comment }) => ({
+            url: `${PRODUCT_URL}/${productId}/${reviewId}`,
+            method: 'PUT',
+            body: { rating, comment },
+        }),
+        invalidatesTags: (result, error, { productId, reviewId }) => [
+            { type: 'Product', id: productId }, // Ensure the product's cached data is invalidated
+            { type: 'Reviews', id: reviewId },  // Optionally, you could invalidate the review as well
+        ],
         }),
 
-        // Reply to an inquiry
-        replyToInquiry: builder.mutation({
-            query: ({ productId, inquiryId, replyMessage }) => ({
-                url: `${PRODUCT_URL}/${productId}/inquiries/${inquiryId}/reply`,
-                method: 'POST',
-                body: { replyMessage },
-            }),
+        // Delete a review
+        deleteReview: builder.mutation({
+        query: ({ productId, reviewId }) => ({
+            url: `${PRODUCT_URL}/${productId}/${reviewId}`, // Assuming the reviews are part of the product endpoint
+            method: 'DELETE',
+        }),
+        invalidatesTags: (result, error, { productId, reviewId }) => [
+            { type: 'Product', id: productId }, // Invalidate the product cache
+            { type: 'Reviews', id: reviewId },  // Optionally invalidate the review cache
+        ],
         }),
 
+ // Delete an inquiry
+deleteInquiry: builder.mutation({
+    query: ({ productId, inquiryId }) => ({
+        url: `${PRODUCT_URL}/${productId}/inquiries/${inquiryId}`, // Use inquiryId here
+        method: 'DELETE',
+    }),
+    invalidatesTags: (result, error, { productId, inquiryId }) => [
+        { type: 'Product', id: productId }, // Invalidate the product cache
+        { type: 'Inquiries', id: inquiryId },  // You might want to create an Inquiries tag
+    ],
+}),
+
+            
         getTopProducts: builder.query({
             query: () => `${PRODUCT_URL}/top`,
             keepUnusedDataFor: 5,
@@ -141,11 +169,19 @@ export const productApiSlice = apiSlice.injectEndpoints({
         }),
         
 
-        // Fetch reviews by user ID
-        getReviewsByUserId: builder.query({
-            query: (userId) => `${PRODUCT_URL}/reviews/user/${userId}`,
-            providesTags: (result, error, userId) => [{ type: 'Reviews', id: userId }],
+        getReviewById: builder.query({
+            query: ({ productId, reviewId }) => `${PRODUCT_URL}/${productId}/${reviewId}`,
+            transformResponse: (response) => response, // Optionally transform the response if needed
         }),
+
+
+        getInquiriesByInquiryId: builder.query({
+            query: ({ productId, inquiryId }) => `${PRODUCT_URL}/${productId}/inquiries/${inquiryId}`,
+            transformResponse: (response) => response, // Optionally transform the response if needed
+        }),
+        
+        
+        
     }),
 });
 
@@ -160,12 +196,16 @@ export const {
     useDeleteProductMutation,
     useCreateReviewMutation,
     useCreateInquiryMutation,
-    useReplyToInquiryMutation,
+    useCreateReplyMutation,
     useGetTopProductsQuery,
     useGetNewProductsQuery,
     useUploadProductImageMutation,
     useGetFilteredProductsQuery,
     useUpdateReviewMutation,
+    useDeleteReviewMutation,
+    useDeleteInquiryMutation,
+    useGetReviewByIdQuery,
+    useGetInquiriesByInquiryIdQuery,
     useGetReviewsByUserIdQuery,
     useGetProductNamesWithOrdersQuery,  // New query hook
 } = productApiSlice;
