@@ -8,6 +8,7 @@ const UserSchema = new mongoose.Schema({
     NIC : { type : String, required : true, default: "" },
     phone : { type : String, required : true, default: "" },
     address : { type : String, required : true, default: "" },
+    age : { type : String, required : true, default: "" },
     password : { type : String, required : true },
     isAdmin : { type : Boolean, required : true, default: false }
 } , { timestamps : true });

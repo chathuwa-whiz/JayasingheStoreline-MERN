@@ -113,7 +113,7 @@ export default function SalesReportPage() {
     // Export data to PDF
     const handleExportToPDF = async () => {
         const doc = new jsPDF('p', 'mm', 'a4');
-    
+
         // Add store logo and name to header
         const img = new Image();
         img.src = logo;
