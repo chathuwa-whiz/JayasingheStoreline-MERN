@@ -20,6 +20,12 @@ export default function SingleProductView() {
     const [qty, setQty] = useState(1);
     const [messagee, setMessagee] = useState('');
 
+    // Price formatter
+    const priceFormatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'LKR',
+    });
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -109,8 +115,8 @@ export default function SingleProductView() {
                     <p className="text-lg text-gray-600 mb-2">Category: <span className="font-semibold text-gray-700">{category}</span></p>
                     
                     <div className="mt-4">
-                        <p className="text-3xl font-semibold text-gray-900">Rs. {newProductPrice}.00</p>
-                        <p className="mt-2 text-lg text-gray-500 line-through">Rs. {sellingPrice}.00</p>
+                        <p className="text-3xl font-semibold text-gray-900">{priceFormatter.format(newProductPrice)}</p>
+                        <p className="mt-2 text-lg text-gray-500 line-through">{priceFormatter.format(sellingPrice)}</p>
                         <p className="mt-1 text-md text-green-600">Discount: {discount}% Off</p>
                     </div>
 

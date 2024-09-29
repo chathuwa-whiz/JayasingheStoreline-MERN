@@ -1,11 +1,24 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { clearCartItems } from "../redux/features/cart/cartSlice";
 
 export default function OrderSummary() {
   const navigate = useNavigate();
   const cart = useSelector((state) => state.cart);
-  const { cartItems } = cart;  
+  const dispatch = useDispatch();
+  const { cartItems } = cart;
+
+  // Price formatter
+  const priceFormatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'LKR',
+  });
+
+  const handleNavigation = () => {
+    dispatch(clearCartItems());
+    navigate('/checkout');
+  };
 
   return (
     <div className="bg-gray-50 text-gray-800 min-h-screen p-8">
@@ -48,8 +61,8 @@ export default function OrderSummary() {
                     </td>
                     <td className="p-4 font-semibold text-gray-800">{item.name}</td>
                     <td className="p-4 text-center font-semibold">{item.qty}</td>
-                    <td className="p-4 font-semibold text-gray-800">Rs.{item.newProductPrice.toFixed(2)}</td>
-                    <td className="p-4 font-semibold text-gray-800">Rs.{(item.newProductPrice * item.qty).toFixed(2)}</td>
+                    <td className="p-4 font-semibold text-gray-800">{priceFormatter.format(item.newProductPrice)}</td>
+                    <td className="p-4 font-semibold text-gray-800">{priceFormatter.format(item.newProductPrice * item.qty)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -62,23 +75,23 @@ export default function OrderSummary() {
           <div className="space-y-4">
             <div className="flex justify-between">
               <span className="font-semibold text-gray-700">Items Price:</span>
-              <span className="font-semibold text-gray-800">Rs.{cart.itemsPriceSum}</span>
+              <span className="font-semibold text-gray-800">{priceFormatter.format(cart.itemsPriceSum)}</span>
             </div>
             <div className="flex justify-between">
               <span className="font-semibold text-gray-700">Delivery Price:</span>
-              <span className="font-semibold text-gray-800">Rs.{cart.deliveryPrice}</span>
+              <span className="font-semibold text-gray-800">{priceFormatter.format(cart.deliveryPrice)}</span>
             </div>
             <div className="flex justify-between">
               <span className="font-semibold text-gray-700">Discount:</span>
-              <span className="font-semibold text-gray-800">Rs.{cart.totalDiscount}</span>
+              <span className="font-semibold text-gray-800">{priceFormatter.format(cart.totalDiscount)}</span>
             </div>
             <div className="flex justify-between border-t border-gray-300 pt-4">
               <span className="font-bold text-xl text-blue-900">Total Price:</span>
-              <span className="font-bold text-xl text-blue-900">Rs.{cart.totalPriceSum}</span>
+              <span className="font-bold text-xl text-blue-900">{priceFormatter.format(cart.totalPriceSum)}</span>
             </div>
           </div>
           <button
-            onClick={() => navigate('/checkout')}
+            onClick={handleNavigation}
             className="bg-blue-900 text-white font-semibold py-3 px-4 mt-6 w-full rounded-lg hover:bg-blue-800 transition-all duration-200"
           >
             Proceed to Checkout
