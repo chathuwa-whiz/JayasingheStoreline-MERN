@@ -10,7 +10,7 @@ export default function LogoutPage() {
     // Add your logout logic here (clear session, tokens, etc.)
     console.log('User logged out');
     // Redirect to login or home page
-    navigate('/inventory');
+    navigate('/adminlogin');
   };
 
   return (
