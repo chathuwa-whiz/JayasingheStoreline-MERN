@@ -114,6 +114,8 @@ export default function DeliveryDetail({ onEditDelivery }) {
     delivery._id.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  console.log("Filtered Deliveries", filteredDeliveries);
+
   return (
     <div className="shadow-lg rounded-lg p-6 bg-gray-100 h-screen overflow-auto">
       <h1 className="text-2xl font-semibold mb-6 text-gray-800">Deliveries</h1>
