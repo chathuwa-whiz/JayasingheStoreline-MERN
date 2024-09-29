@@ -10,7 +10,9 @@ export default function AddStockPage() {
     const { data: products, isLoading, isError } = useGetProductByIdQuery(params._id);
     const [updateProduct] = useUpdateOneProductMutation();
 
-    const [quantity, setQuantity] = useState('');
+    // console.log(products);
+
+    const [quantity, setQuantity] = useState(0);
     const [purchasePrice, setPurchasePrice] = useState('');
     const [reOrderQty, setReorderQty] = useState('');
 
@@ -22,14 +24,14 @@ export default function AddStockPage() {
             toast.error('Please fill in all fields');
             return;
         }
-        setQuantity('');
+        setQuantity(0);
         setPurchasePrice('');
         setReorderQty('');
 
         try {
             const data = await updateProduct({
                 productId: products._id,
-                quantity,
+                quantity: parseInt(quantity) + products.countInStock,
                 purchasePrice,
                 reOrderQty,
             });
