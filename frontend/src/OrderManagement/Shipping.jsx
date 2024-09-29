@@ -135,6 +135,15 @@ const DeliveryInformationForm = () => {
     setSuggestedProvinces([]);
   };
 
+  const handlePostalCodeChange = (e) => {
+    const { value } = e.target;
+    if (/^\d*$/.test(value)) {
+      setPostalCode(value);
+    } else {
+      toast.error('Postal code must contain only numeric characters');
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-blue-100 py-12 px-6 lg:px-8">
       <div className="max-w-lg w-full space-y-8">
@@ -258,21 +267,23 @@ const DeliveryInformationForm = () => {
             </div>
 
             <div>
-              <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700">
-                Postal Code
-              </label>
-              <input
-                id="postalCode"
-                name="postalCode"
-                type="text"
-                value={postalCode}
-                onChange={(e) => setPostalCode(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
-                placeholder="10100"
-              />
-              {errors.postalCode && <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>}
-            </div>
+                <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700">
+                  Postal Code
+                </label>
+                <input
+                  id="postalCode"
+                  name="postalCode"
+                  type="text"
+                  value={postalCode}
+                  onChange={handlePostalCodeChange}
+                  className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
+                  placeholder="10100"
+                />
+                {errors.postalCode && <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>}
+              </div>
           </div>
+
+          
 
           <div className="flex items-center justify-between">
             <button

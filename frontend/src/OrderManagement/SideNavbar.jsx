@@ -106,7 +106,7 @@ const Sidebar = () => {
 
             <li className="mb-4">
               <NavLink
-                to="/logout"
+                to="orderLogout"
                 className="flex items-center hover:text-white hover:bg-red-500 rounded-lg px-4 py-2"
               >
                 <ArrowRightStartOnRectangleIcon className="h-5 w-5 mr-3" />

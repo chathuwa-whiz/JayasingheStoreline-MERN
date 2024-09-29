@@ -25,6 +25,7 @@ const deliverySchema = new mongoose.Schema({
   province: { type: String, required: true, default: "" },
   postalCode: { type: String, required: true, default: "" },
   deliveryStatus: { type: String, required: true, default: "" },
+  createdAt: { type: Date, required: true, default: Date.now },
 });
 
 const Delivery = mongoose.model('Delivery', deliverySchema);

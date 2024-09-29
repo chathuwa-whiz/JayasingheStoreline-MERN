@@ -23,29 +23,41 @@ export default function DeliveryDashboard() {
       const response = await fetch("/api/deliveries");
       if (!response.ok) throw new Error("Network response was not ok");
       const data = await response.json();
+      console.log(data);
       setDeliveries(data);
-
+  
       const pending = data.filter(d => d.deliveryStatus === 'Pending').length;
       const completed = data.filter(d => d.deliveryStatus === 'Completed').length;
       const delayed = data.filter(d => d.deliveryStatus === 'Delayed').length;
-
+  
       setPendingDeliveries(pending);
       setCompletedDeliveries(completed);
       setDelayedDeliveries(delayed);
-
-      const earnings = data.reduce((sum, delivery) => sum + (delivery.deliveryPrice || 0), 0);
-      setTotalEarnings(earnings);
-
-
-      const deliveredItems = data.reduce((sum, delivery) => sum + (delivery.itemsCount || 0), 0);
-      setTotalDeliveredItems(deliveredItems);
-
+  
+      // Updated calculations
+      const totalDeliveryEarnings = data.reduce((sum, delivery) => {
+        const deliveryPrice = delivery.deliveryPrice ? parseFloat(delivery.deliveryPrice) : 0;
+        return sum + deliveryPrice;
+      }, 0);
+      setTotalEarnings(totalDeliveryEarnings);
+  
+      const totalItemEarnings = data.reduce((sum, delivery) => {
+        const itemsPrice = delivery.itemsPrice ? parseFloat(delivery.itemsPrice) : 0;
+        return sum + itemsPrice;
+      }, 0);
+      setTotalDeliveredItems(totalItemEarnings);
+  
+      // Total Combined Earnings Calculation
+      const totalCombinedEarnings = totalItemEarnings + totalDeliveryEarnings;
+      // If you need to track this value in state, uncomment the line below:
+      // setTotalCombinedEarnings(totalCombinedEarnings);
+  
     } catch (error) {
       console.error("Error fetching deliveries:", error);
       setError(error.message);
     }
   };
-
+  
   const fetchDrivers = async () => {
     try {
       const response = await fetch("/api/drivers");
@@ -112,10 +124,17 @@ export default function DeliveryDashboard() {
           </div>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl flex items-center">
-          <FaListUl className="text-4xl text-blue-500 mr-4" />
+          <FaMoneyBill className="text-4xl text-blue-500 mr-4" />
           <div>
-            <h2 className="text-3xl font-semibold text-blue-600">{totalDeliveredItems}</h2>
-            <p className="text-gray-600">Total Delivered Items</p>
+            <h2 className="text-3xl font-semibold text-blue-600">{priceFormatter.format(totalDeliveredItems)}</h2>
+            <p className="text-gray-600">Total Item Earnings</p>
+          </div>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl flex items-center">
+          <FaMoneyBill className="text-4xl text-blue-500 mr-4" />
+          <div>
+            <h2 className="text-3xl font-semibold text-blue-600">{priceFormatter.format(totalEarnings + totalDeliveredItems)}</h2>
+            <p className="text-gray-600">Total Earnings</p>
           </div>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl flex items-center">
@@ -128,34 +147,41 @@ export default function DeliveryDashboard() {
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-        <h2 className="text-2xl font-semibold mb-4">Recent Deliveries</h2>
-        <table className="w-full table-auto">
-          <thead>
-            <tr className="text-left border-b-2 border-gray-300">
-              <th className="px-4 py-2">Delivery No</th>
-              <th className="px-4 py-2">Items Price</th>
-              <th className="px-4 py-2">Delivery Price</th>
-              <th className="px-4 py-2">Total Price</th>
-              <th className="px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {deliveries.slice(0, 5).map(delivery => (
-              <tr key={delivery._id} className="hover:bg-gray-100 transition-colors">
-                <td className="border px-4 py-2">{delivery._id}</td>
-                <td className="border px-4 py-2">{priceFormatter.format(delivery.itemsPrice || 0)}</td>
-                <td className="border px-4 py-2">{priceFormatter.format(delivery.deliveryPrice || 0)}</td>
-                <td className="border px-4 py-2">{priceFormatter.format((delivery.itemsPrice || 0) + (delivery.deliveryPrice || 0))}</td>
-                <td className="border px-4 py-2 text-center">
-                  <button onClick={() => deleteDelivery(delivery._id)} className="text-red-500 hover:text-red-700 transition-colors">
-                    <FaTrash />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+  <h2 className="text-2xl font-semibold mb-4">Recent Deliveries</h2>
+  <table className="w-full table-auto">
+    <thead>
+      <tr className="text-left border-b-2 border-gray-300">
+        <th className="px-4 py-2">Delivery No</th>
+        <th className="px-4 py-2">Items Price</th>
+        <th className="px-4 py-2">Delivery Price</th>
+        <th className="px-4 py-2">Total Price</th>
+        <th className="px-4 py-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+  {deliveries
+    .slice(-5)
+    .reverse()
+    .map(delivery => (
+      <tr key={delivery._id} className="hover:bg-gray-100 transition-colors">
+        <td className="border px-4 py-2">{delivery._id}</td>
+        <td className="border px-4 py-2">{priceFormatter.format(delivery.itemsPrice || 0)}</td>
+        <td className="border px-4 py-2">{priceFormatter.format(delivery.deliveryPrice || 0)}</td>
+        <td className="border px-4 py-2">
+          {priceFormatter.format((delivery.itemsPrice || 0) + (delivery.deliveryPrice || 0))}
+        </td>
+        <td className="border px-4 py-2">
+          <button className="text-red-500 hover:text-red-700" onClick={() => handleDelete(delivery._id)}>
+            <FaTrash />
+          </button>
+        </td>
+      </tr>
+    ))}
+</tbody>
+
+  </table>
+</div>
+
     </div>
   );
 }
