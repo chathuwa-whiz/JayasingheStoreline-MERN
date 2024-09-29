@@ -28,6 +28,8 @@ export default function DashboardList() {
         navigate(`/dashboard/product/${productId}`); // Navigate to the SingleProductView
     };
 
+
+    
     return (
         <div className="flex">
             {/* Sidebar on the left */}
@@ -37,7 +39,7 @@ export default function DashboardList() {
 
             {/* Main content on the right */}
             <div className="w-4/5 p-8">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="space-y-6"> {/* Use space-y for vertical spacing */}
                     {products.map((product) => {
                         // Count new reviews and inquiries from the last day
                         const newReviewsCount = getNewReviewsCount(product.reviews);
@@ -46,30 +48,34 @@ export default function DashboardList() {
                         return (
                             <div key={product._id} className="border rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white">
                                 <div onClick={() => handleProductClick(product._id)} style={{ cursor: 'pointer' }}>
-                                    <div className="relative">
+                                    <div className="flex items-center"> {/* Align items horizontally */}
                                         <img
                                             src={product.image}
                                             alt={product.name}
-                                            className="w-full h-48 object-cover rounded-md mb-4"
+                                            className="w-32 h-32 object-cover rounded-md mr-4" // Adjust image size
                                         />
-                                        <div className="absolute top-2 right-2 bg-blue-600 text-white text-sm px-2 py-1 rounded-full shadow-lg">
-                                            {product.numInquiries || 0} Inquiries
-                                        </div>
-                                        <div className="absolute top-2 left-2 bg-green-600 text-white text-sm px-2 py-1 rounded-full shadow-lg">
-                                            {product.numReviews || 0} Reviews
-                                        </div>
-                                        {newInquiriesCount > 0 && (
-                                            <div className="absolute bottom-2 left-2 bg-red-600 text-white text-sm px-2 py-1 rounded-full shadow-lg">
-                                                {newInquiriesCount} New Inquiries
+                                        <div className="flex-1"> {/* Allow text to take available space */}
+                                            <h2 className="text-lg font-semibold text-gray-800 mb-2">{product.name}</h2>
+                                            <div className="grid grid-cols-2 gap-2"> {/* Use grid to create two columns */}
+                                                <div className="bg-blue-600 text-white text-sm px-2 py-1 rounded-full shadow-lg text-center">
+                                                    {product.numInquiries || 0} Inquiries
+                                                </div>
+                                                <div className="bg-green-600 text-white text-sm px-2 py-1 rounded-full shadow-lg text-center">
+                                                    {product.numReviews || 0} Reviews
+                                                </div>
+                                                {newInquiriesCount > 0 && (
+                                                    <div className="bg-red-600 text-white text-sm px-2 py-1 rounded-full shadow-lg text-center">
+                                                        {newInquiriesCount} New Inquiries
+                                                    </div>
+                                                )}
+                                                {newReviewsCount > 0 && (
+                                                    <div className="bg-yellow-600 text-white text-sm px-2 py-1 rounded-full shadow-lg text-center">
+                                                        {newReviewsCount} New Reviews
+                                                    </div>
+                                                )}
                                             </div>
-                                        )}
-                                        {newReviewsCount > 0 && (
-                                            <div className="absolute bottom-2 right-2 bg-yellow-600 text-white text-sm px-2 py-1 rounded-full shadow-lg">
-                                                {newReviewsCount} New Reviews
-                                            </div>
-                                        )}
+                                        </div>
                                     </div>
-                                    <h2 className="text-lg font-semibold text-gray-800 mb-2">{product.name}</h2>
                                 </div>
                             </div>
                         );

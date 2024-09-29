@@ -178,20 +178,34 @@ export default function SingleProductView() {
                     {quantity === 0 && (
                         <p className="mt-4 text-red-500">This product is currently out of stock.</p>
                     )}
+                {/* Average Rating Display */}
+                <div className="mt-6"> {/* Increased margin for more spacing */}
+                    <h2 className="text-xl font-semibold text-gray-700">Average Rating</h2> {/* Kept the heading size */}
+                    <div className="flex items-center mt-2"> {/* Increased margin for better spacing */}
+                        <div className="text-3xl"> {/* Increased the size of the stars */}
+                            {renderStars(averageRating)}
+                        </div>
+                        <span className="ml-3 text-gray-600 text-xl"> {/* Kept the rating value slightly larger for emphasis */}
+                            {averageRating} / 5.0
+                        </span>
+                    </div>
+                </div>
+
+                    
                 </div>
             </div>
 
  {/* Reviews Display */}
 <div className="mt-10">
     <h2 className="text-2xl font-bold text-gray-800">Product Reviews</h2>
-    
+
     {/* Check if there are reviews */}
     {productData?.reviews && productData.reviews.length > 0 ? (
         productData.reviews.map((review) => (
             <div 
                 key={review._id} 
                 className="mt-4 p-6 border rounded-lg shadow-md bg-white">
-                
+
                 {/* User Name and Date */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
@@ -224,12 +238,12 @@ export default function SingleProductView() {
                 {review.image && (
                     <div className="mt-3">
                         <img
-                            src={review.image}
+                            src={review.image} // Ensure this URL is correct
                             alt={`Review image uploaded by ${review.name}`} // Improved alt text
                             className="w-40 h-auto rounded-lg shadow-md"
                             onError={(e) => { // Handle image loading error
                                 e.target.onerror = null; // Prevents looping
-                                e.target.src = '/path/to/placeholder/image.png'; // Set a placeholder image
+                                e.target.src = '/uploads/reviewRatings/image.png'; // Set a placeholder image
                             }}
                         />
                     </div>
@@ -258,7 +272,6 @@ export default function SingleProductView() {
         <p className="mt-4 text-gray-500">No reviews yet.</p>
     )}
 </div>
-
 
 
             {/* Review Form */}
