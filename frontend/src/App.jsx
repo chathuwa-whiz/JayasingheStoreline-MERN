@@ -40,6 +40,7 @@ import OrderByProducts from "./OrderManagement/OrderByProducts";
 import UpdateOrders from "./OrderManagement/UpdateOrder";
 import OrderReports from "./OrderManagement/Reports";
 import OrderSettings from "./OrderManagement/Settings";
+import OrderLogout from "./OrderManagement/Logout"
 
 
 
@@ -155,6 +156,7 @@ function App() {
           <Route path="orderByProduct" element={<OrderByProducts />} />
           <Route path="orderreport" element={<OrderReports />} />
           <Route path="orderSettings" element={<OrderSettings />} />
+          <Route path="orderLogout" element={<OrderLogout />} />
         </Route>
         <Route path="productlist" element={<ProductsList />} /> 
         <Route path="product/:_id" element={<SingleProductView />} />
