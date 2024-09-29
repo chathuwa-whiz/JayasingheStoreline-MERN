@@ -113,6 +113,14 @@ const PaymentReport = () => {
     const filteredTotalCostData = filterByDate(totalCostData);
     const filteredTotalIncomeData = filterByDate(totalIncomeData);
     const filteredSupplierSendData = filterByDate(supplierSendData);
+    // Base64 image data for your company logo (replace with your actual Base64 image data)
+    const logoBase64 = logo;
+  
+    // Add the logo image at the top of the PDF
+    doc.addImage(logoBase64, 'JPEG', 10, 10, 40, 40); // Adjust the position (x, y) and size (width, height) as needed
+  
+    // Set the position for the report title after the logo
+    doc.text('Payment Report', 14, 60); // Set y position to be after the logo
   
     const generateTable = (title, data) => {
       if (data.length === 0) return;

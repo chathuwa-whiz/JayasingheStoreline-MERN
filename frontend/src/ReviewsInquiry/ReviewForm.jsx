@@ -24,7 +24,17 @@ export default function ReviewForm({ productId, refetch, existingReview }) {
 
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
+        
         if (file) {
+            // Check if file type is an image (jpeg, png, gif)
+            const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!validImageTypes.includes(file.type)) {
+                toast.error("Please upload a valid image file (JPEG, PNG, or GIF).");
+                setImage(null); // Reset the image state if invalid
+                setImagePreview(null); // Reset the preview state if invalid
+                return;
+            }
+    
             // Check if file size exceeds 2MB
             if (file.size > 2 * 1024 * 1024) {
                 toast.error("Image size must not exceed 2MB.");
@@ -33,13 +43,14 @@ export default function ReviewForm({ productId, refetch, existingReview }) {
             } else {
                 setImageSizeError(false); // Reset error state
             }
-
+    
             // Create an object URL to preview the image
             const imageURL = URL.createObjectURL(file);
             setImagePreview(imageURL);
             setImage(file);
         }
     };
+    
 
     const handleCancelImage = () => {
         setImage(null);

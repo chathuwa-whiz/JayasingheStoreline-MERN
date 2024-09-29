@@ -77,7 +77,7 @@ import SupplierSettings from "./SupplierManagement/Settings";
 
 //review
 import EditReviewPage from "./ReviewsInquiry/EditReviewPage";
-import UserReviews from "./ReviewsInquiry/UserReviews";
+import UserReviews from "./ReviewsInquiry/Dashboard";
 import DashboardList from "./ReviewsInquiry/DashboardList";
 import DashboardSinglePro from "./ReviewsInquiry/DashboardSinglePro";
 
@@ -203,7 +203,7 @@ function App() {
 
         {/* Edit Review Route */}
         <Route path="/product/:productId/:reviewId" element={<EditReviewPage />} />
-        <Route path="/user-reviews" element={<UserReviews />} />
+        <Route path="/dashboard" element={<UserReviews />} />
         <Route path="dashboardlist" element={<DashboardList/>} />
         <Route path="dashboard/product/:_id" element={<DashboardSinglePro/>} />
       </Routes>

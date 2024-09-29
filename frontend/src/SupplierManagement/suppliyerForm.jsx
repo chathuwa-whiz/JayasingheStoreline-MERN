@@ -164,4 +164,4 @@ const SupplierForm = () => {
   );
 };
 
-export default SupplierForm;
+export default SupplierForm;
