@@ -160,8 +160,8 @@ export default function DeliveryDashboard() {
     </thead>
     <tbody>
   {deliveries
-    .sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated)) // Sort by last updated
-    .slice(0, 5) // Get the last 5 deliveries
+    .slice(-5)
+    .reverse()
     .map(delivery => (
       <tr key={delivery._id} className="hover:bg-gray-100 transition-colors">
         <td className="border px-4 py-2">{delivery._id}</td>
