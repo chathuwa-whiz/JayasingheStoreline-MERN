@@ -49,6 +49,7 @@ export default function Products() {
   };
 
   return (
+    <div className="bg-gray-100 p-4 rounded-lg shadow-lg">
     <div className="rounded-lg p-8">
       <table className="min-w-full border rounded-lg bg-white">
         <thead className="bg-orange-500 text-white">
@@ -99,6 +100,7 @@ export default function Products() {
           </button>
         ))}
       </div>
+    </div>
     </div>
   );
 }
