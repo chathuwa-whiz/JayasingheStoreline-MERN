@@ -10,6 +10,8 @@ export default function AddStockPage() {
     const { data: products, isLoading, isError } = useGetProductByIdQuery(params._id);
     const [updateProduct] = useUpdateOneProductMutation();
 
+    console.log(products);
+
     const [quantity, setQuantity] = useState('');
     const [purchasePrice, setPurchasePrice] = useState('');
     const [reOrderQty, setReorderQty] = useState('');
@@ -29,7 +31,7 @@ export default function AddStockPage() {
         try {
             const data = await updateProduct({
                 productId: products._id,
-                quantity,
+                quantity: quantity + products.currentQty,
                 purchasePrice,
                 reOrderQty,
             });
