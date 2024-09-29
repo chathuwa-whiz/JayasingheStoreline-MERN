@@ -131,7 +131,7 @@ export default function Dashboard() {
           });
           const ordersByCategoryImgData = ordersByCategoryCanvas.toDataURL('image/png');
           // Adjust position to keep it below the trends chart without moving the line chart
-          doc.addImage(ordersByCategoryImgData, 'PNG', 10, 110, 190, 80); 
+          doc.addImage(ordersByCategoryImgData, 'PNG', 70, 110, 190, 120);
         } catch (error) {
           console.error('Error capturing Orders by Category chart:', error);
         }
