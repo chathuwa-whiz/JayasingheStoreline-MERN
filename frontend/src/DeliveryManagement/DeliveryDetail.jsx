@@ -59,8 +59,9 @@ export default function DeliveryDetail({ onEditDelivery }) {
   };
 
   const downloadPDF = async () => {
-    const doc = new jsPDF('p', 'mm', 'a4');
-
+    // Create a jsPDF instance with landscape orientation
+    const doc = new jsPDF('l', 'mm', 'a4');
+  
     // Add logo to the top left
     const img = new Image();
     img.src = logo;
@@ -68,43 +69,47 @@ export default function DeliveryDetail({ onEditDelivery }) {
       img.onload = resolve;
     });
     doc.addImage(img, 'PNG', 14, 10, 30, 30);
-
+  
+    // Add company name below the logo
+    doc.setFontSize(20);
+    doc.text('Jayasinghe Storelines PVT LTD', 50, 25);
+  
     // Add company details to the top right
     doc.setFontSize(12);
     doc.setTextColor(40, 40, 40);
-    doc.text(`Email: ${companyEmail}`, 150, 15, { align: 'right' });
-    doc.text(`Telephone: ${companyTelephone}`, 150, 22, { align: 'right' });
-    doc.text(`Address: ${companyAddress}`, 150, 29, { align: 'right' });
-
-    // Add title below logo
-    doc.setFontSize(20);
+    doc.text(`Email: ${companyEmail}`, 270, 15, { align: 'right' });
+    doc.text(`Telephone: ${companyTelephone}`, 270, 22, { align: 'right' });
+    doc.text(`Address: ${companyAddress}`, 270, 29, { align: 'right' });
+  
+    // Add title below the company name
+    doc.setFontSize(18);
     doc.text('Delivery Details', 14, 50);
-
+  
     // Prepare table data
-    const tableData = deliveries.map(delivery => [
-      delivery._id,
-      JSON.parse(delivery.deliveryItem).map(item => `${item.name} x ${item.qty}`).join(', '),
-      delivery.firstName,
-      delivery.telephoneNo,
-      delivery.createdAt,
-      priceFormatter.format(delivery.itemsPrice),
-      priceFormatter.format(delivery.deliveryPrice),
-      priceFormatter.format(delivery.totalPrice),
-      delivery.deliveryStatus || 'Pending'
-    ]);
+const tableData = deliveries.map(delivery => [
+  delivery._id,
+  JSON.parse(delivery.deliveryItem).map(item => `${item.name} x ${item.qty}`).join(', '),
+  delivery.firstName,
+  delivery.telephoneNo,
+  delivery.createdAt ? new Date(delivery.createdAt).toLocaleDateString() : 'Date not available',
+  priceFormatter.format(delivery.itemsPrice),
+  priceFormatter.format(delivery.deliveryPrice),
+  priceFormatter.format(delivery.totalPrice),
+  delivery.deliveryStatus || 'Pending'
+]);
 
+  
     // Generate the table
     autoTable(doc, {
-      head: [['Delivery No', 'Delivery Item', 'Name', 'Contact No','CreatedAt', 'Items Price', 'Delivery Price', 'Total Price']],
+      head: [['Delivery No', 'Delivery Item', 'Name', 'Contact No', 'CreatedAt', 'Items Price', 'Delivery Price', 'Total Price', 'Status']],
       body: tableData,
       startY: 60,
     });
-
+  
     // Save the PDF
     doc.save('Delivery-Details.pdf');
   };
-
-
+  
   if (isLoading) {
     return <div>Loading...</div>;
   }
