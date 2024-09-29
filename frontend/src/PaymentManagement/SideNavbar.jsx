@@ -101,7 +101,7 @@ const Sidebar = () => {
 
             <li className="mb-4">
               <NavLink
-                to="/payment/lgout"
+                to="/adminlogin"
                 className="flex items-center hover:text-white hover:bg-red-500 rounded-lg px-4 py-2"
               >
                 <ArrowRightOnRectangleIcon className="h-5 w-5 mr-3" />
