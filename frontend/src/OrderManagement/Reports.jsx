@@ -199,7 +199,7 @@ export default function Dashboard() {
 
       {/* Best-Selling Products based on total orders */}
       <div className="bg-white p-6 rounded-lg shadow-lg mt-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">Product Orders Overview</h3> {/* Header added */}
+        <h3 className="text-xl font-bold text-gray-800 mb-4">Best Selling Products</h3> {/* Header added */}
         <table className="w-full table-auto border-collapse rounded-lg overflow-hidden">
           <thead>
             <tr className="bg-gray-800 text-white rounded-t-lg">

@@ -67,6 +67,9 @@ export default function Dashboard() {
     ],
   };
 
+  // Sort orders by creation date in descending order for recent orders
+  const sortedOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
   return (
     <div className="overflow-auto bg-gray-100 p-6 rounded-lg">
       <div className="grid grid-cols-4 gap-6 mb-8">
@@ -121,15 +124,17 @@ export default function Dashboard() {
             </tr>
           </thead>
           <tbody>
-            {orders.slice(0, 5).map(order => (
+            {sortedOrders.slice(0, 5).map(order => (
               <tr key={order._id} className="text-center hover:bg-gray-100">
                 <td className="border px-4 py-2">{order.orderId}</td>
                 <td className="border px-4 py-2">{new Date(order.createdAt).toLocaleDateString()}</td>
                 <td className="border px-4 py-2">{priceFormatter.format(order.totalPrice)}</td>
                 <td className="border px-4 py-2">
-                  <span className={`inline-block px-2 py-1 text-sm font-semibold rounded-full ${
-                    order.status === 'Completed' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-yellow-800'
-                  }`}>
+                  <span
+                    className={`inline-block px-2 py-1 text-sm font-semibold rounded-full ${
+                      order.status === 'Completed' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-yellow-800'
+                    }`}
+                  >
                     {order.status}
                   </span>
                 </td>
@@ -138,6 +143,7 @@ export default function Dashboard() {
           </tbody>
         </table>
       </div>
+
       <footer className="mt-12 text-center text-gray-600">
         <p>&copy; 2024 Jayasinghe Storeline. All rights reserved.</p>
       </footer>
