@@ -5,6 +5,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logo from '../asset/logo.png';
 
+
 export default function DeliveryDetail({ onEditDelivery }) {
   const { data: deliveries, error: deliveriesError, isLoading } = useGetDeliveriesQuery();
   const [deleteDelivery] = useDeleteDeliveryMutation();
@@ -85,6 +86,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
       JSON.parse(delivery.deliveryItem).map(item => `${item.name} x ${item.qty}`).join(', '),
       delivery.firstName,
       delivery.telephoneNo,
+      delivery.createdAt,
       priceFormatter.format(delivery.itemsPrice),
       priceFormatter.format(delivery.deliveryPrice),
       priceFormatter.format(delivery.totalPrice),
@@ -93,7 +95,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
 
     // Generate the table
     autoTable(doc, {
-      head: [['Delivery No', 'Delivery Item', 'Name', 'Contact No', 'Items Price', 'Delivery Price', 'Total Price']],
+      head: [['Delivery No', 'Delivery Item', 'Name', 'Contact No','CreatedAt', 'Items Price', 'Delivery Price', 'Total Price']],
       body: tableData,
       startY: 60,
     });
@@ -111,6 +113,8 @@ export default function DeliveryDetail({ onEditDelivery }) {
   const filteredDeliveries = deliveries.filter((delivery) =>
     delivery._id.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  console.log("Filtered Deliveries", filteredDeliveries);
 
   return (
     <div className="shadow-lg rounded-lg p-6 bg-gray-100 h-screen overflow-auto">
@@ -132,66 +136,59 @@ export default function DeliveryDetail({ onEditDelivery }) {
       </button>
 
       <table className="w-full bg-white shadow-lg rounded-lg border border-gray-300">
-        <thead className="bg-gray-200 text-gray-700">
-          <tr>
-            <th className="border p-3 text-left">Delivery No</th>
-            <th className="border p-3 text-left">Delivery Item</th>
-            <th className="border p-3 text-left">Name</th>
-            <th className="border p-3 text-left">Contact No</th>
-            <th className="border p-3 text-left">Items Price</th>
-            <th className="border p-3 text-left">Delivery Price</th>
-            <th className="border p-3 text-left">Total Price</th>
-            <th className="border p-3 text-left">Status</th>
-            <th className="border p-3 text-left">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredDeliveries.map((delivery) => (
-            <tr key={delivery._id} className={`border-b ${getRowClass(delivery.deliveryStatus)} hover:bg-orange-100 transition-colors duration-300`}>
-              <td className="border p-3">{delivery._id}</td>
-              <td className="border p-3">
-                {JSON.parse(delivery.deliveryItem).map((item) => (
-                  <div key={item._id}>
-                    <p>{item.name} x {item.qty}</p>
-                  </div>
-                ))}
-              </td>
-              <td className="border p-3">{delivery.firstName}</td>
-              <td className="border p-3">{delivery.telephoneNo}</td>
-              <td className="border p-3">{priceFormatter.format(delivery.itemsPrice)}</td>
-              <td className="border p-3">{priceFormatter.format(delivery.deliveryPrice)}</td>
-              <td className="border p-3">{priceFormatter.format(delivery.totalPrice)}</td>
-              <td className="border p-3">{delivery.deliveryStatus || 'Pending'}</td>
-              <td className="border p-3 flex space-x-2">
-                <button
-                  className={getButtonClass(delivery.deliveryStatus, 'Pending')}
-                  onClick={() => handleStatusChange(delivery._id, 'Pending')}
-                >
-                  Pending
-                </button>
-                <button
-                  className={getButtonClass(delivery.deliveryStatus, 'Delayed')}
-                  onClick={() => handleStatusChange(delivery._id, 'Delayed')}
-                >
-                  Delayed
-                </button>
-                <button
-                  className={getButtonClass(delivery.deliveryStatus, 'Completed')}
-                  onClick={() => handleStatusChange(delivery._id, 'Completed')}
-                >
-                  Completed
-                </button>
-                <button
-                  className="p-2 text-red-500 hover:bg-red-100 rounded-lg transition-colors duration-300"
-                  onClick={() => handleDelete(delivery._id)}
-                >
-                  <FaTrash />
-                </button>
-              </td>
-            </tr>
+  <thead className="bg-gray-200 text-gray-700">
+    <tr>
+      <th className="border p-3 text-left">Delivery No</th>
+      <th className="border p-3 text-left">Delivery Item</th>
+      <th className="border p-3 text-left">Name</th>
+      <th className="border p-3 text-left">Contact No</th>
+      <th className="border p-3 text-left">Delivery Address</th> {/* New column for delivery address */}
+      <th className="border p-3 text-left">Order Date</th> {/* New column for order date */}
+      <th className="border p-3 text-left">Items Price</th>
+      <th className="border p-3 text-left">Delivery Price</th>
+      <th className="border p-3 text-left">Total Price</th>
+      <th className="border p-3 text-left">Status</th>
+      <th className="border p-3 text-left">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {filteredDeliveries.map((delivery) => (
+      <tr key={delivery._id} className={`border-b ${getRowClass(delivery.deliveryStatus)} hover:bg-orange-100 transition-colors duration-300`}>
+        <td className="border p-3">{delivery._id}</td>
+        <td className="border p-3">
+          {JSON.parse(delivery.deliveryItem).map((item) => (
+            <div key={item._id}>
+              <p>{item.name} x {item.qty}</p>
+            </div>
           ))}
-        </tbody>
-      </table>
+        </td>
+        <td className="border p-3">{delivery.firstName}</td>
+        <td className="border p-3">{delivery.telephoneNo}</td>
+        <td className="border p-3">{`${delivery.address}, ${delivery.city}, ${delivery.province}, ${delivery.postalCode}`}</td> {/* Show delivery address */}
+        <td className="border p-3">{delivery.createdAt ? new Date(delivery.createdAt).toLocaleDateString() : 'Date not available'}</td>{/* Format order date */}
+        <td className="border p-3">{priceFormatter.format(delivery.itemsPrice)}</td>
+        <td className="border p-3">{priceFormatter.format(delivery.deliveryPrice)}</td>
+        <td className="border p-3">{priceFormatter.format(delivery.totalPrice)}</td>
+        <td className="border p-3">{delivery.deliveryStatus || 'Pending'}</td>
+        <td className="border p-3 flex space-x-2">
+          <button className={getButtonClass(delivery.deliveryStatus, 'Pending')} onClick={() => handleStatusChange(delivery._id, 'Pending')}>
+            Pending
+          </button>
+          <button className={getButtonClass(delivery.deliveryStatus, 'Delayed')} onClick={() => handleStatusChange(delivery._id, 'Delayed')}>
+            Delayed
+          </button>
+          <button className={getButtonClass(delivery.deliveryStatus, 'Completed')} onClick={() => handleStatusChange(delivery._id, 'Completed')}>
+            Completed
+          </button>
+          <button className="p-2 text-red-500 hover:bg-red-100 rounded-lg transition-colors duration-300" onClick={() => handleDelete(delivery._id)}>
+            <FaTrash />
+          </button>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
     </div>
   );
 }
