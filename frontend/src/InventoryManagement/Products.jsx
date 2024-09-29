@@ -8,8 +8,6 @@ export default function Products() {
   // Fetch all products
   const { data: products, isLoading, isError } = useAllProductsQuery();
 
-  console.log(products);
-
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 10;
 
@@ -22,10 +20,13 @@ export default function Products() {
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Something went wrong</div>;
 
+  // Sort products by createdAt in descending order (latest first)
+  const sortedProducts = products.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
   // Calculate the indices of the products to display
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+  const currentProducts = sortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
   // Calculate total pages
   const totalPages = Math.ceil(products.length / productsPerPage);
@@ -36,7 +37,7 @@ export default function Products() {
 
   return (
     <div className="rounded-lg p-8">
-      <ProductsHeader products = {products} />
+      <ProductsHeader products={products} />
       <table className="min-w-full overflow-y-auto min-h-full border rounded-lg bg-white">
         <thead className="bg-orange-500 text-white">
           <tr>

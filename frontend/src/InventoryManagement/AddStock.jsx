@@ -40,7 +40,11 @@ export default function AddStockPage() {
                 return;
             }
             toast.success('Stock updated successfully!');
-            console.log(data);
+            setTimeout(() => {
+                toast.dismiss();
+                window.location.href = "/inventory/stock";
+
+            }, 2000);
             
         } catch (error) {
             toast.error('Failed to update stock');

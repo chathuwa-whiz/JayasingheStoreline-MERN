@@ -324,7 +324,7 @@ export default function UpdateProducts() {
                     placeholder="Enter brand"
                     value={brand}
                     onKeyDown={(e) => {
-                        if (!/^[a-zA-Z]+$/.test(e.key)) {
+                        if (!/^[a-zA-Z ]+$/.test(e.key)) {
                         e.preventDefault();
                         }
                     }}
