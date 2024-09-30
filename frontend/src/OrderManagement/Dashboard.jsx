@@ -48,7 +48,7 @@ export default function Dashboard() {
       {
         data: [completedOrders, pendingOrders],
         backgroundColor: ['#99FF99', '#FF6666'],
-        hoverBackgroundColor: ['#46A2EB', '#FF7384'],
+        hoverBackgroundColor: ['#3CB371', '#FF7384'],
       },
     ],
   };

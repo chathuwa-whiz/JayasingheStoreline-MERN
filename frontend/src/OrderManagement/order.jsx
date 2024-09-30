@@ -3,7 +3,7 @@ import Sidebar from '../OrderManagement/SideNavbar'
 import { Outlet, useLocation } from 'react-router'
 
 import { OrderHeader } from '../Shared/Header';
-import { InquiryHeader,OrdersByProducts,OrderDashboard,OrderReportsHeader } from '../Shared/Header';
+import { InquiryHeader,OrdersByProducts,OrderDashboard,OrderReportsHeader,OrdersSettingsHeader } from '../Shared/Header';
 
 export default function order() {
 
@@ -22,6 +22,8 @@ export default function order() {
     header = <OrderDashboard />
   }else if(location.pathname === "/order/orderreport") {
     header = <OrderReportsHeader />
+  }else if(location.pathname === "/order/orderSettings") {
+    header = <OrdersSettingsHeader />
   }
   else{
     header = <></>

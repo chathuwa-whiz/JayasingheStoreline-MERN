@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { useCreateProductMutation, useUploadProductImageMutation } from "../redux/api/productApiSlice";
+import { useCreateProductMutation, useUploadProductImageMutation, useAllProductsQuery } from "../redux/api/productApiSlice";
 import { useFetchCategoriesQuery } from "../redux/api/categoryApiSlice";
 import { toast } from "react-hot-toast";
 
@@ -19,12 +19,51 @@ export default function AddProducts() {
   const [quantity, setQuantity] = useState('');
   const [reOrderQty, setReOrderQty] = useState('');
   const [errors, setErrors] = useState({});
+
   const navigate = useNavigate();
+  const [filteredBrands, setFilteredBrands] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const [uploadProductImage] = useUploadProductImageMutation();
   const [createProduct] = useCreateProductMutation();
   const { data: categories } = useFetchCategoriesQuery();
+  const { data: products, isLoading: productsLoading } = useAllProductsQuery();
 
+          // Extract unique brands from the products part //
+
+  useEffect(() => {
+    const filteredBrands = [...new Set(products?.map((product) => product.brand))];
+    setFilteredBrands(filteredBrands);
+    console.log(filteredBrands);
+  }, [products]);
+
+  const handleInputChange = (e) => {
+    const inputValue = e.target.value;
+    setBrand(inputValue);
+
+    if (inputValue) {
+      // Filter the available brands based on the input value (case-insensitive)
+      const suggestions = filteredBrands.filter((b) =>
+        b.toLowerCase().startsWith(inputValue.toLowerCase())
+      );
+      setFilteredBrands(suggestions);
+      setShowSuggestions(true);
+    } else {
+      setFilteredBrands([]); // Clear suggestions if input is empty
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleSuggestionClick = (suggestedBrand) => {
+    setBrand(suggestedBrand); // Set the clicked suggestion as the input value
+    setShowSuggestions(false); // Hide the suggestions after selection
+  };
+
+  console.log(filteredBrands);
+  console.log(showSuggestions);
+
+          // End of Extract unique brands from the products part //
+  
   // Validate Inputs
   const validateInputs = () => {
     const newErrors = {};
@@ -210,7 +249,7 @@ export default function AddProducts() {
             >
               <option value="" disabled>Select a category</option>
               {categories?.map((cat) => (
-                <option key={cat._id} value={cat._id}>{cat.name}</option>
+                <option key={cat._id} value={cat.name}>{cat.name}</option>
               ))}
             </select>
             {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
@@ -250,18 +289,38 @@ export default function AddProducts() {
 
           <div>
             <label className="block text-gray-700 font-medium">Brand</label>
-            <input
-              type="text"
-              className={`w-full p-2 mt-1 border ${errors.brand ? 'border-red-500' : 'border-gray-300'} rounded-lg bg-blue-50 focus:ring-2 focus:ring-orange-500`}
-              placeholder="Enter brand"
-              value={brand}
-              onKeyDown={(e) => {
-                if (!/^[a-zA-Z]+$/.test(e.key)) {
-                  e.preventDefault();
-                }
-              }}
-              onChange={(e) => setBrand(e.target.value)}
-            />
+            <div className="relative">
+              <input
+                type="text"
+                className={`w-full p-2 mt-1 border ${
+                  brand.length === 0 ? 'border-gray-300' : 'border-gray-500'
+                } rounded-lg bg-blue-50 focus:ring-2 focus:ring-orange-500`}
+                placeholder="Enter brand"
+                value={brand}
+                onKeyDown={(e) => {
+                  // Restrict input to only alphabetic characters
+                  if (!/^[a-zA-Z ]+$/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+                onChange={handleInputChange}
+              />
+
+              {/* Suggestions Dropdown */}
+              {showSuggestions && filteredBrands.length > 0 && (
+                <ul className="absolute z-10 bg-white border border-gray-300 rounded-lg mt-1 w-full max-h-40 overflow-y-auto shadow-lg">
+                  {filteredBrands.map((suggestedBrand, index) => (
+                    <li
+                      key={index}
+                      className="p-2 hover:bg-gray-200 cursor-pointer"
+                      onClick={() => handleSuggestionClick(suggestedBrand)}
+                    >
+                      {suggestedBrand}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
             {errors.brand && <p className="text-red-500 text-sm mt-1">{errors.brand}</p>}
           </div>
 

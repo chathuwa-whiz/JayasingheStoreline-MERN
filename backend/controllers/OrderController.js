@@ -23,32 +23,41 @@ export const addOrder = async (req, res) => {
         // Generate a unique order ID
         const orderId = `ORDER-${Date.now()}`;
 
-        // Step 2: Ensure that orderItems is parsed correctly into an array (if it's a string)
+        // Parse orderItems string into an array of objects
         let items;
         try {
-            items = JSON.parse(orderItems); // Ensure you parse this string into an array of objects
+            items = JSON.parse(orderItems);
         } catch (error) {
             return res.status(400).json({ error: "Invalid orderItems format" });
         }
 
-        // Step 3: Create a new order with the parsed orderItems array
-        const order = new Order({...req.fields, orderId });
+        // Create a new order with parsed orderItems array
+        const order = new Order({ ...req.fields, orderId });
 
         // Save the order to the database
         await order.save();
 
-        // Step 4: Update product quantities for each order item
+        // Update product stock and order count for each order item
         for (const item of items) {
             const product = await Product.findById(item._id);
             if (!product) {
                 return res.status(404).json({ error: `Product with ID ${item._id} not found` });
             }
 
-            // Adjust stock quantity logic
+            // Adjust stock quantity
             if (product.currentQty <= 0) {
                 product.currentQty = product.countInStock;
             }
             product.currentQty -= item.qty;
+
+            // Increment totalOrders count for the product
+            await Product.findByIdAndUpdate(
+                item._id,
+                { $inc: { totalOrders: item.qty } }, // Increment totalOrders by item quantity
+                { new: true }
+            );
+
+            // Save the updated product
             await product.save();
         }
 

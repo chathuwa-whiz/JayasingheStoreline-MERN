@@ -2,7 +2,19 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCreateOrderMutation } from '../redux/api/orderApiSlice';
 import { useSelector } from 'react-redux';
-import {toast} from "react-hot-toast";
+import { toast } from "react-hot-toast";
+
+const provinces = [
+  'Central',
+  'Eastern',
+  'Northern',
+  'North Western',
+  'North Central',
+  'Sabaragamuwa',
+  'Southern',
+  'Uva',
+  'Western',
+];
 
 const DeliveryInformationForm = () => {
   const navigate = useNavigate();
@@ -17,10 +29,10 @@ const DeliveryInformationForm = () => {
   const [city, setCity] = useState('');
   const [province, setProvince] = useState('');
   const [postalCode, setPostalCode] = useState('');
- // const [paymentMethod, setPaymentMethod] = useState('');
 
   // Validation state
   const [errors, setErrors] = useState({});
+  const [suggestedProvinces, setSuggestedProvinces] = useState([]);
 
   // Validation logic
   const validateForm = () => {
@@ -69,15 +81,13 @@ const DeliveryInformationForm = () => {
       orderData.append('city', city);
       orderData.append('province', province);
       orderData.append('postalCode', postalCode);
-      //orderData.append('paymentMethod', paymentMethod);
 
       const data = await createOrder(orderData);
       console.log('Order Data', data);
 
-      if(data.error) {
+      if (data.error) {
         toast.error(data.error);
         return;
-
       } else {
         toast.success('Order placed successfully');
         setTimeout(() => {
@@ -88,6 +98,49 @@ const DeliveryInformationForm = () => {
 
     } catch (error) {
       console.error('Error creating order:', error);
+    }
+  };
+
+  // Prevent non-alphabetic characters and limit input length
+  const handleTextChange = (e, setter, fieldName) => {
+    const { value } = e.target;
+    if (/^[A-Za-z\s]*$/.test(value)) {
+      setter(value);
+      if (fieldName === 'province') {
+        // Filter suggested provinces based on user input
+        setSuggestedProvinces(
+          provinces.filter((province) =>
+            province.toLowerCase().includes(value.toLowerCase())
+          )
+        );
+      }
+    } else {
+      toast.error(`${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} cannot contain numbers`);
+    }
+  };
+
+  const handleTelephoneChange = (e) => {
+    const { value } = e.target;
+    if (/^\d*$/.test(value)) {
+      if (value.length <= 10) {
+        setTeleNo(value);
+      } else {
+        toast.error('Telephone number cannot exceed 10 digits');
+      }
+    }
+  };
+
+  const handleProvinceSelect = (province) => {
+    setProvince(province);
+    setSuggestedProvinces([]);
+  };
+
+  const handlePostalCodeChange = (e) => {
+    const { value } = e.target;
+    if (/^\d*$/.test(value)) {
+      setPostalCode(value);
+    } else {
+      toast.error('Postal code must contain only numeric characters');
     }
   };
 
@@ -111,7 +164,7 @@ const DeliveryInformationForm = () => {
                 name="firstName"
                 type="text"
                 value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                onChange={(e) => handleTextChange(e, setFirstName, 'firstName')}
                 className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
                 placeholder="John"
               />
@@ -127,7 +180,7 @@ const DeliveryInformationForm = () => {
                 name="lastName"
                 type="text"
                 value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                onChange={(e) => handleTextChange(e, setLastName, 'lastName')}
                 className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
                 placeholder="Doe"
               />
@@ -143,7 +196,7 @@ const DeliveryInformationForm = () => {
                 name="telephoneNo"
                 type="text"
                 value={telephoneNo}
-                onChange={(e) => setTeleNo(e.target.value)}
+                onChange={handleTelephoneChange}
                 className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
                 placeholder="+94 123 456 789"
               />
@@ -177,7 +230,7 @@ const DeliveryInformationForm = () => {
                 name="city"
                 type="text"
                 value={city}
-                onChange={(e) => setCity(e.target.value)}
+                onChange={(e) => handleTextChange(e, setCity, 'city')}
                 className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
                 placeholder="Colombo"
               />
@@ -193,77 +246,52 @@ const DeliveryInformationForm = () => {
                 name="province"
                 type="text"
                 value={province}
-                onChange={(e) => setProvince(e.target.value)}
+                onChange={(e) => handleTextChange(e, setProvince, 'province')}
                 className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
-                placeholder="Western"
+                placeholder="Enter province"
               />
+              {suggestedProvinces.length > 0 && (
+                <ul className="absolute bg-white border border-gray-300 rounded-md shadow-lg mt-1 z-10">
+                  {suggestedProvinces.map((prov) => (
+                    <li
+                      key={prov}
+                      className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                      onClick={() => handleProvinceSelect(prov)}
+                    >
+                      {prov}
+                    </li>
+                  ))}
+                </ul>
+              )}
               {errors.province && <p className="text-red-500 text-xs mt-1">{errors.province}</p>}
             </div>
 
             <div>
-              <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700">
-                Postal Code
-              </label>
-              <input
-                id="postalCode"
-                name="postalCode"
-                type="text"
-                value={postalCode}
-                onChange={(e) => setPostalCode(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
-                placeholder="00100"
-              />
-              {errors.postalCode && (
-                <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>
-              )}
-            </div>
-
-             {/* <div>
-              <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-700">
-                Select Payment Method
-              </label>
-              <div className="mt-2 space-y-2">
-                <div className="flex items-center">
-                  <input
-                    id="paypal"
-                    name="paymentMethod"
-                    type="radio"
-                    value="PayPal"
-                    checked={paymentMethod === 'PayPal'}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <label htmlFor="paypal" className="ml-3 block text-sm font-medium text-gray-700">
-                    PayPal
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    id="creditCard"
-                    name="paymentMethod"
-                    type="radio"
-                    value="Credit Card"
-                    checked={paymentMethod === 'Credit Card'}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                  />
-                  <label htmlFor="creditCard" className="ml-3 block text-sm font-medium text-gray-700">
-                    Credit Card
-                  </label>
-                </div>
+                <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700">
+                  Postal Code
+                </label>
+                <input
+                  id="postalCode"
+                  name="postalCode"
+                  type="text"
+                  value={postalCode}
+                  onChange={handlePostalCodeChange}
+                  className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
+                  placeholder="10100"
+                />
+                {errors.postalCode && <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>}
               </div>
-            </div> */}
+          </div>
 
+          
 
-
-            <div className="flex justify-center mt-6">
-              <button
-                type="submit"
-                className="w-full bg-blue-900 text-white font-semibold py-3 rounded-md shadow-md hover:bg-blue-800 transition ease-in-out duration-300"
-              >
-                Place Order
-              </button>
-            </div>
+          <div className="flex items-center justify-between">
+            <button
+              type="submit"
+              className="w-full bg-blue-900 text-white font-semibold py-3 rounded-md shadow-md hover:bg-blue-800 transition ease-in-out duration-300"
+            >
+              Submit
+            </button>
           </div>
         </form>
       </div>

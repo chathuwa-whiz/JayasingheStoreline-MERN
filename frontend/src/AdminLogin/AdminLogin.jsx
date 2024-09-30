@@ -1,37 +1,36 @@
 import React, { useState } from 'react';
 import adminBanner from '../../../uploads/AdminLogin/adminBaner.jpg';
-// import { useLoginMutation } from '../redux/api/usersApiSlice';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { useNavigate } from 'react-router-dom';
-// import { setCredentials } from '../redux/features/auth/authSlice';
+import {useNavigate} from 'react-router-dom';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  // const dispatch = useDispatch();
-  // const navigate = useNavigate();
-
-  // const [login, { isLoading }] = useLoginMutation();
-
-  // const { userInfo } = useSelector((state) => state.auth);
-
-  // useEffect(() => {
-  //   if (userInfo) {
-  //     navigate('/home');
-  //   }
-  // }, [userInfo, navigate]);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // const userData = await login({ email, password }).unwrap();
-
-      // Save user data to Redux store
-      // dispatch(setCredentials({ ...userData }));
-
-      // Redirect to the home page or dashboard after successful login
-      // navigate('/home');
+      if(email === 'chathushka@gmail.com' && password === '2024'){
+        navigate('/inventory');
+      }
+      else if(email === 'vidura@gmail.com' && password === '2024'){
+        navigate('/payment');
+      }
+      else if(email === 'jake@gmail.com' && password === '2024'){
+        navigate('/delivery');
+      }
+      else if(email === 'vidumini@gmail.com' && password === '2024'){
+        navigate('/order');
+      }
+      else if(email === 'dulangi@gmail.com' && password === '2024'){
+        navigate('/supplier');
+      }
+      else if(email === 'deshan@gmail.com' && password === '2024'){
+        navigate('/employee');
+      }
+      else if(email === 'akaz@gmail.com' && password === '2024'){
+        navigate('/customer');
+      }
     } catch (err) {
       console.log(err?.data?.message || 'Login failed. Please try again.');
     }
@@ -49,7 +48,7 @@ export default function AdminLogin() {
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">Admin Login Portal</h1>
           </div>
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6">
             <div className="rounded-md shadow-sm space-y-4 mt-16">
               <div>
                 <label htmlFor="email" className="sr-only">Email</label>
@@ -80,6 +79,7 @@ export default function AdminLogin() {
             </div>
             <div>
               <button
+              onClick={handleSubmit}
                 type="submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
               >

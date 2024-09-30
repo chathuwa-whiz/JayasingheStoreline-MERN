@@ -7,8 +7,9 @@ import './CusLogin.css';
 import toast from 'react-hot-toast';
 import { setCredentials } from '../redux/features/auth/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { useProfileMutation } from '../redux/api/usersApiSlice';
+import { Link, useNavigate } from 'react-router-dom';
+import { useProfileMutation, useGetUsersQuery } from '../redux/api/usersApiSlice';
+
 
 export default function ProfileManagementPage() {
   const [username, setUsername] = useState('');
@@ -25,9 +26,11 @@ export default function ProfileManagementPage() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const { data: users } = useGetUsersQuery();
   const { userInfo } = useSelector((state) => state.auth);
   const [updateProfile, { isLoading }] = useProfileMutation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (userInfo) {
@@ -123,6 +126,30 @@ export default function ProfileManagementPage() {
     }
 
     setNIC(formattedNIC);
+  };
+
+  const handleDeleteUser = async (userId) => {
+    const confirmed = window.confirm("Are you sure you want to delete this user?");
+    if (confirmed) {
+      try {
+        const response = await fetch(`http://localhost:4000/api/users/${userId}`, {
+          method: 'DELETE',
+        });
+  
+        if (!response.ok) {
+          // Log the full response for debugging
+          const errorResponse = await response.json();
+          console.error('Error response from server:', errorResponse);
+          throw new Error(`Error deleting user: ${response.status} - ${errorResponse.message || response.statusText}`);
+        }
+  
+        console.log(`User with ID ${userId} deleted successfully.`);
+        navigate('/');
+      } catch (error) {
+        console.error('Failed to delete user:', error);
+        alert(`Error deleting user: ${error.message}`);
+      }
+    }
   };
 
   return (
@@ -318,6 +345,16 @@ export default function ProfileManagementPage() {
                 </button>
               </div>
             </form>
+            
+            <div>
+                <button
+                  type="submit"
+                  className="flex-grow mt-5 py-2 px-4 w-full border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                  onClick={() => handleDeleteUser(userInfo._id)}
+                >
+                  Delete Account
+                </button>
+              </div>
           </div>
           <div className="w-1/2">
             <img
