@@ -24,17 +24,17 @@ const EditReviewPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (rating === 0) {
-      toast.error("Please select a rating!"); // Notify user
+      toast.error("Please select a rating!"); 
       return;
     }
     const res = await updateReview({ productId, reviewId, rating, comment: review });
 
     if (res.error) {
-      toast.error("Failed to update review!"); // Notify user
+      toast.error("Failed to update review!"); 
       console.log(res.error);
       return;
     } else {
-      toast.success("Review updated successfully!"); // Notify user
+      toast.success("Review updated successfully!"); 
       navigate(`/product/${productId}`);
     }
   };

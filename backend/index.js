@@ -36,7 +36,7 @@ const app = express();
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
-app.use(cors()) // Make sure cors is enabled
+app.use(cors()) 
 
 // Set storage engine for multer
 const storage = multer.diskStorage({
@@ -95,6 +95,6 @@ const __dirname = path.resolve();
 app.use("/uploads/products", express.static(path.join(__dirname, '/uploads/products')));
 app.use("/uploads/products", express.static(path.join(__dirname + '/uploads/products')));
 app.use("/uploads/supplierupload", express.static(path.join(__dirname + '/uploads/supplierupload')));
-app.use("/uploads/reviewRatings", express.static(path.join(__dirname + '/uploads/reviewRatings'))); // Serve reviewRatings uploads
+app.use("/uploads/reviewRatings", express.static(path.join(__dirname + '/uploads/reviewRatings'))); // reviewRatings uploads
 
 app.listen(port, () => console.log(`Server running on port: ${port}`));

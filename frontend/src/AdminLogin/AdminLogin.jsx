@@ -31,6 +31,11 @@ export default function AdminLogin() {
       else if(email === 'akaz@gmail.com' && password === '2024'){
         navigate('/customer');
       }
+
+      else if(email === 'chamathka@gmail.com' && password === '2024'){
+        navigate('/dashboardlist');
+      }
+      
     } catch (err) {
       console.log(err?.data?.message || 'Login failed. Please try again.');
     }

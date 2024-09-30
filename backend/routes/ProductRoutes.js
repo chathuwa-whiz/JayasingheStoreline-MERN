@@ -1,6 +1,6 @@
 import express from "express";
 import formidable from "express-formidable";
-import multer from 'multer'; // Import multer
+import multer from 'multer'; // Import multer for file uploading
 const productRoutes = express.Router();
 
 import { addProduct, fetchProducts, fetchProductById, updateProduct, deleteProduct, addProductReview, addProductInquiry, updateReview ,deleteReview, getReviewsByReviewId, replyToInquiry, deleteInquiry, getInquiriesByInquiryId, updateProductStock} from "../controllers/ProductController.js";
