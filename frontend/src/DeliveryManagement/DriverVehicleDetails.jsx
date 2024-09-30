@@ -3,6 +3,7 @@ import { useGetDriversQuery, useCreateDriverMutation, useUpdateDriverMutation, u
 import { FaEdit, FaTrash, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import logo from '../asset/logo.png';
 
 const DriverVehicleDetails = () => {
   const { data: drivers, refetch } = useGetDriversQuery();
@@ -85,8 +86,8 @@ const DriverVehicleDetails = () => {
     }
 
     // Birthday Validation
-    if (birthYear > 2005 || birthYear < 1998) {
-      setMessage({ type: 'error', text: 'Driver must be born between 1998 and 2005' });
+    if (birthYear > 2005 || birthYear < 1984) {
+      setMessage({ type: 'error', text: 'Driver must be born between 1984 and 2005' });
       return false;
     }
 
@@ -173,29 +174,86 @@ const DriverVehicleDetails = () => {
   };
 
   const downloadPDF = () => {
-    const doc = new jsPDF();
-    doc.text('Driver List', 14, 16);
+    const doc = new jsPDF('p', 'mm', 'a4'); // 'p' for portrait orientation
+    const img = new Image();
+    img.src = logo; // Replace with the correct path to your logo
+  
+    img.onload = function () {
+        // Add company details and logo at the top
+        doc.addImage(img, 'PNG', 14, 10, 30, 30); // Adjust position and size as needed
+        doc.setFontSize(16);
+        doc.text('Jayasinghe Storelines PVT (LTD)', 50, 20);
+        doc.setFontSize(12);
+        doc.text('No. 123, Main Street, Colombo, Sri Lanka', 50, 28);
+        doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', 50, 34);
 
-    // Prepare data for the PDF
+         // Get current date and time
+         const currentDate = new Date();
+         const dateString = currentDate.toLocaleDateString(); // Get current date
+         const timeString = currentDate.toLocaleTimeString(); // Get current time
+ 
+         // Add issued time before the date
+         doc.text(`Issued at: ${timeString} on ${dateString}`, 50, 40);
+         
+         doc.setFontSize(18);
+         doc.text('Drivers List', 50, 50);
+
+        // Prepare data for the PDF
+        const rows = drivers.map(driver => [
+            driver.nic,
+            driver.name,
+            driver.birthday.split('T')[0], // Show only the date
+            driver.telephoneNo,
+            driver.vehicleType,
+            driver.vehicleRegNo,
+            driver.driverLicenceNo,
+        ]);
+
+        // Add autoTable to the PDF
+        autoTable(doc, {
+            head: [['NIC', 'Name', 'DOB', 'Telephone', 'Vehicle Type', 'Vehicle Reg No', 'Driver License No']],
+            body: rows,
+            startY: 45, // Adjust to start below the company details and logo
+        });
+
+        // Save the PDF
+        doc.save('Drivers_List.pdf');
+    };
+
+    img.onerror = function () {
+        // Handle the case where the image fails to load
+        console.error('Image loading failed. PDF will be generated without the logo.');
+        generatePDFWithoutLogo(doc); // Pass the doc object to the function
+    };
+};
+
+const generatePDFWithoutLogo = (doc) => {
+    // Make sure the doc object is passed correctly
+    doc.setFontSize(16);
+    doc.text('Jayasinghe Storelines PVT LTD', 14, 20);
+    doc.setFontSize(12);
+    doc.text('No. 123, Main Street, Colombo, Sri Lanka', 14, 28);
+    doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', 14, 34);
+
     const rows = drivers.map(driver => [
-      driver.nic,
-      driver.name,
-      driver.birthday.split('T')[0], // Format date
-      driver.telephoneNo,
-      driver.vehicleType,
-      driver.vehicleRegNo,
-      driver.driverLicenceNo,
+        driver.nic,
+        driver.name,
+        driver.birthday.split('T')[0],
+        driver.telephoneNo,
+        driver.vehicleType,
+        driver.vehicleRegNo,
+        driver.driverLicenceNo,
     ]);
 
-    // Add autoTable to the PDF
     autoTable(doc, {
-      head: [['NIC', 'Name', 'DOB', 'Telephone', 'Vehicle Type', 'Vehicle Reg No', 'Driver License No']],
-      body: rows,
-      startY: 20,
+        head: [['NIC', 'Name', 'DOB', 'Telephone', 'Vehicle Type', 'Vehicle Reg No', 'Driver License No']],
+        body: rows,
+        startY: 45,
     });
 
-    doc.save('drivers_list.pdf'); // Save the PDF
-  };
+    doc.save('Drivers_List.pdf');
+};
+``
 
   // Filter drivers based on the search term
   const filteredDrivers = drivers?.filter(driver =>
