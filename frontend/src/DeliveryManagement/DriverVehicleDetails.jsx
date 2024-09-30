@@ -182,10 +182,21 @@ const DriverVehicleDetails = () => {
         // Add company details and logo at the top
         doc.addImage(img, 'PNG', 14, 10, 30, 30); // Adjust position and size as needed
         doc.setFontSize(16);
-        doc.text('Jayasinghe Storelines PVT LTD', 50, 20);
+        doc.text('Jayasinghe Storelines PVT (LTD)', 50, 20);
         doc.setFontSize(12);
         doc.text('No. 123, Main Street, Colombo, Sri Lanka', 50, 28);
         doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', 50, 34);
+
+         // Get current date and time
+         const currentDate = new Date();
+         const dateString = currentDate.toLocaleDateString(); // Get current date
+         const timeString = currentDate.toLocaleTimeString(); // Get current time
+ 
+         // Add issued time before the date
+         doc.text(`Issued at: ${timeString} on ${dateString}`, 50, 40);
+         
+         doc.setFontSize(18);
+         doc.text('Drivers List', 50, 50);
 
         // Prepare data for the PDF
         const rows = drivers.map(driver => [

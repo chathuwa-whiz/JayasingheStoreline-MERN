@@ -17,6 +17,17 @@ export default function DeliveryDetail({ onEditDelivery }) {
   const companyTelephone = '+94 11 234 5678';
   const companyAddress = '123 Main Street, Colombo, Sri Lanka';
 
+   // Get current date and time
+   const currentDate = new Date();
+   const dateString = currentDate.toLocaleDateString(); // Get current date
+   const timeString = currentDate.toLocaleTimeString(); // Get current time
+
+   // Add issued time before the date
+  //  doc.text(`Issued at: ${timeString} on ${dateString}`, 50, 40);
+   
+  //  doc.setFontSize(18);
+  //  doc.text('Drivers List', 50, 50);
+
   const priceFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'LKR',
@@ -61,7 +72,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
   const downloadPDF = async () => {
     // Create a jsPDF instance with landscape orientation
     const doc = new jsPDF('l', 'mm', 'a4');
-  
+
     // Add logo to the top left
     const img = new Image();
     img.src = logo;
@@ -72,7 +83,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
   
     // Add company name below the logo
     doc.setFontSize(20);
-    doc.text('Jayasinghe Storelines PVT LTD', 50, 25);
+    doc.text('Jayasinghe Storelines PVT (LTD)', 50, 25);
   
     // Add company details to the top right
     doc.setFontSize(12);
@@ -80,6 +91,9 @@ export default function DeliveryDetail({ onEditDelivery }) {
     doc.text(`Email: ${companyEmail}`, 270, 15, { align: 'right' });
     doc.text(`Telephone: ${companyTelephone}`, 270, 22, { align: 'right' });
     doc.text(`Address: ${companyAddress}`, 270, 29, { align: 'right' });
+    doc.text(`Issued at: ${timeString} on ${dateString}`, 201, 36);
+    doc.setFontSize(18);
+    
   
     // Add title below the company name
     doc.setFontSize(18);
