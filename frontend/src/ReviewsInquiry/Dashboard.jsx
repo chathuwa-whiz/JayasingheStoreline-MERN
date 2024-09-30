@@ -168,6 +168,8 @@ export default function Dashboard() {
      // Center align text
     const title = 'JAYASINGHE STORELINES PVT(LTD)';
     const subtext = 'Ratings and Inquiries of Products';
+    const email = 'email: JayasingheStorelines@gmail.com';
+    const currentDate = new Date().toLocaleDateString(); // Get current date
     const pageWidth = pdf.internal.pageSize.width;
     
     pdf.setFontSize(20);
@@ -178,13 +180,13 @@ export default function Dashboard() {
     
     // Calculate the position to center the text
     const titleX = (pageWidth - titleWidth) / 2;
-    const subtextX = (pageWidth - subtextWidth) / 2;
     
     // Add the title and subtext to the PDF
     pdf.text(title, titleX, 20); // Centered at y = 20
     pdf.setFontSize(10);
-    pdf.text(subtext, subtextX, 30); // Centered at y = 30
-
+    pdf.text(subtext, 50, 30); // Centered at y = 30
+    pdf.text(email, 50, 40);  // Adjust the Y position (40) as needed
+    pdf.text(`Date: ${currentDate}`, 150, 40); // Add current date on the right side at y = 40
   
       // Load and add the logo image
       const logo = new Image();
@@ -196,7 +198,7 @@ export default function Dashboard() {
         pdf.addImage(logo, 'PNG', 10, 5, 30, 30); // Adjust position and size
   
         // Add the dashboard content image after the logo
-        pdf.addImage(imgData, 'PNG', 0, position + 40, imgWidth, imgHeight);
+        pdf.addImage(imgData, 'PNG', 0, position + 50, imgWidth, imgHeight);
         heightLeft -= pageHeight;
   
         // Handle pagination if content exceeds one page

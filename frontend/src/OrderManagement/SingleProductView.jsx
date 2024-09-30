@@ -24,9 +24,7 @@ export default function SingleProductView() {
     const [qty, setQty] = useState(1);
     //inquiry message
     const [messagee, setMessagee] = useState('');
-    // Initialize the mutation hook
-    const [deleteReview] = useDeleteReviewMutation();
-
+    
     // Price formatter
     const priceFormatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -57,7 +55,9 @@ export default function SingleProductView() {
 
     const [createReview] = useCreateReviewMutation();
     const [createInquiry] = useCreateInquiryMutation();
+    const [deleteReview] = useDeleteReviewMutation();
 
+//inquiry handler
     const submitInquiryHandler = async (e) => {
         e.preventDefault();
         if (!messagee.trim()) {
@@ -75,17 +75,17 @@ export default function SingleProductView() {
         }
     };
 
+//handle edit review
     const handleEditReview = (reviewId) => {
-        // Navigate to review edit page
         console.log("Review ID : ", reviewId, "Product ID : ", productId);
         navigate(`/product/${productId}/${reviewId}`);
     };
 
-    // Handle delete review
+// Handle delete review
     const handleDeleteReview = async (reviewId) => {
         if (window.confirm("Are you sure you want to delete this review?")) {
             try {
-                await deleteReview({ productId, reviewId }).unwrap();
+                await deleteReview({ productId, reviewId }).unwrap();//handles the response delete
                 refetch(); // Refresh the product data after deletion
                 toast.success("Review deleted successfully!");
             } catch (error) {
@@ -94,16 +94,15 @@ export default function SingleProductView() {
         }
     };
 
-    // Average Rating Calculation
-    const averageRating = productData?.reviews?.length
+// Average Rating function
+    const averageRating = productData?.reviews?.length//safely access length property
         ? (productData.reviews.reduce((acc, review) => acc + review.rating, 0) / productData.reviews.length).toFixed(1)
-        : 0;
+        : 0;// reduce is use to sum
 
-    // Function to render stars
     const renderStars = (rating) => {
-        const fullStars = Math.floor(rating); // Full stars (★)
-        const halfStar = rating - fullStars >= 0.5; // Half star (½)
-        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0); // Empty stars (☆)
+        const fullStars = Math.floor(rating); // Full stars.rounds to nearest whole
+        const halfStar = rating - fullStars >= 0.5; // Half star
+        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0); // Empty stars
 
         return (
             <>
@@ -178,15 +177,16 @@ export default function SingleProductView() {
                     {quantity === 0 && (
                         <p className="mt-4 text-red-500">This product is currently out of stock.</p>
                     )}
+
                 {/* Average Rating Display */}
-                <div className="mt-6"> {/* Increased margin for more spacing */}
-                    <h2 className="text-xl font-semibold text-gray-700">Average Rating</h2> {/* Kept the heading size */}
-                    <div className="flex items-center mt-2"> {/* Increased margin for better spacing */}
-                        <div className="text-3xl"> {/* Increased the size of the stars */}
+                <div className="mt-6"> 
+                    <h2 className="text-xl font-semibold text-gray-700">Average Rating</h2> 
+                    <div className="flex items-center mt-2"> 
+                        <div className="text-3xl"> 
                             {renderStars(averageRating)}
                         </div>
-                        <span className="ml-3 text-gray-600 text-xl"> {/* Kept the rating value slightly larger for emphasis */}
-                            {averageRating} / 5.0
+                        <span className="ml-3 text-gray-600 text-xl"> 
+                            {averageRating} / 5.0 {/*out of 5*/}
                         </span>
                     </div>
                 </div>
@@ -238,12 +238,12 @@ export default function SingleProductView() {
                 {review.image && (
                     <div className="mt-3">
                         <img
-                            src={review.image} // Ensure this URL is correct
-                            alt={`Review image uploaded by ${review.name}`} // Improved alt text
+                            src={review.image} 
+                            alt={`Review image uploaded by ${review.name}`} 
                             className="w-40 h-auto rounded-lg shadow-md"
                             onError={(e) => { // Handle image loading error
                                 e.target.onerror = null; // Prevents looping
-                                e.target.src = '/uploads/reviewRatings/image.png'; // Set a placeholder image
+                                e.target.src = '/uploads/reviewRatings/image.png'; 
                             }}
                         />
                     </div>
@@ -290,7 +290,7 @@ export default function SingleProductView() {
                         <textarea
                             id="messagee"
                             value={messagee}
-                            onChange={(e) => setMessagee(e.target.value)}
+                            onChange={(e) => setMessagee(e.target.value)}//catch user input
                             rows="4"
                             className="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Write your inquiry here..."

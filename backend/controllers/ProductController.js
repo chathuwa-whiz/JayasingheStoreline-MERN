@@ -121,13 +121,13 @@ export const deleteProduct = async (req, res) => {
 export const addProductReview = async (req, res) => {
     try {
         const { rating, comment, email } = req.body;
-        const product = await Product.findById(req.params.id);
+        const product = await Product.findById(req.params.id);//fetches the product using id
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
         }
 
         const alreadyReviewed = product.reviews.find(
-            (r) => r.user.toString() === req.user._id.toString()
+            (r) => r.user.toString() === req.user._id.toString()//check already reviewed
         );
         if (alreadyReviewed) {
             return res.status(400).json({ message: "Product already reviewed" });
@@ -140,12 +140,13 @@ export const addProductReview = async (req, res) => {
 
         // Validate the email format if provided
         if (email && email.trim()) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;// not whitespace or @
             if (!emailRegex.test(email)) {
                 return res.status(400).json({ message: "Invalid email address" });
             }
         }
 
+        //validate the size of the image
         let imageUrl = '';
         if (req.file) {
             if (req.file.size > 2 * 1024 * 1024) {
@@ -162,14 +163,14 @@ export const addProductReview = async (req, res) => {
             image: imageUrl
         };
 
-        // Include email only if it is provided
-        if (email && email.trim()) {
+        // Include email to above only if it is provided
+        if (email && email.trim()) {//remove white spaces from begingig and the end
             review.email = email;
         }
 
-        product.reviews.push(review);
-        product.numReviews = product.reviews.length;
-        product.rating = product.reviews.reduce((acc, item) => item.rating + acc, 0) / product.reviews.length;
+        product.reviews.push(review);//add reviews to the product
+        product.numReviews = product.reviews.length;//update reviews count
+        product.rating = product.reviews.reduce((acc, item) => item.rating + acc, 0) / product.reviews.length;//average rating
         await product.save();
 
         res.status(201).json({ message: "Review added successfully" });
@@ -183,9 +184,9 @@ export const addProductReview = async (req, res) => {
 // add product Inquiry
 export const addProductInquiry = async (req, res) => {
     try {
-      const { messagee } = req.body;
+      const { messagee } = req.body;//client's sending message
 
-      const product = await Product.findById(req.params.id);
+      const product = await Product.findById(req.params.id);//fetch product by id
   
       if (product) {
   
@@ -195,7 +196,7 @@ export const addProductInquiry = async (req, res) => {
           user: req.user._id,
         };
   
-        product.inquiries.push(inquiry);
+        product.inquiries.push(inquiry);//add inquiries to the product
   
         product.numInquiries = product.inquiries.length; // Update the number of inquiries
   
@@ -212,13 +213,13 @@ export const addProductInquiry = async (req, res) => {
 
 // Delete a product inquiry
 export const deleteInquiry = async (req, res) => {
-    const { productId, inquiryId } = req.params; // Make sure these are correctly named in your route
+    const { productId, inquiryId } = req.params; //client delete inquiry by these id's
 
     try {
         // Find the product and remove the inquiry by its ID
         const product = await Product.findByIdAndUpdate(
             productId,
-            { $pull: { inquiries: { _id: inquiryId } } }, // Use $pull to remove the inquiry
+            { $pull: { inquiries: { _id: inquiryId } } }, // Use $pull to remove the inquiry from this array
             { new: true } // This option returns the updated document
         );
 
@@ -248,7 +249,7 @@ export const getInquiriesByInquiryId = async (req, res) => {
             return res.status(404).json({ message: "inquiry not found" });
         }
 
-        // find the review maching the reviewId
+        // find the inquiry maching the inquiryId
         const inquiry = products.inquiries.find(
             (inquiry) => inquiry._id == inquiryId
         );
@@ -257,8 +258,8 @@ export const getInquiriesByInquiryId = async (req, res) => {
             return res.status(404).json( { msg : "inquiry not found for this user" } )
         }
 
-        const inquiryResponse = {
-            ...review.toObject(),
+        const inquiryResponse = {//inquiry response object
+            ...inquiry.toObject(),
             productName: products.name,
             productId: products._id
         };
@@ -300,7 +301,7 @@ export const updateReview = async (req, res) => {
         review.rating = rating;
         review.comment = comment;
 
-        // Optionally, recalculate the overall product rating and number of reviews
+        //  product rating and number of reviews
         product.rating = product.reviews.reduce((acc, item) => item.rating + acc, 0) / product.reviews.length;
 
         // Save the product with updated review
@@ -324,14 +325,14 @@ export const deleteReview = async (req, res) => {
 
         // Find the review inside the product's reviews array
         const reviewIndex = product.reviews.findIndex((r) => r._id.toString() === req.params.reviewId);
-        if (reviewIndex === -1) {
+        if (reviewIndex === -1) {//equal -1 means no reviews
             return res.status(404).json({ error: "Review not found" });
         }
 
         // Remove the review from the reviews array
         product.reviews.splice(reviewIndex, 1);
 
-        // Optionally, recalculate the overall product rating and number of reviews
+        // overall product rating and number of reviews
         product.rating = product.reviews.length 
             ? product.reviews.reduce((acc, item) => item.rating + acc, 0) / product.reviews.length 
             : 0;
@@ -368,7 +369,7 @@ export const getReviewsByReviewId = async (req, res) => {
             return res.status(404).json( { msg : "Review not found for this user" } )
         }
 
-        const reviewResponse = {
+        const reviewResponse = {//review response object
             ...review.toObject(),
             productName: products.name,
             productId: products._id
@@ -381,10 +382,10 @@ export const getReviewsByReviewId = async (req, res) => {
     }
 };
 
-//reply
+//add reply
 export const replyToInquiry = async (req, res) => {
     try {
-        const { productId, inquiryId } = req.params; // Use inquiryId from route parameters
+        const { productId, inquiryId } = req.params; 
         const { replyMessage } = req.body;
 
         // Validate replyMessage
@@ -399,7 +400,7 @@ export const replyToInquiry = async (req, res) => {
         }
 
         // Find the inquiry
-        const inquiry = product.inquiries.id(inquiryId); // Use inquiries to find the specific inquiry
+        const inquiry = product.inquiries.id(inquiryId); 
         if (!inquiry) {
             return res.status(404).json({ message: "Inquiry not found" });
         }

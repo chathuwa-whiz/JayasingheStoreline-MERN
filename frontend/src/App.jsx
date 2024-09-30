@@ -80,6 +80,8 @@ import EditReviewPage from "./ReviewsInquiry/EditReviewPage";
 import UserReviews from "./ReviewsInquiry/Dashboard";
 import DashboardList from "./ReviewsInquiry/DashboardList";
 import DashboardSinglePro from "./ReviewsInquiry/DashboardSinglePro";
+import Logsout from "./ReviewsInquiry/Logout";
+import SettingsDashboard from "./ReviewsInquiry/Settings";
 
 //Employee Management
 import Employee from './EmployeeManagement/Employee';
@@ -204,6 +206,8 @@ function App() {
         {/* Edit Review Route */}
         <Route path="/product/:productId/:reviewId" element={<EditReviewPage />} />
         <Route path="/dashboard" element={<UserReviews />} />
+        <Route path="/logout" element={<Logsout />} />
+        <Route path="/settings" element={<SettingsDashboard />} />
         <Route path="dashboardlist" element={<DashboardList/>} />
         <Route path="dashboard/product/:_id" element={<DashboardSinglePro/>} />
       </Routes>
