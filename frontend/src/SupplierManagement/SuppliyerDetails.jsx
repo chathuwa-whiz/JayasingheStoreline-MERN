@@ -19,24 +19,44 @@ export default function SupplierDetailsForm() {
   const [errors, setErrors] = useState({});
 
   // Validation functions
-  const validateNIC = (NIC) => /(^\d{9}[vV]$)|(^\d{12}$)/.test(NIC);
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const validatePhoneNumber = (phone) => /^\d{10}$/.test(phone); // Assumes a 10-digit phone number
-  const validateName = (name) => name.length >= 3;
+  const validateNIC = (NIC) => {
+    const nicPattern = /(^\d{9}[vV]$)|(^\d{12}$)/;
+    return nicPattern.test(NIC);
+  };
+
+  const validateEmail = (email) => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+  };
+
+  const validatePhoneNumber = (phone) => {
+    const phonePattern = /^\d{10}$/;
+    return phonePattern.test(phone);
+  };
+
+  const validateName = (name) => {
+    const namePattern = /^[A-Za-z\s]{3,}$/; // Only allows letters and spaces
+    return namePattern.test(name);
+  };
 
   const validateForm = () => {
     const newErrors = {};
+
     if (!validateName(supplierName)) {
-      newErrors.supplierName = "Name should be at least 3 characters long.";
+      newErrors.supplierName = "Supplier name should be at least 3 characters long and contain only letters.";
+      toast.error("Supplier name should be valid (no numbers allowed).");
     }
     if (!validateNIC(NIC)) {
       newErrors.NIC = "NIC must be either 9 digits followed by 'v/V' or 12 digits.";
+      toast.error("Invalid NIC. It must be 9 digits followed by 'v/V' or 12 digits.");
     }
     if (!validatePhoneNumber(phoneNumber)) {
       newErrors.phoneNumber = "Phone number must be 10 digits long.";
+      toast.error("Phone number must be exactly 10 digits.");
     }
     if (!validateEmail(email)) {
       newErrors.email = "Please enter a valid email address.";
+      toast.error("Invalid email format.");
     }
 
     setErrors(newErrors);
@@ -47,7 +67,7 @@ export default function SupplierDetailsForm() {
     e.preventDefault();
 
     if (!validateForm()) {
-      return; // Exit if the form is invalid
+      return; 
     }
 
     try {
@@ -63,7 +83,7 @@ export default function SupplierDetailsForm() {
       const data = await createSupplier(supplierData);
       if (data.error) {
         console.log("error data : ", data);
-        toast.error("Supplier create failed. Try Again.");
+        toast.error("Supplier creation failed. Try again.");
       } else {
         toast.success("Supplier created successfully");
         setTimeout(() => {
@@ -74,7 +94,36 @@ export default function SupplierDetailsForm() {
       
     } catch (error) {
       console.log("error : ", error);
+      toast.error("Something went wrong while creating supplier.");
     }
+  };
+
+  // Handle name input change with validation
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    if (/\d/.test(value)) {
+      toast.error("Supplier name cannot contain numbers.");
+      return; // Prevent updating the state if a number is entered
+    }
+    setSupplierName(value);
+  };
+
+  const handleNICChange = (e) => {
+    const value = e.target.value;
+    if (!/^\d*$/.test(value) && value.length !== 10 && value.length !== 12) {
+      toast.error("Invalid NIC. It must be 9 digits followed by 'v/V' or 12 digits.");
+      return;
+    }
+    setNIC(value);
+  };
+
+  const handlePhoneNumberChange = (e) => {
+    const value = e.target.value;
+    if (!/^\d*$/.test(value) || value.length > 10) {
+      toast.error("Phone number must be exactly 10 digits.");
+      return;
+    }
+    setPhoneNumber(value);
   };
 
   const handleMediaChange = async (e) => {
@@ -106,7 +155,7 @@ export default function SupplierDetailsForm() {
                   id="supplierName"
                   type="text"
                   value={supplierName}
-                  onChange={(e) => setSupplierName(e.target.value)}
+                  onChange={handleNameChange}
                 />
                 {errors.supplierName && <p className="text-red-500 text-sm">{errors.supplierName}</p>}
               </div>
@@ -117,8 +166,7 @@ export default function SupplierDetailsForm() {
                   id="SupplierID"
                   type="text"
                   value={NIC}
-                  unique:true
-                  onChange={(e) => setNIC(e.target.value)}
+                  onChange={handleNICChange}
                 />
                 {errors.NIC && <p className="text-red-500 text-sm">{errors.NIC}</p>}
               </div>
@@ -129,7 +177,7 @@ export default function SupplierDetailsForm() {
                   id="phoneNumber"
                   type="tel"
                   value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  onChange={handlePhoneNumberChange}
                 />
                 {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
               </div>
@@ -159,16 +207,15 @@ export default function SupplierDetailsForm() {
                 <select
                   className="w-full p-2 border border-gray-300 rounded"
                   id="Gender"
-                  type="text"
                   value={Gender}
                   onChange={(e) => setGender(e.target.value)}
-                  >
+                >
                   <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
                 </select>
-                
               </div>
+
               <div className="flex justify-between">
                 <button
                   className="bg-orange-500 text-white px-6 py-2 rounded font-medium"
@@ -198,7 +245,7 @@ export default function SupplierDetailsForm() {
               />
               {imageUrl && (
                   <div className="mt-4">
-                      <img src={imageUrl} alt="Product" className="max-h-40 object-contain mx-auto" />
+                      <img src={imageUrl} alt="Supplier" className="max-h-40 object-contain mx-auto" />
                   </div>
               )}
             </div>
