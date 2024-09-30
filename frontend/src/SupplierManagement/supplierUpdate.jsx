@@ -36,7 +36,7 @@ export default function SupplierDetailsForm() {
   // Validation functions
   const validateNIC = (nic) => /(^\d{9}[vV]$)|(^\d{12}$)/.test(nic);
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const validatePhoneNumber = (phone) => /^\d{10}$/.test(phone); // Assumes a 10-digit phone number
+  const validatePhoneNumber = (phone) => /^\d{10}$/.test(phone); 
   const validateName = (name) => name.length >= 3;
 
   const validateForm = () => {
@@ -62,7 +62,7 @@ export default function SupplierDetailsForm() {
     e.preventDefault();
 
     if (!validateForm()) {
-      return; // Exit if the form is invalid
+      return; 
     }
 
     try {

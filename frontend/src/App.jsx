@@ -71,6 +71,7 @@ import SupplierList from "./SupplierManagement/supplierList";
 import SupplierUpdate from "./SupplierManagement/supplierUpdate";
 import SupplierReport from "./SupplierManagement/Report";
 import SupplierSettings from "./SupplierManagement/Settings";
+import SupplierLogout from "./SupplierManagement/logout";
 
 //review
 import EditReviewPage from "./ReviewsInquiry/EditReviewPage";
@@ -185,6 +186,7 @@ function App() {
           <Route path="update/:_id" element={<SupplierUpdate />} />
           <Route path="report" element={<SupplierReport />} />
           <Route path="SupplierSettings" element={<SupplierSettings />} />
+          <Route path="SupplierLogout" element={<SupplierLogout />} />
         </Route>
 
         {/* Employee Management Routes */}

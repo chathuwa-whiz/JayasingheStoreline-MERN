@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
 import 'chart.js/auto';
 import jsPDF from 'jspdf';
@@ -13,22 +13,23 @@ export default function SupplierReport() {
   const { data: suppliers, isLoading: suppliersLoading, isError: suppliersError } = useGetSuppliersQuery({});
   
   const [selectedSupplier, setSelectedSupplier] = useState({});
-  console.log('selectedSupplier', selectedSupplier.name);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  
+  // Ref to hold chart instances
+  const barChartRef = useRef(null);
+  const pieChartRef = useRef(null);
 
   if (productsLoading || suppliersLoading) return <div>Loading...</div>;
   if (productsError || suppliersError) return <div>Error loading data...</div>;
 
   const lowStockProducts = products.filter((product) => product.currentQty <= 5);
 
-  // console.log('suppliers', suppliers);
-
   // Handle checkbox selection for products
   const handleProductSelect = (productId) => {
     setSelectedProducts((prevSelected) =>
       prevSelected.includes(productId)
-        ? prevSelected.filter((id) => id !== productId) // Unselect
-        : [...prevSelected, productId] // Select
+        ? prevSelected.filter((id) => id !== productId) 
+        : [...prevSelected, productId] 
     );
   };
 
@@ -38,7 +39,7 @@ export default function SupplierReport() {
     setSelectedSupplier(selectedSupplier);
   };
 
-  // Generate PDF report
+  // Generate PDF report with charts
   const generatePDF = async () => {
     const doc = new jsPDF();
 
@@ -48,29 +49,56 @@ export default function SupplierReport() {
     await new Promise(resolve => {
         img.onload = resolve;
     });
-    doc.addImage(img, 'PNG', 14, 10, 30, 30); // Adjust size and position as needed
+    doc.addImage(img, 'PNG', 14, 10, 30, 30); 
+
+    // Store information
     doc.setFontSize(20);
     doc.setTextColor(40, 40, 40);
     doc.text('Jayasinghe Storeline', 50, 20);
+
+    // Store contact information
     doc.setFontSize(12);
     doc.text('Products Order Report', 50, 30);
-    
-    doc.text(`Supplier Name: ${selectedSupplier.name}`, 14, 60);
-    doc.text(`Contact Number: ${selectedSupplier.phone}`, 14, 70);
+    doc.text('Email: info@jayasinghe-storeline.com', 50, 40);  // Add email here
+    doc.text('Phone: +94 77 123 4567', 50, 50);  // Add phone number here
 
+    // Supplier and product information
+    doc.text(`Supplier Name: ${selectedSupplier.name}`, 14, 70);
+    doc.text(`Contact Number: ${selectedSupplier.phone}`, 14, 80);
+
+    // Table data for selected products
     const tableData = lowStockProducts
       .filter((product) => selectedProducts.includes(product._id))
       .map((product) => [
         product.name,
         product.reOrderQty,
       ]);
-  
+
+    // Adding product details table
     doc.autoTable({
       head: [['Product Name', 'Order Qty']],
       body: tableData,
-      startY: 80,
+      startY: 90,
     });
 
+    // Generate chart images and add to the PDF
+    const barChartImage = barChartRef.current.toBase64Image();
+    const pieChartImage = pieChartRef.current.toBase64Image();
+
+    // Add bar chart and pie chart on the same page side by side
+    doc.addPage(); // Add a new page for the charts
+    doc.setFontSize(16);
+    doc.text('Low Stock Products by Category and Category Distribution (Charts)', 14, 20);
+
+    // Add bar chart image on the left
+    doc.addImage(barChartImage, 'PNG', 14, 30, 90, 100);  // Adjust the dimensions as needed
+
+    // Add pie chart image on the right
+    doc.addImage(pieChartImage, 'PNG', 110, 30, 90, 100);  // Adjust the dimensions and x position as needed
+
+
+
+    // Save the PDF
     doc.save('order-inquiry.pdf');
   };
 
@@ -109,7 +137,7 @@ export default function SupplierReport() {
       <div className="max-w-md mx-auto">
         <label className="block text-sm font-medium mb-2">Select Supplier:</label>
         <select
-          value={selectedSupplier.name? selectedSupplier._id : ''}
+          value={selectedSupplier.name ? selectedSupplier._id : ''}
           onChange={handleSupplierChange}
           className="p-2 border border-gray-300 rounded w-full"
         >
@@ -125,7 +153,7 @@ export default function SupplierReport() {
       {/* Low Stock Products Table */}
       <div className="max-w-4xl mx-auto overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-lg">
-          <thead className="bg-gray-200">
+          <thead className="bg-orange-500">
             <tr>
               <th className="p-4 text-left">Select</th>
               <th className="p-4 text-left">Product Name</th>
@@ -159,13 +187,13 @@ export default function SupplierReport() {
         {/* Bar Chart */}
         <div className="w-full md:w-1/2 bg-white p-4 rounded-lg shadow-lg">
           <h2 className="text-lg font-semibold mb-4">Low Stock Products by Category</h2>
-          <Bar data={barChartData} />
+          <Bar ref={barChartRef} id="barChart" data={barChartData} />
         </div>
 
         {/* Pie Chart */}
         <div className="w-full md:w-1/2 bg-white p-4 rounded-lg shadow-lg">
           <h2 className="text-lg font-semibold mb-4">Category Distribution</h2>
-          <Pie data={pieChartData} />
+          <Pie ref={pieChartRef} id="pieChart" data={pieChartData} />
         </div>
       </div>
 
