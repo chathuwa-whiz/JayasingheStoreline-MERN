@@ -18,20 +18,6 @@ const createUser = asyncHandler(async (req, res) => {
   try {
     await newUser.save();
     createToken(res, newUser._id);
-
-    res.status(201).json({
-      _id: newUser._id,
-      firstname: newUser.firstname,
-      lastname: newUser.lastname,
-      username: newUser.username,
-      email: newUser.email,
-      NIC: newUser.NIC, // Add this line
-      address: newUser.address, // Add this line
-      age: newUser.age,
-      phone: newUser.phone, // Add this line
-      password: newUser.password,
-      isAdmin: newUser.isAdmin,
-    });
   } catch (error) {
     res.status(400).json({ message: error.message });
     // throw new Error("Invalid user data");
@@ -51,16 +37,16 @@ const loginUser = asyncHandler(async (req, res) => {
     if (password === existingUser.password) {
       createToken(res, existingUser._id);
 
-      res.status(201).json({
-        _id: existingUser._id,
-        username: existingUser.username,
-        email: existingUser.email,
-        NIC: existingUser.NIC, // Add this line
-        address: existingUser.address, // Add this line
-        phone: existingUser.phone, // Add this line
-        password: existingUser.password,
-        isAdmin: existingUser.isAdmin,
-      });
+      // res.status(201).json({
+      //   _id: existingUser._id,
+      //   username: existingUser.username,
+      //   email: existingUser.email,
+      //   NIC: existingUser.NIC, // Add this line
+      //   address: existingUser.address, // Add this line
+      //   phone: existingUser.phone, // Add this line
+      //   password: existingUser.password,
+      //   isAdmin: existingUser.isAdmin,
+      // });
       return;
     } else {
       res.status(400).json({ message: 'Invalid password' });
