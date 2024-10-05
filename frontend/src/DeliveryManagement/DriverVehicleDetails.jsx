@@ -22,7 +22,6 @@ const DriverVehicleDetails = () => {
   });
 
   const today = new Date();
-
   const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate())
     .toISOString()
     .split('T')[0]; // Convert to yyyy-mm-dd format
@@ -45,29 +44,35 @@ const DriverVehicleDetails = () => {
     return regex.test(registrationNumber);
   };
 
+  // Updated NIC Validation Handler
   const handleNICChange = (e) => {
     let value = e.target.value;
 
-    if (NICVersion === '10-digit') {
-      // Allow only numbers and limit to 9 characters
-      value = value.replace(/[^0-9]/g, '').slice(0, 9);
-      setNIC(value + 'v');
-    } else if (NICVersion === '12-digit') {
-      // Allow only numbers and limit to 12 characters
-      value = value.replace(/[^0-9]/g, '').slice(0, 12);
-      setNIC(value);
+    if (/^\d{0,9}$/.test(value)) {
+      // Allow typing digits up to 9 characters
+      setNewDriver({ ...newDriver, nic: value });
+    } else if (/^\d{9}[vV]?$/.test(value)) {
+      // Allow "v" or "V" after exactly 9 digits
+      setNewDriver({ ...newDriver, nic: value });
     }
-  }
+  };
 
-  
+  const handleTelephoneChange = (e) => {
+    const value = e.target.value;
+    if (/^0(70|71|72|74|75|76|77|78)\d{0,7}$/.test(value)) {
+      setNewDriver({ ...newDriver, telephoneNo: value });
+    } else if (value.length < 10) {
+      setNewDriver({ ...newDriver, telephoneNo: value });
+    }
+  };
 
   const validateForm = () => {
     const { nic, name, birthday, telephoneNo, vehicleType, vehicleRegNo, driverLicenceNo } = newDriver;
 
     // Validation regex patterns
-    const nicRegex = /^(?:\d{9}[vV]|\d{12})$/; // 12 digits or 9 digits with "v" or "V"
+    const nicRegex = /^(?:\d{12}|\d{9}[vV]?)$/; // 12 digits or 9 digits followed by "v" or "V"
     const nameRegex = /^[A-Za-z\s]{1,20}$/; // Only letters, max 20 characters
-    const telephoneRegex = /^[0-9]{10}$/; // Exactly 10 digits
+    const telephoneRegex = /^(070|071|072|074|075|076|077|078)\d{7}$/; // Must start with specific prefixes
     const driverLicenseRegex = /^[A-Za-z]\d{7}$/; // One letter and 7 digits
 
     const currentYear = new Date().getFullYear();
@@ -93,7 +98,7 @@ const DriverVehicleDetails = () => {
 
     // Telephone Number Validation
     if (!telephoneRegex.test(telephoneNo)) {
-      setMessage({ type: 'error', text: 'Telephone number must be exactly 10 digits' });
+      setMessage({ type: 'error', text: 'Telephone number must start with 070/071/072/074/075/076/077/078 and be exactly 10 digits' });
       return false;
     }
 
@@ -263,177 +268,168 @@ const generatePDFWithoutLogo = (doc) => {
   return (
     <div className="container mx-auto p-4">
       {/* Form Section */}
-      <div className="border rounded-lg p-6 bg-gray-50 shadow-lg">
-        <h2 className="text-2xl font-semibold mb-4">{editingDriver ? 'Edit Driver' : 'Add New Driver'}</h2>
-        <form onSubmit={handleCreateOrUpdate}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* NIC */}
-            <div>
-              <label htmlFor="nic" className="block text-sm font-medium text-gray-700">NIC</label>
-              <input
-                type="text"
-                id="nic"
-                value={newDriver.nic}
-                onChange={(e) => handleInputChange(e, 'nic', 12, '^[0-9vV]*$')}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none"
-                maxLength={12}
-                required
-          
-              />
-            </div>
-            {/* Name */}
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-              <input
-                type="text"
-                id="name"
-                value={newDriver.name}
-                onChange={(e) => handleInputChange(e, 'name', 20, '^[A-Za-z\\s]*$')}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none"
-                required
-              />
-            </div>
-            {/* Date of Birth */}
-            <div>
-              <label htmlFor="dob" className="block text-sm font-medium text-gray-700">Date of Birth</label>
-              {
-              /* <input
-                type="date"
-                id="dob"
-                value={newDriver.birthday}
-                onChange={(e) => setNewDriver({ ...newDriver, birthday: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                required
-              /> */}
-              <input
-        type="date"
-        id="dob"
-        value={newDriver.birthday}
-        min={minDate} // Restrict to minimum date for 40 years old
-        max={maxDate} // Restrict to maximum date for 18 years old
-        onChange={(e) => setNewDriver({ ...newDriver, birthday: e.target.value })}
-        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none"
-        required
-      />
-            </div>
-            {/* Telephone Number */}
-            <div>
-              <label htmlFor="telephoneNo" className="block text-sm font-medium text-gray-700">Telephone Number</label>
-              <input
-                type="text"
-                id="telephoneNo"
-                value={newDriver.telephoneNo}
-                onChange={(e) => handleInputChange(e, 'telephoneNo', 10, '^[0-9]*$')}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none"
-                maxLength={10}
-                required
-              />
-            </div>
-            {/* Vehicle Type */}
-            <div>
-              <label htmlFor="vehicleType" className="block text-sm font-medium text-gray-700">Vehicle Type</label>
-              <input
-                type="text"
-                id="vehicleType"
-                value={newDriver.vehicleType}
-                onChange={(e) => handleInputChange(e, 'vehicleType', 20)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none"
-              />
-            </div>
-            {/* Vehicle Registration Number */}
-            <div>
-              <label htmlFor="vehicleRegNo" className="block text-sm font-medium text-gray-700">Vehicle Registration Number</label>
-              <input
-                type="text"
-                id="vehicleRegNo"
-                value={newDriver.vehicleRegNo}
-                onChange={(e) => handleInputChange(e, 'vehicleRegNo', 10)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none"
-              />
-            </div>
-            {/* Driver License Number */}
-            <div>
-              <label htmlFor="driverLicenceNo" className="block text-sm font-medium text-gray-700">Driver License Number</label>
-              <input
-                type="text"
-                id="driverLicenceNo"
-                value={newDriver.driverLicenceNo}
-                onChange={(e) => handleInputChange(e, 'driverLicenceNo', 8, '^[A-Za-z0-9]*$')}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none"
-                maxLength={8}
-              />
-            </div>
-          </div>
-          {/* Error Message */}
-          {message.text && (
-            <div className={`mt-4 text-sm font-semibold ${message.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>
-              {message.text}
-            </div>
-          )}
-          <div className="mt-6 flex justify-end">
-            <button type="button" className="mr-4 px-4 py-2 bg-gray-300 rounded-md" onClick={handleCancelEdit}>
-              Cancel
-            </button>
-            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-200">
-              {editingDriver ? 'Update Driver' : 'Add Driver'}
-            </button>
-          </div>
-        </form>
+<div className="border rounded-lg p-6 bg-white shadow-lg transition duration-300 ease-in-out hover:shadow-xl">
+  <h2 className="text-2xl font-semibold mb-4 text-gray-800">{editingDriver ? 'Edit Driver' : 'Add New Driver'}</h2>
+  <form onSubmit={handleCreateOrUpdate}>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      {/* NIC */}
+      <div>
+        <label htmlFor="nic" className="block text-sm font-medium text-gray-700">NIC</label>
+        <input
+          type="text"
+          id="nic"
+          value={newDriver.nic}
+          onChange={(e) => handleInputChange(e, 'nic', 12, '^[0-9vV]*$')}
+          className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+          maxLength={12}
+          required
+        />
       </div>
+      {/* Name */}
+      <div>
+        <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+        <input
+          type="text"
+          id="name"
+          value={newDriver.name}
+          onChange={(e) => handleInputChange(e, 'name', 20, '^[A-Za-z\\s]*$')}
+          className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+          required
+        />
+      </div>
+      {/* Date of Birth */}
+      <div>
+        <label htmlFor="dob" className="block text-sm font-medium text-gray-700">Date of Birth</label>
+        <input
+          type="date"
+          id="dob"
+          value={newDriver.birthday}
+          min={minDate}
+          max={maxDate}
+          onChange={(e) => setNewDriver({ ...newDriver, birthday: e.target.value })}
+          className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+          required
+        />
+      </div>
+      {/* Telephone Number */}
+      <div>
+        <label htmlFor="telephoneNo" className="block text-sm font-medium text-gray-700">Telephone Number</label>
+        <input
+          type="text"
+          id="telephoneNo"
+          value={newDriver.telephoneNo}
+          onChange={(e) => handleInputChange(e, 'telephoneNo', 10, '^[0-9]*$')}
+          className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+          maxLength={10}
+          required
+        />
+      </div>
+      {/* Vehicle Type */}
+      <div>
+        <label htmlFor="vehicleType" className="block text-sm font-medium text-gray-700">Vehicle Type</label>
+        <input
+          type="text"
+          id="vehicleType"
+          value={newDriver.vehicleType}
+          onChange={(e) => handleInputChange(e, 'vehicleType', 20)}
+          className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+        />
+      </div>
+      {/* Vehicle Registration Number */}
+      <div>
+        <label htmlFor="vehicleRegNo" className="block text-sm font-medium text-gray-700">Vehicle Registration Number</label>
+        <input
+          type="text"
+          id="vehicleRegNo"
+          value={newDriver.vehicleRegNo}
+          onChange={(e) => handleInputChange(e, 'vehicleRegNo', 10)}
+          className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+        />
+      </div>
+      {/* Driver License Number */}
+      <div>
+        <label htmlFor="driverLicenceNo" className="block text-sm font-medium text-gray-700">Driver License Number</label>
+        <input
+          type="text"
+          id="driverLicenceNo"
+          value={newDriver.driverLicenceNo}
+          onChange={(e) => handleInputChange(e, 'driverLicenceNo', 8, '^[A-Za-z0-9]*$')}
+          className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+          maxLength={8}
+        />
+      </div>
+    </div>
+    {/* Error Message */}
+    {message.text && (
+      <div className={`mt-4 text-sm font-semibold ${message.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>
+        {message.text}
+      </div>
+    )}
+    <div className="mt-6 flex justify-end">
+      <button type="button" className="mr-4 px-4 py-2 bg-gray-300 rounded-md transition duration-200 hover:bg-gray-400" onClick={handleCancelEdit}>
+        Cancel
+      </button>
+      <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-200 shadow-md">
+        {editingDriver ? 'Update Driver' : 'Add Driver'}
+      </button>
+    </div>
+  </form>
+</div>
+
 
       {/* Driver List Section */}
-      <div className="mt-8">
-        <h2 className="text-2xl font-semibold mb-4">Driver List</h2>
-        <div className="mb-4">
-          <input
-            type="text"
-            placeholder="Search by name or NIC..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none"
-          />
-        </div>
-        <table className="min-w-full bg-white border border-gray-300">
-          <thead>
-            <tr>
-              <th className="border px-4 py-2">NIC</th>
-              <th className="border px-4 py-2">Name</th>
-              <th className="border px-4 py-2">DOB</th>
-              <th className="border px-4 py-2">Telephone</th>
-              <th className="border px-4 py-2">Vehicle Type</th>
-              <th className="border px-4 py-2">Vehicle Reg No</th>
-              <th className="border px-4 py-2">Driver License No</th>
-              <th className="border px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredDrivers && filteredDrivers.length > 0 ? (
-              filteredDrivers.map(driver => (
-                <tr key={driver._id}>
-                  <td className="border px-4 py-2">{driver.nic}</td>
-                  <td className="border px-4 py-2">{driver.name}</td>
-                  <td className="border px-4 py-2">{driver.birthday.split('T')[0]}</td>
-                  <td className="border px-4 py-2">{driver.telephoneNo}</td>
-                  <td className="border px-4 py-2">{driver.vehicleType}</td>
-                  <td className="border px-4 py-2">{driver.vehicleRegNo}</td>
-                  <td className="border px-4 py-2">{driver.driverLicenceNo}</td>
-                  <td className="border px-4 py-2">
-                    <button onClick={() => handleEdit(driver)} className="text-blue-600 hover:underline">
-                      <FaEdit />
-                    </button>
-                    <button onClick={() => handleDelete(driver._id)} className="text-red-600 hover:underline ml-2">
-                      <FaTrash />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="8" className="border text-center px-4 py-2">No drivers found.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+<div className="mt-8">
+  <h2 className="text-2xl font-semibold mb-4 text-gray-800">Driver List</h2>
+  <div className="mb-4">
+    <input
+      type="text"
+      placeholder="Search by name or NIC..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+    />
+  </div>
+  <table className="min-w-full bg-white border border-gray-300 shadow-md">
+    <thead>
+      <tr className="bg-gray-200">
+        <th className="border px-4 py-2 text-left text-gray-600 font-medium">NIC</th>
+        <th className="border px-4 py-2 text-left text-gray-600 font-medium">Name</th>
+        <th className="border px-4 py-2 text-left text-gray-600 font-medium">DOB</th>
+        <th className="border px-4 py-2 text-left text-gray-600 font-medium">Telephone</th>
+        <th className="border px-4 py-2 text-left text-gray-600 font-medium">Vehicle Type</th>
+        <th className="border px-4 py-2 text-left text-gray-600 font-medium">Vehicle Reg No</th>
+        <th className="border px-4 py-2 text-left text-gray-600 font-medium">Driver License No</th>
+        <th className="border px-4 py-2 text-left text-gray-600 font-medium">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {filteredDrivers && filteredDrivers.length > 0 ? (
+        filteredDrivers.map(driver => (
+          <tr key={driver._id} className="hover:bg-gray-100 transition duration-200">
+            <td className="border px-4 py-2">{driver.nic}</td>
+            <td className="border px-4 py-2">{driver.name}</td>
+            <td className="border px-4 py-2">{driver.birthday.split('T')[0]}</td>
+            <td className="border px-4 py-2">{driver.telephoneNo}</td>
+            <td className="border px-4 py-2">{driver.vehicleType}</td>
+            <td className="border px-4 py-2">{driver.vehicleRegNo}</td>
+            <td className="border px-4 py-2">{driver.driverLicenceNo}</td>
+            <td className="border px-4 py-2">
+              <button onClick={() => handleEdit(driver)} className="text-blue-600 hover:underline">
+                <FaEdit />
+              </button>
+              <button onClick={() => handleDelete(driver._id)} className="text-red-600 hover:underline ml-2">
+                <FaTrash />
+              </button>
+            </td>
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <td colSpan="8" className="border px-4 py-2 text-center text-gray-500">No drivers found.</td>
+        </tr>
+      )}
+    </tbody>
+  </table>
         <div className="mt-4">
           <button onClick={downloadPDF} className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
             Download PDF
