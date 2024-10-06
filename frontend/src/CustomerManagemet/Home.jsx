@@ -46,10 +46,21 @@ export default function Home() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
+      {/* New Cart Button */}
+      <div className="flex justify-end mr-20 mt-4">
+          <button
+            onClick={() => window.location.href = '/cart'}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500">
+            Go to Cart
+          </button>
+        </div>
+
       <main className="container mx-auto p-4">
         <div className="text-center mt-8">
           <h1 className="text-5xl font-bold">NEW ARRIVAL!</h1>
         </div>
+
+        
 
         {/* Carousel Section */}
         <section className="mt-12">
