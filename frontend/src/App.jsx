@@ -86,16 +86,12 @@ import Logsout from "./ReviewsInquiry/Logout";
 import SettingsDashboard from "./ReviewsInquiry/Settings";
 
 //Employee Management
-import Employee from './EmployeeManagement/Employee';
-import EmployeeSignIn from './EmployeeManagement/EmployeeSignIn';
-import EmployeeSignUp from './EmployeeManagement/EmployeeSignUp';
-import EmployeeAbout from './EmployeeManagement/EmployeeAbout';
-import EmployeeProfile from './EmployeeManagement/EmployeeProfile';
-import AddEmployee from "./EmployeeManagement/AddEmployee";
+
 
 function App() {
 
   const currentUser = {}; // Your logic to get the current user
+  const url = "http://localhost:4000"; // Ensure your backend is running on this URL
 
   return (
     <BrowserRouter>
@@ -198,11 +194,7 @@ function App() {
 
         {/* Employee Management Routes */}
         <Route path="employee" element={<Employee />}>
-          <Route path="employeeSignIn" element={<EmployeeSignIn />} />
-          <Route path="employeeSignUp" element={<EmployeeSignUp />} />
-          <Route path="employeeAbout" element={<EmployeeAbout />} />
-          <Route path="employeeProfile" element={<EmployeeProfile />} />
-          <Route path="addEmployee" element={<AddEmployee />} />
+          
         </Route>
 
         {/* Edit Review Route */}

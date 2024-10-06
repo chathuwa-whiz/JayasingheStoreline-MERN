@@ -15,7 +15,6 @@ import paymentRoutes from './routes/paymentRoutes.js';
 import deliveryRoutes from './routes/DeliveryRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import orderRoutes from './routes/OrderRoutes.js';
-import payhereRoutes from './routes/payhere.js'; // Import PayHere route
 import adminRoutes from './routes/AdminRoute.js';
 
 import driverRoutes from './routes/DriverRoutes.js'; // Import driver routes
@@ -25,6 +24,7 @@ import supplierRoutes from './routes/SupplierRoutes.js';
 import supplierUploadRoutes from './routes/SupplierUploadRoutes.js';
 import payhereRoutes from './routes/payhere.js'; // Import PayHere route
 import addEmployeeRouter from './routes/addEmployeeRoute.js';
+import jobPostingRouter from './routes/jobPostingRoute.js';
 
 // Load the .env file
 dotenv.config();
@@ -69,8 +69,10 @@ app.use("/api/supplier", supplierRoutes);
 app.use("/api/drivers", driverRoutes); // Use driver routes
 app.use("/api/payhere", payhereRoutes); // Use PayHere route
 app.use("/api/employee",employeeRouter);
+app.use("/api/jobposting", jobPostingRouter);
 app.use("/api/authEmployee",authEmployeeRouter);
 app.use("/api/addEmployee",addEmployeeRouter);
+app.use("/images", express.static('uploads/employee'));
 
 // Route for file upload
 app.post('/api/reviewRatings/upload', upload.single('file'), (req, res) => {

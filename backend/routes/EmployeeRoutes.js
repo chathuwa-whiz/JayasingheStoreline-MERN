@@ -1,8 +1,23 @@
-import express from "express";
-import { test } from "../controllers/EmployeeController.js";
+import express from 'express';
+import { addEmployee, listEmployee, removeEmployee, updateEmployee } from '../controllers/EmployeeController.js';
+import multer from "multer"
 
-const router = express.Router();
+const employeeRouter = express.Router();
 
-router.get('/test',test);
+// Image storage
+const storage = multer.diskStorage({
+    destination: "uploads/employee",
+    filename: (req, file, cb) => {
+        return cb(null, `${Date.now()}${file.originalname}`);
+    }
+});
 
-export default router;
+const upload = multer({ storage: storage });
+
+// employeeRouter.post("/add", upload.single("image"), addEmployee);
+employeeRouter.post("/add", addEmployee);
+employeeRouter.get("/list", listEmployee);
+employeeRouter.delete("/remove", removeEmployee);
+employeeRouter.put("/update", updateEmployee); // New route for updating employees
+
+export default employeeRouter;

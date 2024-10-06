@@ -1,22 +1,15 @@
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
 const employeeSchema = new mongoose.Schema({
-    username:{
-        type:String,
-        required:true,
-        unique:true,
-    },
-    email:{
-        type:String,
-        required:true,
-        unique:true,
-    },
-    password:{
-        type:String,
-        required:true,
-    },
-},{timestamps:true});
+    name: {type:String,required:true},
+    description:{type:String,required:true},
+    basicSalary:{type:Number,required:true},
+    // image:{type:String,required:true},
+    category:{type:String,required:true},
+    dob:{type:String,required:true},
+    nic:{type:String,required:true}
+})
 
-const Employee = mongoose.model('Employee',employeeSchema);
+const employeeModel = mongoose.models.employee || mongoose.model("employee",employeeSchema)
 
-export default Employee;
+export default employeeModel
