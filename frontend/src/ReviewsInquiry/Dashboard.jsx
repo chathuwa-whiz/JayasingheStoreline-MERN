@@ -17,7 +17,7 @@ import Sidebar from './SideNavbar';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export default function Dashboard() {
+export default function DashboardDashboard() {
   const { data: products, isLoading: productsLoading, isError: productsError } = useAllProductsQuery();
   
   if (productsLoading) return <div>Loading...</div>;
