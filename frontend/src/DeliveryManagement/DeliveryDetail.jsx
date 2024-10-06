@@ -5,7 +5,6 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logo from '../asset/logo.png';
 
-
 export default function DeliveryDetail({ onEditDelivery }) {
   const { data: deliveries, error: deliveriesError, isLoading } = useGetDeliveriesQuery();
   const [deleteDelivery] = useDeleteDeliveryMutation();
@@ -17,16 +16,10 @@ export default function DeliveryDetail({ onEditDelivery }) {
   const companyTelephone = '+94 11 234 5678';
   const companyAddress = '123 Main Street, Colombo, Sri Lanka';
 
-   // Get current date and time
-   const currentDate = new Date();
-   const dateString = currentDate.toLocaleDateString(); // Get current date
-   const timeString = currentDate.toLocaleTimeString(); // Get current time
-
-   // Add issued time before the date
-  //  doc.text(`Issued at: ${timeString} on ${dateString}`, 50, 40);
-   
-  //  doc.setFontSize(18);
-  //  doc.text('Drivers List', 50, 50);
+  // Get current date and time
+  const currentDate = new Date();
+  const dateString = currentDate.toLocaleDateString();
+  const timeString = currentDate.toLocaleTimeString();
 
   const priceFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -65,15 +58,12 @@ export default function DeliveryDetail({ onEditDelivery }) {
 
   const getButtonClass = (currentStatus, buttonStatus) => {
     return currentStatus === buttonStatus
-      ? `p-2 text-black rounded-lg`
+      ? `p-2 bg-gray-200 text-gray-800 rounded-lg cursor-not-allowed`
       : `p-2 text-${buttonStatus === 'Pending' ? 'yellow' : buttonStatus === 'Delayed' ? 'blue' : 'green'}-500 hover:bg-${buttonStatus === 'Pending' ? 'yellow' : buttonStatus === 'Delayed' ? 'blue' : 'green'}-100 rounded-lg transition-colors duration-300`;
   };
 
   const downloadPDF = async () => {
-    // Create a jsPDF instance with landscape orientation
     const doc = new jsPDF('l', 'mm', 'a4');
-
-    // Add logo to the top left
     const img = new Image();
     img.src = logo;
     await new Promise(resolve => {
@@ -94,24 +84,22 @@ export default function DeliveryDetail({ onEditDelivery }) {
     doc.text(`Issued at: ${timeString} on ${dateString}`, 201, 36);
     doc.setFontSize(18);
     
-  
     // Add title below the company name
     doc.setFontSize(18);
     doc.text('Delivery Details', 14, 50);
   
     // Prepare table data
-const tableData = deliveries.map(delivery => [
-  delivery._id,
-  JSON.parse(delivery.deliveryItem).map(item => `${item.name} x ${item.qty}`).join(', '),
-  delivery.firstName,
-  delivery.telephoneNo,
-  delivery.createdAt ? new Date(delivery.createdAt).toLocaleDateString() : 'Date not available',
-  priceFormatter.format(delivery.itemsPrice),
-  priceFormatter.format(delivery.deliveryPrice),
-  priceFormatter.format(delivery.totalPrice),
-  delivery.deliveryStatus || 'Pending'
-]);
-
+    const tableData = deliveries.map(delivery => [
+      delivery._id,
+      JSON.parse(delivery.deliveryItem).map(item => `${item.name} x ${item.qty}`).join(', '),
+      delivery.firstName,
+      delivery.telephoneNo,
+      delivery.createdAt ? new Date(delivery.createdAt).toLocaleDateString() : 'Date not available',
+      priceFormatter.format(delivery.itemsPrice),
+      priceFormatter.format(delivery.deliveryPrice),
+      priceFormatter.format(delivery.totalPrice),
+      delivery.deliveryStatus || 'Pending'
+    ]);
   
     // Generate the table
     autoTable(doc, {
@@ -133,8 +121,6 @@ const tableData = deliveries.map(delivery => [
     delivery._id.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  console.log("Filtered Deliveries", filteredDeliveries);
-
   return (
     <div className="shadow-lg rounded-lg p-6 bg-gray-100 h-screen overflow-auto">
       <h1 className="text-2xl font-semibold mb-6 text-gray-800">Deliveries</h1>
@@ -154,60 +140,59 @@ const tableData = deliveries.map(delivery => [
         Download PDF
       </button>
 
-      <table className="w-full bg-white shadow-lg rounded-lg border border-gray-300">
-  <thead className="bg-gray-200 text-gray-700">
-    <tr>
-      <th className="border p-3 text-left">Delivery No</th>
-      <th className="border p-3 text-left">Delivery Item</th>
-      <th className="border p-3 text-left">Name</th>
-      <th className="border p-3 text-left">Contact No</th>
-      <th className="border p-3 text-left">Delivery Address</th> {/* New column for delivery address */}
-      <th className="border p-3 text-left">Order Date</th> {/* New column for order date */}
-      <th className="border p-3 text-left">Items Price</th>
-      <th className="border p-3 text-left">Delivery Price</th>
-      <th className="border p-3 text-left">Total Price</th>
-      <th className="border p-3 text-left">Status</th>
-      <th className="border p-3 text-left">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {filteredDeliveries.map((delivery) => (
-      <tr key={delivery._id} className={`border-b ${getRowClass(delivery.deliveryStatus)} hover:bg-orange-100 transition-colors duration-300`}>
-        <td className="border p-3">{delivery._id}</td>
-        <td className="border p-3">
-          {JSON.parse(delivery.deliveryItem).map((item) => (
-            <div key={item._id}>
-              <p>{item.name} x {item.qty}</p>
-            </div>
+      <table className="min-w-full bg-white shadow-md rounded-lg border border-gray-300">
+        <thead className="bg-gray-200 text-gray-700">
+          <tr>
+            <th className="border p-3 text-left">Delivery No</th>
+            <th className="border p-3 text-left">Delivery Item</th>
+            <th className="border p-3 text-left">Name</th>
+            <th className="border p-3 text-left">Contact No</th>
+            <th className="border p-3 text-left">Delivery Address</th>
+            <th className="border p-3 text-left">Order Date</th>
+            <th className="border p-3 text-left">Items Price</th>
+            <th className="border p-3 text-left">Delivery Price</th>
+            <th className="border p-3 text-left">Total Price</th>
+            <th className="border p-3 text-left">Status</th>
+            <th className="border p-3 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredDeliveries.map((delivery) => (
+            <tr key={delivery._id} className={`border-b ${getRowClass(delivery.deliveryStatus)} hover:bg-orange-100 transition-colors duration-300`}>
+              <td className="border p-3">{delivery._id}</td>
+              <td className="border p-3">
+                {JSON.parse(delivery.deliveryItem).map((item) => (
+                  <div key={item._id}>
+                    <p>{item.name} x {item.qty}</p>
+                  </div>
+                ))}
+              </td>
+              <td className="border p-3">{delivery.firstName}</td>
+              <td className="border p-3">{delivery.telephoneNo}</td>
+              <td className="border p-3">{`${delivery.address}, ${delivery.city}, ${delivery.province}, ${delivery.postalCode}`}</td>
+              <td className="border p-3">{delivery.createdAt ? new Date(delivery.createdAt).toLocaleDateString() : 'Date not available'}</td>
+              <td className="border p-3">{priceFormatter.format(delivery.itemsPrice)}</td>
+              <td className="border p-3">{priceFormatter.format(delivery.deliveryPrice)}</td>
+              <td className="border p-3">{priceFormatter.format(delivery.totalPrice)}</td>
+              <td className="border p-3">{delivery.deliveryStatus || 'Pending'}</td>
+              <td className="border p-3 flex space-x-2">
+                <button className={getButtonClass(delivery.deliveryStatus, 'Pending')} onClick={() => handleStatusChange(delivery._id, 'Pending')}>
+                  Pending
+                </button>
+                <button className={getButtonClass(delivery.deliveryStatus, 'Delayed')} onClick={() => handleStatusChange(delivery._id, 'Delayed')}>
+                  Delayed
+                </button>
+                <button className={getButtonClass(delivery.deliveryStatus, 'Completed')} onClick={() => handleStatusChange(delivery._id, 'Completed')}>
+                  Completed
+                </button>
+                <button className="p-2 text-red-500 hover:bg-red-100 rounded-lg transition-colors duration-300" onClick={() => handleDelete(delivery._id)}>
+                  <FaTrash />
+                </button>
+              </td>
+            </tr>
           ))}
-        </td>
-        <td className="border p-3">{delivery.firstName}</td>
-        <td className="border p-3">{delivery.telephoneNo}</td>
-        <td className="border p-3">{`${delivery.address}, ${delivery.city}, ${delivery.province}, ${delivery.postalCode}`}</td> {/* Show delivery address */}
-        <td className="border p-3">{delivery.createdAt ? new Date(delivery.createdAt).toLocaleDateString() : 'Date not available'}</td>{/* Format order date */}
-        <td className="border p-3">{priceFormatter.format(delivery.itemsPrice)}</td>
-        <td className="border p-3">{priceFormatter.format(delivery.deliveryPrice)}</td>
-        <td className="border p-3">{priceFormatter.format(delivery.totalPrice)}</td>
-        <td className="border p-3">{delivery.deliveryStatus || 'Pending'}</td>
-        <td className="border p-3 flex space-x-2">
-          <button className={getButtonClass(delivery.deliveryStatus, 'Pending')} onClick={() => handleStatusChange(delivery._id, 'Pending')}>
-            Pending
-          </button>
-          <button className={getButtonClass(delivery.deliveryStatus, 'Delayed')} onClick={() => handleStatusChange(delivery._id, 'Delayed')}>
-            Delayed
-          </button>
-          <button className={getButtonClass(delivery.deliveryStatus, 'Completed')} onClick={() => handleStatusChange(delivery._id, 'Completed')}>
-            Completed
-          </button>
-          <button className="p-2 text-red-500 hover:bg-red-100 rounded-lg transition-colors duration-300" onClick={() => handleDelete(delivery._id)}>
-            <FaTrash />
-          </button>
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
-
+        </tbody>
+      </table>
     </div>
   );
 }

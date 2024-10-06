@@ -51,6 +51,8 @@ import Home from "./CustomerManagemet/Home";
 import Customer from "./CustomerManagemet/Customer";
 import Profile from "./CustomerManagemet/profile";
 import CustomerDashboard from "./CustomerManagemet/CustomerDashboard";
+import ForgotPassword from "./CustomerManagemet/ForgotPassword";
+import ResetPassword from "./CustomerManagemet/ResetPassword";
 
 //AdminLogin
 import AdminLoginPage from "./AdminLogin/AdminLogin";
@@ -114,6 +116,8 @@ function App() {
           <Route path="register" element={<Register />} />
           <Route path="customerlogin" element={<CustomerLogin />} />
           <Route path="adminlogin" element={<AdminLoginPage />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="reset-password/:token" element={<ResetPassword />} />
 
           {/* order manager part */}
           <Route path="productlist" element={<ProductsList />} />
