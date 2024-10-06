@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from "../redux/features/cart/cartSlice";
 import toast from "react-hot-toast";
 import ReviewForm from '../ReviewsInquiry/ReviewForm';
+import ChatBot from '../ChatBot/ChatBot'; // Correct path to import ChatBot
 
 export default function SingleProductView() {
     const { _id: productId } = useParams();
@@ -341,7 +342,7 @@ export default function SingleProductView() {
         <p className="mt-4 text-gray-500">No inquiries yet.</p>
     )}
 </div>
-          
+<ChatBot /> {/* ChatBot component is embedded here */}
         </div>
     );
 }
