@@ -41,24 +41,30 @@ const DriverVehicleDetails = () => {
 
   // Helper function to auto-insert hyphen in vehicle registration number
   const formatVehicleRegNo = (value) => {
-    // Remove any existing hyphens
-    let sanitizedValue = value.replace('-', '');
-    if (/^\d{0,6}$/.test(sanitizedValue)) {
-      // Format 12-1234
+    // Remove any existing hyphens and uppercase the input
+    let sanitizedValue = value.replace('-', '').toUpperCase();
+    
+    if (/^[0-9]\d{0,6}$/.test(sanitizedValue)) {
+      // Format 12-3456
       if (sanitizedValue.length > 2) {
-        return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2);
+        return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2, 6);
       }
-    } else if (/^[A-Za-z]{0,7}$/.test(sanitizedValue)) {
-      // Format AB-CDEF or ABC-DEFG
+    } else if (/^[A-Z]{2}\d[0-9]{0,4}$/.test(sanitizedValue)) {
+      // Format AB-CDEF
       if (sanitizedValue.length > 2) {
-        return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2);
+        return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2, 6);
+      }
+    } else if (/^[A-Z]{3}\d{0,4}$/.test(sanitizedValue)) {
+      // Format ABC-DEFG
+      if (sanitizedValue.length > 3) {
+        return sanitizedValue.slice(0, 3) + '-' + sanitizedValue.slice(3, 7);
       }
     }
-    return value;
+    return sanitizedValue;
   };
 
   // Handle input change with auto-formatting for vehicle registration number
-  const handleInputChange = (e, field, maxLength, regex = null) => {
+  const handleInputChange = (e, field) => {
     let value = e.target.value;
     
     if (field === 'nic') {
@@ -78,11 +84,8 @@ const DriverVehicleDetails = () => {
       }
     } else if (field === 'vehicleRegNo') {
       value = formatVehicleRegNo(value);
-    }
-  
-    if (regex && field !== 'nic') {
-      const regexTest = new RegExp(regex);
-      if (!regexTest.test(value)) return;
+      // Ensure the total length doesn't exceed 8 characters (for ABC-DEFG format)
+      value = value.slice(0, 8);
     }
   
     setNewDriver({ ...newDriver, [field]: value });
@@ -147,9 +150,9 @@ const DriverVehicleDetails = () => {
     }
 
     // Vehicle Registration Number Validation
-    const vehicleRegNoRegex1 = /^\d{2}-\d{1,4}$/;      // Format: 12-1234
-    const vehicleRegNoRegex2 = /^[A-Za-z]{2}-[A-Za-z]{1,4}$/;  // Format: AB-CDEF
-    const vehicleRegNoRegex3 = /^[A-Za-z]{3}-[A-Za-z]{1,4}$/;  // Format: ABC-DEFG
+    const vehicleRegNoRegex1 = /^\d{2}-\d{4}$/;      // Format: 12-3456
+    const vehicleRegNoRegex2 = /^[A-Z]{2}-[A-Z]{4}$/;  // Format: AB-CDEF
+    const vehicleRegNoRegex3 = /^[A-Z]{3}-[A-Z]{4}$/;  // Format: ABC-DEFG
     if (
       !vehicleRegNoRegex1.test(vehicleRegNo) &&
       !vehicleRegNoRegex2.test(vehicleRegNo) &&
@@ -384,8 +387,9 @@ const DriverVehicleDetails = () => {
                 type="text"
                 id="vehicleRegNo"
                 value={newDriver.vehicleRegNo}
-                onChange={(e) => handleInputChange(e, 'vehicleRegNo', 8, '^[A-Za-z0-9\\-]*$')}
+                onChange={(e) => handleInputChange(e, 'vehicleRegNo')}
                 className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+                maxLength={8}
                 required
               />
             </div>
