@@ -60,15 +60,31 @@ const DriverVehicleDetails = () => {
   // Handle input change with auto-formatting for vehicle registration number
   const handleInputChange = (e, field, maxLength, regex = null) => {
     let value = e.target.value;
-    if (field === 'vehicleRegNo') {
+    
+    if (field === 'nic') {
+      const birthYear = new Date(newDriver.birthday).getFullYear();
+      if (birthYear < 2001) {
+        // Remove any non-digit characters
+        value = value.replace(/\D/g, '');
+        // Limit to 9 digits
+        value = value.slice(0, 9);
+        // Automatically add 'V' if 9 digits are entered
+        if (value.length === 9) {
+          value += 'V';
+        }
+      } else {
+        // For birth years 2001 and later, allow only digits up to 12
+        value = value.replace(/\D/g, '').slice(0, 12);
+      }
+    } else if (field === 'vehicleRegNo') {
       value = formatVehicleRegNo(value);
     }
-
-    if (regex) {
+  
+    if (regex && field !== 'nic') {
       const regexTest = new RegExp(regex);
       if (!regexTest.test(value)) return;
     }
-    if (value.length > maxLength) return;
+  
     setNewDriver({ ...newDriver, [field]: value });
   };
 
@@ -91,26 +107,29 @@ const DriverVehicleDetails = () => {
 
     // NIC Validation
     const nicRegexNew = /^\d{12}$/;
-    const nicRegexOld = /^\d{9}[vV]$/;
-    if (nicRegexNew.test(nic)) {
-      // New NIC validation
-      const dobYear = birthday.split('-')[0];
+    const nicRegexOld = /^\d{9}V$/;
+
+    if (birthYear >= 2001) {
+      if (!nicRegexNew.test(nic)) {
+        setMessage({ type: 'error', text: 'NIC must be 12 digits for birth years 2001 and after' });
+        return false;
+      }
       const nicYear = nic.slice(0, 4);
-      if (nicYear !== dobYear) {
+      if (nicYear !== birthYear.toString()) {
         setMessage({ type: 'error', text: 'First four digits of NIC must match birth year' });
         return false;
       }
-    } else if (nicRegexOld.test(nic)) {
-      // Old NIC validation
-      const dobYear = birthday.slice(2, 4);
-      const nicYear = nic.slice(0, 2);
-      if (nicYear !== dobYear) {
-        setMessage({ type: 'error', text: 'First two digits of NIC must match birth year' });
+    } else {
+      if (!nicRegexOld.test(nic)) {
+        setMessage({ type: 'error', text: 'NIC must be 9 digits followed by V for birth years before 2001' });
         return false;
       }
-    } else {
-      setMessage({ type: 'error', text: 'Invalid NIC format' });
-      return false;
+      const nicYear = nic.slice(0, 2);
+      const lastTwoBirthYear = birthYear.toString().slice(-2);
+      if (nicYear !== lastTwoBirthYear) {
+        setMessage({ type: 'error', text: 'First two digits of NIC must match last two digits of birth year' });
+        return false;
+      }
     }
 
     // Telephone Number Validation
@@ -327,9 +346,9 @@ const DriverVehicleDetails = () => {
                 type="text"
                 id="nic"
                 value={newDriver.nic}
-                onChange={(e) => handleInputChange(e, 'nic', 12, '^[0-9vV]*$')}
+                onChange={(e) => handleInputChange(e, 'nic', new Date(newDriver.birthday).getFullYear() >= 2001 ? 12 : 10, '^[0-9vV]*$')}
                 className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
-                maxLength={12}
+                maxLength={new Date(newDriver.birthday).getFullYear() >= 2001 ? 12 : 10}
                 required
               />
             </div>
@@ -375,10 +394,11 @@ const DriverVehicleDetails = () => {
               <label htmlFor="driverLicenceNo" className="block text-sm font-medium text-gray-700">Driver License Number</label>
               <input
                 type="text"
-                id="driverLicenceNo"
+                id="nic"
                 value={newDriver.driverLicenceNo}
-                onChange={(e) => handleInputChange(e, 'driverLicenceNo', 15, '^[A-Za-z0-9]*$')}
+                onChange={(e) => handleInputChange(e, 'nic')}
                 className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+                maxLength={new Date(newDriver.birthday).getFullYear() >= 2001 ? 12 : 10}
                 required
               />
             </div>
