@@ -60,7 +60,7 @@ const Sidebar = () => {
               )}
             </li>
 
-            <li className="mb-4">
+            {/* <li className="mb-4">
               <NavLink
                 to="notification"
                 className="flex items-center text-black hover:bg-orange-600 hover:text-white rounded-lg px-4 py-3 transition-colors duration-300"
@@ -68,8 +68,8 @@ const Sidebar = () => {
                 <FaBell className="h-6 w-6 mr-4" />
                 Notification
               </NavLink>
-            </li>
-
+            </li> */}
+            
             {/* <li className="mb-4">
               <NavLink
                 to="reports"
