@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useCreateSupplierMutation, useUploadSupplierImageMutation } from "../redux/api/supplierApiSlice";
 import toast from 'react-hot-toast';
-import { FaCloudUploadAlt } from 'react-icons/fa'; // Make sure to install react-icons
+import { FaCloudUploadAlt } from 'react-icons/fa';  // Make sure to install react-icons
 
 const areaCodes = {
   '011': 'Colombo', '031': 'Negombo', '038': 'Panadura', '055': 'Badulla',
