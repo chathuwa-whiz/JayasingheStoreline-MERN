@@ -9,7 +9,7 @@ export default function SupplierDetailsForm() {
   const [uploadSupplierImage] = useUploadSupplierImageMutation();
 
   const [supplierName, setSupplierName] = useState('');
-  const [NIC, setNIC] = useState('');
+  const [nicNumber, setNicNumber] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [Type, setType] = useState('');
   const [email, setEmail] = useState('');
@@ -19,9 +19,9 @@ export default function SupplierDetailsForm() {
   const [errors, setErrors] = useState({});
 
   // Validation functions
-  const validateNIC = (NIC) => {
+  const validateNIC = (nic) => {
     const nicPattern = /(^\d{9}[vV]$)|(^\d{12}$)/;
-    return nicPattern.test(NIC);
+    return nicPattern.test(nic);
   };
 
   const validateEmail = (email) => {
@@ -35,45 +35,39 @@ export default function SupplierDetailsForm() {
   };
 
   const validateName = (name) => {
-    const namePattern = /^[A-Za-z\s]{3,}$/; // Only allows letters and spaces
-    return namePattern.test(name);
+    return name.length >= 3; // Ensure name is at least 3 characters long
   };
 
   const validateForm = () => {
     const newErrors = {};
-
     if (!validateName(supplierName)) {
-      newErrors.supplierName = "Supplier name should be at least 3 characters long and contain only letters.";
-      toast.error("Supplier name should be valid (no numbers allowed).");
+      newErrors.supplierName = "Supplier name should be at least 3 characters long.";
     }
-    if (!validateNIC(NIC)) {
-      newErrors.NIC = "NIC must be either 9 digits followed by 'v/V' or 12 digits.";
-      toast.error("Invalid NIC. It must be 9 digits followed by 'v/V' or 12 digits.");
+    if (!validateNIC(nicNumber)) {
+      newErrors.nicNumber = "NIC must be either 9 digits followed by 'v/V' or 12 digits.";
     }
     if (!validatePhoneNumber(phoneNumber)) {
-      newErrors.phoneNumber = "Phone number must be 10 digits long.";
-      toast.error("Phone number must be exactly 10 digits.");
+      newErrors.phoneNumber = "Phone number must be exactly 10 digits.";
     }
     if (!validateEmail(email)) {
       newErrors.email = "Please enter a valid email address.";
-      toast.error("Invalid email format.");
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return Object.keys(newErrors).length === 0; // Return true if no errors
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
-      return; 
+      return; // Exit if the form is invalid
     }
 
     try {
       const supplierData = new FormData();
       supplierData.append("name", supplierName);
-      supplierData.append("nic", NIC);
+      supplierData.append("nic", nicNumber);
       supplierData.append("email", email);
       supplierData.append("gender", Gender);
       supplierData.append("phone", phoneNumber);
@@ -83,7 +77,7 @@ export default function SupplierDetailsForm() {
       const data = await createSupplier(supplierData);
       if (data.error) {
         console.log("error data : ", data);
-        toast.error("Supplier creation failed. Try again.");
+        toast.error("Supplier creation failed. Try Again.");
       } else {
         toast.success("Supplier created successfully");
         setTimeout(() => {
@@ -98,45 +92,38 @@ export default function SupplierDetailsForm() {
     }
   };
 
-  // Handle name input change with validation
-  const handleNameChange = (e) => {
-    const value = e.target.value;
-    if (/\d/.test(value)) {
-      toast.error("Supplier name cannot contain numbers.");
-      return; // Prevent updating the state if a number is entered
-    }
-    setSupplierName(value);
-  };
-
-  const handleNICChange = (e) => {
-    const value = e.target.value;
-    if (!/^\d*$/.test(value) && value.length !== 10 && value.length !== 12) {
-      toast.error("Invalid NIC. It must be 9 digits followed by 'v/V' or 12 digits.");
-      return;
-    }
-    setNIC(value);
-  };
-
-  const handlePhoneNumberChange = (e) => {
-    const value = e.target.value;
-    if (!/^\d*$/.test(value) || value.length > 10) {
-      toast.error("Phone number must be exactly 10 digits.");
-      return;
-    }
-    setPhoneNumber(value);
-  };
-
   const handleMediaChange = async (e) => {
     const formData = new FormData();
     formData.append("image", e.target.files[0]);
 
     try {
-        const res = await uploadSupplierImage(formData).unwrap();
-        toast.success(res.message);
-        setSupplierMedia(res.image);
-        setImageUrl(res.image);
+      const res = await uploadSupplierImage(formData).unwrap();
+      toast.success(res.message);
+      setSupplierMedia(res.image);
+      setImageUrl(res.image);
     } catch (error) {
-        toast.error(error?.data?.message || error.error);
+      toast.error(error?.data?.message || error.error);
+    }
+  };
+
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    setSupplierName(value);
+  };
+
+  const handleNICChange = (e) => {
+    const value = e.target.value;
+    if (value.length <= 12) { // Restrict input length to 12 characters
+      setNicNumber(value);
+    }
+  };
+
+  const handlePhoneNumberChange = (e) => {
+    const value = e.target.value;
+    if (/^\d{0,10}$/.test(value)) {
+      setPhoneNumber(value);
+    } else {
+      toast.error('Phone number must be numeric and no longer than 10 digits');
     }
   };
 
@@ -160,15 +147,21 @@ export default function SupplierDetailsForm() {
                 {errors.supplierName && <p className="text-red-500 text-sm">{errors.supplierName}</p>}
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2" htmlFor="SupplierID"> NIC</label>
+                <label className="block text-gray-700 mb-2" htmlFor="nicNumber">NIC Number</label>
                 <input
                   className="w-full p-2 border border-gray-300 rounded"
-                  id="SupplierID"
+                  id="nicNumber"
                   type="text"
-                  value={NIC}
+                  value={nicNumber}
+                  maxLength={12}
                   onChange={handleNICChange}
+                  onKeyDown={(e) => {
+                    if (!/^\d$|^v$|^V$/.test(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}  
                 />
-                {errors.NIC && <p className="text-red-500 text-sm">{errors.NIC}</p>}
+                {errors.nicNumber && <p className="text-red-500 text-sm">{errors.nicNumber}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 mb-2" htmlFor="phoneNumber">Phone Number</label>
@@ -211,11 +204,10 @@ export default function SupplierDetailsForm() {
                   onChange={(e) => setGender(e.target.value)}
                 >
                   <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
                 </select>
               </div>
-
               <div className="flex justify-between">
                 <button
                   className="bg-orange-500 text-white px-6 py-2 rounded font-medium"
@@ -239,15 +231,9 @@ export default function SupplierDetailsForm() {
                 className="hidden"
                 id="supplierMedia"
                 type="file"
-                name='image'
-                accept='image/*'
                 onChange={handleMediaChange}
               />
-              {imageUrl && (
-                  <div className="mt-4">
-                      <img src={imageUrl} alt="Supplier" className="max-h-40 object-contain mx-auto" />
-                  </div>
-              )}
+              {imageUrl && <img src={imageUrl} alt="Supplier" className="mt-4 w-full h-auto" />}
             </div>
           </div>
         </div>
