@@ -22,7 +22,7 @@ export default function Inventory() {
     <div className='flex'>
         <SideNavbar />
         <div className='flex-grow'>
-            {header}
+            {/* {header} */}
             <Outlet /> {/* This will render the child routes */}
         </div>
     </div>

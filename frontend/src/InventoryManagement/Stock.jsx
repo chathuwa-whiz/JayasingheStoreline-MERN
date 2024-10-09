@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaSearch } from "react-icons/fa";
 import { useAllProductsQuery } from '../redux/api/productApiSlice';
 
 export default function Stock() {
@@ -16,20 +16,30 @@ export default function Stock() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 10;
+  const [searchTerm, setSearchTerm] = useState('');
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Something went wrong</div>;
 
-  // Sort products by updatedAt in descending order (latest first)
-  const sortedProducts = products.slice().sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+  // Filter and sort products
+  const filteredAndSortedProducts = useMemo(() => {
+    return products
+      ? products
+          .filter(product => 
+            product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            product.sku.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+      : [];
+  }, [products, searchTerm]);
 
-  // Calculate the indices of the products to display
+  // Calculate total pages based on filtered products
+  const totalPages = Math.ceil(filteredAndSortedProducts.length / productsPerPage);
+
+  // Get current products for the page
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = sortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-
-  // Calculate total pages
-  const totalPages = Math.ceil(products.length / productsPerPage);
+  const currentProducts = filteredAndSortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -37,6 +47,20 @@ export default function Stock() {
 
   return (
     <div className="rounded-lg p-8">
+      {/* Search input */}
+      <div className="mb-4 flex items-center">
+        <input
+          type="text"
+          placeholder="Search by name or SKU"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="p-2 border rounded-l-md w-full"
+        />
+        <button className="bg-orange-500 text-white p-2 rounded-r-md">
+          <FaSearch />
+        </button>
+      </div>
+
       <table className="min-w-full overflow-y-auto min-h-full border rounded-lg bg-white">
         <thead className="bg-orange-500 text-white">
           <tr>
