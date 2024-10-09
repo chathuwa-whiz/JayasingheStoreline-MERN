@@ -111,39 +111,47 @@ export default function Orders() {
           </tr>
         </thead>
         <tbody>
-          {currentOrders.map((order, index) => (
-            <tr key={order._id} className="border-b border-gray-200">
-              <td className="py-2 px-4">{indexOfFirstOrder + index + 1}</td>
-              <td className="py-2 px-4">{order.orderId}</td>
-              <td className="py-2 px-4">
-                {JSON.parse(order.orderItems).map((item) => (
-                  <div key={item._id}>
-                    <p>{item.name} x {item.qty}</p>
-                  </div>
-                ))}
-              </td>
-              <td className="py-2 px-4">{priceFormatter.format(order.itemsPrice)}</td>
-              <td className="py-2 px-4">{priceFormatter.format(order.discount)}</td>
-              <td className="py-2 px-4">{priceFormatter.format(order.totalPrice)}</td>
-              <td className="py-2 px-4">{new Date(order.createdAt).toLocaleDateString()}</td>
-              <td className="px-4 py-2">
-                <span
-                  className={`inline-block px-2 py-1 text-sm font-semibold rounded-full ${
-                    order.status === 'Completed' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'
-                  }`}
-                >
-                  {order.status}
-                </span>
-              </td>
-              <td className="py-2 px-4">
-                <Link to={`/order/orderhistory/update/${order._id}`}>
-                  <button className="text-green-500 hover:text-green-700 mx-2">
-                    <FaPen />
-                  </button>
-                </Link>
+          {currentOrders.length > 0 ? (
+            currentOrders.map((order, index) => (
+              <tr key={order._id} className="border-b border-gray-200">
+                <td className="py-2 px-4">{indexOfFirstOrder + index + 1}</td>
+                <td className="py-2 px-4">{order.orderId}</td>
+                <td className="py-2 px-4">
+                  {JSON.parse(order.orderItems).map((item) => (
+                    <div key={item._id}>
+                      <p>{item.name} x {item.qty}</p>
+                    </div>
+                  ))}
+                </td>
+                <td className="py-2 px-4">{priceFormatter.format(order.itemsPrice)}</td>
+                <td className="py-2 px-4">{priceFormatter.format(order.discount)}</td>
+                <td className="py-2 px-4">{priceFormatter.format(order.totalPrice)}</td>
+                <td className="py-2 px-4">{new Date(order.createdAt).toLocaleDateString()}</td>
+                <td className="px-4 py-2">
+                  <span
+                    className={`inline-block px-2 py-1 text-sm font-semibold rounded-full ${
+                      order.status === 'Completed' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'
+                    }`}
+                  >
+                    {order.status}
+                  </span>
+                </td>
+                <td className="py-2 px-4">
+                  <Link to={`/order/orderhistory/update/${order._id}`}>
+                    <button className="text-green-500 hover:text-green-700 mx-2">
+                      <FaPen />
+                    </button>
+                  </Link>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="9" className="py-4 text-center text-gray-500">
+                No results found
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
 
