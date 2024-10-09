@@ -14,7 +14,7 @@ const CategoryForm = ({
           placeholder="Write category name"
           value={value}
           onKeyDown={(e) => {
-            if (!/^[a-zA-Z]+$/.test(e.key)) {
+            if (!/^[a-zA-Z ]+$/.test(e.key)) {
               e.preventDefault();
             }
           }}

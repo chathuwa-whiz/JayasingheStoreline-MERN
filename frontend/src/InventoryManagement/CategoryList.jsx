@@ -37,6 +37,10 @@ export default function CategoryList() {
       } else {
         setName("");
         toast.success(`${result.name} is created.`);
+        setTimeout(() => {
+          toast.dismiss();
+          window.location.reload();
+        });
       }
     } catch (error) {
       console.error(error);
@@ -67,6 +71,10 @@ export default function CategoryList() {
         setSelectedCategory(null);
         setUpdatingName("");
         setModalVisible(false);
+        setTimeout(() => {
+          toast.dismiss();
+          window.location.reload();
+        });
       }
     } catch (error) {
       console.error(error);
@@ -83,6 +91,10 @@ export default function CategoryList() {
         toast.success(`${result.name} is deleted.`);
         setSelectedCategory(null);
         setModalVisible(false);
+        setTimeout(() => {
+          toast.dismiss();
+          window.location.reload();
+        });
       }
     } catch (error) {
       console.error(error);

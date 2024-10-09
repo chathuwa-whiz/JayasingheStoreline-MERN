@@ -1,7 +1,19 @@
 import mongoose from 'mongoose';
 
 const deliverySchema = new mongoose.Schema({
-  deliveryItem: { type: String, required: true, default : "" },	
+  _id: {
+    type: String,
+    required: true,
+    default: function () {
+      const currentDate = new Date();
+      const year = currentDate.getFullYear().toString().slice(-2); // Get last two digits of the year
+      const month = ('0' + (currentDate.getMonth() + 1)).slice(-2); // Ensure two-digit month
+      const day = ('0' + currentDate.getDate()).slice(-2); // Ensure two-digit day
+      const randomNum = Math.floor(Math.random() * 100); // Random number between 0-99 for uniqueness
+      return `DEL${year}${month}${day}${randomNum}`; // Example: DEL24092645
+    },
+  },
+  deliveryItem: { type: String, required: true, default : "" },
   itemsPrice: { type: Number, required: true, default: 0 },
   deliveryPrice: { type: Number, required: true, default: 0 },
   totalPrice: { type: Number, required: true, default: 0 },
@@ -12,10 +24,8 @@ const deliverySchema = new mongoose.Schema({
   city: { type: String, required: true, default: "" },
   province: { type: String, required: true, default: "" },
   postalCode: { type: String, required: true, default: "" },
-  from: { type: String, required: true, default : "" },
-  to: { type: String, required: true, default : "" },
-  driver: { type: String, required: true, default : "" },
-  vehicleType: { type: String, required: true, default : "" },
+  deliveryStatus: { type: String, required: true, default: "" },
+  createdAt: { type: Date, required: true, default: Date.now },
 });
 
 const Delivery = mongoose.model('Delivery', deliverySchema);

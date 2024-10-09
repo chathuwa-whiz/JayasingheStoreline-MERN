@@ -4,34 +4,36 @@ import { FaPlus } from "react-icons/fa";
 import { useAllProductsQuery } from '../redux/api/productApiSlice';
 
 export default function Stock() {
+  // Fetch all products
+  const { data: products, isLoading, isError } = useAllProductsQuery();
+  console.log(products);
+  
+  // Format Prices
+  const priceFormatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'LKR',
+  });
 
-    // Fetch all products
-    const { data: products, isLoading, isError } = useAllProductsQuery();
-    console.log(products);
-    
-    // Format Prices
-    const priceFormatter = new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'LKR',
-    });
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 10;
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const productsPerPage = 10;
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Something went wrong</div>;
 
-    if (isLoading) return <div>Loading...</div>;
-    if (isError) return <div>Something went wrong</div>;
+  // Sort products by updatedAt in descending order (latest first)
+  const sortedProducts = products.slice().sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
 
-    // Calculate the indices of the products to display
-    const indexOfLastProduct = currentPage * productsPerPage;
-    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-    const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+  // Calculate the indices of the products to display
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = sortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
-    // Calculate total pages
-    const totalPages = Math.ceil(products.length / productsPerPage);
+  // Calculate total pages
+  const totalPages = Math.ceil(products.length / productsPerPage);
 
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-    };
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <div className="rounded-lg p-8">

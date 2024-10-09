@@ -299,7 +299,7 @@ export default function AddProducts() {
                 value={brand}
                 onKeyDown={(e) => {
                   // Restrict input to only alphabetic characters
-                  if (!/^[a-zA-Z]+$/.test(e.key)) {
+                  if (!/^[a-zA-Z ]+$/.test(e.key)) {
                     e.preventDefault();
                   }
                 }}

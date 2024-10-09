@@ -6,12 +6,14 @@ function Notification() {
   const [notifications, setNotifications] = useState([
     { id: 'NO1', deliveryId: 'D10', time: '12:45 PM', status: 'Delivered Successfully', type: 'success', date: '2024-08-24', driver: 'John Doe', additionalDetails: 'Package delivered to address XYZ on time.' },
     { id: 'NO2', deliveryId: 'D11', time: '01:00 PM', status: 'Delivery Failed', type: 'danger', date: '2024-08-25', driver: 'Jane Smith', additionalDetails: 'Package could not be delivered due to incorrect address.' },
-    { id: 'NO1', deliveryId: 'D10', time: '12:45 PM', status: 'Delivered Successfully', type: 'success', date: '2024-08-24', driver: 'John Doe', additionalDetails: 'Package delivered to address XYZ on time.' },
-    { id: 'NO2', deliveryId: 'D11', time: '01:00 PM', status: 'Delivery Failed', type: 'danger', date: '2024-08-25', driver: 'Jane Smith', additionalDetails: 'Package could not be delivered due to incorrect address.' },
-    { id: 'NO1', deliveryId: 'D10', time: '12:45 PM', status: 'Delivered Successfully', type: 'success', date: '2024-08-24', driver: 'John Doe', additionalDetails: 'Package delivered to address XYZ on time.' },
-    { id: 'NO2', deliveryId: 'D11', time: '01:00 PM', status: 'Delivery Failed', type: 'danger', date: '2024-08-25', driver: 'Jane Smith', additionalDetails: 'Package could not be delivered due to incorrect address.' },
-    
-    // Add more notifications as needed
+    { id: 'NO3', deliveryId: 'D12', time: '02:15 PM', status: 'Delivered Successfully', type: 'success', date: '2024-08-26', driver: 'Emily Johnson', additionalDetails: 'Package delivered to address ABC on time.' },
+    { id: 'NO4', deliveryId: 'D13', time: '03:30 PM', status: 'Delivery Failed', type: 'danger', date: '2024-08-27', driver: 'Michael Brown', additionalDetails: 'Recipient was unavailable at the delivery time.' },
+    { id: 'NO5', deliveryId: 'D14', time: '04:00 PM', status: 'Delivered Successfully', type: 'success', date: '2024-08-28', driver: 'Chris Lee', additionalDetails: 'Package delivered with signature required.' },
+    { id: 'NO6', deliveryId: 'D15', time: '05:45 PM', status: 'Delivery Failed', type: 'danger', date: '2024-08-29', driver: 'Sarah Wilson', additionalDetails: 'Delivery address not found.' },
+    { id: 'NO7', deliveryId: 'D16', time: '06:30 PM', status: 'Delivered Successfully', type: 'success', date: '2024-08-30', driver: 'David Green', additionalDetails: 'Package successfully delivered to front desk.' },
+    { id: 'NO8', deliveryId: 'D17', time: '07:15 PM', status: 'Delivery Failed', type: 'danger', date: '2024-08-31', driver: 'Anna Kim', additionalDetails: 'Failed due to weather conditions.' },
+    { id: 'NO9', deliveryId: 'D18', time: '08:00 AM', status: 'Delivered Successfully', type: 'success', date: '2024-09-01', driver: 'James Carter', additionalDetails: 'Delivered to mailbox as requested.' },
+    { id: 'NO10', deliveryId: 'D19', time: '09:30 AM', status: 'Delivery Failed', type: 'danger', date: '2024-09-02', driver: 'Laura Brown', additionalDetails: 'Insufficient address details provided.' },
   ]);
 
   const [filteredNotifications, setFilteredNotifications] = useState(notifications);

@@ -4,6 +4,18 @@ import { useCreateOrderMutation } from '../redux/api/orderApiSlice';
 import { useSelector } from 'react-redux';
 import { toast } from "react-hot-toast";
 
+const areaCodes = {
+  '011': 'Colombo', '031': 'Negombo', '038': 'Panadura', '055': 'Badulla',
+  '021': 'Jaffna', '032': 'Puttalam', '041': 'Matara', '057': 'Bandarawela',
+  '023': 'Mannar', '033': 'Gampaha', '045': 'Ratnapura', '063': 'Ampara',
+  '024': 'Vavuniya', '034': 'Kalutara', '047': 'Hambantota', '065': 'Batticaloa',
+  '025': 'Anuradhapura', '035': 'Kegalle', '051': 'Hatton', '066': 'Matale',
+  '026': 'Trincomalee', '036': 'Avissawella', '052': 'Nuwara Eliya', '067': 'Kalmunai',
+  '027': 'Polonnaruwa', '037': 'Kurunegala', '054': 'Nawalapitiya', '081': 'Kandy'
+};
+
+const networkCodes = ['070', '071', '072', '074', '076', '077', '078'];
+
 const provinces = [
   'Central',
   'Eastern',
@@ -29,6 +41,7 @@ const DeliveryInformationForm = () => {
   const [city, setCity] = useState('');
   const [province, setProvince] = useState('');
   const [postalCode, setPostalCode] = useState('');
+  const [areaName, setAreaName] = useState('');
 
   // Validation state
   const [errors, setErrors] = useState({});
@@ -41,8 +54,13 @@ const DeliveryInformationForm = () => {
     if (!firstName) newErrors.firstName = 'First name is required';
     if (!lastName) newErrors.lastName = 'Last name is required';
     if (!telephoneNo) newErrors.telephoneNo = 'Telephone number is required';
-    else if (telephoneNo.length !== 10)
-      newErrors.telephoneNo = 'Telephone number must be 10 digits';
+    else if (telephoneNo.length !== 10) newErrors.telephoneNo = 'Telephone number must be 10 digits';
+    else {
+      const code = telephoneNo.substring(0, 3);
+      if (!areaCodes[code] && !networkCodes.includes(code)) {
+        newErrors.telephoneNo = 'Invalid telephone number format';
+      }
+    }
     if (!address) newErrors.address = 'Address is required';
     if (!city) newErrors.city = 'City is required';
     if (!province) newErrors.province = 'Province is required';
@@ -115,17 +133,27 @@ const DeliveryInformationForm = () => {
         );
       }
     } else {
-      toast.error(`${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} cannot contain numbers`);
+      // toast.error(`${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} cannot contain numbers`);
     }
   };
 
   const handleTelephoneChange = (e) => {
     const { value } = e.target;
-    if (/^\d*$/.test(value)) {
-      if (value.length <= 10) {
-        setTeleNo(value);
+    if (/^\d{0,10}$/.test(value)) {
+      setTeleNo(value);
+      
+      // Check for area code or network code
+      if (value.length >= 3) {
+        const code = value.substring(0, 3);
+        if (areaCodes[code]) {
+          setAreaName(areaCodes[code]);
+        } else if (networkCodes.includes(code)) {
+          setAreaName('Mobile');
+        } else {
+          setAreaName('');
+        }
       } else {
-        toast.error('Telephone number cannot exceed 10 digits');
+        setAreaName('');
       }
     }
   };
@@ -133,6 +161,15 @@ const DeliveryInformationForm = () => {
   const handleProvinceSelect = (province) => {
     setProvince(province);
     setSuggestedProvinces([]);
+  };
+
+  const handlePostalCodeChange = (e) => {
+    const { value } = e.target;
+    if (/^\d{0,5}$/.test(value)) {
+      setPostalCode(value);
+    } else {
+      // toast.error('Postal code must contain only numeric characters');
+    }
   };
 
   return (
@@ -182,15 +219,22 @@ const DeliveryInformationForm = () => {
               <label htmlFor="telephoneNo" className="block text-sm font-medium text-gray-700">
                 Telephone Number
               </label>
-              <input
-                id="telephoneNo"
-                name="telephoneNo"
-                type="text"
-                value={telephoneNo}
-                onChange={handleTelephoneChange}
-                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
-                placeholder="+94 123 456 789"
-              />
+              <div className="relative">
+                <input
+                  id="telephoneNo"
+                  name="telephoneNo"
+                  type="text"
+                  value={telephoneNo}
+                  onChange={handleTelephoneChange}
+                  className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
+                  placeholder="0XX XXXXXXX"
+                />
+                {areaName && (
+                  <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-500">
+                    {areaName}
+                  </span>
+                )}
+              </div>
               {errors.telephoneNo && (
                 <p className="text-red-500 text-xs mt-1">{errors.telephoneNo}</p>
               )}
@@ -258,21 +302,23 @@ const DeliveryInformationForm = () => {
             </div>
 
             <div>
-              <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700">
-                Postal Code
-              </label>
-              <input
-                id="postalCode"
-                name="postalCode"
-                type="text"
-                value={postalCode}
-                onChange={(e) => setPostalCode(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
-                placeholder="10100"
-              />
-              {errors.postalCode && <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>}
-            </div>
+                <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700">
+                  Postal Code
+                </label>
+                <input
+                  id="postalCode"
+                  name="postalCode"
+                  type="text"
+                  value={postalCode}
+                  onChange={handlePostalCodeChange}
+                  className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-300 ease-in-out hover:shadow-lg"
+                  placeholder="10100"
+                />
+                {errors.postalCode && <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>}
+              </div>
           </div>
+
+          
 
           <div className="flex items-center justify-between">
             <button

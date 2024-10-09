@@ -43,7 +43,7 @@ const Sidebar = () => {
               </NavLink>
             </li>
 
-            <li className="mb-4">
+            {/* <li className="mb-4">
               <button
                 onClick={toggleProducts}
                 className="flex items-center hover:text-white hover:bg-orange-500 rounded-lg px-4 py-2 w-full text-left"
@@ -51,7 +51,7 @@ const Sidebar = () => {
                 <CubeIcon className="h-5 w-5 mr-3" />
                 Products
               </button>
-            </li>
+            </li> */}
 
             <li className="mb-4">
               <NavLink
@@ -101,7 +101,7 @@ const Sidebar = () => {
 
             <li className="mb-4">
               <NavLink
-                to="/logout"
+                to="/adminlogin"
                 className="flex items-center hover:text-white hover:bg-red-500 rounded-lg px-4 py-2"
               >
                 <ArrowRightOnRectangleIcon className="h-5 w-5 mr-3" />

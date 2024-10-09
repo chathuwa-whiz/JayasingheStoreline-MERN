@@ -8,8 +8,11 @@ const UserSchema = new mongoose.Schema({
     NIC : { type : String, required : true, default: "" },
     phone : { type : String, required : true, default: "" },
     address : { type : String, required : true, default: "" },
+    age : { type : String, required : true, default: "" },
     password : { type : String, required : true },
-    isAdmin : { type : Boolean, required : true, default: false }
+    isAdmin : { type : Boolean, required : true, default: false },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date
 } , { timestamps : true });
 
 const User = mongoose.model("User", UserSchema);

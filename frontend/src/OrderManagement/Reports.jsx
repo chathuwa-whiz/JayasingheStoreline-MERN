@@ -77,20 +77,33 @@ export default function Dashboard() {
   const downloadOrderReport = async () => {
     const doc = new jsPDF();
     const currentDate = new Date().toLocaleDateString();
-  
+
+    // Store contact details
+    const storeEmail = 'jayasinghestorelines@gmail.com';  // Example email
+    const storePhone = '+94 332264486';          // Example phone number
+
     // Add store logo and name to header
     const img = new Image();
     img.src = logo;
     img.onload = async () => {
+      // Add logo
       doc.addImage(img, 'PNG', 14, 10, 30, 30); // Adjust size and position as needed
+      
+      // Add store name, email, and phone
       doc.setFontSize(18);
       doc.text('JAYASINGHE STORELINES', 60, 30);
+      doc.setFontSize(12);
+      doc.text(`Email: ${storeEmail}`, 60, 40);
+      doc.text(`Phone: ${storePhone}`, 60, 45);
+      
+      // Add report title
       doc.setFontSize(16);
       doc.text('Order Report', 10, 60);
-  
-      // Add table with product details
+
+      // Add table with product details and header "Product Orders Overview"
+      doc.text('Product Orders Overview', 10, 70);
       doc.autoTable({
-        startY: 70,
+        startY: 80,  // Adjust to place under the header
         head: [['Product Name', 'Order Quantity', 'Selling Price', 'Buying Price', 'Total Revenue']],
         body: products.map(product => [
           product.name,
@@ -100,25 +113,45 @@ export default function Dashboard() {
           priceFormatter.format(product.sellingPrice * product.currentQty)
         ]),
       });
-  
+
       // Wait for the charts to be fully rendered
       if (isChartsReady) {
-        // Add Order Trends Chart
+        // Add a new page for Order Trends and Orders by Category
         doc.addPage();
-        doc.text('Order Trends', 10, 10);
+        doc.text('Order Trends and Orders by Category', 10, 10);
+
+        // Keep Order Trends Line Chart in place
         try {
-          const orderTrendsCanvas = await html2canvas(orderTrendsRef.current, { willReadFrequently: true });
+          const orderTrendsCanvas = await html2canvas(orderTrendsRef.current, {
+            scale: 2, // Increase scale for higher resolution
+            useCORS: true,
+          });
           const orderTrendsImgData = orderTrendsCanvas.toDataURL('image/png');
-          doc.addImage(orderTrendsImgData, 'PNG', 10, 20, 180, 100);
+          // Maintain the position and size of the line chart
+          doc.addImage(orderTrendsImgData, 'PNG', 10, 20, 190, 80); 
         } catch (error) {
           console.error('Error capturing Order Trends chart:', error);
         }
-  
-        // Add Best-Selling Products Table
-        doc.addPage();
-        doc.text('Best Selling Products', 10, 10);
+
+        // Render Orders by Category Pie Chart below Order Trends
+        try {
+          const ordersByCategoryCanvas = await html2canvas(ordersByCategoryRef.current, {
+            scale: 2, // Higher resolution for better quality
+            width: 720, // Width in pixels
+            height: 480, // Height in pixels to maintain aspect ratio
+            useCORS: true,
+          });
+          const ordersByCategoryImgData = ordersByCategoryCanvas.toDataURL('image/png');
+          // Adjust position to keep it below the trends chart without moving the line chart
+          doc.addImage(ordersByCategoryImgData, 'PNG', 70, 110, 190, 120);
+        } catch (error) {
+          console.error('Error capturing Orders by Category chart:', error);
+        }
+
+        // Add Best-Selling Products Table below the charts on the same page
+        doc.text('Best Selling Products', 10, 200);
         doc.autoTable({
-          startY: 20,
+          startY: 210, // Start after the pie chart
           head: [['Product Name', 'Category', 'Total Orders']],
           body: highestOrderProducts.map(product => [
             product.name,
@@ -126,17 +159,18 @@ export default function Dashboard() {
             product.totalOrders
           ]),
         });
-  
-        // Add Report Generation Date
-        doc.text(`Report Generated on: ${currentDate}`, 10, doc.internal.pageSize.height - 10);
-  
+
+        // Add Report Generation Date below the Best Selling Products table
+        const finalY = doc.lastAutoTable.finalY || 230; // Get the final Y position of the table
+        doc.text(`Report Generated on: ${currentDate}`, 10, finalY + 10); // Place date below the table
+
         // Save the PDF
         doc.save('order_report.pdf');
       }
     };
   };
-  
 
+  
   return (
     <div className="overflow-auto bg-gray-100 p-6 rounded-lg">
       {/* Button to download the order report */}
@@ -174,7 +208,7 @@ export default function Dashboard() {
 
       {/* Best-Selling Products based on total orders */}
       <div className="bg-white p-6 rounded-lg shadow-lg mt-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">Best Selling Products</h3>
+        <h3 className="text-xl font-bold text-gray-800 mb-4">Best Selling Products</h3> {/* Header added */}
         <table className="w-full table-auto border-collapse rounded-lg overflow-hidden">
           <thead>
             <tr className="bg-gray-800 text-white rounded-t-lg">

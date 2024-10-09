@@ -113,7 +113,12 @@ export default function SalesReportPage() {
     // Export data to PDF
     const handleExportToPDF = async () => {
         const doc = new jsPDF('p', 'mm', 'a4');
-
+    
+        // Get the current date and time
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString();
+        const formattedTime = now.toLocaleTimeString();
+    
         // Add store logo and name to header
         const img = new Image();
         img.src = logo;
@@ -126,6 +131,12 @@ export default function SalesReportPage() {
         doc.text('Jayasinghe Storeline', 50, 20);
         doc.setFontSize(12);
         doc.text('Inventory and Sales Report', 50, 30);
+        doc.text('jayasinghestorelines@gmail.com', 50, 40);
+    
+        // Add date and time to the top right corner
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`${formattedDate} ${formattedTime}`, 180, 10, { align: 'right' });
     
         // Add Line Chart
         if (lineChartRef.current) {
@@ -204,6 +215,7 @@ export default function SalesReportPage() {
         // Save the PDF
         doc.save('Inventory_Sales_Report.pdf');
     };
+    
     
 
     return (

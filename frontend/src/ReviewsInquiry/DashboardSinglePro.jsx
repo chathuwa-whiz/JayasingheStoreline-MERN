@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
-import { useGetProductByIdQuery, useCreateReviewMutation, useCreateInquiryMutation, useCreateReplyMutation, useDeleteReviewMutation, useDeleteInquiryMutation } from "../redux/api/productApiSlice";
+import { useGetProductByIdQuery, useCreateInquiryMutation, useCreateReplyMutation, useDeleteReviewMutation, useDeleteInquiryMutation } from "../redux/api/productApiSlice";
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from "../redux/features/cart/cartSlice";
 import toast from "react-hot-toast";
@@ -50,7 +50,6 @@ export default function DashboardSinglePro() {
         navigate('/cart');
     };
 
-    const [createReview] = useCreateReviewMutation();
     const [createInquiry] = useCreateInquiryMutation();
      // Initialize the mutation hooks
     const [deleteReview] = useDeleteReviewMutation();
@@ -215,26 +214,6 @@ export default function DashboardSinglePro() {
                             </div>
                         </div>
 
-                        <div className="mt-6 flex items-center space-x-4">
-                            <input
-                                type="number"
-                                min="1"
-                                max={quantity}
-                                className="w-16 p-2 border rounded-lg text-center focus:ring-2 focus:ring-blue-500"
-                                value={qty}
-                                onChange={(e) => setQty(e.target.value)}
-                            />
-                            <button 
-                                onClick={addToCartHandler}
-                                disabled={quantity === 0}
-                                className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition">
-                                Add to Cart
-                            </button>
-                        </div>
-
-                        {quantity === 0 && (
-                            <p className="mt-4 text-red-500">This product is currently out of stock.</p>
-                        )}
                     </div>
                 </div>
 
@@ -265,27 +244,11 @@ export default function DashboardSinglePro() {
                         <p className="mt-4 text-gray-600">No reviews yet.</p>
                     )}
 
-                    {/* Add Review Form */}
-                    {user && <ReviewForm productId={productId} />}
                 </div>
 
                 {/* Inquiry Section */}
                 <div className="mt-10">
                     <h2 className="text-2xl font-bold text-gray-800">Product Inquiries</h2>
-                    <form onSubmit={submitInquiryHandler} className="mt-4">
-                        <textarea
-                            className="w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            rows="5"
-                            value={messagee}
-                            onChange={(e) => setMessagee(e.target.value)}
-                            placeholder="Ask about this product..."
-                        />
-                        <button
-                            type="submit"
-                            className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition mt-4">
-                            Submit Inquiry
-                        </button>
-                    </form>
 
 
 {/* Display Inquiries */}

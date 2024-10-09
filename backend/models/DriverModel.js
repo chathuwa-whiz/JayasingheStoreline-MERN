@@ -1,26 +1,13 @@
 import mongoose from 'mongoose';
 
 const driverSchema = new mongoose.Schema({
-  firstName: {
-    type: String,
-    required: true,
-  },
-  lastName: {
-    type: String,
-    required: true,
-  },
-  telephoneNo: {
-    type: String,
-    required: true,
-  },
-  vehicleRegNo: {
-    type: String,
-    required: true,
-  },
-  vehicleType: {
-    type: String,
-    required: true,
-  },
+  name: { type: String, required: true, default: '' },
+  nic: { type: String, required: true, default: '' },
+  birthday: { type: Date, required: true },
+  telephoneNo: { type: String, required: true, default: '' },
+  vehicleRegNo: { type: String, required: true, default: '' },
+  vehicleType: { type: String, required: true, default: '' },
+  driverLicenceNo: { type: String, required: true, default: '' },
 });
 
 const Driver = mongoose.model('Driver', driverSchema);
