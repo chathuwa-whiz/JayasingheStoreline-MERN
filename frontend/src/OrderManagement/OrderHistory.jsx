@@ -105,6 +105,7 @@ export default function Orders() {
             <th className="py-2 px-4 text-left">Items Price</th>
             <th className="py-2 px-4 text-left">Discount</th>
             <th className="py-2 px-4 text-left">Total Price</th>
+            <th className="py-2 px-4 text-left">Date</th>
             <th className="py-2 px-4 text-left">Status</th>
             <th className="py-2 px-4 text-left">Action</th>
           </tr>
@@ -124,6 +125,7 @@ export default function Orders() {
               <td className="py-2 px-4">{priceFormatter.format(order.itemsPrice)}</td>
               <td className="py-2 px-4">{priceFormatter.format(order.discount)}</td>
               <td className="py-2 px-4">{priceFormatter.format(order.totalPrice)}</td>
+              <td className="py-2 px-4">{new Date(order.createdAt).toLocaleDateString()}</td>
               <td className="px-4 py-2">
                 <span
                   className={`inline-block px-2 py-1 text-sm font-semibold rounded-full ${
