@@ -35,27 +35,63 @@ const DriverVehicleDetails = () => {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [searchTerm, setSearchTerm] = useState('');
 
+  const areaCodes = {
+    '011': 'Colombo', '031': 'Negombo', '038': 'Panadura', '055': 'Badulla',
+    '021': 'Jaffna', '032': 'Puttalam', '041': 'Matara', '057': 'Bandarawela',
+    '023': 'Mannar', '033': 'Gampaha', '045': 'Ratnapura', '063': 'Ampara',
+    '024': 'Vavuniya', '034': 'Kalutara', '047': 'Hambantota', '065': 'Batticaloa',
+    '025': 'Anuradhapura', '035': 'Kegalle', '051': 'Hatton', '066': 'Matale',
+    '026': 'Trincomalee', '036': 'Avissawella', '052': 'Nuwara Eliya', '067': 'Kalmunai',
+    '027': 'Polonnaruwa', '037': 'Kurunegala', '054': 'Nawalapitiya', '081': 'Kandy'
+  };
+
+  const networkCodes = ['070', '071', '072', '074', '076', '077', '078'];
+
+  const formatTelephoneNo = (value) => {
+    // Remove any non-digit characters
+    let formatted = value.replace(/\D/g, '');
+    
+    // Check if it's a mobile number or landline
+    if (networkCodes.includes(formatted.slice(0, 3))) {
+      // Mobile number format: 07X-XXXXXXX
+      if (formatted.length > 3) {
+        formatted = formatted.slice(0, 3) + '-' + formatted.slice(3, 10);
+      }
+    } else {
+      // Landline format: 0XX-XXXXXXX
+      if (formatted.length > 3) {
+        formatted = formatted.slice(0, 3) + '-' + formatted.slice(3, 10);
+      }
+    }
+    
+    return formatted.slice(0, 11); // Limit to 11 characters (including hyphen)
+  };
+
+  const getAreaName = (telephoneNo) => {
+    const areaCode = telephoneNo.slice(0, 3);
+    return areaCodes[areaCode] || '';
+  };
+
   useEffect(() => {
     refetch();
   }, [refetch]);
 
-  // Helper function to auto-insert hyphen in vehicle registration number
   const formatVehicleRegNo = (value) => {
     // Remove any existing hyphens and uppercase the input
     let sanitizedValue = value.replace('-', '').toUpperCase();
     
-    if (/^[0-9]\d{0,6}$/.test(sanitizedValue)) {
-      // Format 12-3456
+    if (/^\d{1,6}$/.test(sanitizedValue)) {
+      // Format 12-1234
       if (sanitizedValue.length > 2) {
         return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2, 6);
       }
-    } else if (/^[A-Z]{2}\d[0-9]{0,4}$/.test(sanitizedValue)) {
-      // Format AB-CDEF
+    } else if (/^[A-Z]{2}\d{0,4}$/.test(sanitizedValue)) {
+      // Format AB-1234
       if (sanitizedValue.length > 2) {
         return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2, 6);
       }
     } else if (/^[A-Z]{3}\d{0,4}$/.test(sanitizedValue)) {
-      // Format ABC-DEFG
+      // Format ABC-1234
       if (sanitizedValue.length > 3) {
         return sanitizedValue.slice(0, 3) + '-' + sanitizedValue.slice(3, 7);
       }
@@ -63,118 +99,65 @@ const DriverVehicleDetails = () => {
     return sanitizedValue;
   };
 
-  // Handle input change with auto-formatting for vehicle registration number
+  const formatDriverLicenceNo = (value) => {
+    // Ensure the first character is a capital letter
+    let formatted = value.toUpperCase();
+    
+    // If the first character is not a letter, remove it
+    if (!/^[A-Z]/.test(formatted)) {
+      formatted = formatted.slice(1);
+    }
+    
+    // Remove any non-alphanumeric characters
+    formatted = formatted.replace(/[^A-Z0-9]/g, '');
+    
+    // Limit to 8 characters total
+    return formatted.slice(0, 8);
+  };
+
   const handleInputChange = (e, field) => {
     let value = e.target.value;
     
-    if (field === 'nic') {
+    if (field === 'name') {
+      value = value.replace(/[^a-zA-Z\s]/g, '');
+    } else if (field === 'birthday') {
+      // When birthday changes, clear the NIC to ensure it's re-entered correctly
+      setNewDriver(prev => ({ ...prev, birthday: value, nic: '' }));
+      return;
+    } else if (field === 'nic') {
       const birthYear = new Date(newDriver.birthday).getFullYear();
       if (birthYear < 2001) {
-        // Remove any non-digit characters
-        value = value.replace(/\D/g, '');
-        // Limit to 9 digits
-        value = value.slice(0, 9);
-        // Automatically add 'V' if 9 digits are entered
-        if (value.length === 9) {
-          value += 'V';
+        // For birth years before 2001
+        value = value.slice(0, 10).replace(/[^0-9V]/gi, '');
+        if (value.length >= 2) {
+          const yearPrefix = value.slice(0, 2);
+          if (yearPrefix !== String(birthYear).slice(-2)) {
+            value = String(birthYear).slice(-2) + value.slice(2);
+          }
+        }
+        if (value.length === 10 && !/V$/i.test(value)) {
+          value = value.slice(0, 9) + 'V';
         }
       } else {
-        // For birth years 2001 and later, allow only digits up to 12
-        value = value.replace(/\D/g, '').slice(0, 12);
+        // For birth years 2001 and after
+        value = value.slice(0, 12).replace(/\D/g, '');
+        if (value.length >= 2 && value.slice(0, 2) !== '20') {
+          value = '20' + value.slice(2);
+        }
       }
     } else if (field === 'vehicleRegNo') {
       value = formatVehicleRegNo(value);
-      // Ensure the total length doesn't exceed 8 characters (for ABC-DEFG format)
-      value = value.slice(0, 8);
+    } else if (field === 'driverLicenceNo') {
+      value = formatDriverLicenceNo(value);
+    } else if (field === 'telephoneNo') {
+      value = formatTelephoneNo(value);
     }
-  
-    setNewDriver({ ...newDriver, [field]: value });
-  };
-
-  const validateForm = () => {
-    const { nic, name, birthday, telephoneNo, vehicleType, vehicleRegNo, driverLicenceNo } = newDriver;
-
-    // Name Validation
-    const nameRegex = /^[A-Za-z\s]+$/;
-    if (!nameRegex.test(name)) {
-      setMessage({ type: 'error', text: 'Name must contain only letters' });
-      return false;
-    }
-
-    // Birthday Validation
-    const birthYear = new Date(birthday).getFullYear();
-    if (birthYear > today.getFullYear() - 18 || birthYear < today.getFullYear() - 40) {
-      setMessage({ type: 'error', text: 'Driver must be between 18 and 40 years old' });
-      return false;
-    }
-
-    // NIC Validation
-    const nicRegexNew = /^\d{12}$/;
-    const nicRegexOld = /^\d{9}V$/;
-
-    if (birthYear >= 2001) {
-      if (!nicRegexNew.test(nic)) {
-        setMessage({ type: 'error', text: 'NIC must be 12 digits for birth years 2001 and after' });
-        return false;
-      }
-      const nicYear = nic.slice(0, 4);
-      if (nicYear !== birthYear.toString()) {
-        setMessage({ type: 'error', text: 'First four digits of NIC must match birth year' });
-        return false;
-      }
-    } else {
-      if (!nicRegexOld.test(nic)) {
-        setMessage({ type: 'error', text: 'NIC must be 9 digits followed by V for birth years before 2001' });
-        return false;
-      }
-      const nicYear = nic.slice(0, 2);
-      const lastTwoBirthYear = birthYear.toString().slice(-2);
-      if (nicYear !== lastTwoBirthYear) {
-        setMessage({ type: 'error', text: 'First two digits of NIC must match last two digits of birth year' });
-        return false;
-      }
-    }
-
-    // Telephone Number Validation
-    const telephoneRegex = /^(070|071|072|074|075|076|077|078)\d{7}$/;
-    if (!telephoneRegex.test(telephoneNo)) {
-      setMessage({ type: 'error', text: 'Telephone number must start with 070-078 and be 10 digits' });
-      return false;
-    }
-
-    // Vehicle Type Validation (Letters and integers)
-    const vehicleTypeRegex = /^[A-Za-z0-9\s]+$/;
-    if (!vehicleTypeRegex.test(vehicleType)) {
-      setMessage({ type: 'error', text: 'Vehicle type must contain only letters and numbers' });
-      return false;
-    }
-
-    // Vehicle Registration Number Validation
-    const vehicleRegNoRegex1 = /^\d{2}-\d{4}$/;      // Format: 12-3456
-    const vehicleRegNoRegex2 = /^[A-Z]{2}-[A-Z]{4}$/;  // Format: AB-CDEF
-    const vehicleRegNoRegex3 = /^[A-Z]{3}-[A-Z]{4}$/;  // Format: ABC-DEFG
-    if (
-      !vehicleRegNoRegex1.test(vehicleRegNo) &&
-      !vehicleRegNoRegex2.test(vehicleRegNo) &&
-      !vehicleRegNoRegex3.test(vehicleRegNo)
-    ) {
-      setMessage({ type: 'error', text: 'Invalid vehicle registration number format' });
-      return false;
-    }
-
-    // Driver License Number Validation (Assuming similar format as before)
-    const driverLicenseRegex = /^[A-Za-z0-9]{1,15}$/; // Adjust max length if needed
-    if (!driverLicenseRegex.test(driverLicenceNo)) {
-      setMessage({ type: 'error', text: 'Invalid driver license number' });
-      return false;
-    }
-
-    return true;
+    
+    setNewDriver(prev => ({ ...prev, [field]: value }));
   };
 
   const handleCreateOrUpdate = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
 
     try {
       if (editingDriver) {
@@ -318,14 +301,16 @@ const DriverVehicleDetails = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Name */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name (English letters only)</label>
               <input
                 type="text"
                 id="name"
                 value={newDriver.name}
-                onChange={(e) => handleInputChange(e, 'name', 50, '^[A-Za-z\\s]*$')}
+                onChange={(e) => handleInputChange(e, 'name')}
                 className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
                 required
+                pattern="[A-Za-z\s]+"
+                title="Please enter English letters only"
               />
             </div>
             {/* Date of Birth */}
@@ -335,9 +320,7 @@ const DriverVehicleDetails = () => {
                 type="date"
                 id="dob"
                 value={newDriver.birthday}
-                min={minDate}
-                max={maxDate}
-                onChange={(e) => setNewDriver({ ...newDriver, birthday: e.target.value })}
+                onChange={(e) => handleInputChange(e, 'birthday')}
                 className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
                 required
               />
@@ -349,24 +332,36 @@ const DriverVehicleDetails = () => {
                 type="text"
                 id="nic"
                 value={newDriver.nic}
-                onChange={(e) => handleInputChange(e, 'nic', new Date(newDriver.birthday).getFullYear() >= 2001 ? 12 : 10, '^[0-9vV]*$')}
+                onChange={(e) => handleInputChange(e, 'nic')}
                 className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
-                maxLength={new Date(newDriver.birthday).getFullYear() >= 2001 ? 12 : 10}
                 required
+                placeholder={new Date(newDriver.birthday).getFullYear() < 2001 ? "YYXXXXXXXXV" : "20XXXXXXXXXX"}
               />
+              <p className="mt-1 text-sm text-gray-500">
+                {new Date(newDriver.birthday).getFullYear() < 2001 
+                  ? "10 digits with 'V' at the end, starting with birth year's last 2 digits" 
+                  : "12 digits, starting with '20'"}
+              </p>
             </div>
             {/* Telephone Number */}
             <div>
               <label htmlFor="telephoneNo" className="block text-sm font-medium text-gray-700">Telephone Number</label>
-              <input
-                type="text"
-                id="telephoneNo"
-                value={newDriver.telephoneNo}
-                onChange={(e) => handleInputChange(e, 'telephoneNo', 10, '^[0-9]*$')}
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
-                maxLength={10}
-                required
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  id="telephoneNo"
+                  value={newDriver.telephoneNo}
+                  onChange={(e) => handleInputChange(e, 'telephoneNo')}
+                  className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+                  required
+                  placeholder="0XX-XXXXXXX"
+                />
+                {newDriver.telephoneNo && getAreaName(newDriver.telephoneNo) && (
+                  <span className="absolute right-2 top-2 text-sm text-gray-500">
+                    {getAreaName(newDriver.telephoneNo)}
+                  </span>
+                )}
+              </div>
             </div>
             {/* Vehicle */}
             <div>
@@ -375,7 +370,7 @@ const DriverVehicleDetails = () => {
                 type="text"
                 id="vehicleType"
                 value={newDriver.vehicleType}
-                onChange={(e) => handleInputChange(e, 'vehicleType', 20, '^[A-Za-z0-9\\s]*$')}
+                onChange={(e) => handleInputChange(e, 'vehicleType')}
                 className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
                 required
               />
@@ -389,9 +384,12 @@ const DriverVehicleDetails = () => {
                 value={newDriver.vehicleRegNo}
                 onChange={(e) => handleInputChange(e, 'vehicleRegNo')}
                 className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
-                maxLength={8}
                 required
+                placeholder="12-1234 or AB-1234 or ABC-1234"
               />
+              <p className="mt-1 text-sm text-gray-500">
+                Format: 12-1234, AB-1234, or ABC-1234
+              </p>
             </div>
             {/* Driver License Number */}
             <div>
@@ -402,9 +400,12 @@ const DriverVehicleDetails = () => {
                 value={newDriver.driverLicenceNo}
                 onChange={(e) => handleInputChange(e, 'driverLicenceNo')}
                 className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
-                maxLength={new Date(newDriver.birthday).getFullYear() >= 2001 ? 12 : 10}
                 required
+                placeholder="A1234567"
               />
+              <p className="mt-1 text-sm text-gray-500">
+                Format: 1 capital letter followed by 7 digits (8 characters total)
+              </p>
             </div>
           </div>
           {/* Error Message */}
