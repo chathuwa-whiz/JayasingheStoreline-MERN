@@ -345,7 +345,7 @@ const DriverVehicleDetails = () => {
             </div>
             {/* Telephone Number */}
             <div>
-              <label htmlFor="telephoneNo" className="block text-sm font-medium text-gray-700">Telephone Number</label>
+              <label htmlFor="telephoneNo" className="block text-sm font-medium text-gray-700">Telephone/Mobile Number</label>
               <div className="relative">
                 <input
                   type="text"
