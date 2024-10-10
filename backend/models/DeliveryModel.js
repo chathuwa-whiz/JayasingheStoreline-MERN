@@ -13,6 +13,7 @@ const deliverySchema = new mongoose.Schema({
       return `DEL${year}${month}${day}${randomNum}`; // Example: DEL24092645
     },
   },
+  orderId: { type: String, required: true, default: "" },
   deliveryItem: { type: String, required: true, default : "" },
   itemsPrice: { type: Number, required: true, default: 0 },
   deliveryPrice: { type: Number, required: true, default: 0 },

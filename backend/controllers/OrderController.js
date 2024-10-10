@@ -114,12 +114,16 @@ export const fetchOrderById = async (req, res) => {
 // update order including order items and quantities
 export const updateOrder = async (req, res) => {
     try {
-        const { orderItems } = req.fields;
+        const { orderItems, status } = req.fields;
 
         // Update the order details
-        const order = await Order.findByIdAndUpdate(req.params.id, {...req.fields}, { new : true });
-        if(!order) {
-            return res.status(400).json( { msg : "Order not found" } );
+        const order = await Order.findByIdAndUpdate(
+            req.params.id,
+            { ...req.fields, status: status || order.status },
+            { new: true }
+        );
+        if (!order) {
+            return res.status(400).json({ msg: "Order not found" });
         }
 
         // Ensure orderItems is an array of objects
@@ -148,7 +152,6 @@ export const updateOrder = async (req, res) => {
             product.currentQty += qtyDifference;
             await product.save();
         }
-        
         await order.save();
         res.json({ msg: "Update Successful", order });
     } catch (error) {
