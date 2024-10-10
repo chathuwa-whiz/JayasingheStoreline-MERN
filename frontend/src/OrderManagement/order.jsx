@@ -33,7 +33,7 @@ export default function order() {
     <div className='flex'>
         <Sidebar />
         <div className='flex-grow'>
-        {header}
+        {/* {header} */}
             <Outlet />
         </div>
     </div>

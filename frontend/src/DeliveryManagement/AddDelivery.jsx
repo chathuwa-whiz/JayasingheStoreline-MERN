@@ -66,7 +66,6 @@ export default function AddDelivery() {
             deliveryData.append("deliveryItem", JSON.stringify(Items));
             deliveryData.append("orderId", orderId);
             const response = await createDelivery(deliveryData);
-            console.log("order response", orderResponse);
             if (response.error) {
                 toast.error("Delivery creation failed. Try Again.");
                 console.log("Delivery creation error:", response.error);
