@@ -41,7 +41,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
       await updateDelivery({ deliveryId: id, formData: updatedDelivery }).unwrap();
       window.location.reload();
     } catch (error) {
-      console.error('Error updating delivery:', error);
+      console.error('Error updating delivery or order:', error);
     }
   };
 
