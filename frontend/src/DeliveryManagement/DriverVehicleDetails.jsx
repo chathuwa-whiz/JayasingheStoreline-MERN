@@ -323,7 +323,12 @@ const DriverVehicleDetails = () => {
                 onChange={(e) => handleInputChange(e, 'birthday')}
                 className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
                 required
+                min={minDate}
+                max={maxDate}
               />
+              <p className="mt-1 text-sm text-gray-500">
+                Driver must be between 18 and 40 years old
+              </p>
             </div>
             {/* NIC */}
             <div>
