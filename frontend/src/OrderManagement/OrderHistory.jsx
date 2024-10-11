@@ -93,7 +93,7 @@ export default function Orders() {
                 deliveries.map((delivery) => (
                   <div key={delivery._id} className="px-4 py-2 hover:bg-gray-100">
                     <p className="text-sm text-gray-600">Order ID: {delivery.orderId}</p>
-                    <p className="text-sm font-semibold text-gray-800">Status: {delivery.status}</p>
+                    <p className="text-sm font-semibold text-gray-800">Status: {delivery.deliveryStatus}</p>
                   </div>
                 ))
               ) : (
