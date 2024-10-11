@@ -80,23 +80,26 @@ const DriverVehicleDetails = () => {
     // Remove any existing hyphens and uppercase the input
     let sanitizedValue = value.replace('-', '').toUpperCase();
     
-    if (/^\d{1,6}$/.test(sanitizedValue)) {
-      // Format 12-1234
-      if (sanitizedValue.length > 2) {
-        return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2, 6);
-      }
+    if (/^\d{1,2}$/.test(sanitizedValue)) {
+      // Format 12-1234 (6 characters total)
+      return sanitizedValue.slice(0, 6);
+    } else if (/^\d{3,6}$/.test(sanitizedValue)) {
+      // Format 12-1234 (6 characters total)
+      return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2, 6);
     } else if (/^[A-Z]{2}\d{0,4}$/.test(sanitizedValue)) {
-      // Format AB-1234
+      // Format AB-1234 (6 characters total)
       if (sanitizedValue.length > 2) {
         return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2, 6);
       }
+      return sanitizedValue.slice(0, 6);
     } else if (/^[A-Z]{3}\d{0,4}$/.test(sanitizedValue)) {
-      // Format ABC-1234
+      // Format ABC-1234 (7 characters total)
       if (sanitizedValue.length > 3) {
         return sanitizedValue.slice(0, 3) + '-' + sanitizedValue.slice(3, 7);
       }
+      return sanitizedValue.slice(0, 7);
     }
-    return sanitizedValue;
+    return sanitizedValue.slice(0, 7); // Limit to 7 characters max
   };
 
   const formatDriverLicenceNo = (value) => {
@@ -393,7 +396,7 @@ const DriverVehicleDetails = () => {
                 placeholder="12-1234 or AB-1234 or ABC-1234"
               />
               <p className="mt-1 text-sm text-gray-500">
-                Format: 12-1234, AB-1234, or ABC-1234
+                Format: 12-1234 (6 chars), AB-1234 (6 chars), or ABC-1234 (7 chars)
               </p>
             </div>
             {/* Driver License Number */}
