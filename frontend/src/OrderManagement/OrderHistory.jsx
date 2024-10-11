@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaPen, FaSearch } from "react-icons/fa";
+import { FaPen, FaSearch, FaBell } from "react-icons/fa";
 import { useGetOrdersQuery } from '../redux/api/orderApiSlice';
+import { useGetDeliveriesQuery } from '../redux/api/deliveryApiSlice';
 
 export default function Orders() {
   // Fetch all orders
   const { data: orders, isLoading, isError } = useGetOrdersQuery();
+  // Fetch all deliveries
+  const { data: deliveries, isLoading: deliveriesLoading, isError: deliveriesError } = useGetDeliveriesQuery();
   const priceFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'LKR',
@@ -19,8 +22,11 @@ export default function Orders() {
   const [searchTerm, setSearchTerm] = useState('');
   const [suggestions, setSuggestions] = useState([]);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Something went wrong</div>;
+  // Notification state
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  if (isLoading || deliveriesLoading) return <div>Loading...</div>;
+  if (isError || deliveriesError) return <div>Something went wrong</div>;
 
   // Filter orders based on search term
   const filteredOrders = orders.filter((order) => {
@@ -63,7 +69,41 @@ export default function Orders() {
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className="bg-gray-100 p-8 rounded-lg shadow-lg">
+    <div className="relative bg-gray-100 p-8 rounded-lg shadow-lg">
+      {/* Notification Icon */}
+      <div className="absolute top-4 right-4 z-10">
+        <button
+          onClick={() => setShowNotifications(!showNotifications)}
+          className="text-gray-600 hover:text-gray-800 focus:outline-none"
+        >
+          <FaBell size={24} />
+          {deliveries && deliveries.length > 0 && (
+            <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+              {deliveries.length}
+            </span>
+          )}
+        </button>
+
+        {/* Notifications Dropdown */}
+        {showNotifications && (
+          <div className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg overflow-hidden z-20">
+            <div className="py-2">
+              <h3 className="text-lg font-semibold text-gray-800 px-4 py-2">Delivery Notifications</h3>
+              {deliveries && deliveries.length > 0 ? (
+                deliveries.map((delivery) => (
+                  <div key={delivery._id} className="px-4 py-2 hover:bg-gray-100">
+                    <p className="text-sm text-gray-600">Order ID: {delivery.orderId}</p>
+                    <p className="text-sm font-semibold text-gray-800">Status: {delivery.status}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-gray-600 px-4 py-2">No deliveries to show.</p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Search bar with dropdown suggestions */}
       <div className="relative mb-4 w-full sm:w-3/3">
         <div className="flex items-center">

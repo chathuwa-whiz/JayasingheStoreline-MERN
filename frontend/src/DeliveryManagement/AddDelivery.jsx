@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useCreateDeliveryMutation } from "../redux/api/deliveryApiSlice";
-import { useGetOrdersQuery } from '../redux/api/orderApiSlice';
+import { useGetOrdersQuery, useUpdateOrderMutation } from '../redux/api/orderApiSlice';
 import { toast } from "react-hot-toast";
 
 export default function AddDelivery() {
     const [image, setImage] = useState(null);
+    const [orderId, setOrderId] = useState('');
     const [itemsPrice, setItemsPrice] = useState(0);
     const [deliveryPrice, setDeliveryPrice] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
@@ -24,7 +25,7 @@ export default function AddDelivery() {
     const [createDelivery] = useCreateDeliveryMutation();
     const { data: orders, isLoading, isError } = useGetOrdersQuery();
     const navigate = useNavigate();
-
+    const [updateOrder] = useUpdateOrderMutation();
     useEffect(() => {
         setTotalPrice(parseFloat(itemsPrice) + parseFloat(deliveryPrice));
     }, [itemsPrice, deliveryPrice]);
@@ -40,6 +41,7 @@ export default function AddDelivery() {
         setItemsPrice(order.itemsPrice);
         setDeliveryPrice(order.deliveryPrice);
         setItems(JSON.parse(order.orderItems));
+        setOrderId(order._id);
     };
 
     const handleSubmit = async (e) => {
@@ -62,7 +64,7 @@ export default function AddDelivery() {
             deliveryData.append("postalCode", postalCode);
             deliveryData.append("deliveryStatus", deliveryStatus);
             deliveryData.append("deliveryItem", JSON.stringify(Items));
-
+            deliveryData.append("orderId", orderId);
             const response = await createDelivery(deliveryData);
             if (response.error) {
                 toast.error("Delivery creation failed. Try Again.");
@@ -98,7 +100,7 @@ export default function AddDelivery() {
                                 onClick={() => handleOrderClick(order)}
                             >
                                 <h3 className="text-lg font-semibold text-gray-800">{order.firstName} {order.lastName}</h3>
-                                <p className="text-gray-600">Order #{order._id}</p>
+                                <p className="text-gray-600">{order.orderId}</p>
                                 <p className="text-gray-600">Items Price: Rs.{order.itemsPrice}</p>
                             </div>
                         ))
