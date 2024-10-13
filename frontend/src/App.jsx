@@ -81,7 +81,7 @@ import SupplierLogout from "./SupplierManagement/logout";
 
 //review
 import EditReviewPage from "./ReviewsInquiry/EditReviewPage";
-import UserReviews from "./ReviewsInquiry/Dashboard";
+import DashboardDashboard from "./ReviewsInquiry/Dashboard";
 import DashboardList from "./ReviewsInquiry/DashboardList";
 import DashboardSinglePro from "./ReviewsInquiry/DashboardSinglePro";
 import Logsout from "./ReviewsInquiry/Logout";
@@ -95,7 +95,6 @@ import EmployeeAbout from './EmployeeManagement/EmployeeAbout';
 import EmployeeProfile from './EmployeeManagement/EmployeeProfile';
 import EmployeeDashboard from "./EmployeeManagement/EmployeeDashboard";
 import SettingsPage from "./InventoryManagement/Settings";
-
 
 function App() {
 
@@ -213,7 +212,7 @@ function App() {
 
         {/* Edit Review Route */}
         <Route path="/product/:productId/:reviewId" element={<EditReviewPage />} />
-        <Route path="/dashboard" element={<UserReviews />} />
+        <Route path="/dashboard" element={<DashboardDashboard />} />
         <Route path="/logout" element={<Logsout />} />
         <Route path="/settings" element={<SettingsDashboard />} />
         <Route path="dashboardlist" element={<DashboardList/>} />

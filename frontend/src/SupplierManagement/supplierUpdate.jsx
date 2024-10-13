@@ -2,6 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { useGetSupplierByIdQuery, useUpdateSupplierMutation, useDeleteSupplierMutation, useUploadSupplierImageMutation } from "../redux/api/supplierApiSlice";
 import { useParams } from 'react-router';
 import toast from "react-hot-toast";
+import { FaCloudUploadAlt } from 'react-icons/fa';
+
+const areaCodes = {
+  '011': 'Colombo', '031': 'Negombo', '038': 'Panadura', '055': 'Badulla',
+  // ... (rest of the area codes)
+};
+
+const networkCodes = {
+  '070': 'Mobitel', '071': 'Mobitel', '072': 'Hutch', '074': 'Dialog',
+  '076': 'Dialog', '077': 'Dialog', '078': 'Hutch'
+};
+
+const supplierTypes = [
+  "Manufacturer", "Wholesaler", "Distributor", "Importer",
+  "Artisan/Craftsman", "Farmer/Producer", "Service Provider",
+  "Dropshipper", "Retailer", "Other"
+];
 
 export default function SupplierDetailsForm() {
   const params = useParams();
@@ -19,6 +36,7 @@ export default function SupplierDetailsForm() {
   const [supplierMedia, setSupplierMedia] = useState('');
   const [imageUrl, setImageUrl] = useState(null);
   const [errors, setErrors] = useState({});
+  const [areaName, setAreaName] = useState('');
 
   useEffect(() => {
     if (supplierData) {
@@ -33,25 +51,56 @@ export default function SupplierDetailsForm() {
     }
   }, [supplierData]);
 
-  // Validation functions
-  const validateNIC = (nic) => /(^\d{9}[vV]$)|(^\d{12}$)/.test(nic);
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const validatePhoneNumber = (phone) => /^\d{10}$/.test(phone); 
-  const validateName = (name) => name.length >= 3;
+  // Updated validation functions
+  const validateNIC = (nic) => {
+    if (typeof nic !== 'string') {
+      return false; // Invalid NIC if it's not a string
+    }
+    
+    nic = nic.toLowerCase();
+    
+    if (nic.startsWith('2')) {
+      return /^\d{12}$/.test(nic);
+    } else {
+      return /^\d{9}v$/.test(nic);
+    }
+  };
+
+  const validateEmail = (email) => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+  };
+
+  const validatePhoneNumber = (phone) => {
+    const phonePattern = /^\d{10}$/;
+    return phonePattern.test(phone);
+  };
+
+  const validateName = (name) => {
+    return name.length >= 3;
+  };
 
   const validateForm = () => {
     const newErrors = {};
     if (!validateName(supplierName)) {
-      newErrors.supplierName = "Name should be at least 3 characters long.";
+      newErrors.supplierName = "Supplier name should be at least 3 characters long.";
     }
     if (!validateNIC(SupplierID)) {
       newErrors.SupplierID = "NIC must be either 9 digits followed by 'v/V' or 12 digits.";
     }
     if (!validatePhoneNumber(phoneNumber)) {
-      newErrors.phoneNumber = "Phone number must be 10 digits long.";
+      newErrors.phoneNumber = "Phone number must be exactly 10 digits.";
+    } else {
+      const code = phoneNumber.substring(0, 3);
+      if (!areaCodes[code] && !networkCodes[code]) {
+        newErrors.phoneNumber = "Invalid phone number format.";
+      }
     }
     if (!validateEmail(email)) {
       newErrors.email = "Please enter a valid email address.";
+    }
+    if (!Type) {
+      newErrors.Type = "Please select a supplier type.";
     }
 
     setErrors(newErrors);
@@ -130,6 +179,48 @@ export default function SupplierDetailsForm() {
     }
   };
 
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    setSupplierName(value);
+  };
+
+  const handleNICChange = (e) => {
+    let value = e.target.value.toLowerCase();
+    
+    if (value.startsWith('2')) {
+      value = value.replace(/[^\d]/g, '').slice(0, 12);
+    } else {
+      value = value.replace(/[^\d]/g, '').slice(0, 9);
+      if (value.length === 9 && !value.endsWith('v')) {
+        value += 'v';
+      }
+    }
+    
+    setSupplierID(value);
+  };
+
+  const handlePhoneNumberChange = (e) => {
+    const value = e.target.value;
+    if (/^\d{0,10}$/.test(value)) {
+      setPhoneNumber(value);
+      
+      if (value.length >= 3) {
+        const code = value.substring(0, 3);
+        if (areaCodes[code]) {
+          setAreaName(areaCodes[code]);
+        } else if (networkCodes[code]) {
+          setAreaName(networkCodes[code]);
+        } else {
+          setAreaName('');
+        }
+      } else {
+        setAreaName('');
+      }
+    } else {
+      toast.error('Phone number must be numeric and no longer than 10 digits');
+    }
+  };
+
   return (
     <div className="flex bg-gray-200 min-h-screen">
       <div className="w-3/4 p-8">
@@ -145,41 +236,55 @@ export default function SupplierDetailsForm() {
                   id="supplierName"
                   type="text"
                   value={supplierName}
-                  onChange={(e) => setSupplierName(e.target.value)}
+                  onChange={handleNameChange}
                 />
                 {errors.supplierName && <p className="text-red-500 text-sm">{errors.supplierName}</p>}
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 mb-2" htmlFor="SupplierID"> NIC</label>
+                <label className="block text-gray-700 mb-2" htmlFor="SupplierID">NIC</label>
                 <input
                   className="w-full p-2 border border-gray-300 rounded"
                   id="SupplierID"
                   type="text"
                   value={SupplierID}
-                  onChange={(e) => setSupplierID(e.target.value)}
+                  onChange={handleNICChange}
+                  maxLength={12}
                 />
                 {errors.SupplierID && <p className="text-red-500 text-sm">{errors.SupplierID}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 mb-2" htmlFor="phoneNumber">Phone Number</label>
-                <input
-                  className="w-full p-2 border border-gray-300 rounded"
-                  id="phoneNumber"
-                  type="tel"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                />
+                <div className="relative">
+                  <input
+                    className="w-full p-2 border border-gray-300 rounded"
+                    id="phoneNumber"
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={handlePhoneNumberChange}
+                    maxLength={10}
+                  />
+                  {areaName && (
+                    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-500">
+                      {areaName}
+                    </span>
+                  )}
+                </div>
                 {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 mb-2" htmlFor="Type">Type</label>
-                <input
+                <select
                   className="w-full p-2 border border-gray-300 rounded"
                   id="Type"
-                  type="text"
                   value={Type}
                   onChange={(e) => setType(e.target.value)}
-                />
+                >
+                  <option value="">Select Supplier Type</option>
+                  {supplierTypes.map((type, index) => (
+                    <option key={index} value={type}>{type}</option>
+                  ))}
+                </select>
+                {errors.Type && <p className="text-red-500 text-sm">{errors.Type}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 mb-2" htmlFor="email">Email</label>
@@ -223,28 +328,45 @@ export default function SupplierDetailsForm() {
             </form>
           </div>
           <div className="w-1/3">
-            <h3 className="text-lg font-semibold mb-4 text-orange-500">Supplier Media</h3>
-            <div className="mb-4">
-              {imageUrl && (
-                <img
-                  src={imageUrl}
-                  alt="Supplier"
-                  className="w-full h-auto object-cover mb-4"
-                />
-              )}
-              <label
-                className="block text-gray-700 mb-2"
-                htmlFor="supplierMedia"
-              >
-                Upload Supplier Image
-              </label>
+            <h3 className="text-lg font-semibold mb-4 text-orange-500">Supplier Image</h3>
+            <div className="border-2 border-dashed border-orange-300 rounded-md p-4 text-center">
               <input
-                className="w-full p-2 border border-gray-300 rounded"
-                id="supplierMedia"
                 type="file"
+                id="supplierMedia"
+                accept="image/*"
                 onChange={handleMediaChange}
+                className="hidden"
               />
+              <label
+                htmlFor="supplierMedia"
+                className="cursor-pointer flex flex-col items-center justify-center"
+              >
+                {imageUrl ? (
+                  <img src={imageUrl} alt="Supplier" className="w-full h-48 object-cover rounded-md mb-4" />
+                ) : (
+                  <div className="w-full h-48 flex items-center justify-center bg-gray-100 rounded-md mb-4">
+                    <FaCloudUploadAlt className="text-5xl text-orange-500" />
+                  </div>
+                )}
+                <span className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition duration-300">
+                  {imageUrl ? 'Change Image' : 'Upload Image'}
+                </span>
+              </label>
+              {imageUrl && (
+                <button
+                  onClick={() => {
+                    setImageUrl(null);
+                    setSupplierMedia('');
+                  }}
+                  className="mt-2 text-red-500 hover:text-red-700"
+                >
+                  Remove Image
+                </button>
+              )}
             </div>
+            <p className="text-sm text-gray-500 mt-2">
+              Max file size: 5MB. Supported formats: JPG, PNG, GIF.
+            </p>
           </div>
         </div>
       </div>
