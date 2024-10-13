@@ -98,7 +98,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
 
     doc.setFontSize(10);
     doc.text(`Date: ${dateString}`, pageWidth - 15, 15, { align: 'right' });
-    doc.text('CONFIDENTIAL', 14, 50);
+    doc.text('CONFIDENTIAL - INTERNAL USE ONLY', 14, 50);
     doc.text(`Contact: ${companyEmail} | ${companyTelephone}`, pageWidth - 15, 22, { align: 'right' });
 
     // Add header separator line
