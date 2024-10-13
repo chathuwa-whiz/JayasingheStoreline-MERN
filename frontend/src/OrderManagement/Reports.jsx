@@ -107,7 +107,7 @@ export default function Dashboard() {
         head: [['Product Name', 'Order Quantity', 'Selling Price', 'Buying Price', 'Total Revenue']],
         body: products.map(product => [
           product.name,
-          product.currentQty,
+          product.totalOrders,
           priceFormatter.format(product.sellingPrice),
           priceFormatter.format(product.buyingPrice),
           priceFormatter.format(product.sellingPrice * product.currentQty)
