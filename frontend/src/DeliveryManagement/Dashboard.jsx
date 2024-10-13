@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaBox, FaClock, FaCheck, FaExclamationCircle, FaMoneyBill, FaListUl, FaTrash, FaUser } from 'react-icons/fa';
+import { FaBox, FaClock, FaCheck, FaExclamationCircle, FaMoneyBill, FaListUl, FaTrash, FaUser, FaTruck, FaCar, FaMotorcycle, FaBoxes } from 'react-icons/fa';
 
 export default function DeliveryDashboard() {
   const [deliveries, setDeliveries] = useState([]);
@@ -76,112 +76,105 @@ export default function DeliveryDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8 overflow-y-auto">
-      <header className="flex justify-between items-center mb-8">
+    <div className="min-h-screen bg-gray-100 p-6 lg:p-8">
+      <header className="bg-white shadow-md rounded-lg p-6 mb-8">
         <h1 className="text-3xl font-bold text-gray-800">Welcome back, Yasith JY</h1>
-        <p className="text-gray-500">Track and manage your deliveries efficiently</p>
+        <p className="text-gray-600 mt-2">Track and manage your deliveries efficiently</p>
       </header>
 
-      {error && <div className="text-red-500 mb-4">{error}</div>}
+      {error && (
+        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-8" role="alert">
+          <p className="font-bold">Error</p>
+          <p>{error}</p>
+        </div>
+      )}
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl flex items-center">
-          <FaBox className="text-4xl text-green-500 mr-4" />
-          <div>
-            <h2 className="text-3xl font-semibold text-green-600">{deliveries.length}</h2>
-            <p className="text-gray-600">Total Deliveries</p>
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <DashboardCard icon={<FaBox />} title="Total Deliveries" value={deliveries.length} color="green" />
+        <DashboardCard icon={<FaClock />} title="Pending Deliveries" value={pendingDeliveries} color="yellow" />
+        <DashboardCard icon={<FaCheck />} title="Completed Deliveries" value={completedDeliveries} color="blue" />
+        <DashboardCard icon={<FaExclamationCircle />} title="Delayed Deliveries" value={delayedDeliveries} color="red" />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <DashboardCard icon={<FaMoneyBill />} title="Total Delivery Earnings" value={priceFormatter.format(totalEarnings)} color="green" />
+        <DashboardCard icon={<FaMoneyBill />} title="Total Item Earnings" value={priceFormatter.format(totalDeliveredItems)} color="blue" />
+        <DashboardCard icon={<FaMoneyBill />} title="Total Earnings" value={priceFormatter.format(totalEarnings + totalDeliveredItems)} color="indigo" />
+        <DashboardCard icon={<FaUser />} title="Total Drivers" value={totalDrivers} color="purple" />
+      </div>
+
+      <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
+        <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-800">Recent Deliveries</h2>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl flex items-center">
-          <FaClock className="text-4xl text-yellow-500 mr-4" />
-          <div>
-            <h2 className="text-3xl font-semibold text-yellow-600">{pendingDeliveries}</h2>
-            <p className="text-gray-600">Pending Deliveries</p>
-          </div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl flex items-center">
-          <FaCheck className="text-4xl text-blue-500 mr-4" />
-          <div>
-            <h2 className="text-3xl font-semibold text-blue-600">{completedDeliveries}</h2>
-            <p className="text-gray-600">Completed Deliveries</p>
-          </div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl flex items-center">
-          <FaExclamationCircle className="text-4xl text-red-500 mr-4" />
-          <div>
-            <h2 className="text-3xl font-semibold text-red-600">{delayedDeliveries}</h2>
-            <p className="text-gray-600">Delayed Deliveries</p>
-          </div>
+        <div className="overflow-x-auto">
+          <table className="w-full table-auto">
+            <thead className="bg-gray-50">
+              <tr className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3">Delivery No</th>
+                <th className="px-6 py-3">Items Price</th>
+                <th className="px-6 py-3">Delivery Price</th>
+                <th className="px-6 py-3">Total Price</th>
+                <th className="px-6 py-3">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {deliveries.slice(-5).reverse().map(delivery => (
+                <tr key={delivery._id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap">{delivery._id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{priceFormatter.format(delivery.itemsPrice || 0)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{priceFormatter.format(delivery.deliveryPrice || 0)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {priceFormatter.format((delivery.itemsPrice || 0) + (delivery.deliveryPrice || 0))}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button className="text-red-500 hover:text-red-700" onClick={() => handleDelete(delivery._id)}>
+                      <FaTrash />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl flex items-center">
-          <FaMoneyBill className="text-4xl text-green-500 mr-4" />
-          <div>
-            <h2 className="text-3xl font-semibold text-green-600">{priceFormatter.format(totalEarnings)}</h2>
-            <p className="text-gray-600">Total Delivery Earnings</p>
-          </div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl flex items-center">
-          <FaMoneyBill className="text-4xl text-blue-500 mr-4" />
-          <div>
-            <h2 className="text-3xl font-semibold text-blue-600">{priceFormatter.format(totalDeliveredItems)}</h2>
-            <p className="text-gray-600">Total Item Earnings</p>
-          </div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl flex items-center">
-          <FaMoneyBill className="text-4xl text-blue-500 mr-4" />
-          <div>
-            <h2 className="text-3xl font-semibold text-blue-600">{priceFormatter.format(totalEarnings + totalDeliveredItems)}</h2>
-            <p className="text-gray-600">Total Earnings</p>
-          </div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl flex items-center">
-          <FaUser className="text-4xl text-purple-500 mr-4" />
-          <div>
-            <h2 className="text-3xl font-semibold text-purple-600">{totalDrivers}</h2>
-            <p className="text-gray-600">Total Drivers</p>
-          </div>
+      {/* Running Line */}
+      <div className="bg-blue-600 text-white py-2 overflow-hidden">
+        <div className="animate-marquee whitespace-nowrap">
+          <span className="text-lg font-semibold mx-4">
+            <FaTruck className="inline-block mr-2" />
+            JAYASINGHE STORELINES PVT (LTD)
+          </span>
+          <span className="text-lg font-semibold mx-4">
+            <FaCar className="inline-block mr-2" />
+            JAYASINGHE STORELINES PVT (LTD)
+          </span>
+          <span className="text-lg font-semibold mx-4">
+            <FaMotorcycle className="inline-block mr-2" />
+            JAYASINGHE STORELINES PVT (LTD)
+          </span>
+          <span className="text-lg font-semibold mx-4">
+            <FaBoxes className="inline-block mr-2" />
+            JAYASINGHE STORELINES PVT (LTD)
+          </span>
         </div>
       </div>
-
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-  <h2 className="text-2xl font-semibold mb-4">Recent Deliveries</h2>
-  <table className="w-full table-auto">
-    <thead>
-      <tr className="text-left border-b-2 border-gray-300">
-        <th className="px-4 py-2">Delivery No</th>
-        <th className="px-4 py-2">Items Price</th>
-        <th className="px-4 py-2">Delivery Price</th>
-        <th className="px-4 py-2">Total Price</th>
-        <th className="px-4 py-2">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-  {deliveries
-    .slice(-5)
-    .reverse()
-    .map(delivery => (
-      <tr key={delivery._id} className="hover:bg-gray-100 transition-colors">
-        <td className="border px-4 py-2">{delivery._id}</td>
-        <td className="border px-4 py-2">{priceFormatter.format(delivery.itemsPrice || 0)}</td>
-        <td className="border px-4 py-2">{priceFormatter.format(delivery.deliveryPrice || 0)}</td>
-        <td className="border px-4 py-2">
-          {priceFormatter.format((delivery.itemsPrice || 0) + (delivery.deliveryPrice || 0))}
-        </td>
-        <td className="border px-4 py-2">
-          <button className="text-red-500 hover:text-red-700" onClick={() => handleDelete(delivery._id)}>
-            <FaTrash />
-          </button>
-        </td>
-      </tr>
-    ))}
-</tbody>
-
-  </table>
-</div>
-
     </div>
   );
 }
+
+function DashboardCard({ icon, title, value, color }) {
+  return (
+    <div className={`bg-white p-6 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg transform hover:scale-105`}>
+      <div className="flex items-center">
+        <div className={`text-4xl text-${color}-500 mr-4`}>{icon}</div>
+        <div>
+          <h2 className={`text-2xl font-semibold text-${color}-600`}>{value}</h2>
+          <p className="text-gray-600 text-sm mt-1">{title}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+

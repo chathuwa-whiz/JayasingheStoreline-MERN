@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useGetDriversQuery, useCreateDriverMutation, useUpdateDriverMutation, useDeleteDriverMutation } from '../redux/api/driverApiSlice';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaSearch, FaDownload } from 'react-icons/fa';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logo from '../asset/logo.png';
@@ -321,21 +321,23 @@ const DriverVehicleDetails = () => {
   );
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 bg-gray-100 min-h-screen">
       {/* Form Section */}
-      <div className="border rounded-lg p-6 bg-white shadow-lg transition duration-300 ease-in-out hover:shadow-xl">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-800">{editingDriver ? 'Edit Driver' : 'Add New Driver'}</h2>
-        <form onSubmit={handleCreateOrUpdate}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="bg-white rounded-lg p-6 shadow-lg mb-8">
+        <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">
+          {editingDriver ? 'Edit Driver' : 'Add New Driver'}
+        </h2>
+        <form onSubmit={handleCreateOrUpdate} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Name */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name (English letters only)</label>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name (English letters only)</label>
               <input
                 type="text"
                 id="name"
                 value={newDriver.name}
                 onChange={(e) => handleInputChange(e, 'name')}
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 required
                 pattern="[A-Za-z\s]+"
                 title="Please enter English letters only"
@@ -343,34 +345,32 @@ const DriverVehicleDetails = () => {
             </div>
             {/* Date of Birth */}
             <div>
-              <label htmlFor="dob" className="block text-sm font-medium text-gray-700">Date of Birth</label>
+              <label htmlFor="dob" className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
               <input
                 type="date"
                 id="dob"
                 value={newDriver.birthday}
                 onChange={(e) => handleInputChange(e, 'birthday')}
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 required
                 min={minDate}
                 max={maxDate}
               />
-              <p className="mt-1 text-sm text-gray-500">
-                Driver must be between 18 and 40 years old
-              </p>
+              <p className="mt-1 text-xs text-gray-500">Driver must be between 18 and 40 years old</p>
             </div>
             {/* NIC */}
             <div>
-              <label htmlFor="nic" className="block text-sm font-medium text-gray-700">NIC</label>
+              <label htmlFor="nic" className="block text-sm font-medium text-gray-700 mb-1">NIC</label>
               <input
                 type="text"
                 id="nic"
                 value={newDriver.nic}
                 onChange={(e) => handleInputChange(e, 'nic')}
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 required
                 placeholder={new Date(newDriver.birthday).getFullYear() < 2001 ? "YYXXXXXXXXV" : "20XXXXXXXXXX"}
               />
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-xs text-gray-500">
                 {new Date(newDriver.birthday).getFullYear() < 2001 
                   ? "10 digits with 'V' at the end, starting with birth year's last 2 digits" 
                   : "12 digits, starting with '20'"}
@@ -378,14 +378,14 @@ const DriverVehicleDetails = () => {
             </div>
             {/* Telephone Number */}
             <div>
-              <label htmlFor="telephoneNo" className="block text-sm font-medium text-gray-700">Telephone/Mobile Number</label>
+              <label htmlFor="telephoneNo" className="block text-sm font-medium text-gray-700 mb-1">Telephone/Mobile Number</label>
               <div className="relative">
                 <input
                   type="text"
                   id="telephoneNo"
                   value={newDriver.telephoneNo}
                   onChange={(e) => handleInputChange(e, 'telephoneNo')}
-                  className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   required
                   placeholder="0XX-XXXXXXX"
                 />
@@ -398,61 +398,64 @@ const DriverVehicleDetails = () => {
             </div>
             {/* Vehicle */}
             <div>
-              <label htmlFor="vehicleType" className="block text-sm font-medium text-gray-700">Vehicle</label>
+              <label htmlFor="vehicleType" className="block text-sm font-medium text-gray-700 mb-1">Vehicle</label>
               <input
                 type="text"
                 id="vehicleType"
                 value={newDriver.vehicleType}
                 onChange={(e) => handleInputChange(e, 'vehicleType')}
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 required
               />
             </div>
             {/* Vehicle Registration Number */}
             <div>
-              <label htmlFor="vehicleRegNo" className="block text-sm font-medium text-gray-700">Vehicle Registration Number</label>
+              <label htmlFor="vehicleRegNo" className="block text-sm font-medium text-gray-700 mb-1">Vehicle Registration Number</label>
               <input
                 type="text"
                 id="vehicleRegNo"
                 value={newDriver.vehicleRegNo}
                 onChange={(e) => handleInputChange(e, 'vehicleRegNo')}
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 required
                 placeholder="12-1234 or AB-1234 or ABC-1234"
-                maxLength={8} // Set maxLength to 8 to account for the longest format (ABC-1234)
+                maxLength={8}
               />
-              <p className="mt-1 text-sm text-gray-500">
-                Format: 12-1234, AB-1234, or ABC-1234
-              </p>
+              <p className="mt-1 text-xs text-gray-500">Format: 12-1234, AB-1234, or ABC-1234</p>
             </div>
             {/* Driver License Number */}
             <div>
-              <label htmlFor="driverLicenceNo" className="block text-sm font-medium text-gray-700">Driver License Number</label>
+              <label htmlFor="driverLicenceNo" className="block text-sm font-medium text-gray-700 mb-1">Driver License Number</label>
               <input
                 type="text"
                 id="driverLicenceNo"
                 value={newDriver.driverLicenceNo}
                 onChange={(e) => handleInputChange(e, 'driverLicenceNo')}
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 required
                 placeholder="A1234567"
               />
-              <p className="mt-1 text-sm text-gray-500">
-                Format: 1 capital letter followed by 7 digits (8 characters total)
-              </p>
+              <p className="mt-1 text-xs text-gray-500">Format: 1 capital letter followed by 7 digits</p>
             </div>
           </div>
           {/* Error Message */}
           {message.text && (
-            <div className={`mt-4 text-sm font-semibold ${message.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>
+            <div className={`mt-4 p-2 rounded ${message.type === 'error' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
               {message.text}
             </div>
           )}
-          <div className="mt-6 flex justify-end">
-            <button type="button" className="mr-4 px-4 py-2 bg-gray-300 rounded-md transition duration-200 hover:bg-gray-400" onClick={handleCancelEdit}>
+          <div className="flex justify-end space-x-4">
+            <button 
+              type="button" 
+              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200" 
+              onClick={handleCancelEdit}
+            >
               Cancel
             </button>
-            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-200 shadow-md">
+            <button 
+              type="submit" 
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-200 shadow-md"
+            >
               {editingDriver ? 'Update Driver' : 'Add Driver'}
             </button>
           </div>
@@ -460,62 +463,68 @@ const DriverVehicleDetails = () => {
       </div>
 
       {/* Driver List Section */}
-      <div className="mt-8">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-800">Driver List</h2>
-        <div className="mb-4">
-          <input
-            type="text"
-            placeholder="Search by name or NIC..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
-          />
-        </div>
-        <table className="min-w-full bg-white border border-gray-300 shadow-md">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border px-4 py-2 text-left text-gray-600 font-medium">NIC</th>
-              <th className="border px-4 py-2 text-left text-gray-600 font-medium">Name</th>
-              <th className="border px-4 py-2 text-left text-gray-600 font-medium">DOB</th>
-              <th className="border px-4 py-2 text-left text-gray-600 font-medium">Telephone</th>
-              <th className="border px-4 py-2 text-left text-gray-600 font-medium">Vehicle</th>
-              <th className="border px-4 py-2 text-left text-gray-600 font-medium">Vehicle Reg No</th>
-              <th className="border px-4 py-2 text-left text-gray-600 font-medium">Driver License No</th>
-              <th className="border px-4 py-2 text-left text-gray-600 font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredDrivers && filteredDrivers.length > 0 ? (
-              filteredDrivers.map(driver => (
-                <tr key={driver._id} className="hover:bg-gray-100 transition duration-200">
-                  <td className="border px-4 py-2">{driver.nic}</td>
-                  <td className="border px-4 py-2">{driver.name}</td>
-                  <td className="border px-4 py-2">{driver.birthday.split('T')[0]}</td>
-                  <td className="border px-4 py-2">{driver.telephoneNo}</td>
-                  <td className="border px-4 py-2">{driver.vehicleType}</td>
-                  <td className="border px-4 py-2">{driver.vehicleRegNo}</td>
-                  <td className="border px-4 py-2">{driver.driverLicenceNo}</td>
-                  <td className="border px-4 py-2">
-                    <button onClick={() => handleEdit(driver)} className="text-blue-600 hover:underline">
-                      <FaEdit />
-                    </button>
-                    <button onClick={() => handleDelete(driver._id)} className="text-red-600 hover:underline ml-2">
-                      <FaTrash />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="8" className="border px-4 py-2 text-center text-gray-500">No drivers found.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-        <div className="mt-4">
-          <button onClick={downloadPDF} className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
-            Download PDF
+      <div className="bg-white rounded-lg p-6 shadow-lg">
+        <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Driver List</h2>
+        <div className="mb-4 flex items-center">
+          <div className="relative flex-grow">
+            <input
+              type="text"
+              placeholder="Search by name or NIC..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          </div>
+          <button 
+            onClick={downloadPDF} 
+            className="ml-4 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200 flex items-center"
+          >
+            <FaDownload className="mr-2" /> Download PDF
           </button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white border border-gray-300">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIC</th>
+                <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DOB</th>
+                <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Telephone</th>
+                <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehicle</th>
+                <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehicle Reg No</th>
+                <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver License No</th>
+                <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {filteredDrivers && filteredDrivers.length > 0 ? (
+                filteredDrivers.map(driver => (
+                  <tr key={driver._id} className="hover:bg-gray-50 transition duration-200">
+                    <td className="border px-4 py-2">{driver.nic}</td>
+                    <td className="border px-4 py-2">{driver.name}</td>
+                    <td className="border px-4 py-2">{driver.birthday.split('T')[0]}</td>
+                    <td className="border px-4 py-2">{driver.telephoneNo}</td>
+                    <td className="border px-4 py-2">{driver.vehicleType}</td>
+                    <td className="border px-4 py-2">{driver.vehicleRegNo}</td>
+                    <td className="border px-4 py-2">{driver.driverLicenceNo}</td>
+                    <td className="border px-4 py-2">
+                      <button onClick={() => handleEdit(driver)} className="text-blue-600 hover:text-blue-800 mr-2">
+                        <FaEdit />
+                      </button>
+                      <button onClick={() => handleDelete(driver._id)} className="text-red-600 hover:text-red-800">
+                        <FaTrash />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8" className="border px-4 py-2 text-center text-gray-500">No drivers found.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
