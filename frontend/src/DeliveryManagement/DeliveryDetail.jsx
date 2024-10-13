@@ -104,7 +104,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
   
     // Generate the table
     autoTable(doc, {
-      head: [['Delivery No', 'Delivery Item', 'Name', 'Contact No', 'CreatedAt', 'Items Price', 'Delivery Price', 'Total Price', 'Status']],
+      head: [['Delivery No', 'Order No', 'Delivery Item', 'Name', 'Contact No', 'CreatedAt', 'Items Price', 'Delivery Price', 'Total Price', 'Status']],
       body: tableData,
       startY: 60,
     });
