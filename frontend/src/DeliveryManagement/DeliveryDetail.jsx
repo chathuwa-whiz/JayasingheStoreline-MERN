@@ -75,9 +75,9 @@ export default function DeliveryDetail({ onEditDelivery }) {
     });
     doc.addImage(img, 'PNG', 14, 10, 30, 30);
 
-    doc.setFontSize(20);
+    doc.setFontSize(25);
     doc.setTextColor(40, 40, 40);
-    doc.text('Delivery Details Report', pageWidth / 2, 25, { align: 'center' });
+    doc.text('Delivery Details Report', pageWidth / 2, 40, { align: 'center' });
 
     doc.setFontSize(10);
     doc.text(`Date: ${dateString}`, pageWidth - 15, 15, { align: 'right' });
@@ -86,7 +86,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
 
     // Footer function
     const addFooter = () => {
-      doc.setFontSize(8);
+      doc.setFontSize(10);
       doc.text(`Jayasinghe Storelines PVT (LTD) | ${companyAddress}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
       doc.text(`Page ${doc.internal.getNumberOfPages()}`, pageWidth - 15, pageHeight - 10, { align: 'right' });
       doc.text('Version 1.0', 14, pageHeight - 10);

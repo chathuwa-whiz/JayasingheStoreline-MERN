@@ -218,8 +218,8 @@ const DriverVehicleDetails = () => {
       const generatePDF = () => {
         // Header
         doc.addImage(img, 'PNG', 14, 10, 30, 30);
-        doc.setFontSize(18);
-        doc.text('Drivers List Report', pageWidth / 2, 25, { align: 'center' });
+        doc.setFontSize(25);
+        doc.text('Drivers List Report', pageWidth / 2, 35, { align: 'center' });
         
         const currentDate = new Date();
         const dateString = currentDate.toLocaleDateString();
@@ -246,12 +246,12 @@ const DriverVehicleDetails = () => {
           startY: 60, // Increased from 50 to 60 to accommodate the lower title position
           didDrawPage: (data) => {
             // Footer
-            doc.setFontSize(8);
+            doc.setFontSize(9);
             doc.text('Jayasinghe Storelines PVT (LTD)', 14, pageHeight - 10);
             doc.text('No. 123, Main Street, Colombo, Sri Lanka', 14, pageHeight - 6);
-            doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 15, pageHeight - 10, { align: 'right' });
+            doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 14, pageHeight - 10, { align: 'right' });
             doc.text('Version 1.0', pageWidth / 2, pageHeight - 10, { align: 'center' });
-            doc.text('This document is confidential and intended for internal use only.', pageWidth / 2, pageHeight - 6, { align: 'center' });
+            doc.text('This document is confidential and intended for internal use only.', pageWidth / 1.48, pageHeight - 6, { align: 'center' });
           },
         });
 
