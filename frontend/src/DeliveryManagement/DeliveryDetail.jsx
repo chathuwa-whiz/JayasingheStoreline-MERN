@@ -91,6 +91,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
     // Prepare table data
     const tableData = deliveries.map(delivery => [
       delivery._id,
+      delivery.orderId,
       JSON.parse(delivery.deliveryItem).map(item => `${item.name} x ${item.qty}`).join(', '),
       delivery.firstName,
       delivery.telephoneNo,
@@ -144,6 +145,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
         <thead className="bg-gray-200 text-gray-700">
           <tr>
             <th className="border p-3 text-left">Delivery No</th>
+            <th className='border p-3 text-left'>Order No</th>
             <th className="border p-3 text-left">Delivery Item</th>
             <th className="border p-3 text-left">Name</th>
             <th className="border p-3 text-left">Contact No</th>

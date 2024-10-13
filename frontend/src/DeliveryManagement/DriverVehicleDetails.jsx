@@ -77,29 +77,27 @@ const DriverVehicleDetails = () => {
   }, [refetch]);
 
   const formatVehicleRegNo = (value) => {
-    // Remove any existing hyphens and uppercase the input
+    // Remove any existing hyphens and convert input to uppercase
     let sanitizedValue = value.replace('-', '').toUpperCase();
     
-    if (/^\d{1,2}$/.test(sanitizedValue)) {
-      // Format 12-1234 (6 characters total)
-      return sanitizedValue.slice(0, 6);
-    } else if (/^\d{3,6}$/.test(sanitizedValue)) {
-      // Format 12-1234 (6 characters total)
-      return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2, 6);
-    } else if (/^[A-Z]{2}\d{0,4}$/.test(sanitizedValue)) {
-      // Format AB-1234 (6 characters total)
-      if (sanitizedValue.length > 2) {
-        return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2, 6);
+    // Check if the sanitized value has exactly 6 characters (12-1234 or AB-1234)
+    if (sanitizedValue.length === 6) {
+      // Check for the format 12-1234 (2 digits + 4 digits)
+      if (/^\d{2}\d{4}$/.test(sanitizedValue)) {
+        return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2);
       }
-      return sanitizedValue.slice(0, 6);
-    } else if (/^[A-Z]{3}\d{0,4}$/.test(sanitizedValue)) {
-      // Format ABC-1234 (7 characters total)
-      if (sanitizedValue.length > 3) {
-        return sanitizedValue.slice(0, 3) + '-' + sanitizedValue.slice(3, 7);
+      // Check for the format AB-1234 (2 letters + 4 digits)
+      if (/^[A-Z]{2}\d{4}$/.test(sanitizedValue)) {
+        return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2);
       }
-      return sanitizedValue.slice(0, 7);
+    } 
+    // Check if the sanitized value has exactly 7 characters for ABC-1234
+    else if (sanitizedValue.length === 7 && /^[A-Z]{3}\d{4}$/.test(sanitizedValue)) {
+      return sanitizedValue.slice(0, 3) + '-' + sanitizedValue.slice(3);
     }
-    return sanitizedValue.slice(0, 7); // Limit to 7 characters max
+    
+    // Return sanitized value if no formatting conditions are met
+    return sanitizedValue;
   };
 
   const formatDriverLicenceNo = (value) => {
@@ -290,6 +288,72 @@ const DriverVehicleDetails = () => {
     doc.save('Drivers_List.pdf');
   };
 
+  const generatePDFWithHeaderFooter = (doc) => {
+    // Load the logo image
+    const img = new Image();
+    img.src = logo; // Ensure the path to the logo is correct
+
+    img.onload = function () {
+        // Add the logo to the header
+        doc.addImage(img, 'PNG', 14, 10, 30, 30); // Adjust position and size as needed
+
+        // Add company details and report title
+        doc.setFontSize(16);
+        doc.text('Jayasinghe Storelines PVT LTD', 50, 20);
+        doc.setFontSize(12);
+        doc.text('No. 123, Main Street, Colombo, Sri Lanka', 50, 28);
+        doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', 50, 34);
+
+        // Add report title and date
+        const currentDate = new Date();
+        const dateString = currentDate.toLocaleDateString();
+        doc.setFontSize(14);
+        doc.text('Drivers List Report', 50, 42);
+        doc.text(`Issued on: ${dateString}`, 50, 48);
+
+        // Add a line below the header
+        doc.setLineWidth(0.5);
+        doc.line(14, 52, 196, 52);
+
+        // Prepare the table data
+        const rows = drivers.map(driver => [
+            driver.nic,
+            driver.name,
+            driver.birthday.split('T')[0],
+            driver.telephoneNo,
+            driver.vehicleType,
+            driver.vehicleRegNo,
+            driver.driverLicenceNo,
+        ]);
+
+        // Add the table
+        autoTable(doc, {
+            head: [['NIC', 'Name', 'DOB', 'Telephone', 'Vehicle Type', 'Vehicle Reg No', 'Driver License No']],
+            body: rows,
+            startY: 55,
+        });
+
+        // Set up the footer
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.setFontSize(10);
+            doc.text(`Page ${i} of ${pageCount}`, 180, doc.internal.pageSize.height - 10);
+            doc.text('Jayasinghe Storelines PVT LTD', 14, doc.internal.pageSize.height - 10);
+            doc.text('Confidential - For Internal Use Only', 14, doc.internal.pageSize.height - 20);
+            doc.text('Version 1.0', 180, doc.internal.pageSize.height - 20);
+        }
+
+        // Save the PDF
+        doc.save('Drivers_List_Professional_Report.pdf');
+    };
+
+    img.onerror = function () {
+        console.error('Image loading failed. PDF will be generated without the logo.');
+        generatePDFWithoutLogo(doc);
+    };
+  };
+
   // Filter drivers based on the search term
   const filteredDrivers = drivers?.filter(driver =>
     driver.name.toLowerCase().includes(searchTerm.toLowerCase()) || driver.nic.includes(searchTerm)
@@ -394,9 +458,10 @@ const DriverVehicleDetails = () => {
                 className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
                 required
                 placeholder="12-1234 or AB-1234 or ABC-1234"
+                maxLength={8} // Set maxLength to 8 to account for the longest format (ABC-1234)
               />
               <p className="mt-1 text-sm text-gray-500">
-                Format: 12-1234 (6 chars), AB-1234 (6 chars), or ABC-1234 (7 chars)
+                Format: 12-1234, AB-1234, or ABC-1234
               </p>
             </div>
             {/* Driver License Number */}
