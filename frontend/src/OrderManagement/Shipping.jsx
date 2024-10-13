@@ -11,7 +11,7 @@ const areaCodes = {
   '024': 'Vavuniya', '034': 'Kalutara', '047': 'Hambantota', '065': 'Batticaloa',
   '025': 'Anuradhapura', '035': 'Kegalle', '051': 'Hatton', '066': 'Matale',
   '026': 'Trincomalee', '036': 'Avissawella', '052': 'Nuwara Eliya', '067': 'Kalmunai',
-  '027': 'Polonnaruwa', '037': 'Kurunegala', '054': 'Nawalapitiya', '081': 'Kandy'
+  '027': 'Polonnaruwa', '037': 'Kurunegala', '054': 'Nawalapitiya', '081': 'Kandy','091': 'Kollupitiya'
 };
 
 const networkCodes = ['070', '071', '072', '074', '076', '077', '078'];
