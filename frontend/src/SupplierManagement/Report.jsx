@@ -62,6 +62,10 @@ export default function SupplierReport() {
     doc.text('Email: info@jayasinghe-storeline.com', 50, 40);  // Add email here
     doc.text('Phone: +94 77 123 4567', 50, 50);  // Add phone number here
 
+    // Add current date
+    const currentDate = new Date().toLocaleDateString(); // Get current date in local format
+    doc.text(`Date: ${currentDate}`, 50, 60); // Add date under phone number
+
     // Supplier and product information
     doc.text(`Supplier Name: ${selectedSupplier.name}`, 14, 70);
     doc.text(`Contact Number: ${selectedSupplier.phone}`, 14, 80);
@@ -95,8 +99,6 @@ export default function SupplierReport() {
 
     // Add pie chart image on the right
     doc.addImage(pieChartImage, 'PNG', 110, 30, 90, 100);  // Adjust the dimensions and x position as needed
-
-
 
     // Save the PDF
     doc.save('order-inquiry.pdf');

@@ -2,13 +2,10 @@ import React from 'react';
 import 'tailwindcss/tailwind.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/swiper-bundle.css';
-import {useLocation} from 'react-router-dom'
-// import 'swiper/modules/autoplay/autoplay.min.css'; // Import the autoplay styles
-import { Autoplay } from 'swiper/modules'; // Import Autoplay directly
 import { useAllProductsQuery } from "../redux/api/productApiSlice";
+import ChatBot from '../ChatBot/ChatBot'; // Correct path to import ChatBot
 
 const Carousel = () => {
-
   const { data: products, isError, isLoading } = useAllProductsQuery();
 
   if (isLoading) return <div>Loading...</div>;
@@ -17,15 +14,14 @@ const Carousel = () => {
   return (
     <div className="my-8">
       <Swiper
-        modules={[Autoplay]} // Pass the Autoplay module here
         spaceBetween={10}
         slidesPerView={1}
-        autoplay={{ delay: 2000, disableOnInteraction: false }} // Automatic sliding with 3-second delay
+        autoplay={{ delay: 2000, disableOnInteraction: false }}
         loop={true}
       >
         {products.slice(0, 5).map((product, index) => (
           <SwiperSlide key={index} className="flex flex-col items-center">
-            <img src={product.image} alt={product.name} className="w-200 h-64 object-cover" /> {/* Larger images */}
+            <img src={product.image} alt={product.name} className="w-200 h-64 object-cover" />
             <div className="mt-4 text-center">
               <p className="text-gray-700 font-semibold">{product.description}</p>
               <span className="text-red-600 text-xl">Rs.{product.sellingPrice}.00</span>
@@ -38,7 +34,6 @@ const Carousel = () => {
 };
 
 export default function Home() {
-
   const { data: products, isError, isLoading } = useAllProductsQuery();
 
   if (isLoading) return <div>Loading...</div>;
@@ -95,9 +90,10 @@ export default function Home() {
               onClick={() => window.location.href = '/productlist'}
               className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700">View All Products</button>
           </div>
-
         </section>
       </main>
+
+      <ChatBot /> {/* ChatBot component is embedded here */}
     </div>
   );
 }

@@ -1,11 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAllProductsQuery } from '../redux/api/productApiSlice';
 import { Pie, Line } from 'react-chartjs-2';
+import { FaBell } from 'react-icons/fa';
+import { DashboardHeader } from '../Shared/Header';
 
 export default function Dashboard() {
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
 
   // Fetch all products
   const { data: products, isLoading: productsLoading, isError: productsError } = useAllProductsQuery();
+
+  useEffect(() => {
+    if (products) {
+      const lowStockNotifications = products
+        .filter(product => product.currentQty < 5)
+        .map(product => ({
+          id: product._id,
+          message: `Low stock alert: ${product.name} (${product.currentQty} remaining)`,
+          type: 'warning'
+        }));
+      setNotifications(lowStockNotifications);
+    }
+  }, [products]);
 
   if (productsLoading) return <div>Loading...</div>;
   if (productsError) return <div>Something went wrong</div>;
@@ -58,28 +75,61 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="overflow-auto bg-gray-100 p-6 rounded-lg">
+    <div className="overflow-auto bg-gray-100 p-6 rounded-lg relative">
+      {/* Notification Icon */}
+      <div className="absolute top-4 right-4">
+        <button 
+          onClick={() => setShowNotifications(!showNotifications)}
+          className="relative p-2 bg-white rounded-full shadow-lg"
+        >
+          <FaBell className="text-gray-600" />
+          {notifications.length > 0 && (
+            <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+              {notifications.length}
+            </span>
+          )}
+        </button>
+
+        {/* Notification Dropdown */}
+        {showNotifications && (
+          <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg overflow-hidden z-20">
+            <div className="py-2">
+              {notifications.length > 0 ? (
+                notifications.map((notification) => (
+                  <div key={notification.id} className="px-4 py-2 hover:bg-gray-100">
+                    <p className={`text-sm ${notification.type === 'warning' ? 'text-yellow-600' : 'text-gray-700'}`}>
+                      {notification.message}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <div className="px-4 py-2 text-sm text-gray-700">No new notifications</div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
 
       <div className="grid grid-cols-4 gap-6 mb-8">
         <div className="bg-green-100 p-6 rounded-lg text-center shadow-lg">
           <h2 className="text-4xl font-bold text-green-800">{products.length}</h2>
           <p className="text-lg text-gray-700">Total Products</p>
-          <p className="text-green-600">+18% +3.8k this week</p>
+          {/* <p className="text-green-600">+18% +3.8k this week</p> */}
         </div>
         <div className="bg-yellow-100 p-6 rounded-lg text-center shadow-lg">
           <h2 className="text-4xl font-bold text-yellow-800">{categories.length}</h2>
           <p className="text-lg text-gray-700">Total Categories</p>
-          <p className="text-yellow-600">+18% +2.8k this week</p>
+          {/* <p className="text-yellow-600">+18% +2.8k this week</p> */}
         </div>
         <div className="bg-blue-100 p-6 rounded-lg text-center shadow-lg overflow-auto">
           <h2 className="text-3xl font-bold text-blue-800">{priceFormatter.format(stockValue)}</h2>
           <p className="text-lg text-gray-700">Total Stock Value</p>
-          <p className="text-blue-600">+18% +7.8k this week</p>
+          {/* <p className="text-blue-600">+18% +7.8k this week</p> */}
         </div>
         <div className="bg-red-100 p-6 rounded-lg text-center shadow-lg">
           <h2 className="text-4xl font-bold text-red-800">{lowStock}</h2>
           <p className="text-lg text-gray-700">Low Stock</p>
-          <p className="text-red-600">+18% +1.2k this week</p>
+          {/* <p className="text-red-600">+18% +1.2k this week</p> */}
         </div>
       </div>
 

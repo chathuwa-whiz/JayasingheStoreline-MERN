@@ -91,6 +91,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
     // Prepare table data
     const tableData = deliveries.map(delivery => [
       delivery._id,
+      delivery.orderId,
       JSON.parse(delivery.deliveryItem).map(item => `${item.name} x ${item.qty}`).join(', '),
       delivery.firstName,
       delivery.telephoneNo,
@@ -145,6 +146,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
         <thead className="bg-gray-200 text-gray-700">
           <tr>
             <th className="border p-3 text-left">Delivery No</th>
+            <th className="border p-3 text-left">Order No</th>
             <th className="border p-3 text-left">Delivery Item</th>
             <th className="border p-3 text-left">Name</th>
             <th className="border p-3 text-left">Contact No</th>
@@ -161,6 +163,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
           {filteredDeliveries.map((delivery) => (
             <tr key={delivery._id} className={`border-b ${getRowClass(delivery.deliveryStatus)} hover:bg-orange-100 transition-colors duration-300`}>
               <td className="border p-3">{delivery._id}</td>
+              <td className="border p-3">{delivery.orderId}</td>
               <td className="border p-3">
                 {JSON.parse(delivery.deliveryItem).map((item) => (
                   <div key={item._id}>

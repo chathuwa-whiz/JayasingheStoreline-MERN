@@ -41,7 +41,7 @@ export default function AddDelivery() {
         setItemsPrice(order.itemsPrice);
         setDeliveryPrice(order.deliveryPrice);
         setItems(JSON.parse(order.orderItems));
-        setOrderId(order._id);
+        setOrderId(order.orderId);
     };
 
     const handleSubmit = async (e) => {

@@ -10,6 +10,7 @@ export default function Products() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 10;
+  const [searchTerm, setSearchTerm] = useState(''); // Add search term state
 
   // Format Prices
   const priceFormatter = new Intl.NumberFormat('en-US', {
@@ -23,13 +24,20 @@ export default function Products() {
   // Sort products by createdAt in descending order (latest first)
   const sortedProducts = products.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
+  // Filter products based on search term
+  const filteredProducts = sortedProducts.filter(product =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    product.sku.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    product.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   // Calculate the indices of the products to display
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = sortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
-  // Calculate total pages
-  const totalPages = Math.ceil(products.length / productsPerPage);
+  // Calculate total pages based on filtered products
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -37,7 +45,22 @@ export default function Products() {
 
   return (
     <div className="rounded-lg p-8">
-      <ProductsHeader products={products} />
+      {/* <ProductsHeader products={products} /> */}
+
+      {/* Search input */}
+      <div className="mb-4">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1); // Reset to page 1 on new search
+          }}
+          placeholder="Search products..."
+          className="px-4 py-2 border rounded-lg w-full"
+        />
+      </div>
+
       <table className="min-w-full overflow-y-auto min-h-full border rounded-lg bg-white">
         <thead className="bg-orange-500 text-white">
           <tr>

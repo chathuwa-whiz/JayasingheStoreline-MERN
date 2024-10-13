@@ -78,6 +78,7 @@ const DriverVehicleDetails = () => {
 
   const formatVehicleRegNo = (value) => {
     // Remove any existing hyphens and convert input to uppercase
+    // Remove any existing hyphens and convert input to uppercase
     let sanitizedValue = value.replace('-', '').toUpperCase();
     
     // Check if the sanitized value has exactly 6 characters (12-1234 or AB-1234)
@@ -89,7 +90,24 @@ const DriverVehicleDetails = () => {
       // Check for the format AB-1234 (2 letters + 4 digits)
       if (/^[A-Z]{2}\d{4}$/.test(sanitizedValue)) {
         return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2);
+    // Check if the sanitized value has exactly 6 characters (12-1234 or AB-1234)
+    if (sanitizedValue.length === 6) {
+      // Check for the format 12-1234 (2 digits + 4 digits)
+      if (/^\d{2}\d{4}$/.test(sanitizedValue)) {
+        return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2);
       }
+      // Check for the format AB-1234 (2 letters + 4 digits)
+      if (/^[A-Z]{2}\d{4}$/.test(sanitizedValue)) {
+        return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2);
+      }
+    } 
+    // Check if the sanitized value has exactly 7 characters for ABC-1234
+    else if (sanitizedValue.length === 7 && /^[A-Z]{3}\d{4}$/.test(sanitizedValue)) {
+      return sanitizedValue.slice(0, 3) + '-' + sanitizedValue.slice(3);
+    }
+    
+    // Return sanitized value if no formatting conditions are met
+    return sanitizedValue;
     } 
     // Check if the sanitized value has exactly 7 characters for ABC-1234
     else if (sanitizedValue.length === 7 && /^[A-Z]{3}\d{4}$/.test(sanitizedValue)) {
@@ -469,8 +487,10 @@ const DriverVehicleDetails = () => {
                 required
                 placeholder="12-1234 or AB-1234 or ABC-1234"
                 maxLength={8} // Set maxLength to 8 to account for the longest format (ABC-1234)
+                maxLength={8} // Set maxLength to 8 to account for the longest format (ABC-1234)
               />
               <p className="mt-1 text-sm text-gray-500">
+                Format: 12-1234, AB-1234, or ABC-1234
                 Format: 12-1234, AB-1234, or ABC-1234
               </p>
             </div>
