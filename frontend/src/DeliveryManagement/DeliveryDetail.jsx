@@ -101,8 +101,16 @@ export default function DeliveryDetail({ onEditDelivery }) {
     doc.text('CONFIDENTIAL', 14, 50);
     doc.text(`Contact: ${companyEmail} | ${companyTelephone}`, pageWidth - 15, 22, { align: 'right' });
 
+    // Add header separator line
+    doc.setDrawColor(200, 200, 200);
+    doc.line(10, 55, pageWidth - 10, 55);
+
     // Footer function
     const addFooter = () => {
+      // Add footer separator line
+      doc.setDrawColor(200, 200, 200);
+      doc.line(10, pageHeight - 15, pageWidth - 10, pageHeight - 15);
+
       doc.setFontSize(10);
       doc.text(`Jayasinghe Storelines PVT (LTD) | ${companyAddress}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
       doc.text(`Page ${doc.internal.getNumberOfPages()}`, pageWidth - 15, pageHeight - 10, { align: 'right' });

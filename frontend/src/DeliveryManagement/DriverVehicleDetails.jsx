@@ -244,6 +244,10 @@ const DriverVehicleDetails = () => {
         doc.text('CONFIDENTIAL - INTERNAL USE ONLY', 14, 45);
         doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', pageWidth - 15, 22, { align: 'right' });
 
+        // Add a line to separate the header
+        doc.setLineWidth(0.5);
+        doc.line(14, 50, pageWidth - 14, 50);
+
         // Prepare data for the PDF
         const rows = drivers.map(driver => [
           driver.nic,
@@ -259,15 +263,19 @@ const DriverVehicleDetails = () => {
         autoTable(doc, {
           head: [['NIC', 'Name', 'DOB', 'Telephone', 'Vehicle Type', 'Vehicle Reg No', 'Driver License No']],
           body: rows,
-          startY: 60, // Increased from 50 to 60 to accommodate the lower title position
+          startY: 55, // Adjusted to accommodate the header line
           didDrawPage: (data) => {
+            // Add a line to separate the footer
+            doc.setLineWidth(0.5);
+            doc.line(14, pageHeight - 20, pageWidth - 14, pageHeight - 20);
+
             // Footer
             doc.setFontSize(9);
-            doc.text('Jayasinghe Storelines PVT (LTD)', 14, pageHeight - 10);
-            doc.text('No. 123, Main Street, Colombo, Sri Lanka', 14, pageHeight - 6);
-            doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 14, pageHeight - 10, { align: 'right' });
-            doc.text('Version 1.0', pageWidth / 2, pageHeight - 10, { align: 'center' });
-            doc.text('This document is confidential and intended for internal use only.', pageWidth / 1.48, pageHeight - 6, { align: 'center' });
+            doc.text('Jayasinghe Storelines PVT (LTD)', 14, pageHeight - 15);
+            doc.text('No. 123, Main Street, Colombo, Sri Lanka', 14, pageHeight - 10);
+            doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 14, pageHeight - 15, { align: 'right' });
+            doc.text('Version 1.0', pageWidth / 2, pageHeight - 15, { align: 'center' });
+            doc.text('This document is confidential and intended for internal use only.', pageWidth / 1.48, pageHeight - 10, { align: 'center' });
           },
         });
 
@@ -300,6 +308,10 @@ const DriverVehicleDetails = () => {
     doc.text('CONFIDENTIAL - INTERNAL USE ONLY', 14, 45);
     doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', pageWidth - 15, 22, { align: 'right' });
 
+    // Add a line to separate the header
+    doc.setLineWidth(0.5);
+    doc.line(14, 50, pageWidth - 14, 50);
+
     // Prepare data for the PDF
     const rows = drivers.map(driver => [
       driver.nic,
@@ -315,15 +327,19 @@ const DriverVehicleDetails = () => {
     autoTable(doc, {
       head: [['NIC', 'Name', 'DOB', 'Telephone', 'Vehicle Type', 'Vehicle Reg No', 'Driver License No']],
       body: rows,
-      startY: 60, // Increased from 50 to 60 to accommodate the lower title position
+      startY: 55, // Adjusted to accommodate the header line
       didDrawPage: (data) => {
+        // Add a line to separate the footer
+        doc.setLineWidth(0.5);
+        doc.line(14, pageHeight - 20, pageWidth - 14, pageHeight - 20);
+
         // Footer
         doc.setFontSize(8);
-        doc.text('Jayasinghe Storelines PVT (LTD)', 14, pageHeight - 10);
-        doc.text('No. 123, Main Street, Colombo, Sri Lanka', 14, pageHeight - 6);
-        doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 15, pageHeight - 10, { align: 'right' });
-        doc.text('Version 1.0', pageWidth / 2, pageHeight - 10, { align: 'center' });
-        doc.text('This document is confidential and intended for internal use only.', pageWidth / 2, pageHeight - 6, { align: 'center' });
+        doc.text('Jayasinghe Storelines PVT (LTD)', 14, pageHeight - 15);
+        doc.text('No. 123, Main Street, Colombo, Sri Lanka', 14, pageHeight - 10);
+        doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 15, pageHeight - 15, { align: 'right' });
+        doc.text('Version 1.0', pageWidth / 2, pageHeight - 15, { align: 'center' });
+        doc.text('This document is confidential and intended for internal use only.', pageWidth / 2, pageHeight - 10, { align: 'center' });
       },
     });
 
