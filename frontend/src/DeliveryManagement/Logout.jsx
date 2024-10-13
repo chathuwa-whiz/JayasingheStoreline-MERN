@@ -1,16 +1,23 @@
-import React from 'react';
-// import { useHistory } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaSignOutAlt, FaTimesCircle } from 'react-icons/fa'; // Icons for better visuals
 
 export default function Logout() {
-  // const history = useHistory();
+  const navigate = useNavigate();
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
-  const handleLogout = () => {
-    // history.push('/login');
+  const handleLogoutClick = () => {
+    setShowConfirmation(true);
+  };
+
+  const handleConfirmLogout = () => {
+    // Add your logout logic here (clear session, tokens, etc.)
+    console.log('User logged out');
+    navigate('/adminlogin');
   };
 
   const handleCancel = () => {
-    // history.push('/dashboard');
+    setShowConfirmation(false);
   };
 
   return (
@@ -20,23 +27,35 @@ export default function Logout() {
         <h2 className="text-2xl font-bold text-gray-800 mb-6">
           Logout from Delivery Manager
         </h2>
-        <p className="text-gray-600 mb-8">Are you sure you want to log out?</p>
-        <div className="flex justify-around">
+        {showConfirmation ? (
+          <>
+            <p className="text-gray-600 mb-8">Are you sure you want to log out?</p>
+            <div className="flex justify-around">
+              <button
+                onClick={handleConfirmLogout}
+                className="bg-red-500 text-white font-semibold px-6 py-2 rounded-full hover:bg-red-600 transition-all duration-300"
+              >
+                <FaSignOutAlt className="inline mr-2" />
+                Yes
+              </button>
+              <button
+                onClick={handleCancel}
+                className="bg-blue-500 text-white font-semibold px-6 py-2 rounded-full hover:bg-blue-600 transition-all duration-300"
+              >
+                <FaTimesCircle className="inline mr-2" />
+                No
+              </button>
+            </div>
+          </>
+        ) : (
           <button
-            onClick={handleLogout}
+            onClick={handleLogoutClick}
             className="bg-red-500 text-white font-semibold px-6 py-2 rounded-full hover:bg-red-600 transition-all duration-300"
           >
             <FaSignOutAlt className="inline mr-2" />
-            Confirm Logout
+            Logout
           </button>
-          <button
-            onClick={handleCancel}
-            className="bg-blue-500 text-white font-semibold px-6 py-2 rounded-full hover:bg-blue-600 transition-all duration-300"
-          >
-            <FaTimesCircle className="inline mr-2" />
-            Cancel
-          </button>
-        </div>
+        )}
       </div>
     </div>
   );
