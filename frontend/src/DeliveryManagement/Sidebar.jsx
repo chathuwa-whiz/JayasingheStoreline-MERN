@@ -35,14 +35,9 @@ const Sidebar = () => {
   return (
     <div className={`h-screen w-64 p-5 flex flex-col justify-between ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
       <div>
-        <div className="flex justify-between items-center mb-8">
+        {/* Centered logo */}
+        <div className="flex justify-center mb-8">
           <img src={logo} alt="logo" className="w-20 h-20 rounded-full border-2 border-orange-500" />
-          <button
-            onClick={toggleDarkMode}
-            className={`p-2 rounded-full ${darkMode ? 'bg-yellow-400 text-gray-900' : 'bg-gray-200 text-gray-900'}`}
-          >
-            {darkMode ? <FaSun /> : <FaMoon />}
-          </button>
         </div>
 
         <div className='mb-8'>
@@ -165,6 +160,19 @@ const Sidebar = () => {
                   <FaSignOutAlt className="h-6 w-6 mr-4" />
                   Logout
                 </NavLink>
+              </li>
+
+              {/* Dark mode button moved here */}
+              <li className="mb-4">
+                <button
+                  onClick={toggleDarkMode}
+                  className={`flex items-center w-full rounded-lg px-4 py-3 transition-colors duration-300 ${
+                    darkMode ? 'bg-yellow-400 text-gray-900' : 'bg-gray-200 text-gray-900'
+                  }`}
+                >
+                  {darkMode ? <FaSun className="h-6 w-6 mr-4" /> : <FaMoon className="h-6 w-6 mr-4" />}
+                  {darkMode ? 'Light Mode' : 'Dark Mode'}
+                </button>
               </li>
             </ul>
           </nav>
