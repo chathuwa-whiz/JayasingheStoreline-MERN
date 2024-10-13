@@ -45,7 +45,7 @@ const DriverVehicleDetails = () => {
     '027': 'Polonnaruwa', '037': 'Kurunegala', '054': 'Nawalapitiya', '081': 'Kandy'
   };
 
-  const networkCodes = ['070', '071', '072', '074', '076', '077', '078'];
+  const networkCodes = ['070', '071', '072', '074', '075', '076', '077', '078'];
 
   const formatTelephoneNo = (value) => {
     // Remove any non-digit characters
