@@ -83,135 +83,144 @@ export default function AddDelivery() {
     };
 
     return (
-        <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50">
-            {/* Pending Orders List */}
-            <div className="border rounded-lg p-6 bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <h2 className="text-2xl font-semibold mb-6 text-gray-800">Pending Orders</h2>
-                <div className="h-screen overflow-y-auto"> {/* Set a fixed height and enable scrolling */}
-                    {isLoading ? (
-                        <p>Loading orders...</p>
-                    ) : isError ? (
-                        <p>Error loading orders</p>
-                    ) : orders?.length > 0 ? (
-                        orders.filter(order => order.status === 'Pending').map(order => ( // Show all orders, but scroll for more
-                            <div
-                                key={order._id}
-                                className="mb-4 p-3 border rounded cursor-pointer hover:bg-gray-100"
-                                onClick={() => handleOrderClick(order)}
-                            >
-                                <h3 className="text-lg font-semibold text-gray-800">{order.firstName} {order.lastName}</h3>
-                                <p className="text-gray-600">{order.orderId}</p>
-                                <p className="text-gray-600">Items Price: Rs.{order.itemsPrice}</p>
-                            </div>
-                        ))
-                    ) : (
-                        <p>No pending orders available</p>
-                    )}
+        <div className="p-8 bg-gray-100 min-h-screen">
+            <h1 className="text-3xl font-bold text-gray-800 mb-8">Add New Delivery</h1>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Pending Orders List */}
+                <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div className="bg-blue-600 text-white p-4">
+                        <h2 className="text-xl font-semibold">Pending Orders</h2>
+                    </div>
+                    <div className="p-4 h-[calc(100vh-200px)] overflow-y-auto">
+                        {isLoading ? (
+                            <p className="text-gray-600">Loading orders...</p>
+                        ) : isError ? (
+                            <p className="text-red-500">Error loading orders</p>
+                        ) : orders?.length > 0 ? (
+                            orders.filter(order => order.status === 'Pending').map(order => (
+                                <div
+                                    key={order._id}
+                                    className="mb-4 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 transition duration-300"
+                                    onClick={() => handleOrderClick(order)}
+                                >
+                                    <h3 className="text-lg font-semibold text-gray-800">{order.firstName} {order.lastName}</h3>
+                                    <p className="text-gray-600">Order ID: {order.orderId}</p>
+                                    <p className="text-gray-600">Items Price: Rs.{order.itemsPrice}</p>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-gray-600">No pending orders available</p>
+                        )}
+                    </div>
                 </div>
-            </div>
 
-            {/* General Information */}
-            <div className="border rounded-lg p-6 bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <h2 className="text-2xl font-semibold mb-6 text-gray-800">Delivery Information</h2>
-                <div className="mb-4">
-                    <label className="block text-gray-700 font-medium">First Name</label>
-                    <input
-                        type="text"
-                        className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
-                        placeholder="Enter first name"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 font-medium">Last Name</label>
-                    <input
-                        type="text"
-                        className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
-                        placeholder="Enter last name"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 font-medium">Telephone Number</label>
-                    <input
-                        type="text"
-                        className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
-                        placeholder="Enter telephone number"
-                        value={telephoneNo}
-                        onChange={(e) => setTelephoneNo(e.target.value)}
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 font-medium">Address</label>
-                    <input
-                        type="text"
-                        className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
-                        placeholder="Enter address"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                    />
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                    <div>
-                        <label className="block text-gray-700 font-medium">City</label>
-                        <input
-                            type="text"
-                            className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
-                            placeholder="Enter city"
-                            value={city}
-                            onChange={(e) => setCity(e.target.value)}
-                        />
+                {/* Delivery Information */}
+                <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div className="bg-green-600 text-white p-4">
+                        <h2 className="text-xl font-semibold">Delivery Information</h2>
                     </div>
-                    <div>
-                        <label className="block text-gray-700 font-medium">Province</label>
-                        <input
-                            type="text"
-                            className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
-                            placeholder="Enter province"
-                            value={province}
-                            onChange={(e) => setProvince(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-gray-700 font-medium">Postal Code</label>
-                        <input
-                            type="text"
-                            className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
-                            placeholder="Enter postal code"
-                            value={postalCode}
-                            onChange={(e) => setPostalCode(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-gray-700 font-medium">Item</label>
-                        {Items.map((item) => (
-                            <div key={item._id}>
+                    <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-2">First Name</label>
                                 <input
                                     type="text"
-                                    className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
-                                    placeholder="Enter Item Name"
-                                    value={item.name}
-                                    disabled
-                                />
-                                <input
-                                    type="number"
-                                    className="w-full p-3 mt-1 border rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-150"
-                                    value={item.qty}
-                                    disabled
+                                    className="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300"
+                                    placeholder="Enter first name"
+                                    value={firstName}
+                                    onChange={(e) => setFirstName(e.target.value)}
                                 />
                             </div>
-                        ))}
-                    </div>
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-2">Last Name</label>
+                                <input
+                                    type="text"
+                                    className="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300"
+                                    placeholder="Enter last name"
+                                    value={lastName}
+                                    onChange={(e) => setLastName(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-gray-700 font-medium mb-2">Telephone Number</label>
+                            <input
+                                type="text"
+                                className="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300"
+                                placeholder="Enter telephone number"
+                                value={telephoneNo}
+                                onChange={(e) => setTelephoneNo(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700 font-medium mb-2">Address</label>
+                            <input
+                                type="text"
+                                className="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300"
+                                placeholder="Enter address"
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-2">City</label>
+                                <input
+                                    type="text"
+                                    className="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300"
+                                    placeholder="Enter city"
+                                    value={city}
+                                    onChange={(e) => setCity(e.target.value)}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-2">Province</label>
+                                <input
+                                    type="text"
+                                    className="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300"
+                                    placeholder="Enter province"
+                                    value={province}
+                                    onChange={(e) => setProvince(e.target.value)}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-2">Postal Code</label>
+                                <input
+                                    type="text"
+                                    className="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300"
+                                    placeholder="Enter postal code"
+                                    value={postalCode}
+                                    onChange={(e) => setPostalCode(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-gray-700 font-medium mb-2">Items</label>
+                            {Items.map((item) => (
+                                <div key={item._id} className="flex space-x-4 mb-2">
+                                    <input
+                                        type="text"
+                                        className="flex-grow p-3 border rounded-lg bg-gray-50"
+                                        value={item.name}
+                                        disabled
+                                    />
+                                    <input
+                                        type="number"
+                                        className="w-24 p-3 border rounded-lg bg-gray-50"
+                                        value={item.qty}
+                                        disabled
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                        <button
+                            type="submit"
+                            className="w-full bg-green-600 text-white font-semibold py-3 rounded-lg hover:bg-green-500 transition duration-300"
+                        >
+                            Submit Delivery
+                        </button>
+                    </form>
                 </div>
-                <button
-                    type="submit"
-                    className="mt-6 w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-500 transition duration-200"
-                    onClick={handleSubmit}
-                >
-                    Submit Delivery
-                </button>
             </div>
         </div>
     );

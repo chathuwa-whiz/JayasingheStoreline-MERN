@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaDownload, FaSearch } from 'react-icons/fa';
 import { useDeleteDeliveryMutation, useGetDeliveriesQuery, useUpdateDeliveryMutation } from '../redux/api/deliveryApiSlice';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -52,14 +52,25 @@ export default function DeliveryDetail({ onEditDelivery }) {
       case 'Completed':
         return 'bg-green-50 border-green-300 text-green-700';
       default:
-        return 'bg-white border-gray-300 text-gray-700';
+        return 'bg-yellow-50 border-yellow-300 text-yellow-700';
     }
   };
 
   const getButtonClass = (currentStatus, buttonStatus) => {
-    return currentStatus === buttonStatus
-      ? `p-2 bg-gray-200 text-gray-800 rounded-lg cursor-not-allowed`
-      : `p-2 text-${buttonStatus === 'Pending' ? 'yellow' : buttonStatus === 'Delayed' ? 'blue' : 'green'}-500 hover:bg-${buttonStatus === 'Pending' ? 'yellow' : buttonStatus === 'Delayed' ? 'blue' : 'green'}-100 rounded-lg transition-colors duration-300`;
+    const baseClasses = "p-2 rounded-lg transition-colors duration-300";
+    if (currentStatus === buttonStatus) {
+      return `${baseClasses} bg-gray-200 text-gray-800 cursor-not-allowed`;
+    }
+    switch (buttonStatus) {
+      case 'Pending':
+        return `${baseClasses} text-yellow-500 hover:bg-yellow-100`;
+      case 'Delayed':
+        return `${baseClasses} text-blue-500 hover:bg-blue-100`;
+      case 'Completed':
+        return `${baseClasses} text-green-500 hover:bg-green-100`;
+      default:
+        return baseClasses;
+    }
   };
 
   const downloadPDF = async () => {
@@ -132,79 +143,100 @@ export default function DeliveryDetail({ onEditDelivery }) {
   );
 
   return (
-    <div className="shadow-lg rounded-lg p-6 bg-gray-100 h-screen overflow-auto">
-      <h1 className="text-2xl font-semibold mb-6 text-gray-800">Deliveries</h1>
+    <div className="bg-gray-100 min-h-screen p-4 sm:p-6 lg:p-8">
+      <div className="max-w-full mx-auto">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Delivery Management</h1>
 
-      <input
-        type="text"
-        placeholder="Search Deliveries by Delivery No"
-        className="p-3 border border-gray-300 rounded-lg mb-6 w-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow duration-300"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
+        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+            <div className="relative w-full sm:w-1/2 mb-4 sm:mb-0">
+              <input
+                type="text"
+                placeholder="Search Deliveries by Delivery No"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow duration-300"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <FaSearch className="absolute left-3 top-3 text-gray-400" />
+            </div>
+            <button
+              className="w-full sm:w-auto px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-300 flex items-center justify-center"
+              onClick={downloadPDF}
+            >
+              <FaDownload className="mr-2" />
+              Download PDF
+            </button>
+          </div>
 
-      <button
-        className="mb-4 p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-300"
-        onClick={downloadPDF}
-      >
-        Download PDF
-      </button>
-
-      <table className="min-w-full bg-white shadow-md rounded-lg border border-gray-300">
-        <thead className="bg-gray-200 text-gray-700">
-          <tr>
-            <th className="border p-3 text-left">Delivery No</th>
-            <th className="border p-3 text-left">Order No</th>
-            <th className="border p-3 text-left">Delivery Item</th>
-            <th className="border p-3 text-left">Name</th>
-            <th className="border p-3 text-left">Contact No</th>
-            <th className="border p-3 text-left">Delivery Address</th>
-            <th className="border p-3 text-left">Order Date</th>
-            <th className="border p-3 text-left">Items Price</th>
-            <th className="border p-3 text-left">Delivery Price</th>
-            <th className="border p-3 text-left">Total Price</th>
-            <th className="border p-3 text-left">Status</th>
-            <th className="border p-3 text-left">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredDeliveries.map((delivery) => (
-            <tr key={delivery._id} className={`border-b ${getRowClass(delivery.deliveryStatus)} hover:bg-orange-100 transition-colors duration-300`}>
-              <td className="border p-3">{delivery._id}</td>
-              <td className="border p-3">{delivery.orderId}</td>
-              <td className="border p-3">
-                {JSON.parse(delivery.deliveryItem).map((item) => (
-                  <div key={item._id}>
-                    <p>{item.name} x {item.qty}</p>
-                  </div>
+          <div className="overflow-x-auto">
+            <table className="w-full bg-white rounded-lg overflow-hidden">
+              <thead className="bg-gray-200 text-gray-700">
+                <tr>
+                  <th className="py-3 px-4 text-left">Delivery No</th>
+                  <th className="py-3 px-4 text-left">Order No</th>
+                  <th className="py-3 px-4 text-left">Delivery Item</th>
+                  <th className="py-3 px-4 text-left">Name</th>
+                  <th className="py-3 px-4 text-left">Contact No</th>
+                  <th className="py-3 px-4 text-left">Delivery Address</th>
+                  <th className="py-3 px-4 text-left">Order Date</th>
+                  <th className="py-3 px-4 text-left">Items Price</th>
+                  <th className="py-3 px-4 text-left">Delivery Price</th>
+                  <th className="py-3 px-4 text-left">Total Price</th>
+                  <th className="py-3 px-4 text-left">Status</th>
+                  <th className="py-3 px-4 text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredDeliveries.map((delivery) => (
+                  <tr key={delivery._id} className={`border-b ${getRowClass(delivery.deliveryStatus)} hover:bg-gray-50 transition-colors duration-300`}>
+                    <td className="py-3 px-4">{delivery._id}</td>
+                    <td className="py-3 px-4">{delivery.orderId}</td>
+                    <td className="py-3 px-4">
+                      {JSON.parse(delivery.deliveryItem).map((item) => (
+                        <div key={item._id} className="text-sm">
+                          {item.name} x {item.qty}
+                        </div>
+                      ))}
+                    </td>
+                    <td className="py-3 px-4">{delivery.firstName}</td>
+                    <td className="py-3 px-4">{delivery.telephoneNo}</td>
+                    <td className="py-3 px-4 text-sm">{`${delivery.address}, ${delivery.city}, ${delivery.province}, ${delivery.postalCode}`}</td>
+                    <td className="py-3 px-4">{delivery.createdAt ? new Date(delivery.createdAt).toLocaleDateString() : 'N/A'}</td>
+                    <td className="py-3 px-4">{priceFormatter.format(delivery.itemsPrice)}</td>
+                    <td className="py-3 px-4">{priceFormatter.format(delivery.deliveryPrice)}</td>
+                    <td className="py-3 px-4">{priceFormatter.format(delivery.totalPrice)}</td>
+                    <td className="py-3 px-4">
+                      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        delivery.deliveryStatus === 'Completed' ? 'bg-green-200 text-green-800' :
+                        delivery.deliveryStatus === 'Delayed' ? 'bg-blue-200 text-blue-800' :
+                        'bg-yellow-200 text-yellow-800'
+                      }`}>
+                        {delivery.deliveryStatus || 'Pending'}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex flex-wrap gap-2">
+                        <button className={getButtonClass(delivery.deliveryStatus, 'Pending')} onClick={() => handleStatusChange(delivery._id, 'Pending')}>
+                          Pending
+                        </button>
+                        <button className={getButtonClass(delivery.deliveryStatus, 'Delayed')} onClick={() => handleStatusChange(delivery._id, 'Delayed')}>
+                          Delayed
+                        </button>
+                        <button className={getButtonClass(delivery.deliveryStatus, 'Completed')} onClick={() => handleStatusChange(delivery._id, 'Completed')}>
+                          Completed
+                        </button>
+                        <button className="p-2 text-red-500 hover:bg-red-100 rounded-lg transition-colors duration-300" onClick={() => handleDelete(delivery._id)}>
+                          <FaTrash />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
                 ))}
-              </td>
-              <td className="border p-3">{delivery.firstName}</td>
-              <td className="border p-3">{delivery.telephoneNo}</td>
-              <td className="border p-3">{`${delivery.address}, ${delivery.city}, ${delivery.province}, ${delivery.postalCode}`}</td>
-              <td className="border p-3">{delivery.createdAt ? new Date(delivery.createdAt).toLocaleDateString() : 'Date not available'}</td>
-              <td className="border p-3">{priceFormatter.format(delivery.itemsPrice)}</td>
-              <td className="border p-3">{priceFormatter.format(delivery.deliveryPrice)}</td>
-              <td className="border p-3">{priceFormatter.format(delivery.totalPrice)}</td>
-              <td className="border p-3">{delivery.deliveryStatus || 'Pending'}</td>
-              <td className="border p-3 flex space-x-2">
-                <button className={getButtonClass(delivery.deliveryStatus, 'Pending')} onClick={() => handleStatusChange(delivery._id, 'Pending')}>
-                  Pending
-                </button>
-                <button className={getButtonClass(delivery.deliveryStatus, 'Delayed')} onClick={() => handleStatusChange(delivery._id, 'Delayed')}>
-                  Delayed
-                </button>
-                <button className={getButtonClass(delivery.deliveryStatus, 'Completed')} onClick={() => handleStatusChange(delivery._id, 'Completed')}>
-                  Completed
-                </button>
-                <button className="p-2 text-red-500 hover:bg-red-100 rounded-lg transition-colors duration-300" onClick={() => handleDelete(delivery._id)}>
-                  <FaTrash />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
