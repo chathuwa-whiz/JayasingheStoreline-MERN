@@ -128,37 +128,85 @@ export default function CustomerManagementDashboard() {
   const totalUsers = filteredUsers.length;
 
   // Generate PDF using jsPDF and jsPDF-Autotable
-  const generatePDF = () => {
-    if (!filteredUsers || filteredUsers.length === 0) {
-      console.log("No user data available to generate PDF.");
-      return;
-    }
-  
-    const doc = new jsPDF();
-  
-    // Adding the logo (Make sure the logo is loaded before generating PDF)
-    const imgData = logo;
-    doc.addImage(imgData, 'PNG', 14, 10, 50, 50); // Adjust x, y, width, height based on logo size
-  
-    // Adding the title
-    doc.text("User Activity Report", 14, 65); // Adjusted y position to avoid overlap with logo
-  
-    // AutoTable for user data
-    doc.autoTable({
-      startY: 72, // Adjust this based on the title height and logo
-      head: [['#', 'Name', 'Last Login', 'Status']],
-      body: filteredUsers.map((user, index) => [
+  const generatePDFWithHeaderFooter = () => {
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+
+    // Load the logo image
+    const img = new Image();
+    img.src = logo;
+
+    img.onload = function () {
+      const addHeaderFooter = (doc) => {
+        // Header
+        doc.addImage(img, 'PNG', 14, 10, 30, 30);
+        doc.setFontSize(16);
+        doc.text('Jayasinghe Storelines PVT LTD', 50, 20);
+        doc.setFontSize(12);
+        doc.text('No. 123, Main Street, Colombo, Sri Lanka', 50, 28);
+        doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', 50, 34);
+
+        // Report title and date
+        const currentDate = new Date().toLocaleDateString();
+        doc.setFontSize(14);
+        doc.text('User Activity Report', 50, 42);
+        doc.text(`Issued on: ${currentDate}`, 50, 48);
+
+        // Line below header
+        doc.setLineWidth(0.5);
+        doc.line(14, 52, pageWidth - 14, 52);
+
+        // Footer
+        doc.setFontSize(10);
+        doc.text('Jayasinghe Storelines PVT LTD', 14, pageHeight - 10);
+        doc.text('Confidential - For Internal Use Only', 14, pageHeight - 20);
+        doc.text('Version 1.0', pageWidth - 30, pageHeight - 20);
+        doc.text(`Page ${doc.internal.getCurrentPageInfo().pageNumber} of`, pageWidth - 30, pageHeight - 10);
+      };
+
+      // Prepare the table data
+      const rows = filteredUsers.map((user, index) => [
         index + 1,
         `${user.firstname} ${user.lastname}`,
         user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'N/A',
         user.isLoggedIn ? 'Online' : 'Offline',
-      ]),
-    });
-  
-    // Save the generated PDF
-    doc.save('user_activity_report.pdf');
-    console.log("PDF generated and download triggered.");
+      ]);
+
+      // Add the table
+      doc.autoTable({
+        head: [['#', 'Name', 'Last Login', 'Status']],
+        body: rows,
+        startY: 55,
+        margin: { top: 60 },
+        didDrawPage: (data) => {
+          addHeaderFooter(doc);
+        },
+      });
+
+      // Add total page number to all pages
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.text(`${pageCount}`, pageWidth - 10, pageHeight - 10);
+      }
+
+      // Save the PDF
+      doc.save('User_Activity_Report.pdf');
+    };
+
+    img.onerror = function () {
+      console.error('Image loading failed. PDF will be generated without the logo.');
+      generatePDFWithoutLogo(doc);
+    };
   };
+
+  const generatePDFWithoutLogo = (doc) => {
+    // ... (keep the existing generatePDFWithoutLogo function)
+  };
+
+  // Replace the existing generatePDF function with this new one
+  const generatePDF = generatePDFWithHeaderFooter;
 
   // Delete user function using fetch
   const handleDeleteUser = async (userId) => {
