@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaTrash, FaDownload, FaSearch } from 'react-icons/fa';
+import { FaTrash, FaDownload, FaSearch, FaMoon, FaSun } from 'react-icons/fa';
 import { useDeleteDeliveryMutation, useGetDeliveriesQuery, useUpdateDeliveryMutation } from '../redux/api/deliveryApiSlice';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -10,6 +10,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
   const [deleteDelivery] = useDeleteDeliveryMutation();
   const [updateDelivery] = useUpdateDeliveryMutation();
   const [searchTerm, setSearchTerm] = useState("");
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Company Details
   const companyEmail = 'info@jayasinghestoreline.com';
@@ -45,29 +46,34 @@ export default function DeliveryDetail({ onEditDelivery }) {
     }
   };
 
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
   const getRowClass = (status) => {
+    const baseClasses = isDarkMode ? 'border-opacity-50 ' : '';
     switch (status) {
       case 'Delayed':
-        return 'bg-blue-50 border-blue-300 text-blue-700';
+        return `${baseClasses}${isDarkMode ? 'bg-blue-900 border-blue-700 text-blue-200' : 'bg-blue-50 border-blue-300 text-blue-700'}`;
       case 'Completed':
-        return 'bg-green-50 border-green-300 text-green-700';
+        return `${baseClasses}${isDarkMode ? 'bg-green-900 border-green-700 text-green-200' : 'bg-green-50 border-green-300 text-green-700'}`;
       default:
-        return 'bg-yellow-50 border-yellow-300 text-yellow-700';
+        return `${baseClasses}${isDarkMode ? 'bg-yellow-900 border-yellow-700 text-yellow-200' : 'bg-yellow-50 border-yellow-300 text-yellow-700'}`;
     }
   };
 
   const getButtonClass = (currentStatus, buttonStatus) => {
     const baseClasses = "p-2 rounded-lg transition-colors duration-300";
     if (currentStatus === buttonStatus) {
-      return `${baseClasses} bg-gray-200 text-gray-800 cursor-not-allowed`;
+      return `${baseClasses} ${isDarkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-800'} cursor-not-allowed`;
     }
     switch (buttonStatus) {
       case 'Pending':
-        return `${baseClasses} text-yellow-500 hover:bg-yellow-100`;
+        return `${baseClasses} ${isDarkMode ? 'text-yellow-400 hover:bg-yellow-900' : 'text-yellow-500 hover:bg-yellow-100'}`;
       case 'Delayed':
-        return `${baseClasses} text-blue-500 hover:bg-blue-100`;
+        return `${baseClasses} ${isDarkMode ? 'text-blue-400 hover:bg-blue-900' : 'text-blue-500 hover:bg-blue-100'}`;
       case 'Completed':
-        return `${baseClasses} text-green-500 hover:bg-green-100`;
+        return `${baseClasses} ${isDarkMode ? 'text-green-400 hover:bg-green-900' : 'text-green-500 hover:bg-green-100'}`;
       default:
         return baseClasses;
     }
@@ -143,24 +149,36 @@ export default function DeliveryDetail({ onEditDelivery }) {
   );
 
   return (
-    <div className="bg-gray-100 min-h-screen p-4 sm:p-6 lg:p-8">
+    <div className={`min-h-screen p-4 sm:p-6 lg:p-8 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-800'}`}>
       <div className="max-w-full mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Delivery Management</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold mb-6">Delivery Management</h1>
+          <button
+            onClick={toggleDarkMode}
+            className={`p-2 rounded-full ${isDarkMode ? 'bg-yellow-400 text-gray-900' : 'bg-gray-800 text-yellow-400'}`}
+          >
+            {isDarkMode ? <FaSun /> : <FaMoon />}
+          </button>
+        </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6">
+        <div className={`rounded-lg shadow-lg p-4 sm:p-6 mb-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
           <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
             <div className="relative w-full sm:w-1/2 mb-4 sm:mb-0">
               <input
                 type="text"
                 placeholder="Search Deliveries by Delivery No"
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow duration-300"
+                className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-shadow duration-300 ${
+                  isDarkMode ? 'bg-gray-700 border-gray-600 text-white focus:ring-blue-500' : 'border-gray-300 focus:ring-blue-500'
+                }`}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <FaSearch className="absolute left-3 top-3 text-gray-400" />
+              <FaSearch className={`absolute left-3 top-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`} />
             </div>
             <button
-              className="w-full sm:w-auto px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-300 flex items-center justify-center"
+              className={`w-full sm:w-auto px-6 py-2 rounded-lg transition-colors duration-300 flex items-center justify-center ${
+                isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'
+              } text-white`}
               onClick={downloadPDF}
             >
               <FaDownload className="mr-2" />
@@ -169,8 +187,8 @@ export default function DeliveryDetail({ onEditDelivery }) {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full bg-white rounded-lg overflow-hidden">
-              <thead className="bg-gray-200 text-gray-700">
+            <table className={`w-full rounded-lg overflow-hidden ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
+              <thead className={isDarkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-200 text-gray-700'}>
                 <tr>
                   <th className="py-3 px-4 text-left">Delivery No</th>
                   <th className="py-3 px-4 text-left">Order No</th>
@@ -188,7 +206,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
               </thead>
               <tbody>
                 {filteredDeliveries.map((delivery) => (
-                  <tr key={delivery._id} className={`border-b ${getRowClass(delivery.deliveryStatus)} hover:bg-gray-50 transition-colors duration-300`}>
+                  <tr key={delivery._id} className={`border-b ${getRowClass(delivery.deliveryStatus)} hover:bg-opacity-80 transition-colors duration-300`}>
                     <td className="py-3 px-4">{delivery._id}</td>
                     <td className="py-3 px-4">{delivery.orderId}</td>
                     <td className="py-3 px-4">

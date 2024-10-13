@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useGetDriversQuery, useCreateDriverMutation, useUpdateDriverMutation, useDeleteDriverMutation } from '../redux/api/driverApiSlice';
-import { FaEdit, FaTrash, FaSearch, FaDownload } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaSearch, FaDownload, FaMoon, FaSun } from 'react-icons/fa';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logo from '../asset/logo.png';
@@ -34,6 +34,7 @@ const DriverVehicleDetails = () => {
   const [editingDriver, setEditingDriver] = useState(null);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [searchTerm, setSearchTerm] = useState('');
+  const [darkMode, setDarkMode] = useState(false);
 
   const areaCodes = {
     '011': 'Colombo', '031': 'Negombo', '038': 'Panadura', '055': 'Badulla',
@@ -75,6 +76,18 @@ const DriverVehicleDetails = () => {
   useEffect(() => {
     refetch();
   }, [refetch]);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
 
   const formatVehicleRegNo = (value) => {
     // Remove any existing hyphens and convert input to uppercase
@@ -127,8 +140,8 @@ const DriverVehicleDetails = () => {
       return;
     } else if (field === 'nic') {
       const birthYear = new Date(newDriver.birthday).getFullYear();
-      if (birthYear < 2001) {
-        // For birth years before 2001
+      if (birthYear < 2000) {
+        // For birth years before 2000 (9 digit + V format)
         value = value.slice(0, 10).replace(/[^0-9V]/gi, '');
         if (value.length >= 2) {
           const yearPrefix = value.slice(0, 2);
@@ -140,10 +153,13 @@ const DriverVehicleDetails = () => {
           value = value.slice(0, 9) + 'V';
         }
       } else {
-        // For birth years 2001 and after
+        // For birth years 2000 and after (12 digit format)
         value = value.slice(0, 12).replace(/\D/g, '');
-        if (value.length >= 2 && value.slice(0, 2) !== '20') {
-          value = '20' + value.slice(2);
+        if (value.length >= 4) {
+          const yearPrefix = value.slice(0, 4);
+          if (yearPrefix !== String(birthYear)) {
+            value = String(birthYear) + value.slice(4);
+          }
         }
       }
     } else if (field === 'vehicleRegNo') {
@@ -321,23 +337,35 @@ const DriverVehicleDetails = () => {
   );
 
   return (
-    <div className="container mx-auto p-4 bg-gray-100 min-h-screen">
+    <div className={`container mx-auto p-4 min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
+      {/* Dark Mode Toggle */}
+      <button
+        onClick={toggleDarkMode}
+        className={`fixed top-4 right-4 p-2 rounded-full ${darkMode ? 'bg-yellow-400 text-gray-900' : 'bg-gray-700 text-yellow-400'}`}
+      >
+        {darkMode ? <FaSun /> : <FaMoon />}
+      </button>
+
       {/* Form Section */}
-      <div className="bg-white rounded-lg p-6 shadow-lg mb-8">
-        <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">
+      <div className={`rounded-lg p-6 shadow-lg mb-8 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+        <h2 className={`text-3xl font-bold mb-6 border-b pb-2 ${darkMode ? 'text-gray-200 border-gray-700' : 'text-gray-800 border-gray-200'}`}>
           {editingDriver ? 'Edit Driver' : 'Add New Driver'}
         </h2>
         <form onSubmit={handleCreateOrUpdate} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Name */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name (English letters only)</label>
+              <label htmlFor="name" className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Name (English letters only)</label>
               <input
                 type="text"
                 id="name"
                 value={newDriver.name}
                 onChange={(e) => handleInputChange(e, 'name')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  darkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white' 
+                    : 'bg-white border-gray-300 text-gray-900'
+                }`}
                 required
                 pattern="[A-Za-z\s]+"
                 title="Please enter English letters only"
@@ -345,13 +373,17 @@ const DriverVehicleDetails = () => {
             </div>
             {/* Date of Birth */}
             <div>
-              <label htmlFor="dob" className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+              <label htmlFor="dob" className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Date of Birth</label>
               <input
                 type="date"
                 id="dob"
                 value={newDriver.birthday}
                 onChange={(e) => handleInputChange(e, 'birthday')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  darkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white' 
+                    : 'bg-white border-gray-300 text-gray-900'
+                }`}
                 required
                 min={minDate}
                 max={maxDate}
@@ -360,13 +392,17 @@ const DriverVehicleDetails = () => {
             </div>
             {/* NIC */}
             <div>
-              <label htmlFor="nic" className="block text-sm font-medium text-gray-700 mb-1">NIC</label>
+              <label htmlFor="nic" className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>NIC</label>
               <input
                 type="text"
                 id="nic"
                 value={newDriver.nic}
                 onChange={(e) => handleInputChange(e, 'nic')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  darkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white' 
+                    : 'bg-white border-gray-300 text-gray-900'
+                }`}
                 required
                 placeholder={new Date(newDriver.birthday).getFullYear() < 2001 ? "YYXXXXXXXXV" : "20XXXXXXXXXX"}
               />
@@ -378,14 +414,18 @@ const DriverVehicleDetails = () => {
             </div>
             {/* Telephone Number */}
             <div>
-              <label htmlFor="telephoneNo" className="block text-sm font-medium text-gray-700 mb-1">Telephone/Mobile Number</label>
+              <label htmlFor="telephoneNo" className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Telephone/Mobile Number</label>
               <div className="relative">
                 <input
                   type="text"
                   id="telephoneNo"
                   value={newDriver.telephoneNo}
                   onChange={(e) => handleInputChange(e, 'telephoneNo')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                    darkMode 
+                      ? 'bg-gray-700 border-gray-600 text-white' 
+                      : 'bg-white border-gray-300 text-gray-900'
+                  }`}
                   required
                   placeholder="0XX-XXXXXXX"
                 />
@@ -398,25 +438,33 @@ const DriverVehicleDetails = () => {
             </div>
             {/* Vehicle */}
             <div>
-              <label htmlFor="vehicleType" className="block text-sm font-medium text-gray-700 mb-1">Vehicle</label>
+              <label htmlFor="vehicleType" className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Vehicle</label>
               <input
                 type="text"
                 id="vehicleType"
                 value={newDriver.vehicleType}
                 onChange={(e) => handleInputChange(e, 'vehicleType')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  darkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white' 
+                    : 'bg-white border-gray-300 text-gray-900'
+                }`}
                 required
               />
             </div>
             {/* Vehicle Registration Number */}
             <div>
-              <label htmlFor="vehicleRegNo" className="block text-sm font-medium text-gray-700 mb-1">Vehicle Registration Number</label>
+              <label htmlFor="vehicleRegNo" className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Vehicle Registration Number</label>
               <input
                 type="text"
                 id="vehicleRegNo"
                 value={newDriver.vehicleRegNo}
                 onChange={(e) => handleInputChange(e, 'vehicleRegNo')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  darkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white' 
+                    : 'bg-white border-gray-300 text-gray-900'
+                }`}
                 required
                 placeholder="12-1234 or AB-1234 or ABC-1234"
                 maxLength={8}
@@ -425,13 +473,17 @@ const DriverVehicleDetails = () => {
             </div>
             {/* Driver License Number */}
             <div>
-              <label htmlFor="driverLicenceNo" className="block text-sm font-medium text-gray-700 mb-1">Driver License Number</label>
+              <label htmlFor="driverLicenceNo" className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Driver License Number</label>
               <input
                 type="text"
                 id="driverLicenceNo"
                 value={newDriver.driverLicenceNo}
                 onChange={(e) => handleInputChange(e, 'driverLicenceNo')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  darkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white' 
+                    : 'bg-white border-gray-300 text-gray-900'
+                }`}
                 required
                 placeholder="A1234567"
               />
@@ -463,8 +515,10 @@ const DriverVehicleDetails = () => {
       </div>
 
       {/* Driver List Section */}
-      <div className="bg-white rounded-lg p-6 shadow-lg">
-        <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Driver List</h2>
+      <div className={`rounded-lg p-6 shadow-lg ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+        <h2 className={`text-3xl font-bold mb-6 border-b pb-2 ${darkMode ? 'text-gray-200 border-gray-700' : 'text-gray-800 border-gray-200'}`}>
+          Driver List
+        </h2>
         <div className="mb-4 flex items-center">
           <div className="relative flex-grow">
             <input
@@ -472,7 +526,11 @@ const DriverVehicleDetails = () => {
               placeholder="Search by name or NIC..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={`w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                darkMode 
+                  ? 'bg-gray-700 border-gray-600 text-white' 
+                  : 'bg-white border-gray-300 text-gray-900'
+              }`}
             />
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           </div>
@@ -484,9 +542,9 @@ const DriverVehicleDetails = () => {
           </button>
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-300">
+          <table className={`min-w-full border ${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}>
             <thead>
-              <tr className="bg-gray-100">
+              <tr className={darkMode ? 'bg-gray-800' : 'bg-gray-100'}>
                 <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIC</th>
                 <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                 <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DOB</th>
@@ -497,10 +555,14 @@ const DriverVehicleDetails = () => {
                 <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className={`divide-y ${darkMode ? 'divide-gray-600' : 'divide-gray-200'}`}>
               {filteredDrivers && filteredDrivers.length > 0 ? (
                 filteredDrivers.map(driver => (
-                  <tr key={driver._id} className="hover:bg-gray-50 transition duration-200">
+                  <tr key={driver._id} className={`transition duration-200 ${
+                    darkMode 
+                      ? 'hover:bg-gray-600' 
+                      : 'hover:bg-gray-50'
+                  }`}>
                     <td className="border px-4 py-2">{driver.nic}</td>
                     <td className="border px-4 py-2">{driver.name}</td>
                     <td className="border px-4 py-2">{driver.birthday.split('T')[0]}</td>
@@ -520,7 +582,7 @@ const DriverVehicleDetails = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" className="border px-4 py-2 text-center text-gray-500">No drivers found.</td>
+                  <td colSpan="8" className={`border px-4 py-2 text-center text-${darkMode ? 'gray-400' : 'gray-500'}`}>No drivers found.</td>
                 </tr>
               )}
             </tbody>

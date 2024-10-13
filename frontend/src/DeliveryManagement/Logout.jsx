@@ -29,14 +29,14 @@ export default function Logout() {
 
   return (
     <div 
-      className="flex items-center justify-center min-h-screen bg-gradient-to-br from-orange-400 via-red-500 to-pink-500 relative overflow-hidden"
+      className="flex items-center justify-center min-h-screen relative overflow-hidden"
       style={{
+        backgroundImage: 'linear-gradient(45deg, #ff0000, #0000ff, #ff0000, #0000ff)',
         backgroundSize: '400% 400%',
         backgroundPosition: `${bgPosition}% ${bgPosition}%`,
         transition: 'background-position 0.5s ease'
       }}
     >
-      <div className="absolute inset-0 bg-black opacity-50"></div>
       <div className="bg-white p-10 rounded-2xl shadow-2xl text-center max-w-md mx-auto z-10 transform transition-all duration-300 hover:scale-105">
         <div className="mb-6 text-6xl text-red-500 animate-pulse">
           <FaExclamationTriangle />

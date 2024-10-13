@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useCreateDeliveryMutation } from "../redux/api/deliveryApiSlice";
 import { useGetOrdersQuery, useUpdateOrderMutation } from '../redux/api/orderApiSlice';
 import { toast } from "react-hot-toast";
+import { FaMoon, FaSun } from 'react-icons/fa';
 
 export default function AddDelivery() {
     const [image, setImage] = useState(null);
@@ -19,6 +20,7 @@ export default function AddDelivery() {
     const [postalCode, setPostalCode] = useState('');
     const [deliveryStatus, setDeliveryStatus] = useState('Pending');
     const [Items, setItems] = useState([]);
+    const [darkMode, setDarkMode] = useState(false);
 
     console.log("Items:", Items);
 
@@ -29,6 +31,14 @@ export default function AddDelivery() {
     useEffect(() => {
         setTotalPrice(parseFloat(itemsPrice) + parseFloat(deliveryPrice));
     }, [itemsPrice, deliveryPrice]);
+
+    useEffect(() => {
+        if (darkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }, [darkMode]);
 
     const handleOrderClick = (order) => {
         setFirstName(order.firstName);
@@ -82,81 +92,111 @@ export default function AddDelivery() {
         }
     };
 
+    const toggleDarkMode = () => {
+        setDarkMode(!darkMode);
+    };
+
     return (
-        <div className="p-8 bg-gray-100 min-h-screen">
-            <h1 className="text-3xl font-bold text-gray-800 mb-8">Add New Delivery</h1>
+        <div className={`p-8 min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-800'}`}>
+            <div className="flex justify-between items-center mb-8">
+                <h1 className="text-3xl font-bold">Add New Delivery</h1>
+                <button
+                    onClick={toggleDarkMode}
+                    className={`p-2 rounded-full ${darkMode ? 'bg-yellow-400 text-gray-900' : 'bg-gray-700 text-yellow-400'}`}
+                >
+                    {darkMode ? <FaSun /> : <FaMoon />}
+                </button>
+            </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Pending Orders List */}
-                <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                    <div className="bg-blue-600 text-white p-4">
+                <div className={`rounded-lg shadow-lg overflow-hidden ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+                    <div className={`p-4 ${darkMode ? 'bg-blue-800' : 'bg-blue-600'} text-white`}>
                         <h2 className="text-xl font-semibold">Pending Orders</h2>
                     </div>
                     <div className="p-4 h-[calc(100vh-200px)] overflow-y-auto">
                         {isLoading ? (
-                            <p className="text-gray-600">Loading orders...</p>
+                            <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>Loading orders...</p>
                         ) : isError ? (
                             <p className="text-red-500">Error loading orders</p>
                         ) : orders?.length > 0 ? (
                             orders.filter(order => order.status === 'Pending').map(order => (
                                 <div
                                     key={order._id}
-                                    className="mb-4 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 transition duration-300"
+                                    className={`mb-4 p-4 border rounded-lg cursor-pointer transition duration-300 ${
+                                        darkMode 
+                                            ? 'border-gray-700 hover:bg-gray-700' 
+                                            : 'border-gray-200 hover:bg-blue-50'
+                                    }`}
                                     onClick={() => handleOrderClick(order)}
                                 >
-                                    <h3 className="text-lg font-semibold text-gray-800">{order.firstName} {order.lastName}</h3>
-                                    <p className="text-gray-600">Order ID: {order.orderId}</p>
-                                    <p className="text-gray-600">Items Price: Rs.{order.itemsPrice}</p>
+                                    <h3 className="text-lg font-semibold">{order.firstName} {order.lastName}</h3>
+                                    <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>Order ID: {order.orderId}</p>
+                                    <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>Items Price: Rs.{order.itemsPrice}</p>
                                 </div>
                             ))
                         ) : (
-                            <p className="text-gray-600">No pending orders available</p>
+                            <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>No pending orders available</p>
                         )}
                     </div>
                 </div>
 
                 {/* Delivery Information */}
-                <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                    <div className="bg-green-600 text-white p-4">
+                <div className={`rounded-lg shadow-lg overflow-hidden ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+                    <div className={`p-4 ${darkMode ? 'bg-green-800' : 'bg-green-600'} text-white`}>
                         <h2 className="text-xl font-semibold">Delivery Information</h2>
                     </div>
                     <form onSubmit={handleSubmit} className="p-6 space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-gray-700 font-medium mb-2">First Name</label>
-                                <input
-                                    type="text"
-                                    className="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300"
-                                    placeholder="Enter first name"
-                                    value={firstName}
-                                    onChange={(e) => setFirstName(e.target.value)}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-gray-700 font-medium mb-2">Last Name</label>
-                                <input
-                                    type="text"
-                                    className="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300"
-                                    placeholder="Enter last name"
-                                    value={lastName}
-                                    onChange={(e) => setLastName(e.target.value)}
-                                />
-                            </div>
-                        </div>
                         <div>
-                            <label className="block text-gray-700 font-medium mb-2">Telephone Number</label>
+                            <label className={`block font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>First Name</label>
                             <input
                                 type="text"
-                                className="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300"
+                                className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300 ${
+                                    darkMode 
+                                        ? 'bg-gray-700 border-gray-600 text-white' 
+                                        : 'bg-gray-50 border-gray-300 text-gray-900'
+                                }`}
+                                placeholder="Enter first name"
+                                value={firstName}
+                                onChange={(e) => setFirstName(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <label className={`block font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Last Name</label>
+                            <input
+                                type="text"
+                                className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300 ${
+                                    darkMode 
+                                        ? 'bg-gray-700 border-gray-600 text-white' 
+                                        : 'bg-gray-50 border-gray-300 text-gray-900'
+                                }`}
+                                placeholder="Enter last name"
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <label className={`block font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Telephone Number</label>
+                            <input
+                                type="text"
+                                className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300 ${
+                                    darkMode 
+                                        ? 'bg-gray-700 border-gray-600 text-white' 
+                                        : 'bg-gray-50 border-gray-300 text-gray-900'
+                                }`}
                                 placeholder="Enter telephone number"
                                 value={telephoneNo}
                                 onChange={(e) => setTelephoneNo(e.target.value)}
                             />
                         </div>
                         <div>
-                            <label className="block text-gray-700 font-medium mb-2">Address</label>
+                            <label className={`block font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Address</label>
                             <input
                                 type="text"
-                                className="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300"
+                                className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300 ${
+                                    darkMode 
+                                        ? 'bg-gray-700 border-gray-600 text-white' 
+                                        : 'bg-gray-50 border-gray-300 text-gray-900'
+                                }`}
                                 placeholder="Enter address"
                                 value={address}
                                 onChange={(e) => setAddress(e.target.value)}
@@ -164,30 +204,42 @@ export default function AddDelivery() {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
-                                <label className="block text-gray-700 font-medium mb-2">City</label>
+                                <label className={`block font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>City</label>
                                 <input
                                     type="text"
-                                    className="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300"
+                                    className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300 ${
+                                        darkMode 
+                                            ? 'bg-gray-700 border-gray-600 text-white' 
+                                            : 'bg-gray-50 border-gray-300 text-gray-900'
+                                    }`}
                                     placeholder="Enter city"
                                     value={city}
                                     onChange={(e) => setCity(e.target.value)}
                                 />
                             </div>
                             <div>
-                                <label className="block text-gray-700 font-medium mb-2">Province</label>
+                                <label className={`block font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Province</label>
                                 <input
                                     type="text"
-                                    className="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300"
+                                    className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300 ${
+                                        darkMode 
+                                            ? 'bg-gray-700 border-gray-600 text-white' 
+                                            : 'bg-gray-50 border-gray-300 text-gray-900'
+                                    }`}
                                     placeholder="Enter province"
                                     value={province}
                                     onChange={(e) => setProvince(e.target.value)}
                                 />
                             </div>
                             <div>
-                                <label className="block text-gray-700 font-medium mb-2">Postal Code</label>
+                                <label className={`block font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Postal Code</label>
                                 <input
                                     type="text"
-                                    className="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300"
+                                    className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300 ${
+                                        darkMode 
+                                            ? 'bg-gray-700 border-gray-600 text-white' 
+                                            : 'bg-gray-50 border-gray-300 text-gray-900'
+                                    }`}
                                     placeholder="Enter postal code"
                                     value={postalCode}
                                     onChange={(e) => setPostalCode(e.target.value)}
@@ -195,18 +247,26 @@ export default function AddDelivery() {
                             </div>
                         </div>
                         <div>
-                            <label className="block text-gray-700 font-medium mb-2">Items</label>
+                            <label className={`block font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Items</label>
                             {Items.map((item) => (
                                 <div key={item._id} className="flex space-x-4 mb-2">
                                     <input
                                         type="text"
-                                        className="flex-grow p-3 border rounded-lg bg-gray-50"
+                                        className={`flex-grow p-3 border rounded-lg ${
+                                            darkMode 
+                                                ? 'bg-gray-700 border-gray-600 text-white' 
+                                                : 'bg-gray-50 border-gray-300 text-gray-900'
+                                        }`}
                                         value={item.name}
                                         disabled
                                     />
                                     <input
                                         type="number"
-                                        className="w-24 p-3 border rounded-lg bg-gray-50"
+                                        className={`w-24 p-3 border rounded-lg ${
+                                            darkMode 
+                                                ? 'bg-gray-700 border-gray-600 text-white' 
+                                                : 'bg-gray-50 border-gray-300 text-gray-900'
+                                        }`}
                                         value={item.qty}
                                         disabled
                                     />
@@ -215,7 +275,11 @@ export default function AddDelivery() {
                         </div>
                         <button
                             type="submit"
-                            className="w-full bg-green-600 text-white font-semibold py-3 rounded-lg hover:bg-green-500 transition duration-300"
+                            className={`w-full font-semibold py-3 rounded-lg transition duration-300 ${
+                                darkMode 
+                                    ? 'bg-green-700 text-white hover:bg-green-600' 
+                                    : 'bg-green-600 text-white hover:bg-green-500'
+                            }`}
                         >
                             Submit Delivery
                         </button>

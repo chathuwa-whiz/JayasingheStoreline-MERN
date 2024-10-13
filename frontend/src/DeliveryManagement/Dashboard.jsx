@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaBox, FaClock, FaCheck, FaExclamationCircle, FaMoneyBill, FaListUl, FaTrash, FaUser, FaTruck, FaCar, FaMotorcycle, FaBoxes } from 'react-icons/fa';
+import { FaBox, FaClock, FaCheck, FaExclamationCircle, FaMoneyBill, FaListUl, FaTrash, FaUser, FaTruck, FaCar, FaMotorcycle, FaBoxes, FaMoon, FaSun } from 'react-icons/fa';
 
 export default function DeliveryDashboard() {
   const [deliveries, setDeliveries] = useState([]);
@@ -10,6 +10,7 @@ export default function DeliveryDashboard() {
   const [totalDeliveredItems, setTotalDeliveredItems] = useState(0);
   const [totalDrivers, setTotalDrivers] = useState(0);
   const [error, setError] = useState(null);
+  const [darkMode, setDarkMode] = useState(false);
 
   // Price formatter for LKR
   const priceFormatter = new Intl.NumberFormat('en-LK', {
@@ -75,11 +76,25 @@ export default function DeliveryDashboard() {
     fetchDrivers();
   }, []);
 
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100 p-6 lg:p-8">
-      <header className="bg-white shadow-md rounded-lg p-6 mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Welcome back, Yasith JY</h1>
-        <p className="text-gray-600 mt-2">Track and manage your deliveries efficiently</p>
+    <div className={`min-h-screen p-6 lg:p-8 ${darkMode ? 'dark bg-gray-900' : 'bg-gradient-animate'}`}>
+      <header className={`${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'} shadow-md rounded-lg p-6 mb-8`}>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Welcome back, Yasith JY</h1>
+            <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} mt-2`}>Track and manage your deliveries efficiently</p>
+          </div>
+          <button
+            onClick={toggleDarkMode}
+            className={`p-2 rounded-full ${darkMode ? 'bg-yellow-400 text-gray-900' : 'bg-gray-200 text-gray-600'}`}
+          >
+            {darkMode ? <FaSun size={24} /> : <FaMoon size={24} />}
+          </button>
+        </div>
       </header>
 
       {error && (
@@ -90,17 +105,17 @@ export default function DeliveryDashboard() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <DashboardCard icon={<FaBox />} title="Total Deliveries" value={deliveries.length} color="green" />
-        <DashboardCard icon={<FaClock />} title="Pending Deliveries" value={pendingDeliveries} color="yellow" />
-        <DashboardCard icon={<FaCheck />} title="Completed Deliveries" value={completedDeliveries} color="blue" />
-        <DashboardCard icon={<FaExclamationCircle />} title="Delayed Deliveries" value={delayedDeliveries} color="red" />
+        <DashboardCard icon={<FaBox />} title="Total Deliveries" value={deliveries.length} color="green" darkMode={darkMode} />
+        <DashboardCard icon={<FaClock />} title="Pending Deliveries" value={pendingDeliveries} color="yellow" darkMode={darkMode} />
+        <DashboardCard icon={<FaCheck />} title="Completed Deliveries" value={completedDeliveries} color="blue" darkMode={darkMode} />
+        <DashboardCard icon={<FaExclamationCircle />} title="Delayed Deliveries" value={delayedDeliveries} color="red" darkMode={darkMode} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <DashboardCard icon={<FaMoneyBill />} title="Total Delivery Earnings" value={priceFormatter.format(totalEarnings)} color="green" />
-        <DashboardCard icon={<FaMoneyBill />} title="Total Item Earnings" value={priceFormatter.format(totalDeliveredItems)} color="blue" />
-        <DashboardCard icon={<FaMoneyBill />} title="Total Earnings" value={priceFormatter.format(totalEarnings + totalDeliveredItems)} color="indigo" />
-        <DashboardCard icon={<FaUser />} title="Total Drivers" value={totalDrivers} color="purple" />
+        <DashboardCard icon={<FaMoneyBill />} title="Total Delivery Earnings" value={priceFormatter.format(totalEarnings)} color="green" darkMode={darkMode} />
+        <DashboardCard icon={<FaMoneyBill />} title="Total Item Earnings" value={priceFormatter.format(totalDeliveredItems)} color="blue" darkMode={darkMode} />
+        <DashboardCard icon={<FaMoneyBill />} title="Total Earnings" value={priceFormatter.format(totalEarnings + totalDeliveredItems)} color="indigo" darkMode={darkMode} />
+        <DashboardCard icon={<FaUser />} title="Total Drivers" value={totalDrivers} color="purple" darkMode={darkMode} />
       </div>
 
       <div className="bg-white shadow-md rounded-lg overflow-hidden mb-8">
@@ -160,21 +175,66 @@ export default function DeliveryDashboard() {
           </span>
         </div>
       </div>
+
+      {/* Add this style tag at the bottom of the component */}
+      <style jsx>{`
+        @keyframes gradientAnimation {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+
+        .bg-gradient-animate {
+          background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+          background-size: 400% 400%;
+          animation: gradientAnimation 15s ease infinite;
+        }
+
+        /* Dark mode styles */
+        .dark {
+          color: #ffffff;
+        }
+
+        .dark .bg-white {
+          background-color: #1a202c;
+        }
+
+        .dark .text-gray-600 {
+          color: #a0aec0;
+        }
+
+        .dark .text-gray-800 {
+          color: #e2e8f0;
+        }
+
+        .dark .bg-gray-50 {
+          background-color: #2d3748;
+        }
+
+        .dark .hover\:bg-gray-50:hover {
+          background-color: #4a5568;
+        }
+      `}</style>
     </div>
   );
 }
 
-function DashboardCard({ icon, title, value, color }) {
+function DashboardCard({ icon, title, value, color, darkMode }) {
   return (
-    <div className={`bg-white p-6 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg transform hover:scale-105`}>
+    <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} p-6 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg transform hover:scale-105`}>
       <div className="flex items-center">
         <div className={`text-4xl text-${color}-500 mr-4`}>{icon}</div>
         <div>
           <h2 className={`text-2xl font-semibold text-${color}-600`}>{value}</h2>
-          <p className="text-gray-600 text-sm mt-1">{title}</p>
+          <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} text-sm mt-1`}>{title}</p>
         </div>
       </div>
     </div>
   );
 }
-
