@@ -45,7 +45,7 @@ const DriverVehicleDetails = () => {
     '027': 'Polonnaruwa', '037': 'Kurunegala', '054': 'Nawalapitiya', '081': 'Kandy'
   };
 
-  const networkCodes = ['070', '071', '072', '074','075', '076', '077', '078'];
+  const networkCodes = ['070', '071', '072', '074', '075', '076', '077', '078'];
 
   const formatTelephoneNo = (value) => {
     // Remove any non-digit characters
@@ -78,7 +78,6 @@ const DriverVehicleDetails = () => {
 
   const formatVehicleRegNo = (value) => {
     // Remove any existing hyphens and convert input to uppercase
-    // Remove any existing hyphens and convert input to uppercase
     let sanitizedValue = value.replace('-', '').toUpperCase();
     
     // Check if the sanitized value has exactly 6 characters (12-1234 or AB-1234)
@@ -90,24 +89,7 @@ const DriverVehicleDetails = () => {
       // Check for the format AB-1234 (2 letters + 4 digits)
       if (/^[A-Z]{2}\d{4}$/.test(sanitizedValue)) {
         return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2);
-    // Check if the sanitized value has exactly 6 characters (12-1234 or AB-1234)
-    if (sanitizedValue.length === 6) {
-      // Check for the format 12-1234 (2 digits + 4 digits)
-      if (/^\d{2}\d{4}$/.test(sanitizedValue)) {
-        return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2);
       }
-      // Check for the format AB-1234 (2 letters + 4 digits)
-      if (/^[A-Z]{2}\d{4}$/.test(sanitizedValue)) {
-        return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2);
-      }
-    } 
-    // Check if the sanitized value has exactly 7 characters for ABC-1234
-    else if (sanitizedValue.length === 7 && /^[A-Z]{3}\d{4}$/.test(sanitizedValue)) {
-      return sanitizedValue.slice(0, 3) + '-' + sanitizedValue.slice(3);
-    }
-    
-    // Return sanitized value if no formatting conditions are met
-    return sanitizedValue;
     } 
     // Check if the sanitized value has exactly 7 characters for ABC-1234
     else if (sanitizedValue.length === 7 && /^[A-Z]{3}\d{4}$/.test(sanitizedValue)) {
@@ -306,79 +288,69 @@ const DriverVehicleDetails = () => {
     doc.save('Drivers_List.pdf');
   };
 
-  const generatePDFWithHeaderFooter = () => {
-    const doc = new jsPDF('p', 'mm', 'a4');
-    const pageWidth = doc.internal.pageSize.width;
-    const pageHeight = doc.internal.pageSize.height;
-
+  const generatePDFWithHeaderFooter = (doc) => {
     // Load the logo image
     const img = new Image();
-    img.src = logo;
+    img.src = logo; // Ensure the path to the logo is correct
 
     img.onload = function () {
-      const addHeaderFooter = (doc) => {
-        // Header
-        doc.addImage(img, 'PNG', 14, 10, 30, 30);
+        // Add the logo to the header
+        doc.addImage(img, 'PNG', 14, 10, 30, 30); // Adjust position and size as needed
+
+        // Add company details and report title
         doc.setFontSize(16);
         doc.text('Jayasinghe Storelines PVT LTD', 50, 20);
         doc.setFontSize(12);
         doc.text('No. 123, Main Street, Colombo, Sri Lanka', 50, 28);
         doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', 50, 34);
 
-        // Report title and date
-        const currentDate = new Date().toLocaleDateString();
+        // Add report title and date
+        const currentDate = new Date();
+        const dateString = currentDate.toLocaleDateString();
         doc.setFontSize(14);
         doc.text('Drivers List Report', 50, 42);
-        doc.text(`Issued on: ${currentDate}`, 50, 48);
+        doc.text(`Issued on: ${dateString}`, 50, 48);
 
-        // Line below header
+        // Add a line below the header
         doc.setLineWidth(0.5);
-        doc.line(14, 52, pageWidth - 14, 52);
+        doc.line(14, 52, 196, 52);
 
-        // Footer
-        doc.setFontSize(10);
-        doc.text('Jayasinghe Storelines PVT LTD', 14, pageHeight - 10);
-        doc.text('Confidential - For Internal Use Only', 14, pageHeight - 20);
-        doc.text('Version 1.0', pageWidth - 30, pageHeight - 20);
-        doc.text(`Page ${doc.internal.getCurrentPageInfo().pageNumber} of`, pageWidth - 30, pageHeight - 10);
-      };
+        // Prepare the table data
+        const rows = drivers.map(driver => [
+            driver.nic,
+            driver.name,
+            driver.birthday.split('T')[0],
+            driver.telephoneNo,
+            driver.vehicleType,
+            driver.vehicleRegNo,
+            driver.driverLicenceNo,
+        ]);
 
-      // Prepare the table data
-      const rows = drivers.map(driver => [
-        driver.nic,
-        driver.name,
-        driver.birthday.split('T')[0],
-        driver.telephoneNo,
-        driver.vehicleType,
-        driver.vehicleRegNo,
-        driver.driverLicenceNo,
-      ]);
+        // Add the table
+        autoTable(doc, {
+            head: [['NIC', 'Name', 'DOB', 'Telephone', 'Vehicle Type', 'Vehicle Reg No', 'Driver License No']],
+            body: rows,
+            startY: 55,
+        });
 
-      // Add the table
-      autoTable(doc, {
-        head: [['NIC', 'Name', 'DOB', 'Telephone', 'Vehicle Type', 'Vehicle Reg No', 'Driver License No']],
-        body: rows,
-        startY: 55,
-        margin: { top: 60 },
-        didDrawPage: (data) => {
-          addHeaderFooter(doc);
-        },
-      });
+        // Set up the footer
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.setFontSize(10);
+            doc.text(`Page ${i} of ${pageCount}`, 180, doc.internal.pageSize.height - 10);
+            doc.text('Jayasinghe Storelines PVT LTD', 14, doc.internal.pageSize.height - 10);
+            doc.text('Confidential - For Internal Use Only', 14, doc.internal.pageSize.height - 20);
+            doc.text('Version 1.0', 180, doc.internal.pageSize.height - 20);
+        }
 
-      // Add total page number to all pages
-      const pageCount = doc.internal.getNumberOfPages();
-      for (let i = 1; i <= pageCount; i++) {
-        doc.setPage(i);
-        doc.text(`${pageCount}`, pageWidth - 10, pageHeight - 10);
-      }
-
-      // Save the PDF
-      doc.save('Drivers_List_Professional_Report.pdf');
+        // Save the PDF
+        doc.save('Drivers_List_Professional_Report.pdf');
     };
 
     img.onerror = function () {
-      console.error('Image loading failed. PDF will be generated without the logo.');
-      generatePDFWithoutLogo(doc);
+        console.error('Image loading failed. PDF will be generated without the logo.');
+        generatePDFWithoutLogo(doc);
     };
   };
 
@@ -487,10 +459,8 @@ const DriverVehicleDetails = () => {
                 required
                 placeholder="12-1234 or AB-1234 or ABC-1234"
                 maxLength={8} // Set maxLength to 8 to account for the longest format (ABC-1234)
-                maxLength={8} // Set maxLength to 8 to account for the longest format (ABC-1234)
               />
               <p className="mt-1 text-sm text-gray-500">
-                Format: 12-1234, AB-1234, or ABC-1234
                 Format: 12-1234, AB-1234, or ABC-1234
               </p>
             </div>
@@ -582,7 +552,7 @@ const DriverVehicleDetails = () => {
           </tbody>
         </table>
         <div className="mt-4">
-          <button onClick={generatePDFWithHeaderFooter} className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
+          <button onClick={downloadPDF} className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
             Download PDF
           </button>
         </div>
