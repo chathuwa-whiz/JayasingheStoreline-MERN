@@ -95,6 +95,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
       JSON.parse(delivery.deliveryItem).map(item => `${item.name} x ${item.qty}`).join(', '),
       delivery.firstName,
       delivery.telephoneNo,
+      `${delivery.address}, ${delivery.city}, ${delivery.province}, ${delivery.postalCode}`,
       delivery.createdAt ? new Date(delivery.createdAt).toLocaleDateString() : 'Date not available',
       priceFormatter.format(delivery.itemsPrice),
       priceFormatter.format(delivery.deliveryPrice),
@@ -104,7 +105,7 @@ export default function DeliveryDetail({ onEditDelivery }) {
   
     // Generate the table
     autoTable(doc, {
-      head: [['Delivery No', 'Order No', 'Delivery Item', 'Name', 'Contact No', 'CreatedAt', 'Items Price', 'Delivery Price', 'Total Price', 'Status']],
+      head: [['Delivery No', 'Order No', 'Delivery Item', 'Name', 'Contact No', 'Delivery Address', 'CreatedAt', 'Items Price', 'Delivery Price', 'Total Price', 'Status']],
       body: tableData,
       startY: 60,
     });
