@@ -59,30 +59,54 @@ const Checkout = () => {
     const errors = {};
 
     if (selectedPaymentMethod === 'card') {
-      const cardNumberPattern = /^\d{4}-\d{4}-\d{4}-\d{4}$/;
-      if (!cardNumberPattern.test(cardNumber) || cardNumber.replace(/-/g, '').length > 16) {
-        errors.cardNumber = 'Card number must be up to 16 digits with hyphens';
-      }
+        // Card Number Validation
+        const cardNumberPattern = /^\d{4}-\d{4}-\d{4}-\d{4}$/;
+        if (!cardNumberPattern.test(cardNumber) || cardNumber.replace(/-/g, '').length > 16) {
+            errors.cardNumber = 'Card number must be up to 16 digits with hyphens';
+        }
 
-      const cardNamePattern = /^[a-zA-Z\s]+$/;
-      if (!cardNamePattern.test(cardName)) {
-        errors.cardName = 'Card name must only contain letters and spaces';
-      }
+        // Card Name Validation
+        const cardNamePattern = /^[a-zA-Z\s]+$/;
+        if (!cardNamePattern.test(cardName)) {
+            errors.cardName = 'Card name must only contain letters and spaces';
+        }
 
-      const expirationDatePattern = /^\d{2}\/\d{2}$/;
-      if (!expirationDatePattern.test(expirationDate)) {
-        errors.expirationDate = 'Invalid expiration date format';
-      }
+        // Expiration Date Validation (MM/YY)
+        const expirationDatePattern = /^\d{2}\/\d{2}$/;
+        if (!expirationDatePattern.test(expirationDate)) {
+            errors.expirationDate = 'Invalid expiration date format (MM/YY)';
+        } else {
+            const [month, year] = expirationDate.split('/').map(Number);
 
-      const cvvPattern = /^\d{3,4}$/;
-      if (!cvvPattern.test(cvv)) {
-        errors.cvv = 'CVV must be 3 or 4 digits';
-      }
+            // Check if month is valid (between 01 and 12)
+            if (month < 1 || month > 12) {
+                errors.expirationDate = 'Invalid month. Must be between 01 and 12.';
+            } else {
+                // Get current month and year
+                const currentDate = new Date();
+                const currentMonth = currentDate.getMonth() + 1;
+                const currentYear = currentDate.getFullYear() % 100; 
+
+                // Check if expiration date is in the past
+                if (year < currentYear || (year === currentYear && month < currentMonth)) {
+                    errors.expirationDate = 'Expiration date cannot be in the past.';
+                }
+            }
+        }
+
+        // CVV Validation
+        const cvvPattern = /^\d{3,4}$/;
+        if (!cvvPattern.test(cvv)) {
+            errors.cvv = 'CVV must be 3 or 4 digits';
+        }
     }
 
+    // Set errors and return whether the form is valid
     setErrors(errors);
     return Object.keys(errors).length === 0;
-  };
+};
+
+
 
   const handlePaymentSelection = (method) => {
     setSelectedPaymentMethod(method);
@@ -158,7 +182,7 @@ const Checkout = () => {
         items: "Order Description",
         amount: totalAmount,
         currency: "LKR",
-        first_name: "viduura",
+        first_name: "vidura",
         last_name: "rathnayaka",
         email: "vidura@gmail.com",
         phone: "0772909990",
@@ -285,83 +309,88 @@ const Checkout = () => {
           </div>
 
           {selectedPaymentMethod === 'card' && (
-            <div>
-              <h3 className="text-lg font-semibold mb-2 text-blue-600">Card Details</h3>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Card number</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${
-                      errors.cardNumber ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    placeholder="Card number"
-                    value={cardNumber}
-                    onChange={handleCardNumberChange}
-                  />
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                    {cardType === 'visa' && (
-                      <img src={visa} alt="Visa" className="h-6" />
-                    )}
-                    {cardType === 'mastercard' && (
-                      <img src={mastercard} alt="MasterCard" className="h-6" />
-                    )}
-                  </div>
-                </div>
-                {errors.cardNumber && <p className="text-red-500 text-sm">{errors.cardNumber}</p>}
-              </div>
+  <div>
+    <h3 className="text-lg font-semibold mb-2 text-blue-600">Card Details</h3>
+    
+    {/* Card Number Input */}
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700">Card Number</label>
+      <div className="relative">
+        <input
+          type="text"
+          className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${
+            errors.cardNumber ? 'border-red-500' : 'border-gray-300'
+          }`}
+          placeholder="Card number (e.g., 1234-5678-9012-3456)"
+          value={cardNumber}
+          onChange={handleCardNumberChange}
+        />
+        <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+          {cardType === 'visa' && <img src={visa} alt="Visa" className="h-6" />}
+          {cardType === 'mastercard' && <img src={mastercard} alt="MasterCard" className="h-6" />}
+        </div>
+      </div>
+      {errors.cardNumber && <p className="text-red-500 text-sm">{errors.cardNumber}</p>}
+    </div>
 
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Cardholder Name</label>
-                <input
-                  type="text"
-                  className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${
-                    errors.cardName ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                  placeholder="Cardholder name"
-                  value={cardName}
-                  onChange={handleCardNameChange}
-                />
-                {errors.cardName && <p className="text-red-500 text-sm">{errors.cardName}</p>}
-              </div>
+    {/* Cardholder Name Input */}
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700">Cardholder Name</label>
+      <input
+        type="text"
+        className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${
+          errors.cardName ? 'border-red-500' : 'border-gray-300'
+        }`}
+        placeholder="Cardholder name"
+        value={cardName}
+        onChange={handleCardNameChange}
+      />
+      {errors.cardName && <p className="text-red-500 text-sm">{errors.cardName}</p>}
+    </div>
 
-              <div className="flex mb-4">
-                <div className="w-1/2 pr-2">
-                  <label className="block text-sm font-medium text-gray-700">Expiration Date</label>
-                  <input
-                    type="text"
-                    className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${
-                      errors.expirationDate ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    placeholder="MM/YY"
-                    value={expirationDate}
-                    onChange={handleExpirationDateChange}
-                  />
-                  {errors.expirationDate && <p className="text-red-500 text-sm">{errors.expirationDate}</p>}
-                </div>
+    {/* Expiration Date and CVV Inputs */}
+    <div className="flex mb-4">
+      {/* Expiration Date Input */}
+      <div className="w-1/2 pr-2">
+        <label className="block text-sm font-medium text-gray-700">Expiration Date (MM/YY)</label>
+        <input
+          type="text"
+          className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${
+            errors.expirationDate ? 'border-red-500' : 'border-gray-300'
+          }`}
+          placeholder="MM/YY"
+          value={expirationDate}
+          onChange={handleExpirationDateChange}
+        />
+        {errors.expirationDate && <p className="text-red-500 text-sm">{errors.expirationDate}</p>}
+      </div>
 
-                <div className="w-1/2 pl-2">
-                  <label className="block text-sm font-medium text-gray-700">CVV</label>
-                  <input
-                    type="text"
-                    className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${
-                      errors.cvv ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    placeholder="CVV"
-                    value={cvv}
-                    onChange={handleCvvChange}
-                  />
-                  {errors.cvv && <p className="text-red-500 text-sm">{errors.cvv}</p>}
-                </div>
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md mt-4 hover:bg-blue-700"
-              >
-                Make Payment
-              </button>
-            </div>
-          )}
+      {/* CVV Input */}
+      <div className="w-1/2 pl-2">
+        <label className="block text-sm font-medium text-gray-700">CVV</label>
+        <input
+          type="text"
+          className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none sm:text-sm ${
+            errors.cvv ? 'border-red-500' : 'border-gray-300'
+          }`}
+          placeholder="CVV (3 or 4 digits)"
+          value={cvv}
+          onChange={handleCvvChange}
+        />
+        {errors.cvv && <p className="text-red-500 text-sm">{errors.cvv}</p>}
+      </div>
+    </div>
+
+    {/* Submit Button */}
+    <button
+      type="submit"
+      className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md mt-4 hover:bg-blue-700"
+    >
+      Make Payment
+    </button>
+  </div>
+)}
+
 
           {selectedPaymentMethod === 'cod' && (
             <div>
