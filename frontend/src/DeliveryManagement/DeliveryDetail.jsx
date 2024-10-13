@@ -64,30 +64,35 @@ export default function DeliveryDetail({ onEditDelivery }) {
 
   const downloadPDF = async () => {
     const doc = new jsPDF('l', 'mm', 'a4');
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+
+    // Header
     const img = new Image();
     img.src = logo;
     await new Promise(resolve => {
       img.onload = resolve;
     });
     doc.addImage(img, 'PNG', 14, 10, 30, 30);
-  
-    // Add company name below the logo
+
     doc.setFontSize(20);
-    doc.text('Jayasinghe Storelines PVT (LTD)', 50, 25);
-  
-    // Add company details to the top right
-    doc.setFontSize(12);
     doc.setTextColor(40, 40, 40);
-    doc.text(`Email: ${companyEmail}`, 270, 15, { align: 'right' });
-    doc.text(`Telephone: ${companyTelephone}`, 270, 22, { align: 'right' });
-    doc.text(`Address: ${companyAddress}`, 270, 29, { align: 'right' });
-    doc.text(`Issued at: ${timeString} on ${dateString}`, 201, 36);
-    doc.setFontSize(18);
-    
-    // Add title below the company name
-    doc.setFontSize(18);
-    doc.text('Delivery Details', 14, 50);
-  
+    doc.text('Delivery Details Report', pageWidth / 2, 25, { align: 'center' });
+
+    doc.setFontSize(10);
+    doc.text(`Date: ${dateString}`, pageWidth - 15, 15, { align: 'right' });
+    doc.text('CONFIDENTIAL', 14, 50);
+    doc.text(`Contact: ${companyEmail} | ${companyTelephone}`, pageWidth - 15, 22, { align: 'right' });
+
+    // Footer function
+    const addFooter = () => {
+      doc.setFontSize(8);
+      doc.text(`Jayasinghe Storelines PVT (LTD) | ${companyAddress}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+      doc.text(`Page ${doc.internal.getNumberOfPages()}`, pageWidth - 15, pageHeight - 10, { align: 'right' });
+      doc.text('Version 1.0', 14, pageHeight - 10);
+      doc.text('This document is confidential and intended solely for internal use.', pageWidth / 2, pageHeight - 6, { align: 'center' });
+    };
+
     // Prepare table data
     const tableData = deliveries.map(delivery => [
       delivery._id,
@@ -102,14 +107,17 @@ export default function DeliveryDetail({ onEditDelivery }) {
       priceFormatter.format(delivery.totalPrice),
       delivery.deliveryStatus || 'Pending'
     ]);
-  
+
     // Generate the table
     autoTable(doc, {
       head: [['Delivery No', 'Order No', 'Delivery Item', 'Name', 'Contact No', 'Delivery Address', 'CreatedAt', 'Items Price', 'Delivery Price', 'Total Price', 'Status']],
       body: tableData,
       startY: 60,
+      didDrawPage: (data) => {
+        addFooter();
+      },
     });
-  
+
     // Save the PDF
     doc.save('Delivery-Details.pdf');
   };

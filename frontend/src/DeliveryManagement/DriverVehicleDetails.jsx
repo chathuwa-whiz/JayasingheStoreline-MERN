@@ -208,67 +208,83 @@ const DriverVehicleDetails = () => {
   };
 
   const downloadPDF = () => {
-    const doc = new jsPDF('p', 'mm', 'a4'); // 'p' for portrait orientation
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
     const img = new Image();
-    img.src = logo; // Replace with the correct path to your logo
+    img.src = logo;
 
     img.onload = function () {
-      // Add company details and logo at the top
-      doc.addImage(img, 'PNG', 14, 10, 30, 30); // Adjust position and size as needed
-      doc.setFontSize(16);
-      doc.text('Jayasinghe Storelines PVT (LTD)', 50, 20);
-      doc.setFontSize(12);
-      doc.text('No. 123, Main Street, Colombo, Sri Lanka', 50, 28);
-      doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', 50, 34);
+      const generatePDF = () => {
+        // Header
+        doc.addImage(img, 'PNG', 14, 10, 30, 30);
+        doc.setFontSize(18);
+        doc.text('Drivers List Report', pageWidth / 2, 25, { align: 'center' });
+        
+        const currentDate = new Date();
+        const dateString = currentDate.toLocaleDateString();
+        doc.setFontSize(10);
+        doc.text(`Date: ${dateString}`, pageWidth - 15, 15, { align: 'right' });
+        doc.text('CONFIDENTIAL - INTERNAL USE ONLY', 14, 45);
+        doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', pageWidth - 15, 22, { align: 'right' });
 
-      // Get current date and time
-      const currentDate = new Date();
-      const dateString = currentDate.toLocaleDateString(); // Get current date
-      const timeString = currentDate.toLocaleTimeString(); // Get current time
+        // Prepare data for the PDF
+        const rows = drivers.map(driver => [
+          driver.nic,
+          driver.name,
+          driver.birthday.split('T')[0],
+          driver.telephoneNo,
+          driver.vehicleType,
+          driver.vehicleRegNo,
+          driver.driverLicenceNo,
+        ]);
 
-      // Add issued time before the date
-      doc.text(`Issued at: ${timeString} on ${dateString}`, 50, 40);
+        // Add autoTable to the PDF
+        autoTable(doc, {
+          head: [['NIC', 'Name', 'DOB', 'Telephone', 'Vehicle Type', 'Vehicle Reg No', 'Driver License No']],
+          body: rows,
+          startY: 60, // Increased from 50 to 60 to accommodate the lower title position
+          didDrawPage: (data) => {
+            // Footer
+            doc.setFontSize(8);
+            doc.text('Jayasinghe Storelines PVT (LTD)', 14, pageHeight - 10);
+            doc.text('No. 123, Main Street, Colombo, Sri Lanka', 14, pageHeight - 6);
+            doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 15, pageHeight - 10, { align: 'right' });
+            doc.text('Version 1.0', pageWidth / 2, pageHeight - 10, { align: 'center' });
+            doc.text('This document is confidential and intended for internal use only.', pageWidth / 2, pageHeight - 6, { align: 'center' });
+          },
+        });
 
-      doc.setFontSize(18);
-      doc.text('Drivers List', 50, 50);
+        // Save the PDF
+        doc.save('Drivers_List_Report.pdf');
+      };
 
-      // Prepare data for the PDF
-      const rows = drivers.map(driver => [
-        driver.nic,
-        driver.name,
-        driver.birthday.split('T')[0], // Show only the date
-        driver.telephoneNo,
-        driver.vehicleType,
-        driver.vehicleRegNo,
-        driver.driverLicenceNo,
-      ]);
-
-      // Add autoTable to the PDF
-      autoTable(doc, {
-        head: [['NIC', 'Name', 'DOB', 'Telephone', 'Vehicle Type', 'Vehicle Reg No', 'Driver License No']],
-        body: rows,
-        startY: 55, // Adjust to start below the company details and logo
-      });
-
-      // Save the PDF
-      doc.save('Drivers_List.pdf');
+      generatePDF();
     };
 
     img.onerror = function () {
-      // Handle the case where the image fails to load
       console.error('Image loading failed. PDF will be generated without the logo.');
-      generatePDFWithoutLogo(doc); // Pass the doc object to the function
+      generatePDFWithoutLogo();
     };
   };
 
-  const generatePDFWithoutLogo = (doc) => {
-    // Make sure the doc object is passed correctly
-    doc.setFontSize(16);
-    doc.text('Jayasinghe Storelines PVT LTD', 14, 20);
-    doc.setFontSize(12);
-    doc.text('No. 123, Main Street, Colombo, Sri Lanka', 14, 28);
-    doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', 14, 34);
+  const generatePDFWithoutLogo = () => {
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
 
+    // Header (without logo)
+    doc.setFontSize(25);
+    doc.text('Drivers List Report', pageWidth / 2, 35, { align: 'center' });
+    
+    const currentDate = new Date();
+    const dateString = currentDate.toLocaleDateString();
+    doc.setFontSize(10);
+    doc.text(`Date: ${dateString}`, pageWidth - 15, 15, { align: 'right' });
+    doc.text('CONFIDENTIAL - INTERNAL USE ONLY', 14, 45);
+    doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', pageWidth - 15, 22, { align: 'right' });
+
+    // Prepare data for the PDF
     const rows = drivers.map(driver => [
       driver.nic,
       driver.name,
@@ -279,79 +295,24 @@ const DriverVehicleDetails = () => {
       driver.driverLicenceNo,
     ]);
 
+    // Add autoTable to the PDF
     autoTable(doc, {
       head: [['NIC', 'Name', 'DOB', 'Telephone', 'Vehicle Type', 'Vehicle Reg No', 'Driver License No']],
       body: rows,
-      startY: 45,
+      startY: 60, // Increased from 50 to 60 to accommodate the lower title position
+      didDrawPage: (data) => {
+        // Footer
+        doc.setFontSize(8);
+        doc.text('Jayasinghe Storelines PVT (LTD)', 14, pageHeight - 10);
+        doc.text('No. 123, Main Street, Colombo, Sri Lanka', 14, pageHeight - 6);
+        doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 15, pageHeight - 10, { align: 'right' });
+        doc.text('Version 1.0', pageWidth / 2, pageHeight - 10, { align: 'center' });
+        doc.text('This document is confidential and intended for internal use only.', pageWidth / 2, pageHeight - 6, { align: 'center' });
+      },
     });
 
-    doc.save('Drivers_List.pdf');
-  };
-
-  const generatePDFWithHeaderFooter = (doc) => {
-    // Load the logo image
-    const img = new Image();
-    img.src = logo; // Ensure the path to the logo is correct
-
-    img.onload = function () {
-        // Add the logo to the header
-        doc.addImage(img, 'PNG', 14, 10, 30, 30); // Adjust position and size as needed
-
-        // Add company details and report title
-        doc.setFontSize(16);
-        doc.text('Jayasinghe Storelines PVT LTD', 50, 20);
-        doc.setFontSize(12);
-        doc.text('No. 123, Main Street, Colombo, Sri Lanka', 50, 28);
-        doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', 50, 34);
-
-        // Add report title and date
-        const currentDate = new Date();
-        const dateString = currentDate.toLocaleDateString();
-        doc.setFontSize(14);
-        doc.text('Drivers List Report', 50, 42);
-        doc.text(`Issued on: ${dateString}`, 50, 48);
-
-        // Add a line below the header
-        doc.setLineWidth(0.5);
-        doc.line(14, 52, 196, 52);
-
-        // Prepare the table data
-        const rows = drivers.map(driver => [
-            driver.nic,
-            driver.name,
-            driver.birthday.split('T')[0],
-            driver.telephoneNo,
-            driver.vehicleType,
-            driver.vehicleRegNo,
-            driver.driverLicenceNo,
-        ]);
-
-        // Add the table
-        autoTable(doc, {
-            head: [['NIC', 'Name', 'DOB', 'Telephone', 'Vehicle Type', 'Vehicle Reg No', 'Driver License No']],
-            body: rows,
-            startY: 55,
-        });
-
-        // Set up the footer
-        const pageCount = doc.internal.getNumberOfPages();
-        for (let i = 1; i <= pageCount; i++) {
-            doc.setPage(i);
-            doc.setFontSize(10);
-            doc.text(`Page ${i} of ${pageCount}`, 180, doc.internal.pageSize.height - 10);
-            doc.text('Jayasinghe Storelines PVT LTD', 14, doc.internal.pageSize.height - 10);
-            doc.text('Confidential - For Internal Use Only', 14, doc.internal.pageSize.height - 20);
-            doc.text('Version 1.0', 180, doc.internal.pageSize.height - 20);
-        }
-
-        // Save the PDF
-        doc.save('Drivers_List_Professional_Report.pdf');
-    };
-
-    img.onerror = function () {
-        console.error('Image loading failed. PDF will be generated without the logo.');
-        generatePDFWithoutLogo(doc);
-    };
+    // Save the PDF
+    doc.save('Drivers_List_Report.pdf');
   };
 
   // Filter drivers based on the search term
