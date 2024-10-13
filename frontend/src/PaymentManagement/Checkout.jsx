@@ -104,7 +104,7 @@ const Checkout = () => {
       setExpirationDate('');
       setCvv('');
       setErrors({});
-      navigate('/order-confirmation'); // Navigate to confirmation page
+      navigate('/home'); // Navigate to confirmation page
       return;
     }
   
@@ -136,7 +136,7 @@ const Checkout = () => {
           setExpirationDate('');
           setCvv('');
           setErrors({});
-          navigate('/order-confirmation');
+          navigate('/home');
         } else {
           toast.error(result.message || 'Payment failed');
         }
@@ -171,7 +171,7 @@ const Checkout = () => {
         window.payhere.onCompleted = (response) => {
           console.log('Payment completed:', response);
           toast.success('Payment successful');
-          navigate('/order-confirmation');
+          navigate('/home');
         };
   
         window.payhere.onDismissed = () => {
