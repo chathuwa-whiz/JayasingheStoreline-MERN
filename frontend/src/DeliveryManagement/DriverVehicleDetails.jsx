@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useGetDriversQuery, useCreateDriverMutation, useUpdateDriverMutation, useDeleteDriverMutation } from '../redux/api/driverApiSlice';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaSearch, FaDownload, FaMoon, FaSun } from 'react-icons/fa';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logo from '../asset/logo.png';
@@ -34,6 +34,7 @@ const DriverVehicleDetails = () => {
   const [editingDriver, setEditingDriver] = useState(null);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [searchTerm, setSearchTerm] = useState('');
+  const [darkMode, setDarkMode] = useState(false);
 
   const areaCodes = {
     '011': 'Colombo', '031': 'Negombo', '038': 'Panadura', '055': 'Badulla',
@@ -45,7 +46,7 @@ const DriverVehicleDetails = () => {
     '027': 'Polonnaruwa', '037': 'Kurunegala', '054': 'Nawalapitiya', '081': 'Kandy'
   };
 
-  const networkCodes = ['070', '071', '072', '074', '076', '077', '078'];
+  const networkCodes = ['070', '071', '072', '074', '075', '076', '077', '078'];
 
   const formatTelephoneNo = (value) => {
     // Remove any non-digit characters
@@ -76,30 +77,40 @@ const DriverVehicleDetails = () => {
     refetch();
   }, [refetch]);
 
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
   const formatVehicleRegNo = (value) => {
-    // Remove any existing hyphens and uppercase the input
+    // Remove any existing hyphens and convert input to uppercase
     let sanitizedValue = value.replace('-', '').toUpperCase();
     
-    if (/^\d{1,2}$/.test(sanitizedValue)) {
-      // Format 12-1234 (6 characters total)
-      return sanitizedValue.slice(0, 6);
-    } else if (/^\d{3,6}$/.test(sanitizedValue)) {
-      // Format 12-1234 (6 characters total)
-      return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2, 6);
-    } else if (/^[A-Z]{2}\d{0,4}$/.test(sanitizedValue)) {
-      // Format AB-1234 (6 characters total)
-      if (sanitizedValue.length > 2) {
-        return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2, 6);
+    // Check if the sanitized value has exactly 6 characters (12-1234 or AB-1234)
+    if (sanitizedValue.length === 6) {
+      // Check for the format 12-1234 (2 digits + 4 digits)
+      if (/^\d{2}\d{4}$/.test(sanitizedValue)) {
+        return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2);
       }
-      return sanitizedValue.slice(0, 6);
-    } else if (/^[A-Z]{3}\d{0,4}$/.test(sanitizedValue)) {
-      // Format ABC-1234 (7 characters total)
-      if (sanitizedValue.length > 3) {
-        return sanitizedValue.slice(0, 3) + '-' + sanitizedValue.slice(3, 7);
+      // Check for the format AB-1234 (2 letters + 4 digits)
+      if (/^[A-Z]{2}\d{4}$/.test(sanitizedValue)) {
+        return sanitizedValue.slice(0, 2) + '-' + sanitizedValue.slice(2);
       }
-      return sanitizedValue.slice(0, 7);
+    } 
+    // Check if the sanitized value has exactly 7 characters for ABC-1234
+    else if (sanitizedValue.length === 7 && /^[A-Z]{3}\d{4}$/.test(sanitizedValue)) {
+      return sanitizedValue.slice(0, 3) + '-' + sanitizedValue.slice(3);
     }
-    return sanitizedValue.slice(0, 7); // Limit to 7 characters max
+    
+    // Return sanitized value if no formatting conditions are met
+    return sanitizedValue;
   };
 
   const formatDriverLicenceNo = (value) => {
@@ -129,8 +140,8 @@ const DriverVehicleDetails = () => {
       return;
     } else if (field === 'nic') {
       const birthYear = new Date(newDriver.birthday).getFullYear();
-      if (birthYear < 2001) {
-        // For birth years before 2001
+      if (birthYear < 2000) {
+        // For birth years before 2000 (9 digit + V format)
         value = value.slice(0, 10).replace(/[^0-9V]/gi, '');
         if (value.length >= 2) {
           const yearPrefix = value.slice(0, 2);
@@ -142,10 +153,13 @@ const DriverVehicleDetails = () => {
           value = value.slice(0, 9) + 'V';
         }
       } else {
-        // For birth years 2001 and after
+        // For birth years 2000 and after (12 digit format)
         value = value.slice(0, 12).replace(/\D/g, '');
-        if (value.length >= 2 && value.slice(0, 2) !== '20') {
-          value = '20' + value.slice(2);
+        if (value.length >= 4) {
+          const yearPrefix = value.slice(0, 4);
+          if (yearPrefix !== String(birthYear)) {
+            value = String(birthYear) + value.slice(4);
+          }
         }
       }
     } else if (field === 'vehicleRegNo') {
@@ -210,67 +224,95 @@ const DriverVehicleDetails = () => {
   };
 
   const downloadPDF = () => {
-    const doc = new jsPDF('p', 'mm', 'a4'); // 'p' for portrait orientation
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
     const img = new Image();
-    img.src = logo; // Replace with the correct path to your logo
+    img.src = logo;
 
     img.onload = function () {
-      // Add company details and logo at the top
-      doc.addImage(img, 'PNG', 14, 10, 30, 30); // Adjust position and size as needed
-      doc.setFontSize(16);
-      doc.text('Jayasinghe Storelines PVT (LTD)', 50, 20);
-      doc.setFontSize(12);
-      doc.text('No. 123, Main Street, Colombo, Sri Lanka', 50, 28);
-      doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', 50, 34);
+      const generatePDF = () => {
+        // Header
+        doc.addImage(img, 'PNG', 14, 10, 30, 30);
+        doc.setFontSize(25);
+        doc.text('Drivers List Report', pageWidth / 2, 35, { align: 'center' });
+        
+        const currentDate = new Date();
+        const dateString = currentDate.toLocaleDateString();
+        doc.setFontSize(10);
+        doc.text(`Date: ${dateString}`, pageWidth - 15, 15, { align: 'right' });
+        doc.text('CONFIDENTIAL - INTERNAL USE ONLY', 14, 45);
+        doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', pageWidth - 15, 22, { align: 'right' });
 
-      // Get current date and time
-      const currentDate = new Date();
-      const dateString = currentDate.toLocaleDateString(); // Get current date
-      const timeString = currentDate.toLocaleTimeString(); // Get current time
+        // Add a line to separate the header
+        doc.setLineWidth(0.5);
+        doc.line(14, 50, pageWidth - 14, 50);
 
-      // Add issued time before the date
-      doc.text(`Issued at: ${timeString} on ${dateString}`, 50, 40);
+        // Prepare data for the PDF
+        const rows = drivers.map(driver => [
+          driver.nic,
+          driver.name,
+          driver.birthday.split('T')[0],
+          driver.telephoneNo,
+          driver.vehicleType,
+          driver.vehicleRegNo,
+          driver.driverLicenceNo,
+        ]);
 
-      doc.setFontSize(18);
-      doc.text('Drivers List', 50, 50);
+        // Add autoTable to the PDF
+        autoTable(doc, {
+          head: [['NIC', 'Name', 'DOB', 'Telephone', 'Vehicle Type', 'Vehicle Reg No', 'Driver License No']],
+          body: rows,
+          startY: 55, // Adjusted to accommodate the header line
+          didDrawPage: (data) => {
+            // Add a line to separate the footer
+            doc.setLineWidth(0.5);
+            doc.line(14, pageHeight - 20, pageWidth - 14, pageHeight - 20);
 
-      // Prepare data for the PDF
-      const rows = drivers.map(driver => [
-        driver.nic,
-        driver.name,
-        driver.birthday.split('T')[0], // Show only the date
-        driver.telephoneNo,
-        driver.vehicleType,
-        driver.vehicleRegNo,
-        driver.driverLicenceNo,
-      ]);
+            // Footer
+            doc.setFontSize(9);
+            doc.text('Jayasinghe Storelines PVT (LTD)', 14, pageHeight - 15);
+            doc.text('No. 123, Main Street, Colombo, Sri Lanka', 14, pageHeight - 10);
+            doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 14, pageHeight - 15, { align: 'right' });
+            doc.text('Version 1.0', pageWidth / 2, pageHeight - 15, { align: 'center' });
+            doc.text('This document is confidential and intended for internal use only.', pageWidth / 1.48, pageHeight - 10, { align: 'center' });
+          },
+        });
 
-      // Add autoTable to the PDF
-      autoTable(doc, {
-        head: [['NIC', 'Name', 'DOB', 'Telephone', 'Vehicle Type', 'Vehicle Reg No', 'Driver License No']],
-        body: rows,
-        startY: 55, // Adjust to start below the company details and logo
-      });
+        // Save the PDF
+        doc.save('Drivers_List_Report.pdf');
+      };
 
-      // Save the PDF
-      doc.save('Drivers_List.pdf');
+      generatePDF();
     };
 
     img.onerror = function () {
-      // Handle the case where the image fails to load
       console.error('Image loading failed. PDF will be generated without the logo.');
-      generatePDFWithoutLogo(doc); // Pass the doc object to the function
+      generatePDFWithoutLogo();
     };
   };
 
-  const generatePDFWithoutLogo = (doc) => {
-    // Make sure the doc object is passed correctly
-    doc.setFontSize(16);
-    doc.text('Jayasinghe Storelines PVT LTD', 14, 20);
-    doc.setFontSize(12);
-    doc.text('No. 123, Main Street, Colombo, Sri Lanka', 14, 28);
-    doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', 14, 34);
+  const generatePDFWithoutLogo = () => {
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
 
+    // Header (without logo)
+    doc.setFontSize(25);
+    doc.text('Drivers List Report', pageWidth / 2, 35, { align: 'center' });
+    
+    const currentDate = new Date();
+    const dateString = currentDate.toLocaleDateString();
+    doc.setFontSize(10);
+    doc.text(`Date: ${dateString}`, pageWidth - 15, 15, { align: 'right' });
+    doc.text('CONFIDENTIAL - INTERNAL USE ONLY', 14, 45);
+    doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', pageWidth - 15, 22, { align: 'right' });
+
+    // Add a line to separate the header
+    doc.setLineWidth(0.5);
+    doc.line(14, 50, pageWidth - 14, 50);
+
+    // Prepare data for the PDF
     const rows = drivers.map(driver => [
       driver.nic,
       driver.name,
@@ -281,13 +323,28 @@ const DriverVehicleDetails = () => {
       driver.driverLicenceNo,
     ]);
 
+    // Add autoTable to the PDF
     autoTable(doc, {
       head: [['NIC', 'Name', 'DOB', 'Telephone', 'Vehicle Type', 'Vehicle Reg No', 'Driver License No']],
       body: rows,
-      startY: 45,
+      startY: 55, // Adjusted to accommodate the header line
+      didDrawPage: (data) => {
+        // Add a line to separate the footer
+        doc.setLineWidth(0.5);
+        doc.line(14, pageHeight - 20, pageWidth - 14, pageHeight - 20);
+
+        // Footer
+        doc.setFontSize(8);
+        doc.text('Jayasinghe Storelines PVT (LTD)', 14, pageHeight - 15);
+        doc.text('No. 123, Main Street, Colombo, Sri Lanka', 14, pageHeight - 10);
+        doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 15, pageHeight - 15, { align: 'right' });
+        doc.text('Version 1.0', pageWidth / 2, pageHeight - 15, { align: 'center' });
+        doc.text('This document is confidential and intended for internal use only.', pageWidth / 2, pageHeight - 10, { align: 'center' });
+      },
     });
 
-    doc.save('Drivers_List.pdf');
+    // Save the PDF
+    doc.save('Drivers_List_Report.pdf');
   };
 
   // Filter drivers based on the search term
@@ -296,21 +353,35 @@ const DriverVehicleDetails = () => {
   );
 
   return (
-    <div className="container mx-auto p-4">
+    <div className={`container mx-auto p-4 min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
+      {/* Dark Mode Toggle */}
+      <button
+        onClick={toggleDarkMode}
+        className={`fixed top-4 right-4 p-2 rounded-full ${darkMode ? 'bg-yellow-400 text-gray-900' : 'bg-gray-700 text-yellow-400'}`}
+      >
+        {darkMode ? <FaSun /> : <FaMoon />}
+      </button>
+
       {/* Form Section */}
-      <div className="border rounded-lg p-6 bg-white shadow-lg transition duration-300 ease-in-out hover:shadow-xl">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-800">{editingDriver ? 'Edit Driver' : 'Add New Driver'}</h2>
-        <form onSubmit={handleCreateOrUpdate}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className={`rounded-lg p-6 shadow-lg mb-8 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+        <h2 className={`text-3xl font-bold mb-6 border-b pb-2 ${darkMode ? 'text-gray-200 border-gray-700' : 'text-gray-800 border-gray-200'}`}>
+          {editingDriver ? 'Edit Driver' : 'Add New Driver'}
+        </h2>
+        <form onSubmit={handleCreateOrUpdate} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Name */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name (English letters only)</label>
+              <label htmlFor="name" className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Name (English letters only)</label>
               <input
                 type="text"
                 id="name"
                 value={newDriver.name}
                 onChange={(e) => handleInputChange(e, 'name')}
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  darkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white' 
+                    : 'bg-white border-gray-300 text-gray-900'
+                }`}
                 required
                 pattern="[A-Za-z\s]+"
                 title="Please enter English letters only"
@@ -318,34 +389,40 @@ const DriverVehicleDetails = () => {
             </div>
             {/* Date of Birth */}
             <div>
-              <label htmlFor="dob" className="block text-sm font-medium text-gray-700">Date of Birth</label>
+              <label htmlFor="dob" className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Date of Birth</label>
               <input
                 type="date"
                 id="dob"
                 value={newDriver.birthday}
                 onChange={(e) => handleInputChange(e, 'birthday')}
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  darkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white' 
+                    : 'bg-white border-gray-300 text-gray-900'
+                }`}
                 required
                 min={minDate}
                 max={maxDate}
               />
-              <p className="mt-1 text-sm text-gray-500">
-                Driver must be between 18 and 40 years old
-              </p>
+              <p className="mt-1 text-xs text-gray-500">Driver must be between 18 and 40 years old</p>
             </div>
             {/* NIC */}
             <div>
-              <label htmlFor="nic" className="block text-sm font-medium text-gray-700">NIC</label>
+              <label htmlFor="nic" className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>NIC</label>
               <input
                 type="text"
                 id="nic"
                 value={newDriver.nic}
                 onChange={(e) => handleInputChange(e, 'nic')}
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  darkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white' 
+                    : 'bg-white border-gray-300 text-gray-900'
+                }`}
                 required
                 placeholder={new Date(newDriver.birthday).getFullYear() < 2001 ? "YYXXXXXXXXV" : "20XXXXXXXXXX"}
               />
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-xs text-gray-500">
                 {new Date(newDriver.birthday).getFullYear() < 2001 
                   ? "10 digits with 'V' at the end, starting with birth year's last 2 digits" 
                   : "12 digits, starting with '20'"}
@@ -353,14 +430,18 @@ const DriverVehicleDetails = () => {
             </div>
             {/* Telephone Number */}
             <div>
-              <label htmlFor="telephoneNo" className="block text-sm font-medium text-gray-700">Telephone/Mobile Number</label>
+              <label htmlFor="telephoneNo" className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Telephone/Mobile Number</label>
               <div className="relative">
                 <input
                   type="text"
                   id="telephoneNo"
                   value={newDriver.telephoneNo}
                   onChange={(e) => handleInputChange(e, 'telephoneNo')}
-                  className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                    darkMode 
+                      ? 'bg-gray-700 border-gray-600 text-white' 
+                      : 'bg-white border-gray-300 text-gray-900'
+                  }`}
                   required
                   placeholder="0XX-XXXXXXX"
                 />
@@ -373,60 +454,76 @@ const DriverVehicleDetails = () => {
             </div>
             {/* Vehicle */}
             <div>
-              <label htmlFor="vehicleType" className="block text-sm font-medium text-gray-700">Vehicle</label>
+              <label htmlFor="vehicleType" className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Vehicle</label>
               <input
                 type="text"
                 id="vehicleType"
                 value={newDriver.vehicleType}
                 onChange={(e) => handleInputChange(e, 'vehicleType')}
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  darkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white' 
+                    : 'bg-white border-gray-300 text-gray-900'
+                }`}
                 required
               />
             </div>
             {/* Vehicle Registration Number */}
             <div>
-              <label htmlFor="vehicleRegNo" className="block text-sm font-medium text-gray-700">Vehicle Registration Number</label>
+              <label htmlFor="vehicleRegNo" className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Vehicle Registration Number</label>
               <input
                 type="text"
                 id="vehicleRegNo"
                 value={newDriver.vehicleRegNo}
                 onChange={(e) => handleInputChange(e, 'vehicleRegNo')}
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  darkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white' 
+                    : 'bg-white border-gray-300 text-gray-900'
+                }`}
                 required
                 placeholder="12-1234 or AB-1234 or ABC-1234"
+                maxLength={8}
               />
-              <p className="mt-1 text-sm text-gray-500">
-                Format: 12-1234 (6 chars), AB-1234 (6 chars), or ABC-1234 (7 chars)
-              </p>
+              <p className="mt-1 text-xs text-gray-500">Format: 12-1234, AB-1234, or ABC-1234</p>
             </div>
             {/* Driver License Number */}
             <div>
-              <label htmlFor="driverLicenceNo" className="block text-sm font-medium text-gray-700">Driver License Number</label>
+              <label htmlFor="driverLicenceNo" className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Driver License Number</label>
               <input
                 type="text"
                 id="driverLicenceNo"
                 value={newDriver.driverLicenceNo}
                 onChange={(e) => handleInputChange(e, 'driverLicenceNo')}
-                className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  darkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white' 
+                    : 'bg-white border-gray-300 text-gray-900'
+                }`}
                 required
                 placeholder="A1234567"
               />
-              <p className="mt-1 text-sm text-gray-500">
-                Format: 1 capital letter followed by 7 digits (8 characters total)
-              </p>
+              <p className="mt-1 text-xs text-gray-500">Format: 1 capital letter followed by 7 digits</p>
             </div>
           </div>
           {/* Error Message */}
           {message.text && (
-            <div className={`mt-4 text-sm font-semibold ${message.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>
+            <div className={`mt-4 p-2 rounded ${message.type === 'error' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
               {message.text}
             </div>
           )}
-          <div className="mt-6 flex justify-end">
-            <button type="button" className="mr-4 px-4 py-2 bg-gray-300 rounded-md transition duration-200 hover:bg-gray-400" onClick={handleCancelEdit}>
+          <div className="flex justify-end space-x-4">
+            <button 
+              type="button" 
+              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200" 
+              onClick={handleCancelEdit}
+            >
               Cancel
             </button>
-            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-200 shadow-md">
+            <button 
+              type="submit" 
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-200 shadow-md"
+            >
               {editingDriver ? 'Update Driver' : 'Add Driver'}
             </button>
           </div>
@@ -434,62 +531,78 @@ const DriverVehicleDetails = () => {
       </div>
 
       {/* Driver List Section */}
-      <div className="mt-8">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-800">Driver List</h2>
-        <div className="mb-4">
-          <input
-            type="text"
-            placeholder="Search by name or NIC..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm outline-none p-2 transition duration-200"
-          />
-        </div>
-        <table className="min-w-full bg-white border border-gray-300 shadow-md">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border px-4 py-2 text-left text-gray-600 font-medium">NIC</th>
-              <th className="border px-4 py-2 text-left text-gray-600 font-medium">Name</th>
-              <th className="border px-4 py-2 text-left text-gray-600 font-medium">DOB</th>
-              <th className="border px-4 py-2 text-left text-gray-600 font-medium">Telephone</th>
-              <th className="border px-4 py-2 text-left text-gray-600 font-medium">Vehicle</th>
-              <th className="border px-4 py-2 text-left text-gray-600 font-medium">Vehicle Reg No</th>
-              <th className="border px-4 py-2 text-left text-gray-600 font-medium">Driver License No</th>
-              <th className="border px-4 py-2 text-left text-gray-600 font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredDrivers && filteredDrivers.length > 0 ? (
-              filteredDrivers.map(driver => (
-                <tr key={driver._id} className="hover:bg-gray-100 transition duration-200">
-                  <td className="border px-4 py-2">{driver.nic}</td>
-                  <td className="border px-4 py-2">{driver.name}</td>
-                  <td className="border px-4 py-2">{driver.birthday.split('T')[0]}</td>
-                  <td className="border px-4 py-2">{driver.telephoneNo}</td>
-                  <td className="border px-4 py-2">{driver.vehicleType}</td>
-                  <td className="border px-4 py-2">{driver.vehicleRegNo}</td>
-                  <td className="border px-4 py-2">{driver.driverLicenceNo}</td>
-                  <td className="border px-4 py-2">
-                    <button onClick={() => handleEdit(driver)} className="text-blue-600 hover:underline">
-                      <FaEdit />
-                    </button>
-                    <button onClick={() => handleDelete(driver._id)} className="text-red-600 hover:underline ml-2">
-                      <FaTrash />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="8" className="border px-4 py-2 text-center text-gray-500">No drivers found.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-        <div className="mt-4">
-          <button onClick={downloadPDF} className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
-            Download PDF
+      <div className={`rounded-lg p-6 shadow-lg ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+        <h2 className={`text-3xl font-bold mb-6 border-b pb-2 ${darkMode ? 'text-gray-200 border-gray-700' : 'text-gray-800 border-gray-200'}`}>
+          Driver List
+        </h2>
+        <div className="mb-4 flex items-center">
+          <div className="relative flex-grow">
+            <input
+              type="text"
+              placeholder="Search by name or NIC..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={`w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                darkMode 
+                  ? 'bg-gray-700 border-gray-600 text-white' 
+                  : 'bg-white border-gray-300 text-gray-900'
+              }`}
+            />
+            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          </div>
+          <button 
+            onClick={downloadPDF} 
+            className="ml-4 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200 flex items-center"
+          >
+            <FaDownload className="mr-2" /> Download PDF
           </button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className={`min-w-full border ${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}>
+            <thead>
+              <tr className={darkMode ? 'bg-gray-800' : 'bg-gray-100'}>
+                <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIC</th>
+                <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DOB</th>
+                <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Telephone</th>
+                <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehicle</th>
+                <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehicle Reg No</th>
+                <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver License No</th>
+                <th className="border px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className={`divide-y ${darkMode ? 'divide-gray-600' : 'divide-gray-200'}`}>
+              {filteredDrivers && filteredDrivers.length > 0 ? (
+                filteredDrivers.map(driver => (
+                  <tr key={driver._id} className={`transition duration-200 ${
+                    darkMode 
+                      ? 'hover:bg-gray-600' 
+                      : 'hover:bg-gray-50'
+                  }`}>
+                    <td className="border px-4 py-2">{driver.nic}</td>
+                    <td className="border px-4 py-2">{driver.name}</td>
+                    <td className="border px-4 py-2">{driver.birthday.split('T')[0]}</td>
+                    <td className="border px-4 py-2">{driver.telephoneNo}</td>
+                    <td className="border px-4 py-2">{driver.vehicleType}</td>
+                    <td className="border px-4 py-2">{driver.vehicleRegNo}</td>
+                    <td className="border px-4 py-2">{driver.driverLicenceNo}</td>
+                    <td className="border px-4 py-2">
+                      <button onClick={() => handleEdit(driver)} className="text-blue-600 hover:text-blue-800 mr-2">
+                        <FaEdit />
+                      </button>
+                      <button onClick={() => handleDelete(driver._id)} className="text-red-600 hover:text-red-800">
+                        <FaTrash />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8" className={`border px-4 py-2 text-center text-${darkMode ? 'gray-400' : 'gray-500'}`}>No drivers found.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
