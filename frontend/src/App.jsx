@@ -40,6 +40,7 @@ import OrderByProducts from "./OrderManagement/OrderByProducts";
 import UpdateOrders from "./OrderManagement/UpdateOrder";
 import OrderReports from "./OrderManagement/Reports";
 import OrderSettings from "./OrderManagement/Settings";
+import OrderLogout from "./OrderManagement/Logout"
 
 
 
@@ -50,6 +51,8 @@ import Home from "./CustomerManagemet/Home";
 import Customer from "./CustomerManagemet/Customer";
 import Profile from "./CustomerManagemet/profile";
 import CustomerDashboard from "./CustomerManagemet/CustomerDashboard";
+import ForgotPassword from "./CustomerManagemet/ForgotPassword";
+import ResetPassword from "./CustomerManagemet/ResetPassword";
 
 //AdminLogin
 import AdminLoginPage from "./AdminLogin/AdminLogin";
@@ -74,12 +77,15 @@ import SupplierUpdate from "./SupplierManagement/supplierUpdate";
 import PaymentRequest from "./SupplierManagement/PaymentRequest";
 import SupplierReport from "./SupplierManagement/Report";
 import SupplierSettings from "./SupplierManagement/Settings";
+import SupplierLogout from "./SupplierManagement/logout";
 
 //review
 import EditReviewPage from "./ReviewsInquiry/EditReviewPage";
-import UserReviews from "./ReviewsInquiry/Dashboard";
+import DashboardDashboard from "./ReviewsInquiry/Dashboard";
 import DashboardList from "./ReviewsInquiry/DashboardList";
 import DashboardSinglePro from "./ReviewsInquiry/DashboardSinglePro";
+import Logsout from "./ReviewsInquiry/Logout";
+import SettingsDashboard from "./ReviewsInquiry/Settings";
 
 //Employee Management
 import Employee from './EmployeeManagement/Employee';
@@ -89,7 +95,6 @@ import EmployeeAbout from './EmployeeManagement/EmployeeAbout';
 import EmployeeProfile from './EmployeeManagement/EmployeeProfile';
 import EmployeeDashboard from "./EmployeeManagement/EmployeeDashboard";
 import SettingsPage from "./InventoryManagement/Settings";
-
 
 function App() {
 
@@ -110,6 +115,8 @@ function App() {
           <Route path="register" element={<Register />} />
           <Route path="customerlogin" element={<CustomerLogin />} />
           <Route path="adminlogin" element={<AdminLoginPage />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="reset-password/:token" element={<ResetPassword />} />
 
           {/* order manager part */}
           <Route path="productlist" element={<ProductsList />} />
@@ -155,6 +162,7 @@ function App() {
           <Route path="orderByProduct" element={<OrderByProducts />} />
           <Route path="orderreport" element={<OrderReports />} />
           <Route path="orderSettings" element={<OrderSettings />} />
+          <Route path="orderLogout" element={<OrderLogout />} />
         </Route>
         <Route path="productlist" element={<ProductsList />} /> 
         <Route path="product/:_id" element={<SingleProductView />} />
@@ -190,6 +198,7 @@ function App() {
           <Route path="paymentRequest" element={<PaymentRequest />} />
           <Route path="report" element={<SupplierReport />} />
           <Route path="SupplierSettings" element={<SupplierSettings />} />
+          <Route path="SupplierLogout" element={<SupplierLogout />} />
         </Route>
 
         {/* Employee Management Routes */}
@@ -203,7 +212,9 @@ function App() {
 
         {/* Edit Review Route */}
         <Route path="/product/:productId/:reviewId" element={<EditReviewPage />} />
-        <Route path="/dashboard" element={<UserReviews />} />
+        <Route path="/dashboard" element={<DashboardDashboard />} />
+        <Route path="/logout" element={<Logsout />} />
+        <Route path="/settings" element={<SettingsDashboard />} />
         <Route path="dashboardlist" element={<DashboardList/>} />
         <Route path="dashboard/product/:_id" element={<DashboardSinglePro/>} />
       </Routes>

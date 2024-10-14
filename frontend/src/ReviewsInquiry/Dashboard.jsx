@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAllProductsQuery } from '../redux/api/productApiSlice';
-import { Pie, Bar } from 'react-chartjs-2';
+import { Pie, Bar, Line, Doughnut } from 'react-chartjs-2';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import logoImage from '../asset/logo.png'; // Adjust the path based on the file location
@@ -17,7 +17,7 @@ import Sidebar from './SideNavbar';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export default function Dashboard() {
+export default function DashboardDashboard() {
   const { data: products, isLoading: productsLoading, isError: productsError } = useAllProductsQuery();
   
   if (productsLoading) return <div>Loading...</div>;
@@ -75,6 +75,7 @@ export default function Dashboard() {
     return ratingCounts.map(count => (totalReviews > 0 ? (count / totalReviews) * 100 : 0));
   };
 
+  
   const averageStarRatingsPieChartData = {
     labels: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'],
     datasets: [{
@@ -168,6 +169,8 @@ export default function Dashboard() {
      // Center align text
     const title = 'JAYASINGHE STORELINES PVT(LTD)';
     const subtext = 'Ratings and Inquiries of Products';
+    const email = 'email: JayasingheStorelines@gmail.com';
+    const currentDate = new Date().toLocaleDateString(); // Get current date
     const pageWidth = pdf.internal.pageSize.width;
     
     pdf.setFontSize(20);
@@ -178,13 +181,13 @@ export default function Dashboard() {
     
     // Calculate the position to center the text
     const titleX = (pageWidth - titleWidth) / 2;
-    const subtextX = (pageWidth - subtextWidth) / 2;
     
     // Add the title and subtext to the PDF
     pdf.text(title, titleX, 20); // Centered at y = 20
     pdf.setFontSize(10);
-    pdf.text(subtext, subtextX, 30); // Centered at y = 30
-
+    pdf.text(subtext, 50, 30); // Centered at y = 30
+    pdf.text(email, 50, 40);  // Adjust the Y position (40) as needed
+    pdf.text(`Date: ${currentDate}`, 150, 40); // Add current date on the right side at y = 40
   
       // Load and add the logo image
       const logo = new Image();
@@ -196,7 +199,7 @@ export default function Dashboard() {
         pdf.addImage(logo, 'PNG', 10, 5, 30, 30); // Adjust position and size
   
         // Add the dashboard content image after the logo
-        pdf.addImage(imgData, 'PNG', 0, position + 40, imgWidth, imgHeight);
+        pdf.addImage(imgData, 'PNG', 0, position + 50, imgWidth, imgHeight);
         heightLeft -= pageHeight;
   
         // Handle pagination if content exceeds one page
@@ -300,20 +303,22 @@ export default function Dashboard() {
 
       {/* Charts Section */}
       <div className="grid grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">Inquiries by Category</h3>
+      <div className="bg-white p-6 rounded-lg shadow-lg mb-6"> {/* Add margin-bottom here */}
+      <h3 className="text-xl font-bold text-gray-800 mb-4">Inquiries by Category</h3>
           <div className="relative h-80">
             <Bar data={inquiriesBarChartData} options={{ ...chartOptions, maintainAspectRatio: false }} />
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">Average Star Ratings Distribution</h3>
+        <div className="bg-white p-6 rounded-lg shadow-lg mb-6"> {/* Add margin-bottom here */}
+        <h3 className="text-xl font-bold text-gray-800 mb-4">Average Star Ratings Distribution</h3>
           <div className="relative h-80">
             <Pie data={averageStarRatingsPieChartData} options={chartOptions} />
           </div>
         </div>
       </div>
+
+      
 
       {/* Products Table */}
       <div className="bg-white p-6 rounded-lg shadow-lg mb-8">

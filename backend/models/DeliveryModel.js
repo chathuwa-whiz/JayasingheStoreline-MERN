@@ -13,6 +13,7 @@ const deliverySchema = new mongoose.Schema({
       return `DEL${year}${month}${day}${randomNum}`; // Example: DEL24092645
     },
   },
+  orderId: { type: String, required: true, default: "" },
   deliveryItem: { type: String, required: true, default : "" },
   itemsPrice: { type: Number, required: true, default: 0 },
   deliveryPrice: { type: Number, required: true, default: 0 },
@@ -25,6 +26,7 @@ const deliverySchema = new mongoose.Schema({
   province: { type: String, required: true, default: "" },
   postalCode: { type: String, required: true, default: "" },
   deliveryStatus: { type: String, required: true, default: "" },
+  createdAt: { type: Date, required: true, default: Date.now },
 });
 
 const Delivery = mongoose.model('Delivery', deliverySchema);

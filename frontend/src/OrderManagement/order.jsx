@@ -13,13 +13,13 @@ export default function order() {
   let header;
 
   if(location.pathname === "/order/orderhistory") {
-    header = <OrderHeader />
+    // header = <OrderHeader />
   } else if(location.pathname === "/order/orderinqiry") {
     header = <InquiryHeader />
   } else if(location.pathname === "/order/orderByProduct") {
     header = <OrdersByProducts />
   }else if(location.pathname === "/order") {
-    header = <OrderDashboard />
+    // header = <OrderDashboard />
   }else if(location.pathname === "/order/orderreport") {
     header = <OrderReportsHeader />
   }else if(location.pathname === "/order/orderSettings") {

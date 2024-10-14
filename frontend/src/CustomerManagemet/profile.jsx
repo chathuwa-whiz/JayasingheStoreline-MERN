@@ -354,7 +354,18 @@ export default function ProfileManagementPage() {
                 >
                   Delete Account
                 </button>
-              </div>
+            </div>
+
+            {/* New Cart button */}
+            <div>
+              <button
+                type="button"
+                className="flex-grow mt-5 py-2 px-4 w-full border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                onClick={() => navigate('/cart')}
+              >
+                Go to Cart
+              </button>
+            </div>
           </div>
           <div className="w-1/2">
             <img
