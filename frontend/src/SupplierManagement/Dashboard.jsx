@@ -49,7 +49,7 @@ export default function SupplierManagementDashboard() {
 
   // Low stock products sample data
   const lowStockProducts = productsData
-    ? productsData.filter(product => product.currentQty < 10)
+    ? productsData.filter(product => product.currentQty < 5)
     : [];
 
   return (

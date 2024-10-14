@@ -18,9 +18,6 @@ export default function Stock() {
   const productsPerPage = 10;
   const [searchTerm, setSearchTerm] = useState('');
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Something went wrong</div>;
-
   // Filter and sort products
   const filteredAndSortedProducts = useMemo(() => {
     return products
@@ -44,6 +41,9 @@ export default function Stock() {
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Something went wrong</div>;
 
   return (
     <div className="rounded-lg p-8">
