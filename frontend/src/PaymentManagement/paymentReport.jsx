@@ -95,51 +95,97 @@ const PaymentReport = () => {
   };
 
   const generatePDF = () => {
-    const doc = new jsPDF();
-  
-    // Calculate center for the logo
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const logoWidth = 50;  // Your logo width
-    const logoX = (pageWidth - logoWidth) / 2;
-  
-    // Add the centered logo
-    doc.addImage(logo, 'JPEG', logoX, 10, 50, 50);
-  
-    // Text for report title
-    doc.text('Payment Report', 14, 65);
-  
-    const filteredHrSendData = filterByDate(hrSendData);
-    const filteredProfitData = filterByDate(profitData);
-    const filteredTotalCostData = filterByDate(totalCostData);
-    const filteredTotalIncomeData = filterByDate(totalIncomeData);
-    const filteredSupplierSendData = filterByDate(supplierSendData);
-    // Base64 image data for your company logo (replace with your actual Base64 image data)
-    const logoBase64 = logo;
-  
-    // Add the logo image at the top of the PDF
-    doc.addImage(logoBase64, 'JPEG', 10, 10, 40, 40); // Adjust the position (x, y) and size (width, height) as needed
-  
-    // Set the position for the report title after the logo
-    doc.text('Payment Report', 14, 60); // Set y position to be after the logo
-  
-    const generateTable = (title, data) => {
-      if (data.length === 0) return;
-      doc.text(title, 14, doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 50);
-      doc.autoTable({
-        startY: doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 60,
-        head: [['Date', 'Description', 'Amount']],
-        body: data.map((item) => [item.date, item.description, `Rs.${item.amount}`]),
-        theme: 'grid',
-      });
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+    const img = new Image();
+    img.src = logo;
+
+    img.onload = function () {
+      const generatePDFContent = () => {
+        // Header
+        doc.addImage(img, 'PNG', 14, 10, 30, 30);
+        doc.setFontSize(25);
+        doc.text('Payment Report', pageWidth / 2, 35, { align: 'center' });
+        
+        const currentDate = new Date();
+        const dateString = currentDate.toLocaleDateString();
+        doc.setFontSize(10);
+        doc.text(`Date: ${dateString}`, pageWidth - 15, 15, { align: 'right' });
+        doc.text('CONFIDENTIAL - INTERNAL USE ONLY', 14, 45);
+        doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', pageWidth - 15, 22, { align: 'right' });
+
+        // Add a line to separate the header
+        doc.setLineWidth(0.5);
+        doc.line(14, 50, pageWidth - 14, 50);
+
+        // Content
+        let yPosition = 55;
+
+        const generateTable = (title, data) => {
+          if (data.length === 0) return;
+          doc.setFontSize(14);
+          doc.text(title, 14, yPosition);
+          yPosition += 10;
+          doc.autoTable({
+            startY: yPosition,
+            head: [['Date', 'Description', 'Amount']],
+            body: data.map((item) => [item.date, item.description, `Rs.${item.amount}`]),
+            theme: 'grid',
+            didDrawPage: (data) => {
+              // Add header and footer on each page
+              addHeaderAndFooter();
+            },
+          });
+          yPosition = doc.lastAutoTable.finalY + 15;
+        };
+
+        generateTable('HR Send Data', filterByDate(hrSendData));
+        generateTable('Profit Data', filterByDate(profitData));
+        generateTable('Total Cost Data', filterByDate(totalCostData));
+        generateTable('Total Income Data', filterByDate(totalIncomeData));
+        generateTable('Supplier Send Data', filterByDate(supplierSendData));
+
+        // Save the PDF
+        doc.save(`Payment_Report_${searchDate || 'All'}.pdf`);
+      };
+
+      const addHeaderAndFooter = () => {
+        // Header
+        doc.addImage(img, 'PNG', 14, 10, 30, 30);
+        doc.setFontSize(25);
+        doc.text('Payment Report', pageWidth / 2, 35, { align: 'center' });
+        
+        const currentDate = new Date();
+        const dateString = currentDate.toLocaleDateString();
+        doc.setFontSize(10);
+        doc.text(`Date: ${dateString}`, pageWidth - 15, 15, { align: 'right' });
+        doc.text('CONFIDENTIAL - INTERNAL USE ONLY', 14, 45);
+        doc.text('Contact: +94 11 234 5678 | Email: info@jayasinghe.com', pageWidth - 15, 22, { align: 'right' });
+
+        // Add a line to separate the header
+        doc.setLineWidth(0.5);
+        doc.line(14, 50, pageWidth - 14, 50);
+
+        // Footer
+        doc.setLineWidth(0.5);
+        doc.line(14, pageHeight - 20, pageWidth - 14, pageHeight - 20);
+
+        doc.setFontSize(9);
+        doc.text('Jayasinghe Storelines PVT (LTD)', 14, pageHeight - 15);
+        doc.text('No. 123, Main Street, Colombo, Sri Lanka', 14, pageHeight - 10);
+        doc.text(`Page ${doc.internal.getNumberOfPages()}`, pageWidth - 14, pageHeight - 15, { align: 'right' });
+        doc.text('Version 1.0', pageWidth / 2, pageHeight - 15, { align: 'center' });
+        doc.text('This document is confidential and intended for internal use only.', pageWidth / 1.48, pageHeight - 10, { align: 'center' });
+      };
+
+      generatePDFContent();
     };
-  
-    generateTable('HR Send Data', filteredHrSendData);
-    generateTable('Profit Data', filteredProfitData);
-    generateTable('Total Cost Data', filteredTotalCostData);
-    generateTable('Total Income Data', filteredTotalIncomeData);
-    generateTable('Supplier Send Data', filteredSupplierSendData);
-  
-    doc.save(`Payment_Report_${searchDate || 'All'}.pdf`);
+
+    img.onerror = function () {
+      console.error('Image loading failed. PDF will be generated without the logo.');
+      generatePDFContent();
+    };
   };
   
   if (isLoading) return <div>Loading...</div>;
