@@ -72,25 +72,15 @@ const Checkout = () => {
         }
 
         // Expiration Date Validation (MM/YY)
-        const expirationDatePattern = /^\d{2}\/\d{2}$/;
+        const expirationDatePattern = /^(0[1-9]|1[0-9])\/\d{2}$/;
         if (!expirationDatePattern.test(expirationDate)) {
             errors.expirationDate = 'Invalid expiration date format (MM/YY)';
         } else {
             const [month, year] = expirationDate.split('/').map(Number);
 
-            // Check if month is valid (between 01 and 12)
-            if (month < 1 || month > 12) {
-                errors.expirationDate = 'Invalid month. Must be between 01 and 12.';
-            } else {
-                // Get current month and year
-                const currentDate = new Date();
-                const currentMonth = currentDate.getMonth() + 1;
-                const currentYear = currentDate.getFullYear() % 100; 
-
-                // Check if expiration date is in the past
-                if (year < currentYear || (year === currentYear && month < currentMonth)) {
-                    errors.expirationDate = 'Expiration date cannot be in the past.';
-                }
+            // Check if year is 24 or above
+            if (year < 24) {
+                errors.expirationDate = 'Year must be 24 or later.';
             }
         }
 
@@ -240,6 +230,28 @@ const Checkout = () => {
 
   const handleExpirationDateChange = (e) => {
     let value = e.target.value.replace(/[^0-9/]/g, '');
+    const [mm, yy] = value.split('/');
+
+    if (mm) {
+      // Restrict first digit to 0 or 1
+      if (mm.length === 1 && !['0', '1'].includes(mm)) {
+        return;
+      }
+      // Restrict second digit to 1-9 if first digit is 0 or 1
+      if (mm.length === 2) {
+        const secondDigit = parseInt(mm[1]);
+        if (secondDigit < 1 || secondDigit > 9) {
+          return;
+        }
+      }
+    }
+
+    if (yy) {
+      // Restrict year to 24 and above
+      if (parseInt(yy) < 24) {
+        return;
+      }
+    }
 
     if (value.length === 2 && !value.includes('/')) {
       value += '/';
