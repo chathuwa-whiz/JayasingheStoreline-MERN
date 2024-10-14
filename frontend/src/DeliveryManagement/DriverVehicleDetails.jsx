@@ -35,6 +35,7 @@ const DriverVehicleDetails = () => {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [searchTerm, setSearchTerm] = useState('');
   const [darkMode, setDarkMode] = useState(false);
+  const [error, setError] = useState({});
 
   const areaCodes = {
     '011': 'Colombo', '031': 'Negombo', '038': 'Panadura', '055': 'Badulla',
@@ -167,7 +168,20 @@ const DriverVehicleDetails = () => {
     } else if (field === 'driverLicenceNo') {
       value = formatDriverLicenceNo(value);
     } else if (field === 'telephoneNo') {
-      value = formatTelephoneNo(value);
+      value = value.replace(/\D/g, "");
+      if (value.length > 10) value = value.slice(0, 10);
+
+      const validPrefixes = ["070", "071", "072", "074", "075", "076", "077", "078"];
+      const prefix = value.slice(0, 3);
+
+      if (value.length >= 3 && !validPrefixes.includes(prefix)) {
+        setError(prev => ({ ...prev, telephoneNo: "Invalid phone number: prefix not allowed" }));
+        return;
+      }
+
+      const formatted = value.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2$3");
+      setNewDriver(prev => ({ ...prev, telephoneNo: formatted }));
+      setError(prev => ({ ...prev, telephoneNo: "" }));
     }
     
     setNewDriver(prev => ({ ...prev, [field]: value }));
@@ -433,7 +447,7 @@ const DriverVehicleDetails = () => {
               <label htmlFor="telephoneNo" className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Telephone/Mobile Number</label>
               <div className="relative">
                 <input
-                  type="text"
+                  type="tel"
                   id="telephoneNo"
                   value={newDriver.telephoneNo}
                   onChange={(e) => handleInputChange(e, 'telephoneNo')}
@@ -441,9 +455,9 @@ const DriverVehicleDetails = () => {
                     darkMode 
                       ? 'bg-gray-700 border-gray-600 text-white' 
                       : 'bg-white border-gray-300 text-gray-900'
-                  }`}
+                  } ${error.telephoneNo ? 'border-red-500' : ''}`}
                   required
-                  placeholder="0XX-XXXXXXX"
+                  placeholder="07X-XXXXXXX"
                 />
                 {newDriver.telephoneNo && getAreaName(newDriver.telephoneNo) && (
                   <span className="absolute right-2 top-2 text-sm text-gray-500">
@@ -451,6 +465,9 @@ const DriverVehicleDetails = () => {
                   </span>
                 )}
               </div>
+              {error.telephoneNo && (
+                <p className="mt-1 text-xs text-red-500">{error.telephoneNo}</p>
+              )}
             </div>
             {/* Vehicle */}
             <div>
