@@ -260,7 +260,7 @@ export default function DashboardDashboard() {
           min="1"
           max="5"
           value={maxRating}
-          onChange={(e) => setMaxRating(Number(e.target.value))}
+          //onChange={(e) => setMaxRating(Number(e.target.value))}
           placeholder="Max Rating"
           className="p-2 border rounded w-1/2"
         />
@@ -282,7 +282,8 @@ export default function DashboardDashboard() {
         <div className="bg-teal-100 p-6 rounded-lg text-center shadow-lg">
           <h2 className="text-4xl font-bold text-teal-800">{products.length}</h2>
           <p className="text-lg text-gray-700">Total Products</p>
-          <p className="text-teal-600">+10% +1.2k this week</p>
+          {/*
+          <p className="text-teal-600">+10% +1.2k this week</p>*/}
         </div>
 
         <div className="bg-purple-100 p-6 rounded-lg text-center shadow-lg">
