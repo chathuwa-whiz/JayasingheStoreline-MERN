@@ -29,23 +29,15 @@ const Checkout = () => {
   }, [cart]);
 
   useEffect(() => {
-    // Load PayHere SDK dynamically
-    const loadPayHereSDK = () => {
-      const script = document.createElement('script');
-      script.src = 'https://www.payhere.lk/lib/payhere.js';
-      script.async = true;
-      script.onload = () => {
-        if (window.payhere) {
-          console.log('PayHere SDK loaded');
-        } else {
-          console.error('PayHere SDK failed to load');
-          toast.error('PayHere SDK failed to load');
-        }
-      };
-      document.body.appendChild(script);
-    };
+    // Load PayHere SDK
+    const script = document.createElement('script');
+    script.src = 'https://www.payhere.lk/lib/payhere.js';
+    script.async = true;
+    document.body.appendChild(script);
 
-    loadPayHereSDK();
+    return () => {
+      document.body.removeChild(script);
+    };
   }, []);
 
   const [cardNumber, setCardNumber] = useState('');
@@ -54,6 +46,11 @@ const Checkout = () => {
   const [cvv, setCvv] = useState('');
   const [errors, setErrors] = useState({});
   const [cardType, setCardType] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  const [paymentMethod, setPaymentMethod] = useState('card'); // 'card', 'cod', or 'payhere'
 
   const validateForm = () => {
     const errors = {};
@@ -97,7 +94,7 @@ const Checkout = () => {
         // CVV Validation
         const cvvPattern = /^\d{3,4}$/;
         if (!cvvPattern.test(cvv)) {
-            errors.cvv = 'CVV must be 3 or 4 digits';
+            errors.cvv = 'CVV must be 3 digits';
         }
     }
 
@@ -114,106 +111,122 @@ const Checkout = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    if (!validateForm()) {
-      return;
-    }
-  
-    if (selectedPaymentMethod === 'cod') {
-      // Handle COD
-      toast.success('Order confirmed successfully!');
-      setSelectedPaymentMethod(null);
-      setCardNumber('');
-      setCardName('');
-      setExpirationDate('');
-      setCvv('');
-      setErrors({});
-      navigate('/home'); // Navigate to confirmation page
-      return;
-    }
-  
-    if (selectedPaymentMethod === 'card') {
-      // Handle Card payment
-      const paymentData = {
-        paymentMethod: selectedPaymentMethod,
-        cardNumber,
-        cardName,
-        expirationDate,
-        cvv
-      };
-  
-      try {
-        const response = await fetch('api/payment', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(paymentData)
-        });
-  
-        const result = await response.json();
-        if (response.ok) {
-          toast.success('Payment successful');
-          setSelectedPaymentMethod(null);
-          setCardNumber('');
-          setCardName('');
-          setExpirationDate('');
-          setCvv('');
-          setErrors({});
-          navigate('/home');
-        } else {
-          toast.error(result.message || 'Payment failed');
+    
+    setError('');
+    setIsLoading(true);
+
+    try {
+      if (paymentMethod === 'card') {
+        // Validate card details
+        if (!cardNumber || !expirationDate || !cvv || !cardName) {
+          throw new Error('Please fill in all card details');
         }
-      } catch (error) {
-        console.error('Error processing payment:', error);
-        toast.error('Payment failed');
-      }
-    }
-  
-    if (selectedPaymentMethod === 'payhere') {
-      // Handle PayHere payment
-      const payment = {
-        sandbox: true, // Set to false for live environment
-        merchant_id: "1228044",
-        return_url: "http://localhost:5173/checkout",
-        cancel_url: "http://localhost:5173/checkout",
-        notify_url: "http://localhost:5173/api/payhere/notify",
-        order_id: Date.now(),
-        items: "Order Description",
-        amount: totalAmount,
-        currency: "LKR",
-        first_name: "vidura",
-        last_name: "rathnayaka",
-        email: "vidura@gmail.com",
-        phone: "0772909990",
-        address: "Address Line",
-        city: "Malabe",
-        country: "Sri Lanka",
-      };
-  
-      if (window.payhere) {
-        window.payhere.onCompleted = (response) => {
-          console.log('Payment completed:', response);
-          toast.success('Payment successful');
-          navigate('/home');
-        };
-  
-        window.payhere.onDismissed = () => {
-          toast.error('Payment cancelled');
-        };
-  
-        window.payhere.onError = (error) => {
-          console.error('Payment error:', error);
-          toast.error('Payment failed');
-        };
-  
-        window.payhere.startPayment(payment);
+
+        const strippedCardNumber = cardNumber.replace(/\D/g, '');
+        if (strippedCardNumber.length < 13 || strippedCardNumber.length > 19) {
+          throw new Error('Card number should be between 13 and 19 digits');
+        }
+
+        if (!/^\d{2}\/\d{2}$/.test(expirationDate)) {
+          throw new Error('Expiration date should be in MM/YY format');
+        }
+
+        if (!/^\d{3,4}$/.test(cvv)) {
+          throw new Error('CVV should be 3 or 4 digits');
+        }
+
+        // Process card payment
+        await processCardPayment();
+      } else if (paymentMethod === 'cod') {
+        // Process COD order
+        await processCODOrder();
+      } else if (paymentMethod === 'payhere') {
+        await initPayHerePayment();
+        return; // Return early as PayHere will handle the rest
       } else {
-        toast.error('PayHere SDK not loaded');
+        throw new Error('Invalid payment method');
       }
+
+      setIsLoading(false);
+      setSuccess('Order placed successfully! Redirecting to home...');
+
+      // Redirect to home page after a short delay
+      setTimeout(() => {
+        navigate('/');  // Assuming '/' is your home route
+      }, 2000);  // 2 second delay before redirect
+    } catch (error) {
+      setIsLoading(false);
+      setError(error.message || 'Payment failed. Please try again.');
     }
   };
-  
+
+  const processCardPayment = async () => {
+    // Simulate API call for card payment processing
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    // Add your actual card payment processing logic here
+  };
+
+  const processCODOrder = async () => {
+    // Simulate API call for COD order processing
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Add your actual COD order processing logic here
+  };
+
+  const initPayHerePayment = () => {
+    return new Promise((resolve, reject) => {
+      if (typeof window.payhere === 'undefined') {
+        reject(new Error('PayHere SDK not loaded'));
+        return;
+      }
+
+      // Configure your PayHere payment
+      const payment = {
+        sandbox: true, // Set to false in production
+        merchant_id: 'YOUR_MERCHANT_ID',
+        return_url: 'http://your-return-url.com',
+        cancel_url: 'http://your-cancel-url.com',
+        notify_url: 'http://your-notify-url.com',
+        order_id: 'ItemNo12345',
+        items: 'Door bell wireles',
+        amount: '1000.00',
+        currency: 'LKR',
+        first_name: 'Saman',
+        last_name: 'Perera',
+        email: 'samanp@gmail.com',
+        phone: '0771234567',
+        address: 'No.1, Galle Road',
+        city: 'Colombo',
+        country: 'Sri Lanka',
+        delivery_address: 'No. 46, Galle road, Kalutara South',
+        delivery_city: 'Kalutara',
+        delivery_country: 'Sri Lanka',
+        custom_1: '',
+        custom_2: ''
+      };
+
+      window.payhere.startPayment(payment);
+
+      window.payhere.onCompleted = function onCompleted(orderId) {
+        console.log("Payment completed. OrderID:" + orderId);
+        setIsLoading(false);
+        setSuccess('Payment successful! Redirecting to home...');
+        setTimeout(() => navigate('/'), 2000);
+        resolve();
+      };
+
+      window.payhere.onDismissed = function onDismissed() {
+        console.log("Payment dismissed");
+        setIsLoading(false);
+        reject(new Error('Payment cancelled'));
+      };
+
+      window.payhere.onError = function onError(error) {
+        console.log("Error:" + error);
+        setIsLoading(false);
+        reject(new Error('Payment error'));
+      };
+    });
+  };
 
   const handleCardNumberChange = (e) => {
     const value = e.target.value.replace(/[^0-9]/g, '');
@@ -240,12 +253,34 @@ const Checkout = () => {
 
   const handleExpirationDateChange = (e) => {
     let value = e.target.value.replace(/[^0-9/]/g, '');
-
-    if (value.length === 2 && !value.includes('/')) {
-      value += '/';
-    }
-
+    
     if (value.length <= 5) {
+      if (value.length === 1) {
+        // Only allow 0 or 1 as the first digit
+        if (!/[01]/.test(value)) {
+          value = '';
+        }
+      } else if (value.length === 2 && !value.includes('/')) {
+        // For the second digit, only allow 1-9 if first digit is 0, or 1-2 if first digit is 1
+        const firstDigit = value[0];
+        const secondDigit = value[1];
+        if (firstDigit === '0' && !/[1-9]/.test(secondDigit)) {
+          value = value.slice(0, 1);
+        } else if (firstDigit === '1' && !/[12]/.test(secondDigit)) {
+          value = value.slice(0, 1);
+        } else {
+          value += '/';
+        }
+      } else if (value.length === 5) {
+        const [month, year] = value.split('/');
+        const currentYear = new Date().getFullYear() % 100;
+        const enteredYear = parseInt(year, 10);
+        
+        if (enteredYear < 24 || enteredYear < currentYear) {
+          value = value.slice(0, 3);
+        }
+      }
+      
       setExpirationDate(value);
     }
   };
@@ -385,9 +420,12 @@ const Checkout = () => {
     <button
       type="submit"
       className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md mt-4 hover:bg-blue-700"
+      disabled={isLoading}
     >
-      Make Payment
+      {isLoading ? 'Processing...' : 'Make Payment'}
     </button>
+    {error && <p className="error">{error}</p>}
+    {success && <p className="success">{success}</p>}
   </div>
 )}
 
