@@ -1,7 +1,7 @@
 {
   "name": "jayasinghestoreline-mern",
   "version": "1.0.0",
-  "description": "",
+  "description": "ITP Project",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -10,7 +10,7 @@
     "dev": "concurrently \"npm run frontend\" \"npm run backend\""
   },
   "keywords": [],
-  "author": "",
+  "author": "chathushka",
   "license": "ISC",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",

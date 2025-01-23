@@ -29,6 +29,7 @@ export default function DefaultHeader() {
           <a href="#" className="hover:text-yellow-400">CATALOG</a>
           <a href="#" className="hover:text-yellow-400">MAP</a>
           <a href="#" className="hover:text-yellow-400">CONTACT</a>
+          <a href="/inventory" className="hover:text-yellow-400">Inventory</a>
         </nav>
 
         {/* Login and Register Buttons */}
